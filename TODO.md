@@ -112,15 +112,15 @@
 
 ### TIMER
 
-- [ ] Timer0 driver (`drivers/timer0`)
-- [ ] Timer1 driver (`drivers/timer1`)
-- [ ] Timer2 driver (`drivers/timer2`)
-- [ ] Timer3 driver (`drivers/timer3`)
-- [ ] Overflow interrupt support
-- [ ] Periodic tick support
-- [ ] Millis/tick counter helper
-- [ ] Example: periodic LED toggle
-- [ ] Example: software scheduler tick
+- [x] Timer0 driver (`drivers/timer0`)
+- [x] Timer1 driver (`drivers/timer1`)
+- [x] Timer2 driver (`drivers/timer2`)
+- [x] Timer3 driver (`drivers/timer3`)
+- [x] Overflow interrupt support
+- [x] Periodic tick support
+- [x] Millis/tick counter helper
+- [x] Example: periodic LED toggle
+- [x] Example: software scheduler tick
 
 ### EEPROM
 

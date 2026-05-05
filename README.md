@@ -1,97 +1,82 @@
 # PIC PLATFORM - Universal Drivers (C18 + XC8)
 
-Це база універсальних драйверів для PIC (фокус: PIC18).
-Репозиторій не є application-проєктом.
+Universal PIC drivers base (focus: PIC18).
+This repository is a reusable drivers library, not an application project.
 
-## Цілі
+## Goals
 
-- Універсальні перевикористовувані драйвери
-- Підтримка MPLAB C18 та MPLAB XC8
-- Мінімальна залежність драйверів від компілятора
-- Усі compiler-specific відмінності винесені в `core/compiler.h`
+- Reusable and portable drivers
+- Support MPLAB C18 and MPLAB XC8
+- Keep compiler-specific details in `core/compiler.h`
 
-## Структура
+## Structure
 
 - `core/`
 - `drivers/`
 - `examples/`
-- `docs/`
 - `C18/`
 - `XC8/`
 
-## Як створити новий драйвер
+## Compiler Examples
 
-1. Прочитати `DRIVER_GUIDELINES.md`
-2. Скопіювати `/drivers/_template`
-3. Перейменувати під назву драйвера
-4. Реалізувати API та внутрішню логіку драйвера
-5. Додати/адаптувати `example.c`
+- `examples/common` - universal examples
+- `C18/examples` - MPLAB C18 examples
+- `XC8/examples` - MPLAB XC8 examples
 
-## Приклади для компіляторів
+## Timer Drivers
 
-- `examples/common` - універсальні приклади
-- `C18/examples` - приклади під MPLAB C18
-- `XC8/examples` - приклади під MPLAB XC8
+Timer module includes drivers for:
 
-## Core Layer
+- Timer0
+- Timer1
+- Timer2
+- Timer3
 
-Базовий шар з типами, macro utilities і compiler abstraction.
+Each timer exposes a unified API:
 
-## GPIO Driver
+- `timerX_init(uint16_t prescaler)`
+- `timerX_start()` / `timerX_stop()`
+- `timerX_set(uint16_t value)` / `timerX_get()`
+- `timerX_enable_interrupt()` / `timerX_disable_interrupt()`
+- `timerX_set_callback(void (*cb)(void))`
+- `timerX_irq_handler()` for ISR integration
 
-### GPIO Driver Architecture
+Overflow handling:
 
-- `drivers/gpio/gpio.c` — universal entry point
-- `C18/drivers/gpio/gpio.c` — C18-specific implementation
-- `XC8/drivers/gpio/gpio.c` — XC8-specific implementation
+- Overflow interrupt flag is cleared in `timerX_irq_handler()`
+- Optional callback is called on overflow when set
 
-## UART Driver
+### Tick System
 
-### UART Driver Architecture
+Global millisecond tick is implemented in:
 
-- `drivers/uart/uart.c` — universal entry point
-- `C18/drivers/uart/uart.c` — C18-specific implementation
-- `XC8/drivers/uart/uart.c` — XC8-specific implementation
+- `drivers/tick/tick.h`
+- `drivers/tick/tick.c`
 
-## UART Debug Module
+API:
 
-Опціональний debug layer поверх UART через macro API.
+- `tick_init()`
+- `tick_get()`
+- `tick_delay(ms)`
 
-## RS485 Driver
+Tick uses Timer1 overflow callback and integer-only counter.
 
-UART-based layer with direction control, frame, CRC8 and timeout.
+### Timer Architecture
 
-## ADC Driver
+Universal entry + compiler-specific override pattern:
 
-ADC driver для sensors/buttons/voltage з averaging і helper-функціями.
+- `drivers/timer0/timer0.c` -> `C18`/`XC8` or fallback
+- `drivers/timer1/timer1.c` -> `C18`/`XC8` or fallback
+- `drivers/timer2/timer2.c` -> `C18`/`XC8` or fallback
+- `drivers/timer3/timer3.c` -> `C18`/`XC8` or fallback
 
-## PWM Driver
+## Notes
 
-PWM реалізовано через CCP1/CCP2 з базою на Timer2.
+- No malloc
+- No float
+- Timer drivers keep timer-only responsibility
 
-Ключова формула частоти:
-
-- `PWM Frequency = Fosc / (4 * prescaler * (PR2 + 1))`
-
-Можливості:
-
-- підтримка `PWM_CHANNEL_1` і `PWM_CHANNEL_2`
-- `pwm_init(frequency)` налаштовує Timer2, PR2 та prescaler
-- `pwm_set_duty(channel, duty)` керує 10-bit duty (`CCPRxL` + `DCxB`)
-- `pwm_start` / `pwm_stop`
-
-### PWM Driver Architecture
-
-- `drivers/pwm/pwm.c` — universal entry point + fallback
-- `C18/drivers/pwm/pwm.c` — C18-specific implementation
-- `XC8/drivers/pwm/pwm.c` — XC8-specific implementation
-
-Приклади використання:
-
-- LED dimming (sweep duty)
-- Fan low/medium/high speed presets
-
-## Підтримувані компілятори
+## Supported Compilers
 
 - MPLAB C18
 - MPLAB XC8
