@@ -48,37 +48,7 @@
 - `core/interrupts.h` - helper-макроси дл€ global interrupts
 - `core/config.h` - compile-time feature flags
 
-як використовуютьс€ драйверами:
-
-- драйвери п≥дключають `core/compiler.h` дл€ compiler portability
-- за потреби п≥дключають `core/types.h`, `core/bit_utils.h`, `core/delay.h`
-- project-level налаштуванн€ виконуютьс€ через `core/config.h` та `core/device.h`
-
 ## GPIO Driver
-
-GPIO Ч еталонний ун≥версальний драйвер дл€ керуванн€ напр€мком та станом п≥н≥в через рег≥стри ≥ номер б≥та.
-ƒрайвер не хардкодить конкретн≥ п≥ни ≥ працюЇ через `volatile uint8_t*`.
-
-Ѕазовий приклад використанн€:
-
-```c
-gpio_set_output(&TRISB, 0u);
-gpio_write_high(&PORTB, 0u);
-if (gpio_read(&PORTB, 1u) != 0u)
-{
-    gpio_toggle(&PORTB, 0u);
-}
-```
-
-API:
-
-- `void gpio_init(void);`
-- `void gpio_set_output(volatile uint8_t* tris, uint8_t bit);`
-- `void gpio_set_input(volatile uint8_t* tris, uint8_t bit);`
-- `void gpio_write_high(volatile uint8_t* port, uint8_t bit);`
-- `void gpio_write_low(volatile uint8_t* port, uint8_t bit);`
-- `void gpio_toggle(volatile uint8_t* port, uint8_t bit);`
-- `uint8_t gpio_read(volatile uint8_t* port, uint8_t bit);`
 
 ### GPIO Driver Architecture
 
@@ -86,28 +56,7 @@ API:
 - `C18/drivers/gpio/gpio.c` Ч C18-specific implementation
 - `XC8/drivers/gpio/gpio.c` Ч XC8-specific implementation
 
-Fallback logic у `drivers/gpio/gpio.c`:
-
-- дл€ `DRV_COMPILER_C18` п≥дключаЇтьс€ `C18` реал≥зац≥€
-- дл€ `DRV_COMPILER_XC8` п≥дключаЇтьс€ `XC8` реал≥зац≥€
-- ≥накше використовуЇтьс€ вбудований universal fallback
-
 ## UART Driver
-
-UART Ч легкий ун≥версальний драйвер ≥з Їдиним API дл€ вс≥х комп≥л€тор≥в.
-ѕ≥дтримуЇ polling обм≥н та м≥н≥мальний RX circular buffer без dynamic memory.
-
-API:
-
-- `void uart_init(uint32_t baudrate);`
-- `void uart_write_byte(uint8_t data);`
-- `void uart_write_string(const char* str);`
-- `uint8_t uart_read_byte(void);`
-- `uint8_t uart_is_data_ready(void);`
-
-Debug note:
-
-- при `DRV_DEBUG_ENABLE=1` макрос `DBG_PRINT(str)` у `core/debug.h` використовуЇ `uart_write_string(str)`.
 
 ### UART Driver Architecture
 
@@ -115,11 +64,37 @@ Debug note:
 - `C18/drivers/uart/uart.c` Ч C18-specific implementation
 - `XC8/drivers/uart/uart.c` Ч XC8-specific implementation
 
-Fallback logic у `drivers/uart/uart.c`:
+## UART Debug Module
 
-- дл€ `DRV_COMPILER_C18` п≥дключаЇтьс€ `C18` реал≥зац≥€
-- дл€ `DRV_COMPILER_XC8` п≥дключаЇтьс€ `XC8` реал≥зац≥€
-- ≥накше використовуЇтьс€ вбудований universal fallback
+UART Debug Ч це опц≥ональний модуль поверх UART дл€ коротких debug-пов≥домлень без `printf`.
+
+”в≥мкненн€:
+
+```c
+#define DRV_DEBUG_ENABLE 1
+#define DRV_USE_UART 1
+```
+
+Ѕазове використанн€:
+
+```c
+DBG_PRINT("Hello");
+DBG_PRINTLN(" UART");
+DBG_PRINT_INT(123);
+DBG_PRINT_HEX(0xAB);
+```
+
+Zero-cost when disabled:
+
+- €кщо `DRV_DEBUG_ENABLE=0` або `DRV_USE_UART=0`, debug макроси розгортаютьс€ в порожн≥ `do { } while (0)`
+- код виклик≥в не генеруЇтьс€, runtime/heap overhead в≥дсутн≥й
+
+јрх≥тектура:
+
+- `drivers/uart_debug/uart_debug.h` Ч macro API + enable/disable logic
+- `drivers/uart_debug/uart_debug.c` Ч universal entry/fallback
+- `C18/drivers/uart_debug/uart_debug.c` Ч C18-specific implementation
+- `XC8/drivers/uart_debug/uart_debug.c` Ч XC8-specific implementation
 
 ## ѕ≥дтримуван≥ комп≥л€тори
 

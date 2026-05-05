@@ -62,19 +62,19 @@
 
 ### UART Debug (lightweight, optional)
 
-- [ ] Debug module (`drivers/uart_debug`)
-- [ ] Compile-time enable/disable via macro (e.g. `DRV_DEBUG_ENABLE`)
-- [ ] Zero-cost when disabled (no code, no memory usage)
-- [ ] Macro-based API:
-  - [ ] `DBG_PRINT()`
-  - [ ] `DBG_PRINTLN()`
-  - [ ] `DBG_WRITE_BYTE()`
-- [ ] Optional formatted output (lightweight, без важкого printf)
-- [ ] Redirect to UART driver
-- [ ] No dynamic memory usage
-- [ ] Minimal stack usage
-- [ ] Example: print debug message
-- [ ] Example: debug values (int/hex)
+- [x] Debug module (`drivers/uart_debug`)
+- [x] Compile-time enable/disable via macro (e.g. `DRV_DEBUG_ENABLE`)
+- [x] Zero-cost when disabled (no code, no memory usage)
+- [x] Macro-based API:
+  - [x] `DBG_PRINT()`
+  - [x] `DBG_PRINTLN()`
+  - [x] `DBG_WRITE_BYTE()`
+- [x] Optional formatted output (lightweight, без важкого printf)
+- [x] Redirect to UART driver
+- [x] No dynamic memory usage
+- [x] Minimal stack usage
+- [x] Example: print debug message
+- [x] Example: debug values (int/hex)
 
 ### RS485
 
