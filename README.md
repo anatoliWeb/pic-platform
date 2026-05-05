@@ -38,16 +38,6 @@
 `core/` Ч це базовий шар, в≥д €кого залежать ус≥ драйвери.
 ¬≥н надаЇ сп≥льн≥ типи, макроси, конф≥гурац≥ю та комп≥л€торну абстракц≥ю.
 
-‘айли Core Layer:
-
-- `core/compiler.h` - абстракц≥€ C18/XC8 ≥ базов≥ compiler wrappers
-- `core/types.h` - сп≥льн≥ типи статус≥в та булевих значень
-- `core/bit_utils.h` - ун≥версальн≥ б≥тов≥ макроси
-- `core/delay.h` - Їдин≥ wrappers дл€ затримок
-- `core/device.h` - базов≥ device/clock налаштуванн€
-- `core/interrupts.h` - helper-макроси дл€ global interrupts
-- `core/config.h` - compile-time feature flags
-
 ## GPIO Driver
 
 ### GPIO Driver Architecture
@@ -66,8 +56,6 @@
 
 ## UART Debug Module
 
-UART Debug Ч це опц≥ональний модуль поверх UART дл€ коротких debug-пов≥домлень без `printf`.
-
 ”в≥мкненн€:
 
 ```c
@@ -75,51 +63,10 @@ UART Debug Ч це опц≥ональний модуль поверх UART дл€ коротких debug-пов≥домлень б
 #define DRV_USE_UART 1
 ```
 
-Ѕазове використанн€:
-
-```c
-DBG_PRINT("Hello");
-DBG_PRINTLN(" UART");
-DBG_PRINT_INT(123);
-DBG_PRINT_HEX(0xAB);
-```
-
-Zero-cost when disabled:
-
-- €кщо `DRV_DEBUG_ENABLE=0` або `DRV_USE_UART=0`, debug макроси розгортаютьс€ в порожн≥ `do { } while (0)`
-- код виклик≥в не генеруЇтьс€, runtime/heap overhead в≥дсутн≥й
-
-јрх≥тектура:
-
-- `drivers/uart_debug/uart_debug.h` Ч macro API + enable/disable logic
-- `drivers/uart_debug/uart_debug.c` Ч universal entry/fallback
-- `C18/drivers/uart_debug/uart_debug.c` Ч C18-specific implementation
-- `XC8/drivers/uart_debug/uart_debug.c` Ч XC8-specific implementation
-
 ## RS485 Driver
 
 RS485 Ч UART-based protocol layer.
-¬икористовуЇ UART дл€ передач≥ байт≥в ≥ GPIO дл€ керуванн€ напр€мком DE/RE.
-
-Frame format:
-
-- `[START][LEN][DATA...][CRC]`
-- `START = 0xAA`
-- `LEN = payload length`
-- `CRC = CRC8 (poly 0x07)`
-
-ћожливост≥:
-
-- direction control: `rs485_set_tx()` / `rs485_set_rx()`
-- send/receive frames: `rs485_send_frame()` / `rs485_receive_frame()`
-- CRC check: `rs485_crc8()`
-- simple timeout on receive (delay-based)
-
-Ѕазовий master/slave сценар≥й:
-
-- master формуЇ payload ≥ викликаЇ `rs485_send_frame(...)`
-- slave читаЇ через `rs485_receive_frame(...)`
-- при CRC mismatch або timeout повертаЇтьс€ `0`
+Frame format: `[START][LEN][DATA...][CRC]`, де `START = 0xAA`, `CRC = CRC8`.
 
 ### RS485 Driver Architecture
 
@@ -127,11 +74,33 @@ Frame format:
 - `C18/drivers/rs485/rs485.c` Ч C18-specific implementation
 - `XC8/drivers/rs485/rs485.c` Ч XC8-specific implementation
 
-Fallback logic у `drivers/rs485/rs485.c`:
+## ADC Driver
 
-- дл€ `DRV_COMPILER_C18` п≥дключаЇтьс€ `C18` реал≥зац≥€
-- дл€ `DRV_COMPILER_XC8` п≥дключаЇтьс€ `XC8` реал≥зац≥€
-- ≥накше використовуЇтьс€ вбудований universal fallback
+ADC driver призначений дл€ сенсор≥в, ADC-buttons та вим≥рюванн€ напруги.
+ѕ≥дтримуЇ single read, multi read та averaging.
+
+API:
+
+- `void adc_init(void);`
+- `uint16_t adc_read(uint8_t channel);`
+- `uint16_t adc_read_avg(uint8_t channel, uint8_t samples);`
+- `void adc_read_multiple(uint8_t* channels, uint16_t* results, uint8_t count);`
+- `uint16_t adc_to_millivolts(uint16_t adc_value, uint16_t vref_mv);`
+- `uint16_t adc_read_voltage(uint8_t channel);`
+- `int16_t adc_read_thermistor(uint8_t channel);`
+- `uint8_t adc_read_button(uint8_t channel);`
+
+Ќотатки дл€ сенсор≥в:
+
+- `adc_read_voltage()` повертаЇ м≥л≥вольти без float
+- `adc_read_thermistor()` використовуЇ просте наближенн€ (розширюЇтьс€ п≥зн≥ше)
+- `adc_read_button()` використовуЇ table-like threshold mapping дл€ ADC ladder
+
+### ADC Driver Architecture
+
+- `drivers/adc/adc.c` Ч universal entry point + fallback
+- `C18/drivers/adc/adc.c` Ч C18-specific implementation
+- `XC8/drivers/adc/adc.c` Ч XC8-specific implementation
 
 ## ѕ≥дтримуван≥ комп≥л€тори
 

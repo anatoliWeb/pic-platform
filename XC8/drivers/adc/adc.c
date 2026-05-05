@@ -1,11 +1,4 @@
 #include "drivers/adc/adc.h"
-
-#if defined(DRV_COMPILER_C18)
-    #include "../../C18/drivers/adc/adc.c"
-#elif defined(DRV_COMPILER_XC8)
-    #include "../../XC8/drivers/adc/adc.c"
-#else
-
 #include "core/delay.h"
 
 #define ADC_DEFAULT_VREF_MV 5000u
@@ -108,5 +101,3 @@ uint8_t adc_read_button(uint8_t channel)
 
     return ADC_BUTTON_NONE;
 }
-
-#endif
