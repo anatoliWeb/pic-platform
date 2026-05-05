@@ -41,17 +41,4 @@
 
 #define DRV_UNUSED(x) ((void)(x))
 
-/* =========================================================
- * Optional delay wrapper
- * ========================================================= */
-#if defined(DRV_COMPILER_XC8)
-    #include <libpic30.h>
-    #define DRV_DELAY_US(us) __delay_us(us)
-    #define DRV_DELAY_MS(ms) __delay_ms(ms)
-#else
-    /* C18: project can override these macros with custom delay functions */
-    #define DRV_DELAY_US(us) do { DRV_UNUSED(us); } while (0)
-    #define DRV_DELAY_MS(ms) do { DRV_UNUSED(ms); } while (0)
-#endif
-
 #endif /* CORE_COMPILER_H */

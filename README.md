@@ -131,3 +131,32 @@ Scratchpad і CRC:
 - `drivers/ds18b20/example.c` — single + multi-device сценарії
 - `C18/examples/ds18b20_example.c`
 - `XC8/examples/ds18b20_example.c`
+
+## Timing / Delay
+
+Шар `core/delay` є базою для bit-banging драйверів (1-Wire, software SPI тощо).
+
+Що надається:
+
+- `delay_us(uint16_t us)`
+- `delay_ms(uint16_t ms)`
+- сумісні макроси `DRV_DELAY_US(...)` і `DRV_DELAY_MS(...)`
+
+Реалізація:
+
+- XC8: короткі кроки через `__delay_us(1)` і `__delay_ms(1)` у циклі
+- C18: calibrated blocking loops + `NOP`, з `volatile` лічильниками для захисту від оптимізації
+
+Частота:
+
+- джерело істини: `DRV_XTAL_FREQ` з `core/device.h`
+
+Важливо:
+
+- delay є blocking
+- hardware timers не використовуються в цьому шарі
+- точність критична для 1-Wire слотів
+
+Приклад:
+
+- `examples/common/delay_example.c` (blink + short us pulse)

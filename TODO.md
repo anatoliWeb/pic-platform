@@ -250,78 +250,78 @@
 
 ### Timing Handling
 
-- [ ] Delay-based timing (using core/delay.h)
-- [ ] Ensure compatibility with C18 and XC8
-- [ ] Minimal blocking implementation
-- [ ] No hardware timers required (bit-banging only)
+- [x] Delay-based timing (using core/delay.h)
+- [x] Ensure compatibility with C18 and XC8
+- [x] Minimal blocking implementation
+- [x] No hardware timers required (bit-banging only)
 
 ---
 
 ### API
 
-- [ ] onewire_init(volatile uint8_t* port, volatile uint8_t* tris, uint8_t pin)
-- [ ] onewire_reset(void)
-- [ ] onewire_write_bit(uint8_t bit)
-- [ ] onewire_read_bit(void)
-- [ ] onewire_write_byte(uint8_t byte)
-- [ ] onewire_read_byte(void)
+- [x] onewire_init(volatile uint8_t* port, volatile uint8_t* tris, uint8_t pin)
+- [x] onewire_reset(void)
+- [x] onewire_write_bit(uint8_t bit)
+- [x] onewire_read_bit(void)
+- [x] onewire_write_byte(uint8_t byte)
+- [x] onewire_read_byte(void)
 
 ---
 
 ### Higher-Level Helpers
 
-- [ ] onewire_skip_rom()
-- [ ] onewire_read_rom(uint8_t* rom)
-- [ ] onewire_match_rom(uint8_t* rom)
+- [x] onewire_skip_rom()
+- [x] onewire_read_rom(uint8_t* rom)
+- [x] onewire_match_rom(uint8_t* rom)
 
 ---
 
 ### DS18B20 Helpers
 
-- [ ] ds18b20_start_conversion()
-- [ ] ds18b20_read_temperature_raw()
-- [ ] ds18b20_read_temperature_celsius()
+- [x] ds18b20_start_conversion()
+- [x] ds18b20_read_temperature_raw()
+- [x] ds18b20_read_temperature_celsius()
 
 ---
 
 ### CRC
 
-- [ ] Implement CRC8 (Dallas/Maxim)
-- [ ] Validate scratchpad data
+- [x] Implement CRC8 (Dallas/Maxim)
+- [x] Validate scratchpad data
 
 ---
 
 ### Examples
 
-- [ ] Example: detect device (presence)
-- [ ] Example: read ROM code
-- [ ] Example: read temperature (DS18B20)
-- [ ] Example: multiple sensors (optional)
+- [x] Example: detect device (presence)
+- [x] Example: read ROM code
+- [x] Example: read temperature (DS18B20)
+- [x] Example: multiple sensors (optional)
 
 ---
 
 ### Compiler-Specific
 
-- [ ] C18 implementation (`C18/drivers/onewire/onewire.c`)
-- [ ] XC8 implementation (`XC8/drivers/onewire/onewire.c`)
-- [ ] Universal fallback implementation
+- [x] C18 implementation (`C18/drivers/onewire/onewire.c`)
+- [x] XC8 implementation (`XC8/drivers/onewire/onewire.c`)
+- [x] Universal fallback implementation
 
 ---
 
 ### Integration
 
-- [ ] Use GPIO driver for pin control
-- [ ] Use delay wrapper from core/delay.h
-- [ ] No malloc
-- [ ] Minimal stack usage
+- [x] Use GPIO driver for pin control
+- [x] Use delay wrapper from core/delay.h
+- [x] No malloc
+- [x] Minimal stack usage
 
 ---
 
 ### Documentation
 
-- [ ] Add README section: 1-Wire driver
-- [ ] Explain timing constraints
-- [ ] Explain DS18B20 usage
+- [x] Add README section: 1-Wire driver
+- [x] Explain timing constraints
+- [x] Explain DS18B20 usage
 
 
 

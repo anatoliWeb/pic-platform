@@ -2,17 +2,27 @@
 #define CORE_DELAY_H
 
 #include "core/compiler.h"
+#include "core/device.h"
 
 /*
- * Unified delay wrappers.
- * Prefer calling these macros from drivers instead of compiler-specific APIs.
+ * Blocking delay API used by timing-sensitive drivers.
+ * This layer is intentionally simple and does not use hardware timers.
  */
-#ifndef DRV_DELAY_MS
-    #define DRV_DELAY_MS(ms) do { DRV_UNUSED(ms); } while (0)
+void delay_us(uint16_t us);
+void delay_ms(uint16_t ms);
+
+/*
+ * Backward-compatible wrappers used across existing drivers.
+ */
+#ifdef DRV_DELAY_US
+    #undef DRV_DELAY_US
 #endif
 
-#ifndef DRV_DELAY_US
-    #define DRV_DELAY_US(us) do { DRV_UNUSED(us); } while (0)
+#ifdef DRV_DELAY_MS
+    #undef DRV_DELAY_MS
 #endif
+
+#define DRV_DELAY_US(us) delay_us((uint16_t)(us))
+#define DRV_DELAY_MS(ms) delay_ms((uint16_t)(ms))
 
 #endif /* CORE_DELAY_H */
