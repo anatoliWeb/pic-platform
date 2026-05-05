@@ -157,13 +157,13 @@
 
 ### External Interrupts
 
-- [ ] External interrupt driver (`drivers/ext_interrupt`)
-- [ ] INT0 support
-- [ ] INT1 support
-- [ ] INT2 support
-- [ ] Rising/falling edge config
-- [ ] Callback-style handler where possible
-- [ ] Example: button interrupt
+- [x] External interrupt driver (`drivers/ext_interrupt`)
+- [x] INT0 support
+- [x] INT1 support
+- [x] INT2 support
+- [x] Rising/falling edge config
+- [x] Callback-style handler where possible
+- [x] Example: button interrupt
 
 ### Port Change Interrupt
 
