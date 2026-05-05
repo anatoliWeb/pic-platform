@@ -15,22 +15,50 @@ This repository is a reusable drivers library, not an application project.
 - Compiler-specific implementations in `C18/` and `XC8/`
 - Fallback implementation when no specific override is selected
 
-## Timer Drivers
+## SPI / MSSP Driver
 
-Timer support includes Timer0, Timer1, Timer2, Timer3 with unified API:
+SPI driver uses PIC MSSP module and supports:
 
-- `init/start/stop/set/get`
-- interrupt enable/disable
-- overflow callback
-- `timerX_irq_handler()` for ISR integration
+- Master mode
+- Basic slave mode
+- SPI modes 0, 1, 2, 3
+- Byte transfer and buffer transfer
+- Chip Select helper without hardcoded pin
 
-### Tick System
+API highlights:
 
-- `tick_init()`
-- `tick_get()`
-- `tick_delay(ms)`
+- `spi_init_master(mode, clock)`
+- `spi_init_slave(mode)`
+- `spi_transfer_byte(data)`
+- `spi_transfer_buffer(tx, rx, len)`
+- `spi_cs_init(tris, port, pin)`
+- `spi_cs_select()` / `spi_cs_deselect()`
 
-Tick is millisecond-based and integer-only.
+Clock options:
+
+- Fosc/4
+- Fosc/16
+- Fosc/64
+- TMR2/2
+
+Transfer buffer behavior:
+
+- if `tx_buffer == NULL` -> sends `0xFF`
+- if `rx_buffer != NULL` -> stores received bytes
+
+### SPI Driver Architecture
+
+- `drivers/spi/spi.c` — universal entry point + fallback
+- `C18/drivers/spi/spi.c` — C18-specific implementation
+- `XC8/drivers/spi/spi.c` — XC8-specific implementation
+
+### SPI Examples
+
+- `drivers/spi/example.c`:
+: sensor register read flow
+: external EEPROM/Flash command + address + data flow
+- `C18/examples/spi_example.c`
+- `XC8/examples/spi_example.c`
 
 ## EEPROM Driver
 
@@ -40,34 +68,16 @@ EEPROM driver provides safe internal data memory access:
 - block read/write
 - wear-aware update write
 
-API:
+Safe write sequence uses interrupt-off + EECON2 unlock (0x55, 0xAA).
 
-- `eeprom_init()`
-- `eeprom_read_byte(address)`
-- `eeprom_write_byte(address, value)`
-- `eeprom_update_byte(address, value)`
-- `eeprom_read_block(address, buffer, length)`
-- `eeprom_write_block(address, data, length)`
+## Timer Drivers + Tick
 
-### Safe Write Sequence
+- Timer0, Timer1, Timer2, Timer3 unified APIs
+- Overflow callback support
+- Millisecond tick via `tick_init/tick_get/tick_delay`
 
-Write flow follows required unlock sequence:
+## Notes
 
-1. Disable global interrupts
-2. `EECON2 = 0x55`
-3. `EECON2 = 0xAA`
-4. Set `WR` bit
-5. Wait until write completes
-6. Restore global interrupts
-
-### Wear Recommendations
-
-- Prefer `eeprom_update_byte()` over direct write
-- Do not write unchanged values
-- Minimize frequent writes in fast loops
-
-## Examples
-
-- `drivers/eeprom/example.c` - save/restore setting + block operations
-- `C18/examples/eeprom_example.c` - byte write/read with UART debug output
-- `XC8/examples/eeprom_example.c` - byte write/read with UART debug output
+- No malloc
+- No float
+- Drivers are device-agnostic on API level
