@@ -262,3 +262,37 @@ API:
 Приклад:
 
 - `drivers/lcd_hd44780/example.c` ("Temp: 23.5C" / "System OK")
+
+### LCD через I2C (PCF8574)
+
+Додано приклад інтеграції HD44780 через I2C-експандер PCF8574:
+
+- `drivers/lcd_hd44780/example_i2c.c`
+
+Особливості:
+
+- це лише example (не окремий драйвер)
+- використовує існуючий `drivers/i2c`
+- локальні helper-и в прикладі:
+  - `lcd_i2c_write(...)`
+  - `lcd_i2c_send_nibble(...)`
+  - `lcd_i2c_send_byte(...)`
+
+I2C адреса:
+
+- типово `0x27` (`LCD_I2C_ADDR`)
+- для деяких модулів може бути `0x3F`
+
+Wiring (поширений backpack):
+
+- P0=RS, P1=RW, P2=EN, P3=Backlight, P4=D4, P5=D5, P6=D6, P7=D7
+
+Коли використовувати:
+
+- коли потрібно зекономити GPIO піни MCU
+- коли LCD розміщений далі та зручніше вести I2C лінії
+
+Різниця з direct GPIO:
+
+- direct GPIO: швидше, але займає більше пінів
+- PCF8574 I2C: менше пінів, але трохи більше latency на байт

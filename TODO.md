@@ -334,6 +334,14 @@
 - [ ] Set cursor
 - [ ] Example: print debug text
 
+#### HD44780 over I2C (PCF8574)
+
+- [ ] I2C LCD example (`drivers/lcd_hd44780/example_i2c.c`)
+- [ ] Use existing I2C driver
+- [ ] Implement minimal I2C → LCD bridge (local in example)
+- [ ] Support PCF8574 (0x27 / 0x3F)
+- [ ] Example: print debug text via I2C
+
 ### Buttons
 
 - [ ] Button driver (`drivers/button`)
