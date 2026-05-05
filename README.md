@@ -188,3 +188,43 @@ Scratchpad і CRC:
 
 Note about naming:
 - In C, function overloading is not supported, so a single function name cannot have both one-argument and two-argument signatures.
+
+## Scheduler
+
+Легкий scheduler реалізовано поверх `drivers/tick` для non-blocking архітектури без RTOS.
+
+Файли:
+
+- `core/scheduler/scheduler.h`
+- `core/scheduler/scheduler.c`
+- `core/scheduler/example.c`
+
+API:
+
+- `scheduler_init()`
+- `scheduler_add_task(task_t* task)`
+- `scheduler_run()`
+
+Модель роботи:
+
+- використовує `tick_get()`
+- для кожної задачі перевіряє `now - last_run >= interval`
+- при спрацюванні викликає callback і оновлює `last_run`
+
+Особливості:
+
+- статичний реєстр задач, без `malloc`
+- `MAX_TASKS = 10`
+- мінімальний overhead
+
+Правила використання:
+
+- `scheduler_run()` викликати часто в `while(1)`
+- callback-и мають бути короткими і неблокуючими
+- довгі `delay` всередині задач небажані
+
+Приклад задач:
+
+- blink LED (500 ms)
+- read DS18B20 (1000 ms)
+- debug print (2000 ms)
