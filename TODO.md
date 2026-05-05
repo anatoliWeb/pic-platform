@@ -181,11 +181,11 @@
 
 ### Comparator
 
-- [ ] Comparator driver (`drivers/comparator`)
-- [ ] Enable/disable comparator
-- [ ] Configure input mode
-- [ ] Read comparator output
-- [ ] Example: threshold detection
+- [x] Comparator driver (`drivers/comparator`)
+- [x] Enable/disable comparator
+- [x] Configure input mode
+- [x] Read comparator output
+- [x] Example: threshold detection
 
 ### Capture / Compare
 

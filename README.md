@@ -15,34 +15,45 @@
 - Compiler-specific реалізації у `C18/` і `XC8/`
 - Fallback реалізація, якщо override не вибрано
 
-## Watchdog Timer (WDT)
+## Comparator Driver
 
-WDT helper є мінімальним модулем для безпечного очищення watchdog.
+Comparator driver призначений для простого threshold detection.
 
-Що включено:
+Підтримка:
 
-- `wdt_clear()`
-- `WDT_CLEAR()` macro alias
+- `comparator_init(mode)`
+- `comparator_enable()`
+- `comparator_disable()`
+- `comparator_get_output()`
 
-WDT зазвичай вмикається через config bits, а не runtime API.
-На багатьох PIC18 вмикання/вимикання WDT у runtime обмежене або недоступне.
+Режими:
 
-### Як використовувати
+- `CMP_MODE_OFF`
+- `CMP_MODE_1`
+- `CMP_MODE_2`
+- `CMP_MODE_3`
 
-- Викликайте `wdt_clear()` у головному циклі після критичних ділянок логіки
-- Не викликайте `wdt_clear()` занадто часто без контролю, щоб не приховати зависання
+Налаштування режиму виконується через `CMCON` / `CMCON0` залежно від MCU.
 
-### Config Notes
+### Comparator Driver Architecture
 
-- Увімкнення/режим WDT задається у configuration bits проєкту
-- Prescaler WDT також задається config-параметрами конкретного MCU
+- `drivers/comparator/comparator.c` — universal entrypoint + fallback
+- `C18/drivers/comparator/comparator.c` — C18-specific implementation
+- `XC8/drivers/comparator/comparator.c` — XC8-specific implementation
 
-### Приклади
+### Threshold Detection Example
 
-- `drivers/wdt/example.c`
-- `C18/examples/wdt_example.c`
-- `XC8/examples/wdt_example.c`
+- init comparator
+- read comparator output
+- якщо output=1 -> toggle/set LED
+- якщо output=0 -> clear LED
+
+Приклади:
+
+- `drivers/comparator/example.c`
+- `C18/examples/comparator_example.c`
+- `XC8/examples/comparator_example.c`
 
 ## Інші драйвери
 
-Доступні: GPIO, UART, UART debug, RS485, ADC, PWM, Timer, EEPROM, SPI, I2C, external interrupt, portb change.
+Доступні: GPIO, UART, UART debug, RS485, ADC, PWM, Timer, EEPROM, SPI, I2C, external interrupt, PORTB change, WDT.
