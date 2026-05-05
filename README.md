@@ -1,6 +1,7 @@
 # PIC PLATFORM - Universal Drivers (C18 + XC8)
 
 Бібліотека універсальних драйверів для PIC (фокус: PIC18).
+Це база драйверів, не application-проєкт.
 
 ## Підтримувані компілятори
 
@@ -14,37 +15,36 @@
 - Compiler-specific реалізації у `C18/` і `XC8/`
 - Fallback реалізація, якщо override не вибрано
 
-## CCP Capture / Compare
+## Reset / Power Helper
 
-CCP Capture та CCP Compare реалізовані як два окремі драйвери.
-Вони використовують Timer1 як базу часу і callback-підхід для подій.
+Reset helper визначає причину останнього ресету через status-біти MCU.
 
-### CCP Capture
+Підтримувані причини:
 
-- capture по rising/falling або кожні 4/16 подій
-- зчитування 16-bit значення з CCPR
-- callback `ccp_capture_callback_t(value)`
-- `ccp_capture_irq_handler()` викликається з ISR проєкту
+- Power-on reset (POR)
+- Brown-out reset (BOR)
+- Watchdog reset (TO/WDT)
+- External/software reset (RI)
 
-### CCP Compare
+API:
 
-- встановлення compare value через CCPR
-- callback при match-події
-- `ccp_compare_irq_handler()` викликається з ISR проєкту
+- `reset_init()`
+- `reset_get_cause()`
+- `reset_clear_flags()`
 
-### ISR Integration
+### Як це допомагає в debug
 
-Драйвери не створюють ISR.
-У реальному ISR потрібно викликати відповідний handler:
+- можна вивести причину старту системи в UART log
+- легше знайти випадкові WDT/BOR ресети
 
-- `ccp_capture_irq_handler()`
-- `ccp_compare_irq_handler()`
+### Важливі нотатки
+
+- логіка базується на RCON-бітах
+- точна інтерпретація окремих бітів може відрізнятись між PIC18 моделями
+- після аналізу причини рекомендується викликати `reset_clear_flags()`
 
 ### Приклади
 
-- `drivers/ccp_capture/example.c` — вимірювання ширини імпульсу
-- `drivers/ccp_compare/example.c` — таймінгові події (toggle LED)
-- `C18/examples/ccp_capture_example.c`
-- `XC8/examples/ccp_capture_example.c`
-- `C18/examples/ccp_compare_example.c`
-- `XC8/examples/ccp_compare_example.c`
+- `drivers/reset/example.c`
+- `C18/examples/reset_example.c`
+- `XC8/examples/reset_example.c`

@@ -198,11 +198,11 @@
 
 ### Reset / Power
 
-- [ ] Reset helper (`drivers/reset`)
-- [ ] Detect reset source where possible
-- [ ] Brown-out reset notes
-- [ ] Power-on reset notes
-- [ ] Example: print reset reason via UART
+- [x] Reset helper (`drivers/reset`)
+- [x] Detect reset source where possible
+- [x] Brown-out reset notes
+- [x] Power-on reset notes
+- [x] Example: print reset reason via UART
 
 ### Oscillator / Clock
 
