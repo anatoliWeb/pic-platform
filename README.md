@@ -1,50 +1,52 @@
 # PIC PLATFORM - Universal Drivers (C18 + XC8)
 
 Бібліотека універсальних драйверів для PIC (фокус: PIC18).
-Це база драйверів, не application-проєкт.
 
 ## Підтримувані компілятори
 
 - MPLAB C18
 - MPLAB XC8
 
-## Архітектура
+## Oscillator / Clock
 
-- Спільний API для кожного драйвера
-- Universal entrypoint у `drivers/`
-- Compiler-specific реалізації у `C18/` і `XC8/`
-- Fallback реалізація, якщо override не вибрано
+`DRV_XTAL_FREQ` у `core/device.h` є єдиним джерелом частоти для всієї системи.
 
-## Reset / Power Helper
+Чому це важливо:
 
-Reset helper визначає причину останнього ресету через status-біти MCU.
+- delay-логіка використовує цю частоту
+- UART baudrate розрахунки залежать від неї
+- I2C clock (SSPADD) залежить від неї
 
-Підтримувані причини:
+Рекомендація:
 
-- Power-on reset (POR)
-- Brown-out reset (BOR)
-- Watchdog reset (TO/WDT)
-- External/software reset (RI)
+- не хардкодити частоту в окремих драйверах
+- змінювати частоту централізовано тільки в `core/device.h`
 
-API:
+### API
 
-- `reset_init()`
-- `reset_get_cause()`
-- `reset_clear_flags()`
+- `clock_get_frequency()` повертає compile-time частоту (`DRV_XTAL_FREQ`)
 
-### Як це допомагає в debug
+### Oscillator modes (нотатки)
 
-- можна вивести причину старту системи в UART log
-- легше знайти випадкові WDT/BOR ресети
+- `HS` — high-speed crystal (високі частоти)
+- `XT` — стандартний кварц
+- `LP` — low-power crystal
+- `RC` — RC-генератор (менш точний)
 
-### Важливі нотатки
+### Config examples
 
-- логіка базується на RCON-бітах
-- точна інтерпретація окремих бітів може відрізнятись між PIC18 моделями
-- після аналізу причини рекомендується викликати `reset_clear_flags()`
+C18:
 
-### Приклади
+```c
+#pragma config OSC = HS
+```
 
-- `drivers/reset/example.c`
-- `C18/examples/reset_example.c`
-- `XC8/examples/reset_example.c`
+XC8:
+
+```c
+#pragma config FOSC = HS
+```
+
+## Інші драйвери
+
+Доступні модулі: GPIO, UART, UART debug, RS485, ADC, PWM, Timer, EEPROM, SPI, I2C, External Interrupt, PORTB Change, WDT, Comparator, CCP Capture/Compare, Reset helper.

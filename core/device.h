@@ -12,11 +12,18 @@
 #endif
 
 /*
- * System clock in Hz.
- * Update this value to match your hardware clock configuration.
+ * Single source of truth for MCU frequency (Hz).
+ * All drivers should use DRV_XTAL_FREQ for timing-related calculations.
+ */
+#ifndef DRV_XTAL_FREQ
+    #define DRV_XTAL_FREQ 8000000UL
+#endif
+
+/*
+ * Backward compatibility macro used by many XC8/C18 delay utilities.
  */
 #ifndef _XTAL_FREQ
-    #define _XTAL_FREQ 8000000UL
+    #define _XTAL_FREQ DRV_XTAL_FREQ
 #endif
 
 #endif /* CORE_DEVICE_H */
