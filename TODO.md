@@ -354,12 +354,12 @@
 
 ### ADC Buttons
 
-- [ ] ADC button driver (`drivers/adc_buttons`)
-- [ ] Multiple buttons on one ADC channel
-- [ ] Threshold table
-- [ ] Debounce
-- [ ] Click/hold support
-- [ ] Example: resistor ladder buttons
+- [x] ADC button driver (`drivers/adc_buttons`)
+- [x] Multiple buttons on one ADC channel
+- [x] Threshold table
+- [x] Debounce
+- [x] Click/hold support
+- [x] Example: resistor ladder buttons
 
 ### Software Scheduler
 

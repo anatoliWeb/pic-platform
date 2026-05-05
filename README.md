@@ -332,3 +332,49 @@ API:
   - click -> toggle LED
   - click -> next screen
   - hold -> enter menu
+
+### ADC Buttons
+
+Äğàéâåğ `drivers/adc_buttons` äîçâîëÿº ÷èòàòè ê³ëüêà êíîïîê ÷åğåç îäèí ADC êàíàë (resistor ladder).
+
+ßê ïğàöşº:
+
+- îäèí ADC âõ³ä
+- òàáëèöÿ ä³àïàçîí³â `min/max -> button id`
+- ÿêùî çíà÷åííÿ íå ïîòğàïëÿº â òàáëèöş: `ADC_BUTTONS_NO_BUTTON`
+
+API:
+
+- `adc_buttons_init(...)`
+- `adc_buttons_update(...)`
+- `adc_buttons_get(...)`
+- `adc_buttons_is_clicked(...)`
+- `adc_buttons_is_held(...)`
+
+Ëîã³êà:
+
+- debounce ~30 ms
+- click: press -> release äî hold threshold
+- hold: íàòèñíóòî >= 500 ms
+- áåç `delay`, ò³ëüêè `tick_get()`
+
+ßê ï³äáèğàòè thresholds:
+
+- âèì³ğÿòè ADC çíà÷åííÿ äëÿ êîæíî¿ êíîïêè
+- çàäàòè ä³àïàçîíè ç çàïàñîì ïî øóìó
+- íå õàğäêîäèòè â äğàéâåğ³, ïåğåäàâàòè ÷åğåç table
+
+Ïğèêëàä òàáëèö³:
+
+- `{0,100,1}`
+- `{150,250,2}`
+- `{300,400,3}`
+- `{450,550,4}`
+
+Ïğèêëàä:
+
+- `drivers/adc_buttons/example.c`
+  - button1 -> next
+  - button2 -> prev
+  - button3 -> select
+  - hold -> enter menu
