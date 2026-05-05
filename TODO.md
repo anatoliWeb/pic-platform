@@ -174,10 +174,10 @@
 
 ### Watchdog Timer
 
-- [ ] WDT helper (`drivers/wdt`)
-- [ ] Enable/disable notes
-- [ ] Clear watchdog macro/function
-- [ ] Example: safe main loop with watchdog clear
+- [x] WDT helper (`drivers/wdt`)
+- [x] Enable/disable notes
+- [x] Clear watchdog macro/function
+- [x] Example: safe main loop with watchdog clear
 
 ### Comparator
 

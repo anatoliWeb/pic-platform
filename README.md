@@ -15,41 +15,34 @@
 - Compiler-specific реалізації у `C18/` і `XC8/`
 - Fallback реалізація, якщо override не вибрано
 
-## PORTB Change Interrupt
+## Watchdog Timer (WDT)
 
-Драйвер підтримує переривання по зміні на RB4–RB7.
+WDT helper є мінімальним модулем для безпечного очищення watchdog.
 
-Що робить драйвер:
+Що включено:
 
-- init RB4..RB7 як input
-- робить dummy read `PORTB` для скидання mismatch
-- керує `RBIE` enable/disable
-- тримає `last_state` та `changed_mask`
-- викликає callback: `(changed_mask, current_state)`
+- `wdt_clear()`
+- `WDT_CLEAR()` macro alias
 
-Формування маски змін:
+WDT зазвичай вмикається через config bits, а не runtime API.
+На багатьох PIC18 вмикання/вимикання WDT у runtime обмежене або недоступне.
 
-- `changed_mask = (current ^ last_state) & 0xF0`
+### Як використовувати
 
-### ISR Integration
+- Викликайте `wdt_clear()` у головному циклі після критичних ділянок логіки
+- Не викликайте `wdt_clear()` занадто часто без контролю, щоб не приховати зависання
 
-Драйвер не створює ISR.
-У вашому ISR потрібно викликати:
+### Config Notes
 
-`portb_change_irq_handler();`
+- Увімкнення/режим WDT задається у configuration bits проєкту
+- Prescaler WDT також задається config-параметрами конкретного MCU
 
-### PORTB Change Architecture
+### Приклади
 
-- `drivers/portb_change/portb_change.c` — universal entrypoint + fallback
-- `C18/drivers/portb_change/portb_change.c` — C18-specific implementation
-- `XC8/drivers/portb_change/portb_change.c` — XC8-specific implementation
-
-### Examples
-
-- `drivers/portb_change/example.c` — button/keypad style callback pattern
-- `C18/examples/portb_change_example.c`
-- `XC8/examples/portb_change_example.c`
+- `drivers/wdt/example.c`
+- `C18/examples/wdt_example.c`
+- `XC8/examples/wdt_example.c`
 
 ## Інші драйвери
 
-Доступні базові драйвери: GPIO, UART, UART debug, RS485, ADC, PWM, Timer, EEPROM, SPI, I2C, external interrupt.
+Доступні: GPIO, UART, UART debug, RS485, ADC, PWM, Timer, EEPROM, SPI, I2C, external interrupt, portb change.
