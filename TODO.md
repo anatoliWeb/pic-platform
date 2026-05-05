@@ -206,27 +206,27 @@
 
 ### Oscillator / Clock
 
-- [ ] Clock helper (`drivers/clock`)
-- [ ] Define `_XTAL_FREQ` / oscillator frequency strategy
-- [ ] Notes for HS/XT/LP/RC oscillator modes
-- [ ] Example: clock config note for C18
-- [ ] Example: clock config note for XC8
+- [x] Clock helper (`drivers/clock`)
+- [x] Define `_XTAL_FREQ` / oscillator frequency strategy
+- [x] Notes for HS/XT/LP/RC oscillator modes
+- [x] Example: clock config note for C18
+- [x] Example: clock config note for XC8
 
 ### 1-Wire
 
-- [ ] 1-Wire driver (`drivers/onewire`)
-- [ ] Single-wire GPIO bit-banging implementation
-- [ ] Reset pulse
-- [ ] Presence detect
+- [x] 1-Wire driver (`drivers/onewire`)
+- [x] Single-wire GPIO bit-banging implementation
+- [x] Reset pulse
+- [x] Presence detect
 
 ---
 
 ### Core Operations
 
-- [ ] Write bit
-- [ ] Read bit
-- [ ] Write byte
-- [ ] Read byte
+- [x] Write bit
+- [x] Read bit
+- [x] Write byte
+- [x] Read byte
 
 ---
 
