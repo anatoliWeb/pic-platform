@@ -228,3 +228,37 @@ API:
 - blink LED (500 ms)
 - read DS18B20 (1000 ms)
 - debug print (2000 ms)
+
+### LCD HD44780
+
+Драйвер `drivers/lcd_hd44780` реалізує 4-bit режим через GPIO bit-banging.
+
+API:
+
+- `lcd_init_pins(...)`
+- `lcd_init()`
+- `lcd_clear()`
+- `lcd_set_cursor(row, col)`
+- `lcd_write_char(c)`
+- `lcd_write_string(str)`
+
+4-bit wiring:
+
+- RS та EN задаються окремими pin
+- D4..D7 задаються через `lcd_init_pins(...)`
+- дані передаються nibble-by-nibble: старший, потім молодший
+
+Ініціалізація:
+
+- `0x03`, `0x03`, `0x03`, `0x02` (перехід у 4-bit)
+- далі: function set, display on, clear, entry mode
+
+Таймінги:
+
+- EN pulse ~2us
+- command delay ~40us
+- clear/home delay ~2ms
+
+Приклад:
+
+- `drivers/lcd_hd44780/example.c` ("Temp: 23.5C" / "System OK")
