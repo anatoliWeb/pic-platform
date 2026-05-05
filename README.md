@@ -96,6 +96,43 @@ Zero-cost when disabled:
 - `C18/drivers/uart_debug/uart_debug.c` Ч C18-specific implementation
 - `XC8/drivers/uart_debug/uart_debug.c` Ч XC8-specific implementation
 
+## RS485 Driver
+
+RS485 Ч UART-based protocol layer.
+¬икористовуЇ UART дл€ передач≥ байт≥в ≥ GPIO дл€ керуванн€ напр€мком DE/RE.
+
+Frame format:
+
+- `[START][LEN][DATA...][CRC]`
+- `START = 0xAA`
+- `LEN = payload length`
+- `CRC = CRC8 (poly 0x07)`
+
+ћожливост≥:
+
+- direction control: `rs485_set_tx()` / `rs485_set_rx()`
+- send/receive frames: `rs485_send_frame()` / `rs485_receive_frame()`
+- CRC check: `rs485_crc8()`
+- simple timeout on receive (delay-based)
+
+Ѕазовий master/slave сценар≥й:
+
+- master формуЇ payload ≥ викликаЇ `rs485_send_frame(...)`
+- slave читаЇ через `rs485_receive_frame(...)`
+- при CRC mismatch або timeout повертаЇтьс€ `0`
+
+### RS485 Driver Architecture
+
+- `drivers/rs485/rs485.c` Ч universal entry point + fallback
+- `C18/drivers/rs485/rs485.c` Ч C18-specific implementation
+- `XC8/drivers/rs485/rs485.c` Ч XC8-specific implementation
+
+Fallback logic у `drivers/rs485/rs485.c`:
+
+- дл€ `DRV_COMPILER_C18` п≥дключаЇтьс€ `C18` реал≥зац≥€
+- дл€ `DRV_COMPILER_XC8` п≥дключаЇтьс€ `XC8` реал≥зац≥€
+- ≥накше використовуЇтьс€ вбудований universal fallback
+
 ## ѕ≥дтримуван≥ комп≥л€тори
 
 - MPLAB C18
