@@ -8,6 +8,7 @@
 
 #include "drivers/onewire/onewire.h"
 #include "core/delay.h"
+#include "drivers/crc/crc.h"
 
 static const uint8_t DS18B20_CMD_CONVERT_T = 0x44u;
 static const uint8_t DS18B20_CMD_READ_SCRATCHPAD = 0xBEu;
@@ -59,7 +60,7 @@ uint8_t ds18b20_read_scratchpad(uint8_t* rom, uint8_t* data)
         data[i] = onewire_read_byte();
     }
 
-    if (onewire_crc8(data, 8u) != data[8])
+    if (crc8_dallas(data, 8u) != data[8])
     {
         return 0u;
     }

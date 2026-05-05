@@ -405,3 +405,36 @@ Scheduler розширено без зміни базової архітектури.
 - `if (timer_expired(&t1, 100)) { /* 100 ms task */ }`
 
 Це зручно для PID/UI циклів без блокувань.
+
+### CRC / Checksum
+
+Додано універсальний модуль `drivers/crc` для повторного використання в різних драйверах.
+
+API:
+
+- `crc8_dallas(const uint8_t* data, uint16_t len)`
+- `crc16_modbus(const uint8_t* data, uint16_t len)`
+- `checksum8(const uint8_t* data, uint16_t len)`
+
+Алгоритми:
+
+- CRC8 Dallas/Maxim (`0x31`, reversed `0x8C`) - підходить для 1-Wire payload validation
+- CRC16 Modbus/IBM (`0xA001`) - підходить для RS485/Modbus кадрів
+- Checksum8 - проста сума байтів (low 8 bits)
+
+Реалізація:
+
+- без таблиць (loop-based)
+- без `malloc`
+- переносима між C18/XC8
+
+Інтеграція:
+
+- DS18B20 використовує `crc8_dallas(...)` для перевірки scratchpad
+- RS485 використовує `crc16_modbus(...)` для перевірки кадру
+
+Приклад:
+
+- `drivers/crc/example.c`
+  - розрахунок CRC8, CRC16, checksum
+  - валідація прикладу кадру

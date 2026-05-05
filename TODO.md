@@ -370,11 +370,11 @@
 
 ### CRC / Checksum
 
-- [ ] CRC helper (`drivers/crc`)
-- [ ] CRC8
-- [ ] CRC16
-- [ ] Simple checksum
-- [ ] Example: RS485 frame validation
+- [x] CRC helper (`drivers/crc`)
+- [x] CRC8
+- [x] CRC16
+- [x] Simple checksum
+- [x] Example: RS485 frame validation
 
 ### Ring Buffer
 

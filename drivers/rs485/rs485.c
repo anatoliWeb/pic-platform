@@ -9,6 +9,7 @@
 #include "core/delay.h"
 #include "drivers/gpio/gpio.h"
 #include "drivers/uart/uart.h"
+#include "drivers/crc/crc.h"
 
 #define RS485_START_BYTE       0xAAu
 #define RS485_TIMEOUT_TICKS    200u
@@ -49,32 +50,12 @@ uint8_t rs485_read_byte(void)
 
 uint8_t rs485_crc8(uint8_t* data, uint8_t len)
 {
-    uint8_t crc = 0x00u;
-    uint8_t i;
-    uint8_t j;
-
-    for (i = 0u; i < len; i++)
-    {
-        crc ^= data[i];
-        for (j = 0u; j < 8u; j++)
-        {
-            if ((crc & 0x80u) != 0u)
-            {
-                crc = (uint8_t)((crc << 1u) ^ 0x07u);
-            }
-            else
-            {
-                crc <<= 1u;
-            }
-        }
-    }
-
-    return crc;
+    return crc8_dallas(data, len);
 }
 
 uint8_t rs485_send_frame(uint8_t* data, uint8_t len)
 {
-    uint8_t crc;
+    uint16_t crc;
     uint8_t i;
 
     if ((data == (uint8_t*)0) || (len == 0u))
@@ -82,20 +63,23 @@ uint8_t rs485_send_frame(uint8_t* data, uint8_t len)
         return 0u;
     }
 
-    crc = rs485_crc8(data, len);
+    crc = crc16_modbus(data, len);
 
     rs485_set_tx();
-    DRV_DELAY_US(50);
+    DRV_DELAY_US(50u);
 
     rs485_send_byte(RS485_START_BYTE);
     rs485_send_byte(len);
+
     for (i = 0u; i < len; i++)
     {
         rs485_send_byte(data[i]);
     }
-    rs485_send_byte(crc);
 
-    DRV_DELAY_US(50);
+    rs485_send_byte((uint8_t)(crc & 0x00FFu));
+    rs485_send_byte((uint8_t)((crc >> 8u) & 0x00FFu));
+
+    DRV_DELAY_US(50u);
     rs485_set_rx();
 
     return 1u;
@@ -107,8 +91,10 @@ uint8_t rs485_receive_frame(uint8_t* buffer, uint8_t max_len)
     uint8_t start;
     uint8_t len;
     uint8_t i;
-    uint8_t recv_crc;
-    uint8_t calc_crc;
+    uint8_t crc_low;
+    uint8_t crc_high;
+    uint16_t recv_crc;
+    uint16_t calc_crc;
 
     if ((buffer == (uint8_t*)0) || (max_len == 0u))
     {
@@ -128,7 +114,7 @@ uint8_t rs485_receive_frame(uint8_t* buffer, uint8_t max_len)
             }
         }
 
-        DRV_DELAY_MS(1);
+        DRV_DELAY_MS(1u);
         timeout--;
     }
 
@@ -140,7 +126,7 @@ uint8_t rs485_receive_frame(uint8_t* buffer, uint8_t max_len)
     timeout = RS485_TIMEOUT_TICKS;
     while ((uart_is_data_ready() == 0u) && (timeout > 0u))
     {
-        DRV_DELAY_MS(1);
+        DRV_DELAY_MS(1u);
         timeout--;
     }
     if (timeout == 0u)
@@ -159,7 +145,7 @@ uint8_t rs485_receive_frame(uint8_t* buffer, uint8_t max_len)
         timeout = RS485_TIMEOUT_TICKS;
         while ((uart_is_data_ready() == 0u) && (timeout > 0u))
         {
-            DRV_DELAY_MS(1);
+            DRV_DELAY_MS(1u);
             timeout--;
         }
 
@@ -174,16 +160,29 @@ uint8_t rs485_receive_frame(uint8_t* buffer, uint8_t max_len)
     timeout = RS485_TIMEOUT_TICKS;
     while ((uart_is_data_ready() == 0u) && (timeout > 0u))
     {
-        DRV_DELAY_MS(1);
+        DRV_DELAY_MS(1u);
         timeout--;
     }
     if (timeout == 0u)
     {
         return 0u;
     }
+    crc_low = rs485_read_byte();
 
-    recv_crc = rs485_read_byte();
-    calc_crc = rs485_crc8(buffer, len);
+    timeout = RS485_TIMEOUT_TICKS;
+    while ((uart_is_data_ready() == 0u) && (timeout > 0u))
+    {
+        DRV_DELAY_MS(1u);
+        timeout--;
+    }
+    if (timeout == 0u)
+    {
+        return 0u;
+    }
+    crc_high = rs485_read_byte();
+
+    recv_crc = (uint16_t)(((uint16_t)crc_high << 8u) | crc_low);
+    calc_crc = crc16_modbus(buffer, len);
 
     if (recv_crc != calc_crc)
     {
