@@ -124,14 +124,14 @@
 
 ### EEPROM
 
-- [ ] EEPROM driver (`drivers/eeprom`)
-- [ ] Read byte
-- [ ] Write byte
-- [ ] Read block
-- [ ] Write block
-- [ ] Basic wear-safe helper where possible
-- [ ] Example: save setting
-- [ ] Example: restore setting after reset
+- [x] EEPROM driver (`drivers/eeprom`)
+- [x] Read byte
+- [x] Write byte
+- [x] Read block
+- [x] Write block
+- [x] Basic wear-safe helper where possible
+- [x] Example: save setting
+- [x] Example: restore setting after reset
 
 ### SPI / MSSP
 

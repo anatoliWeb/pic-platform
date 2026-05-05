@@ -3,80 +3,71 @@
 Universal PIC drivers base (focus: PIC18).
 This repository is a reusable drivers library, not an application project.
 
-## Goals
+## Supported Compilers
 
-- Reusable and portable drivers
-- Support MPLAB C18 and MPLAB XC8
-- Keep compiler-specific details in `core/compiler.h`
+- MPLAB C18
+- MPLAB XC8
 
-## Structure
+## Core Idea
 
-- `core/`
-- `drivers/`
-- `examples/`
-- `C18/`
-- `XC8/`
-
-## Compiler Examples
-
-- `examples/common` - universal examples
-- `C18/examples` - MPLAB C18 examples
-- `XC8/examples` - MPLAB XC8 examples
+- One shared API per driver
+- Universal entry file in `drivers/`
+- Compiler-specific implementations in `C18/` and `XC8/`
+- Fallback implementation when no specific override is selected
 
 ## Timer Drivers
 
-Timer module includes drivers for:
+Timer support includes Timer0, Timer1, Timer2, Timer3 with unified API:
 
-- Timer0
-- Timer1
-- Timer2
-- Timer3
-
-Each timer exposes a unified API:
-
-- `timerX_init(uint16_t prescaler)`
-- `timerX_start()` / `timerX_stop()`
-- `timerX_set(uint16_t value)` / `timerX_get()`
-- `timerX_enable_interrupt()` / `timerX_disable_interrupt()`
-- `timerX_set_callback(void (*cb)(void))`
+- `init/start/stop/set/get`
+- interrupt enable/disable
+- overflow callback
 - `timerX_irq_handler()` for ISR integration
 
-Overflow handling:
-
-- Overflow interrupt flag is cleared in `timerX_irq_handler()`
-- Optional callback is called on overflow when set
-
 ### Tick System
-
-Global millisecond tick is implemented in:
-
-- `drivers/tick/tick.h`
-- `drivers/tick/tick.c`
-
-API:
 
 - `tick_init()`
 - `tick_get()`
 - `tick_delay(ms)`
 
-Tick uses Timer1 overflow callback and integer-only counter.
+Tick is millisecond-based and integer-only.
 
-### Timer Architecture
+## EEPROM Driver
 
-Universal entry + compiler-specific override pattern:
+EEPROM driver provides safe internal data memory access:
 
-- `drivers/timer0/timer0.c` -> `C18`/`XC8` or fallback
-- `drivers/timer1/timer1.c` -> `C18`/`XC8` or fallback
-- `drivers/timer2/timer2.c` -> `C18`/`XC8` or fallback
-- `drivers/timer3/timer3.c` -> `C18`/`XC8` or fallback
+- byte read/write
+- block read/write
+- wear-aware update write
 
-## Notes
+API:
 
-- No malloc
-- No float
-- Timer drivers keep timer-only responsibility
+- `eeprom_init()`
+- `eeprom_read_byte(address)`
+- `eeprom_write_byte(address, value)`
+- `eeprom_update_byte(address, value)`
+- `eeprom_read_block(address, buffer, length)`
+- `eeprom_write_block(address, data, length)`
 
-## Supported Compilers
+### Safe Write Sequence
 
-- MPLAB C18
-- MPLAB XC8
+Write flow follows required unlock sequence:
+
+1. Disable global interrupts
+2. `EECON2 = 0x55`
+3. `EECON2 = 0xAA`
+4. Set `WR` bit
+5. Wait until write completes
+6. Restore global interrupts
+
+### Wear Recommendations
+
+- Prefer `eeprom_update_byte()` over direct write
+- Do not write unchanged values
+- Minimize frequent writes in fast loops
+
+## Examples
+
+- `drivers/eeprom/example.c` - save/restore setting + block operations
+- `C18/examples/eeprom_example.c` - byte write/read with UART debug output
+- `XC8/examples/eeprom_example.c` - byte write/read with UART debug output
