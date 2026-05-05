@@ -21,7 +21,6 @@ static void print_rom(const uint8_t* rom)
 void main(void)
 {
     uint8_t present;
-    uint8_t read_back;
     uint8_t rom[8];
     uint8_t found_roms[2][8];
     uint8_t found_count;
@@ -35,13 +34,6 @@ void main(void)
     {
         DBG_PRINT("Device found\r\n");
 
-        onewire_write_byte(0xA5u);
-        read_back = onewire_read_byte();
-        DBG_PRINT("Read byte: 0x");
-        DBG_PRINT_HEX(read_back);
-        DBG_PRINT("\r\n");
-
-        /* Single-device ROM read example. */
         if (onewire_reset() != 0u)
         {
             onewire_read_rom(rom);
@@ -49,7 +41,7 @@ void main(void)
             print_rom(rom);
         }
 
-        /* Multi-device search placeholder API usage. */
+        /* TODO: Search ROM not implemented yet (placeholder returns 0). */
         if (onewire_reset() != 0u)
         {
             found_count = onewire_search_rom(found_roms, 2u);

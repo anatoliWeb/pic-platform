@@ -13,6 +13,7 @@
 static volatile uint8_t* g_onewire_port = (volatile uint8_t*)0;
 static volatile uint8_t* g_onewire_tris = (volatile uint8_t*)0;
 static uint8_t g_onewire_pin = 0u;
+
 static const uint8_t OW_CMD_READ_ROM = 0x33u;
 static const uint8_t OW_CMD_MATCH_ROM = 0x55u;
 static const uint8_t OW_CMD_SKIP_ROM = 0xCCu;
@@ -51,15 +52,19 @@ uint8_t onewire_reset(void)
 {
     uint8_t present;
 
+    DRV_INT_DISABLE();
+
     onewire_set_low();
-    DRV_DELAY_US(480);
+    DRV_DELAY_US(480u);
 
     onewire_release_line();
-    DRV_DELAY_US(70);
+    DRV_DELAY_US(70u);
 
     present = (onewire_read_line() == 0u) ? 1u : 0u;
 
-    DRV_DELAY_US(410);
+    DRV_DELAY_US(410u);
+
+    DRV_INT_ENABLE();
 
     return present;
 }
@@ -174,8 +179,37 @@ uint8_t onewire_search_rom(uint8_t (*roms)[8], uint8_t max_devices)
     (void)roms;
     (void)max_devices;
 
-    /* Placeholder: full ROM search tree traversal will be added later. */
+    /* Search ROM not implemented yet. */
     return 0u;
+}
+
+uint8_t onewire_crc8(const uint8_t* data, uint8_t len)
+{
+    uint8_t i;
+    uint8_t j;
+    uint8_t crc = 0u;
+
+    if (data == (const uint8_t*)0)
+    {
+        return 0u;
+    }
+
+    for (i = 0u; i < len; i++)
+    {
+        uint8_t in_byte = data[i];
+        for (j = 0u; j < 8u; j++)
+        {
+            uint8_t mix = (uint8_t)((crc ^ in_byte) & 0x01u);
+            crc >>= 1u;
+            if (mix != 0u)
+            {
+                crc ^= 0x8Cu;
+            }
+            in_byte >>= 1u;
+        }
+    }
+
+    return crc;
 }
 
 #endif

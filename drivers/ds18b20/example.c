@@ -29,13 +29,18 @@ void main(void)
     uart_init(9600u);
     onewire_init(&PORTB, &TRISB, 1u);
 
-    /* Single device mode: use Skip ROM by passing NULL. */
-    temp_x10 = ds18b20_get_temperature_celsius_x10((uint8_t*)0);
-    DBG_PRINT("Single T(C): ");
-    print_temp_x10(temp_x10);
-    DBG_PRINT("\r\n");
+    if (ds18b20_read_temperature_celsius((uint8_t*)0, &temp_x10) != 0u)
+    {
+        DBG_PRINT("Single T(C): ");
+        print_temp_x10(temp_x10);
+        DBG_PRINT("\r\n");
+    }
+    else
+    {
+        DBG_PRINT("Single sensor read error\r\n");
+    }
 
-    /* Multi-device mode: discover ROMs and read each sensor. */
+    /* TODO: Search ROM not implemented yet, count will be 0. */
     count = onewire_search_rom(roms, 4u);
     DBG_PRINT("Found devices: ");
     DBG_PRINT_INT(count);
@@ -43,12 +48,14 @@ void main(void)
 
     for (i = 0u; i < count; i++)
     {
-        temp_x10 = ds18b20_get_temperature_celsius_x10(roms[i]);
-        DBG_PRINT("ROM[");
-        DBG_PRINT_INT(i);
-        DBG_PRINT("] T(C): ");
-        print_temp_x10(temp_x10);
-        DBG_PRINT("\r\n");
+        if (ds18b20_read_temperature_celsius(roms[i], &temp_x10) != 0u)
+        {
+            DBG_PRINT("ROM[");
+            DBG_PRINT_INT(i);
+            DBG_PRINT("] T(C): ");
+            print_temp_x10(temp_x10);
+            DBG_PRINT("\r\n");
+        }
     }
 
     while (1)

@@ -160,3 +160,31 @@ Scratchpad і CRC:
 Приклад:
 
 - `examples/common/delay_example.c` (blink + short us pulse)
+
+## 1-Wire Update Notes
+
+- `onewire_reset()` now runs in a critical section (`DRV_INT_DISABLE` / `DRV_INT_ENABLE`) to protect timing-sensitive reset/presence slots.
+- Bit slot timing is kept as:
+  - write '1': low ~6us, release, wait ~64us
+  - write '0': low ~60us, release, wait ~10us
+  - read slot: low ~6us, release, wait ~9us, sample, wait ~55us
+- Added `onewire_crc8(const uint8_t* data, uint8_t len)` (Dallas/Maxim CRC8, reversed polynomial `0x8C`).
+- `Search ROM not implemented yet` (API placeholder returns `0`).
+
+## DS18B20 Update Notes
+
+- DS18B20 uses only 1-Wire API (no low-level pin duplication).
+- Scratchpad read is 9 bytes with CRC check:
+  - `onewire_crc8(data, 8) == data[8]`
+- Temperature conversion:
+  - raw = `(data[1] << 8) | data[0]`
+  - celsius x10 = `(raw * 10) / 16`
+- New status-based API to avoid `0C vs error` ambiguity:
+  - `uint8_t ds18b20_read_temperature_raw(uint8_t* rom, int16_t* out_raw)`
+  - `uint8_t ds18b20_read_temperature_celsius(uint8_t* rom, int16_t* out_temp_x10)`
+- Backward-compatible wrappers remain:
+  - `ds18b20_get_temperature_raw()`
+  - `ds18b20_get_temperature_celsius_x10()`
+
+Note about naming:
+- In C, function overloading is not supported, so a single function name cannot have both one-argument and two-argument signatures.
