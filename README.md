@@ -1,7 +1,6 @@
 # PIC PLATFORM - Universal Drivers (C18 + XC8)
 
 Бібліотека універсальних драйверів для PIC (фокус: PIC18).
-Це база драйверів, не application-проєкт.
 
 ## Підтримувані компілятори
 
@@ -15,45 +14,37 @@
 - Compiler-specific реалізації у `C18/` і `XC8/`
 - Fallback реалізація, якщо override не вибрано
 
-## Comparator Driver
+## CCP Capture / Compare
 
-Comparator driver призначений для простого threshold detection.
+CCP Capture та CCP Compare реалізовані як два окремі драйвери.
+Вони використовують Timer1 як базу часу і callback-підхід для подій.
 
-Підтримка:
+### CCP Capture
 
-- `comparator_init(mode)`
-- `comparator_enable()`
-- `comparator_disable()`
-- `comparator_get_output()`
+- capture по rising/falling або кожні 4/16 подій
+- зчитування 16-bit значення з CCPR
+- callback `ccp_capture_callback_t(value)`
+- `ccp_capture_irq_handler()` викликається з ISR проєкту
 
-Режими:
+### CCP Compare
 
-- `CMP_MODE_OFF`
-- `CMP_MODE_1`
-- `CMP_MODE_2`
-- `CMP_MODE_3`
+- встановлення compare value через CCPR
+- callback при match-події
+- `ccp_compare_irq_handler()` викликається з ISR проєкту
 
-Налаштування режиму виконується через `CMCON` / `CMCON0` залежно від MCU.
+### ISR Integration
 
-### Comparator Driver Architecture
+Драйвери не створюють ISR.
+У реальному ISR потрібно викликати відповідний handler:
 
-- `drivers/comparator/comparator.c` — universal entrypoint + fallback
-- `C18/drivers/comparator/comparator.c` — C18-specific implementation
-- `XC8/drivers/comparator/comparator.c` — XC8-specific implementation
+- `ccp_capture_irq_handler()`
+- `ccp_compare_irq_handler()`
 
-### Threshold Detection Example
+### Приклади
 
-- init comparator
-- read comparator output
-- якщо output=1 -> toggle/set LED
-- якщо output=0 -> clear LED
-
-Приклади:
-
-- `drivers/comparator/example.c`
-- `C18/examples/comparator_example.c`
-- `XC8/examples/comparator_example.c`
-
-## Інші драйвери
-
-Доступні: GPIO, UART, UART debug, RS485, ADC, PWM, Timer, EEPROM, SPI, I2C, external interrupt, PORTB change, WDT.
+- `drivers/ccp_capture/example.c` — вимірювання ширини імпульсу
+- `drivers/ccp_compare/example.c` — таймінгові події (toggle LED)
+- `C18/examples/ccp_capture_example.c`
+- `XC8/examples/ccp_capture_example.c`
+- `C18/examples/ccp_compare_example.c`
+- `XC8/examples/ccp_compare_example.c`

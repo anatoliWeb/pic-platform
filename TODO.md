@@ -189,12 +189,12 @@
 
 ### Capture / Compare
 
-- [ ] CCP capture driver (`drivers/ccp_capture`)
-- [ ] CCP compare driver (`drivers/ccp_compare`)
-- [ ] Capture event support
-- [ ] Compare event support
-- [ ] Example: measure pulse width
-- [ ] Example: generate timed event
+- [x] CCP capture driver (`drivers/ccp_capture`)
+- [x] CCP compare driver (`drivers/ccp_compare`)
+- [x] Capture event support
+- [x] Compare event support
+- [x] Example: measure pulse width
+- [x] Example: generate timed event
 
 ### Reset / Power
 
