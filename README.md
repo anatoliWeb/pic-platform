@@ -35,8 +35,7 @@
 
 ## Core Layer
 
-`core/` Ч це базовий шар, в≥д €кого залежать ус≥ драйвери.
-¬≥н надаЇ сп≥льн≥ типи, макроси, конф≥гурац≥ю та комп≥л€торну абстракц≥ю.
+Ѕазовий шар з типами, macro utilities ≥ compiler abstraction.
 
 ## GPIO Driver
 
@@ -56,51 +55,41 @@
 
 ## UART Debug Module
 
-”в≥мкненн€:
-
-```c
-#define DRV_DEBUG_ENABLE 1
-#define DRV_USE_UART 1
-```
+ќпц≥ональний debug layer поверх UART через macro API.
 
 ## RS485 Driver
 
-RS485 Ч UART-based protocol layer.
-Frame format: `[START][LEN][DATA...][CRC]`, де `START = 0xAA`, `CRC = CRC8`.
-
-### RS485 Driver Architecture
-
-- `drivers/rs485/rs485.c` Ч universal entry point + fallback
-- `C18/drivers/rs485/rs485.c` Ч C18-specific implementation
-- `XC8/drivers/rs485/rs485.c` Ч XC8-specific implementation
+UART-based layer with direction control, frame, CRC8 and timeout.
 
 ## ADC Driver
 
-ADC driver призначений дл€ сенсор≥в, ADC-buttons та вим≥рюванн€ напруги.
-ѕ≥дтримуЇ single read, multi read та averaging.
+ADC driver дл€ sensors/buttons/voltage з averaging ≥ helper-функц≥€ми.
 
-API:
+## PWM Driver
 
-- `void adc_init(void);`
-- `uint16_t adc_read(uint8_t channel);`
-- `uint16_t adc_read_avg(uint8_t channel, uint8_t samples);`
-- `void adc_read_multiple(uint8_t* channels, uint16_t* results, uint8_t count);`
-- `uint16_t adc_to_millivolts(uint16_t adc_value, uint16_t vref_mv);`
-- `uint16_t adc_read_voltage(uint8_t channel);`
-- `int16_t adc_read_thermistor(uint8_t channel);`
-- `uint8_t adc_read_button(uint8_t channel);`
+PWM реал≥зовано через CCP1/CCP2 з базою на Timer2.
 
-Ќотатки дл€ сенсор≥в:
+ лючова формула частоти:
 
-- `adc_read_voltage()` повертаЇ м≥л≥вольти без float
-- `adc_read_thermistor()` використовуЇ просте наближенн€ (розширюЇтьс€ п≥зн≥ше)
-- `adc_read_button()` використовуЇ table-like threshold mapping дл€ ADC ladder
+- `PWM Frequency = Fosc / (4 * prescaler * (PR2 + 1))`
 
-### ADC Driver Architecture
+ћожливост≥:
 
-- `drivers/adc/adc.c` Ч universal entry point + fallback
-- `C18/drivers/adc/adc.c` Ч C18-specific implementation
-- `XC8/drivers/adc/adc.c` Ч XC8-specific implementation
+- п≥дтримка `PWM_CHANNEL_1` ≥ `PWM_CHANNEL_2`
+- `pwm_init(frequency)` налаштовуЇ Timer2, PR2 та prescaler
+- `pwm_set_duty(channel, duty)` керуЇ 10-bit duty (`CCPRxL` + `DCxB`)
+- `pwm_start` / `pwm_stop`
+
+### PWM Driver Architecture
+
+- `drivers/pwm/pwm.c` Ч universal entry point + fallback
+- `C18/drivers/pwm/pwm.c` Ч C18-specific implementation
+- `XC8/drivers/pwm/pwm.c` Ч XC8-specific implementation
+
+ѕриклади використанн€:
+
+- LED dimming (sweep duty)
+- Fan low/medium/high speed presets
 
 ## ѕ≥дтримуван≥ комп≥л€тори
 

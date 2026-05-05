@@ -78,37 +78,37 @@
 
 ### RS485
 
-- [ ] RS485 driver (`drivers/rs485`)
-- [ ] Direction pin control DE/RE
-- [ ] Send frame
-- [ ] Receive frame
-- [ ] Timeout handling
-- [ ] CRC support
-- [ ] Example: master send command
-- [ ] Example: slave receive command
+- [x] RS485 driver (`drivers/rs485`)
+- [x] Direction pin control DE/RE
+- [x] Send frame
+- [x] Receive frame
+- [x] Timeout handling
+- [x] CRC support
+- [x] Example: master send command
+- [x] Example: slave receive command
 
 ### ADC
 
-- [ ] ADC driver (`drivers/adc`)
-- [ ] ADC init
-- [ ] Read single channel
-- [ ] Read multiple channels
-- [ ] Averaging support
-- [ ] Sensor helper functions
-- [ ] Example: read potentiometer
-- [ ] Example: read thermistor
-- [ ] Example: read ADC buttons
+- [x] ADC driver (`drivers/adc`)
+- [x] ADC init
+- [x] Read single channel
+- [x] Read multiple channels
+- [x] Averaging support
+- [x] Sensor helper functions
+- [x] Example: read potentiometer
+- [x] Example: read thermistor
+- [x] Example: read ADC buttons
 
 ### PWM / CCP
 
-- [ ] PWM driver (`drivers/pwm`)
-- [ ] CCP1 PWM support
-- [ ] CCP2 PWM support
-- [ ] Set duty cycle
-- [ ] Set frequency where possible
-- [ ] Start/stop PWM
-- [ ] Example: LED dimming
-- [ ] Example: fan speed control
+- [x] PWM driver (`drivers/pwm`)
+- [x] CCP1 PWM support
+- [x] CCP2 PWM support
+- [x] Set duty cycle
+- [x] Set frequency where possible
+- [x] Start/stop PWM
+- [x] Example: LED dimming
+- [x] Example: fan speed control
 
 ### TIMER
 
@@ -211,6 +211,119 @@
 - [ ] Notes for HS/XT/LP/RC oscillator modes
 - [ ] Example: clock config note for C18
 - [ ] Example: clock config note for XC8
+
+### 1-Wire
+
+- [ ] 1-Wire driver (`drivers/onewire`)
+- [ ] Single-wire GPIO bit-banging implementation
+- [ ] Reset pulse
+- [ ] Presence detect
+
+---
+
+### Core Operations
+
+- [ ] Write bit
+- [ ] Read bit
+- [ ] Write byte
+- [ ] Read byte
+
+---
+
+### ROM Commands
+
+- [ ] Skip ROM (0xCC)
+- [ ] Match ROM (0x55)
+- [ ] Read ROM (0x33)
+- [ ] Search ROM (basic support or placeholder)
+
+---
+
+### Device Support (DS18B20)
+
+- [ ] Start temperature conversion
+- [ ] Read scratchpad
+- [ ] Convert raw data to temperature
+- [ ] Basic CRC check
+
+---
+
+### Timing Handling
+
+- [ ] Delay-based timing (using core/delay.h)
+- [ ] Ensure compatibility with C18 and XC8
+- [ ] Minimal blocking implementation
+- [ ] No hardware timers required (bit-banging only)
+
+---
+
+### API
+
+- [ ] onewire_init(volatile uint8_t* port, volatile uint8_t* tris, uint8_t pin)
+- [ ] onewire_reset(void)
+- [ ] onewire_write_bit(uint8_t bit)
+- [ ] onewire_read_bit(void)
+- [ ] onewire_write_byte(uint8_t byte)
+- [ ] onewire_read_byte(void)
+
+---
+
+### Higher-Level Helpers
+
+- [ ] onewire_skip_rom()
+- [ ] onewire_read_rom(uint8_t* rom)
+- [ ] onewire_match_rom(uint8_t* rom)
+
+---
+
+### DS18B20 Helpers
+
+- [ ] ds18b20_start_conversion()
+- [ ] ds18b20_read_temperature_raw()
+- [ ] ds18b20_read_temperature_celsius()
+
+---
+
+### CRC
+
+- [ ] Implement CRC8 (Dallas/Maxim)
+- [ ] Validate scratchpad data
+
+---
+
+### Examples
+
+- [ ] Example: detect device (presence)
+- [ ] Example: read ROM code
+- [ ] Example: read temperature (DS18B20)
+- [ ] Example: multiple sensors (optional)
+
+---
+
+### Compiler-Specific
+
+- [ ] C18 implementation (`C18/drivers/onewire/onewire.c`)
+- [ ] XC8 implementation (`XC8/drivers/onewire/onewire.c`)
+- [ ] Universal fallback implementation
+
+---
+
+### Integration
+
+- [ ] Use GPIO driver for pin control
+- [ ] Use delay wrapper from core/delay.h
+- [ ] No malloc
+- [ ] Minimal stack usage
+
+---
+
+### Documentation
+
+- [ ] Add README section: 1-Wire driver
+- [ ] Explain timing constraints
+- [ ] Explain DS18B20 usage
+
+
 
 ### LCD / Display Helpers
 

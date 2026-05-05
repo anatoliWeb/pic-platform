@@ -1,11 +1,4 @@
 #include "drivers/pwm/pwm.h"
-
-#if defined(DRV_COMPILER_C18)
-    #include "../../C18/drivers/pwm/pwm.c"
-#elif defined(DRV_COMPILER_XC8)
-    #include "../../XC8/drivers/pwm/pwm.c"
-#else
-
 #include "core/device.h"
 
 static uint8_t pwm_prescaler_bits = 0u;
@@ -106,5 +99,3 @@ void pwm_set_duty(pwm_channel_t channel, uint16_t duty)
         CCP2CONbits.DC2B1 = (uint8_t)((duty >> 1u) & 0x01u);
     }
 }
-
-#endif
