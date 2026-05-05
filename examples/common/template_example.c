@@ -12,7 +12,6 @@ void main(void)
 
     while (1)
     {
-        /* Driver calls here */
-        DRV_DELAY_MS(100);
+        /* Minimal portable usage example */
     }
 }
