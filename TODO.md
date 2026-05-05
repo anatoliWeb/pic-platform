@@ -24,13 +24,13 @@
 
 ## Core / Common
 
-- [ ] `core/compiler.h` — абстракція компілятора C18/XC8
-- [ ] `core/types.h` — спільні типи, статуси, помилки
-- [ ] `core/bit_utils.h` — макроси для роботи з бітами
-- [ ] `core/delay.h` — універсальні затримки
-- [ ] `core/device.h` — базові налаштування MCU
-- [ ] `core/interrupts.h` — допоміжні макроси для interrupt-логіки
-- [ ] `core/config.h` — загальні feature flags
+- [x] `core/compiler.h` — абстракція компілятора C18/XC8
+- [x] `core/types.h` — спільні типи, статуси, помилки
+- [x] `core/bit_utils.h` — макроси для роботи з бітами
+- [x] `core/delay.h` — універсальні затримки
+- [x] `core/device.h` — базові налаштування MCU
+- [x] `core/interrupts.h` — допоміжні макроси для interrupt-логіки
+- [x] `core/config.h` — загальні feature flags
 
 ---
 
@@ -38,25 +38,25 @@
 
 ### GPIO
 
-- [ ] GPIO driver (`drivers/gpio`)
-- [ ] Digital input
-- [ ] Digital output
-- [ ] Pin direction control
-- [ ] Pin read/write/toggle
-- [ ] Example: LED blink
-- [ ] Example: button read
+- [x] GPIO driver (`drivers/gpio`)
+- [x] Digital input
+- [x] Digital output
+- [x] Pin direction control
+- [x] Pin read/write/toggle
+- [x] Example: LED blink
+- [x] Example: button read
 
 ### UART / USART
 
-- [ ] UART driver (`drivers/uart`)
-- [ ] UART init
-- [ ] Send byte
-- [ ] Send string
-- [ ] Receive byte
-- [ ] RX interrupt support
-- [ ] TX interrupt support
-- [ ] Ring buffer support
-- [ ] Example: echo received byte
+- [x] UART driver (`drivers/uart`)
+- [x] UART init
+- [x] Send byte
+- [x] Send string
+- [x] Receive byte
+- [x] RX interrupt support
+- [x] TX interrupt support
+- [x] Ring buffer support
+- [x] Example: echo received byte
 
 ---
 

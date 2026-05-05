@@ -80,6 +80,47 @@ API:
 - `void gpio_toggle(volatile uint8_t* port, uint8_t bit);`
 - `uint8_t gpio_read(volatile uint8_t* port, uint8_t bit);`
 
+### GPIO Driver Architecture
+
+- `drivers/gpio/gpio.c` Ч universal entry point
+- `C18/drivers/gpio/gpio.c` Ч C18-specific implementation
+- `XC8/drivers/gpio/gpio.c` Ч XC8-specific implementation
+
+Fallback logic у `drivers/gpio/gpio.c`:
+
+- дл€ `DRV_COMPILER_C18` п≥дключаЇтьс€ `C18` реал≥зац≥€
+- дл€ `DRV_COMPILER_XC8` п≥дключаЇтьс€ `XC8` реал≥зац≥€
+- ≥накше використовуЇтьс€ вбудований universal fallback
+
+## UART Driver
+
+UART Ч легкий ун≥версальний драйвер ≥з Їдиним API дл€ вс≥х комп≥л€тор≥в.
+ѕ≥дтримуЇ polling обм≥н та м≥н≥мальний RX circular buffer без dynamic memory.
+
+API:
+
+- `void uart_init(uint32_t baudrate);`
+- `void uart_write_byte(uint8_t data);`
+- `void uart_write_string(const char* str);`
+- `uint8_t uart_read_byte(void);`
+- `uint8_t uart_is_data_ready(void);`
+
+Debug note:
+
+- при `DRV_DEBUG_ENABLE=1` макрос `DBG_PRINT(str)` у `core/debug.h` використовуЇ `uart_write_string(str)`.
+
+### UART Driver Architecture
+
+- `drivers/uart/uart.c` Ч universal entry point
+- `C18/drivers/uart/uart.c` Ч C18-specific implementation
+- `XC8/drivers/uart/uart.c` Ч XC8-specific implementation
+
+Fallback logic у `drivers/uart/uart.c`:
+
+- дл€ `DRV_COMPILER_C18` п≥дключаЇтьс€ `C18` реал≥зац≥€
+- дл€ `DRV_COMPILER_XC8` п≥дключаЇтьс€ `XC8` реал≥зац≥€
+- ≥накше використовуЇтьс€ вбудований universal fallback
+
 ## ѕ≥дтримуван≥ комп≥л€тори
 
 - MPLAB C18

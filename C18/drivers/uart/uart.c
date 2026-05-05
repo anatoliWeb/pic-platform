@@ -1,14 +1,7 @@
 #include "drivers/uart/uart.h"
-
-#if defined(DRV_COMPILER_C18)
-    #include "../../C18/drivers/uart/uart.c"
-#elif defined(DRV_COMPILER_XC8)
-    #include "../../XC8/drivers/uart/uart.c"
-#else
-
 #include "core/device.h"
 
-#define UART_RX_BUFFER_SIZE 16u
+#define UART_RX_BUFFER_SIZE 32u
 
 static volatile uint8_t uart_rx_buffer[UART_RX_BUFFER_SIZE];
 static volatile uint8_t uart_rx_head = 0u;
@@ -39,6 +32,25 @@ static uint8_t uart_rx_pop(uint8_t* data)
     return 1u;
 }
 
+static void uart_recover_overrun(void)
+{
+    if (RCSTAbits.OERR != 0u)
+    {
+        RCSTAbits.CREN = 0u;
+        RCSTAbits.CREN = 1u;
+    }
+}
+
+static void uart_poll_fill_buffer(void)
+{
+    uart_recover_overrun();
+
+    while (PIR1bits.RCIF != 0u)
+    {
+        uart_rx_push(RCREG);
+    }
+}
+
 void uart_init(uint32_t baudrate)
 {
     uint16_t brg;
@@ -50,6 +62,7 @@ void uart_init(uint32_t baudrate)
 
     TXSTAbits.SYNC = 0u;
     TXSTAbits.BRGH = 1u;
+
     brg = (uint16_t)((_XTAL_FREQ / (16u * baudrate)) - 1u);
     SPBRG = (uint8_t)(brg & 0xFFu);
 
@@ -88,11 +101,7 @@ uint8_t uart_read_byte(void)
 {
     uint8_t data;
 
-    while (PIR1bits.RCIF != 0u)
-    {
-        uart_rx_push(RCREG);
-    }
-
+    uart_poll_fill_buffer();
     if (uart_rx_pop(&data) != 0u)
     {
         return data;
@@ -102,17 +111,12 @@ uint8_t uart_read_byte(void)
     {
     }
 
+    uart_recover_overrun();
     return RCREG;
 }
 
 uint8_t uart_is_data_ready(void)
 {
-    while (PIR1bits.RCIF != 0u)
-    {
-        uart_rx_push(RCREG);
-    }
-
+    uart_poll_fill_buffer();
     return (uart_rx_head != uart_rx_tail) ? 1u : 0u;
 }
-
-#endif
