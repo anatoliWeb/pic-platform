@@ -296,3 +296,39 @@ Wiring (ïîøèğåíèé backpack):
 
 - direct GPIO: øâèäøå, àëå çàéìàº á³ëüøå ï³í³â
 - PCF8574 I2C: ìåíøå ï³í³â, àëå òğîõè á³ëüøå latency íà áàéò
+
+### Button Driver
+
+Äğàéâåğ `drivers/button` ğåàë³çóº íåáëîêóş÷ó îáğîáêó êíîïîê íà îñíîâ³ `tick_get()`.
+
+Ìîæëèâîñò³:
+
+- debounce (òèïîâî 30 ms)
+- click (press -> release êîğîòøå hold threshold)
+- hold (íàòèñíóòî äîâøå 500 ms)
+- áåç `delay` ³ áåç `malloc`
+
+API:
+
+- `button_init(...)`
+- `button_update(...)`
+- `button_is_clicked(...)`
+- `button_is_held(...)`
+
+ßê âèêîğèñòîâóâàòè:
+
+- âèêëèêàòè `button_update()` ïåğ³îäè÷íî (êîæí³ 10-20 ms)
+- çğó÷íî çàïóñêàòè ç scheduler àáî ç tick-loop
+
+Ëîã³êà ñòàí³â:
+
+- debounce ï³äòâåğäæóº çì³íó ñòàíó ï³ñëÿ ñòàá³ëüíîãî ³íòåğâàëó
+- `click_flag` âñòàíîâëşºòüñÿ ïğè êîğîòêîìó íàòèñêàíí³
+- `hold_flag` âñòàíîâëşºòüñÿ ïğè óòğèìàíí³
+
+Ïğèêëàä:
+
+- `drivers/button/example.c`
+  - click -> toggle LED
+  - click -> next screen
+  - hold -> enter menu

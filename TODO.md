@@ -327,30 +327,30 @@
 
 ### LCD / Display Helpers
 
-- [ ] HD44780 LCD driver (`drivers/lcd_hd44780`)
-- [ ] 4-bit mode
-- [ ] 8-bit mode if needed
-- [ ] Print char/string
-- [ ] Set cursor
-- [ ] Example: print debug text
+- [x] HD44780 LCD driver (`drivers/lcd_hd44780`)
+- [x] 4-bit mode
+- [x] 8-bit mode if needed
+- [x] Print char/string
+- [x] Set cursor
+- [x] Example: print debug text
 
 #### HD44780 over I2C (PCF8574)
 
-- [ ] I2C LCD example (`drivers/lcd_hd44780/example_i2c.c`)
-- [ ] Use existing I2C driver
-- [ ] Implement minimal I2C → LCD bridge (local in example)
-- [ ] Support PCF8574 (0x27 / 0x3F)
-- [ ] Example: print debug text via I2C
+- [x] I2C LCD example (`drivers/lcd_hd44780/example_i2c.c`)
+- [x] Use existing I2C driver
+- [x] Implement minimal I2C → LCD bridge (local in example)
+- [x] Support PCF8574 (0x27 / 0x3F)
+- [x] Example: print debug text via I2C
 
 ### Buttons
 
-- [ ] Button driver (`drivers/button`)
-- [ ] Debounce
-- [ ] Click
-- [ ] Hold
-- [ ] Double click where possible
-- [ ] Example: one digital button
-- [ ] Example: menu button
+- [x] Button driver (`drivers/button`)
+- [x] Debounce
+- [x] Click
+- [x] Hold
+- [x] Double click where possible
+- [x] Example: one digital button
+- [x] Example: menu button
 
 ### ADC Buttons
 
