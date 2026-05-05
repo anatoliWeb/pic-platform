@@ -363,10 +363,10 @@
 
 ### Software Scheduler
 
-- [ ] Lightweight scheduler (`drivers/scheduler`)
-- [ ] Periodic task tick
-- [ ] Non-blocking timers
-- [ ] Example: run tasks every 10 ms / 100 ms / 1 s
+- [x] Lightweight scheduler (`drivers/scheduler`)
+- [x] Periodic task tick
+- [x] Non-blocking timers
+- [x] Example: run tasks every 10 ms / 100 ms / 1 s
 
 ### CRC / Checksum
 

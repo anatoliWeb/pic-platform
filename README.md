@@ -378,3 +378,30 @@ API:
   - button2 -> prev
   - button3 -> select
   - hold -> enter menu
+
+### Scheduler Improvements
+
+Scheduler розширено без зміни базової архітектури.
+
+Додано в `task_t`:
+
+- `enabled` — дозволяє вмикати/вимикати задачу
+- `run_once` — one-shot виконання
+
+Оновлена логіка `scheduler_run()`:
+
+- якщо `enabled == 0` -> задача пропускається
+- якщо спрацював інтервал:
+  - callback викликається
+  - при `run_once != 0` задача автоматично вимикається
+  - інакше оновлюється `last_run`
+
+Додано helper для non-blocking таймерів:
+
+- `uint8_t timer_expired(uint32_t* last, uint32_t interval)`
+
+Приклад використання:
+
+- `if (timer_expired(&t1, 100)) { /* 100 ms task */ }`
+
+Це зручно для PID/UI циклів без блокувань.

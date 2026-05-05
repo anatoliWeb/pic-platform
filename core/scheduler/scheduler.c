@@ -38,6 +38,11 @@ void scheduler_add_task(task_t* task)
     }
 
     task->last_run = tick_get();
+    if (task->enabled > 1u)
+    {
+        task->enabled = 1u;
+    }
+
     g_tasks[g_task_count] = task;
     g_task_count++;
 }
@@ -56,10 +61,43 @@ void scheduler_run(void)
             continue;
         }
 
+        if (task->enabled == 0u)
+        {
+            continue;
+        }
+
         if ((now - task->last_run) >= task->interval)
         {
-            task->last_run = now;
+            if (task->run_once != 0u)
+            {
+                task->enabled = 0u;
+            }
+            else
+            {
+                task->last_run = now;
+            }
+
             task->callback();
         }
     }
+}
+
+uint8_t timer_expired(uint32_t* last, uint32_t interval)
+{
+    uint32_t now;
+
+    if (last == (uint32_t*)0)
+    {
+        return 0u;
+    }
+
+    now = tick_get();
+
+    if ((now - *last) >= interval)
+    {
+        *last = now;
+        return 1u;
+    }
+
+    return 0u;
 }
