@@ -88,3 +88,46 @@ Multi-device зауваження:
 ### Example
 
 - `drivers/onewire/example.c` — reset + presence detect + write/read byte + ROM read + search API usage
+
+## DS18B20 Driver
+
+Драйвер `DS18B20` реалізований поверх `drivers/onewire` без дублювання low-level 1-Wire логіки.
+
+Що підтримується:
+
+- `ds18b20_start_conversion(uint8_t* rom)`
+- `ds18b20_read_scratchpad(uint8_t* rom, uint8_t* data)`
+- `ds18b20_get_temperature_raw(uint8_t* rom)`
+- `ds18b20_get_temperature_celsius_x10(uint8_t* rom)`
+
+Команди DS18B20:
+
+- `0x44` — Convert T
+- `0xBE` — Read Scratchpad
+
+Режими адресації:
+
+- `rom == NULL` -> `Skip ROM` (single device)
+- `rom != NULL` -> `Match ROM` (multi-device)
+
+Scratchpad і CRC:
+
+- читається 9 байт scratchpad
+- `data[8]` перевіряється через CRC8 Dallas/Maxim
+- при помилці CRC функції читання повертають `0` (error)
+
+Температура без float:
+
+- raw: `int16_t temp = (data[1] << 8) | data[0]`
+- масштаб: `temp_c_x10 = (temp * 10) / 16`
+
+Зауваження:
+
+- конверсія очікується через `DRV_DELAY_MS(750)`
+- для C18 `DRV_DELAY_MS` треба забезпечити проєктною реалізацією delay
+
+Приклади:
+
+- `drivers/ds18b20/example.c` — single + multi-device сценарії
+- `C18/examples/ds18b20_example.c`
+- `XC8/examples/ds18b20_example.c`

@@ -241,10 +241,10 @@
 
 ### Device Support (DS18B20)
 
-- [ ] Start temperature conversion
-- [ ] Read scratchpad
-- [ ] Convert raw data to temperature
-- [ ] Basic CRC check
+- [x] Start temperature conversion
+- [x] Read scratchpad
+- [x] Convert raw data to temperature
+- [x] Basic CRC check
 
 ---
 
