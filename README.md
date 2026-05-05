@@ -7,46 +7,46 @@
 - MPLAB C18
 - MPLAB XC8
 
-## Oscillator / Clock
+## јрх≥тектура
 
-`DRV_XTAL_FREQ` у `core/device.h` Ї Їдиним джерелом частоти дл€ вс≥Їњ системи.
+- —п≥льний API дл€ кожного драйвера
+- Universal entrypoint у `drivers/`
+- Compiler-specific реал≥зац≥њ у `C18/` ≥ `XC8/`
+- Fallback реал≥зац≥€, €кщо override не вибрано
 
-„ому це важливо:
+## 1-Wire Driver (Base)
 
-- delay-лог≥ка використовуЇ цю частоту
-- UART baudrate розрахунки залежать в≥д нењ
-- I2C clock (SSPADD) залежить в≥д нењ
+1-Wire базовий драйвер реал≥зовано через GPIO bit-banging.
 
-–екомендац≥€:
+ўо п≥дтримуЇтьс€:
 
-- не хардкодити частоту в окремих драйверах
-- зм≥нювати частоту централ≥зовано т≥льки в `core/device.h`
+- `onewire_init(port, tris, pin)`
+- `onewire_reset()`
 
-### API
+як працюЇ reset/presence:
 
-- `clock_get_frequency()` повертаЇ compile-time частоту (`DRV_XTAL_FREQ`)
+1. Master т€гне л≥н≥ю LOW ~480us
+2. ¬≥дпускаЇ л≥н≥ю (input/high-Z)
+3. „екаЇ ~70us
+4. „итаЇ presence (LOW => device present)
+5. „екаЇ ~410us
 
-### Oscillator modes (нотатки)
+¬имоги до timing:
 
-- `HS` Ч high-speed crystal (висок≥ частоти)
-- `XT` Ч стандартний кварц
-- `LP` Ч low-power crystal
-- `RC` Ч RC-генератор (менш точний)
+- м≥кросекундн≥ затримки через `core/delay.h`
+- точн≥сть `_XTAL_FREQ / DRV_XTAL_FREQ` критична
 
-### Config examples
+¬ажливо:
 
-C18:
+- потр≥бен зовн≥шн≥й pull-up резистор на 1-Wire л≥н≥њ
+- драйвер не використовуЇ hardware peripheral
 
-```c
-#pragma config OSC = HS
-```
+### 1-Wire Architecture
 
-XC8:
+- `drivers/onewire/onewire.c` Ч universal entrypoint + fallback
+- `C18/drivers/onewire/onewire.c` Ч C18-specific implementation
+- `XC8/drivers/onewire/onewire.c` Ч XC8-specific implementation
 
-```c
-#pragma config FOSC = HS
-```
+### Example
 
-## ≤нш≥ драйвери
-
-ƒоступн≥ модул≥: GPIO, UART, UART debug, RS485, ADC, PWM, Timer, EEPROM, SPI, I2C, External Interrupt, PORTB Change, WDT, Comparator, CCP Capture/Compare, Reset helper.
+- `drivers/onewire/example.c` Ч reset + presence detect + debug print
