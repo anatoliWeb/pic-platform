@@ -135,25 +135,25 @@
 
 ### SPI / MSSP
 
-- [ ] SPI driver (`drivers/spi`)
-- [ ] SPI master mode
-- [ ] SPI slave mode if needed
-- [ ] Transfer byte
-- [ ] Transfer buffer
-- [ ] Chip select helper
-- [ ] Example: SPI sensor read
-- [ ] Example: external EEPROM/flash connection
+- [x] SPI driver (`drivers/spi`)
+- [x] SPI master mode
+- [x] SPI slave mode if needed
+- [x] Transfer byte
+- [x] Transfer buffer
+- [x] Chip select helper
+- [x] Example: SPI sensor read
+- [x] Example: external EEPROM/flash connection
 
 ### I2C / MSSP
 
-- [ ] I2C driver (`drivers/i2c`)
-- [ ] I2C master mode
-- [ ] Start/stop/restart
-- [ ] Read/write byte
-- [ ] ACK/NACK handling
-- [ ] Device scan helper
-- [ ] Example: I2C LCD
-- [ ] Example: I2C sensor read
+- [x] I2C driver (`drivers/i2c`)
+- [x] I2C master mode
+- [x] Start/stop/restart
+- [x] Read/write byte
+- [x] ACK/NACK handling
+- [x] Device scan helper
+- [x] Example: I2C LCD
+- [x] Example: I2C sensor read
 
 ### External Interrupts
 

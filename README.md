@@ -1,83 +1,55 @@
 # PIC PLATFORM - Universal Drivers (C18 + XC8)
 
-Universal PIC drivers base (focus: PIC18).
-This repository is a reusable drivers library, not an application project.
+Бібліотека універсальних драйверів для PIC (фокус: PIC18).
+Це база драйверів, не application-проєкт.
 
-## Supported Compilers
+## Підтримувані компілятори
 
 - MPLAB C18
 - MPLAB XC8
 
-## Core Idea
+## Архітектура
 
-- One shared API per driver
-- Universal entry file in `drivers/`
-- Compiler-specific implementations in `C18/` and `XC8/`
-- Fallback implementation when no specific override is selected
+- Спільний API для кожного драйвера
+- Universal entrypoint у `drivers/`
+- Compiler-specific реалізації у `C18/` і `XC8/`
+- Fallback реалізація, якщо override не вибрано
 
-## SPI / MSSP Driver
+## I2C / MSSP Driver
 
-SPI driver uses PIC MSSP module and supports:
+I2C реалізовано через MSSP у режимі Master.
 
-- Master mode
-- Basic slave mode
-- SPI modes 0, 1, 2, 3
-- Byte transfer and buffer transfer
-- Chip Select helper without hardcoded pin
+Підтримка:
 
-API highlights:
+- `i2c_init(clock_hz)`
+- `i2c_start()` / `i2c_restart()` / `i2c_stop()`
+- `i2c_write_byte()` / `i2c_read_byte(ack)`
+- `i2c_write_register()` / `i2c_read_register()`
+- `i2c_device_ready()`
+- `i2c_scan()`
 
-- `spi_init_master(mode, clock)`
-- `spi_init_slave(mode)`
-- `spi_transfer_byte(data)`
-- `spi_transfer_buffer(tx, rx, len)`
-- `spi_cs_init(tris, port, pin)`
-- `spi_cs_select()` / `spi_cs_deselect()`
+Особливості:
 
-Clock options:
+- ACK/NACK handling через `ACKSTAT`, `ACKDT`, `ACKEN`
+- scan адрес `0x08..0x77`
+- без `malloc`
+- без прив'язки до конкретного I2C-пристрою
 
-- Fosc/4
-- Fosc/16
-- Fosc/64
-- TMR2/2
+### I2C Driver Architecture
 
-Transfer buffer behavior:
+- `drivers/i2c/i2c.c` — universal entrypoint + fallback
+- `C18/drivers/i2c/i2c.c` — C18-specific implementation
+- `XC8/drivers/i2c/i2c.c` — XC8-specific implementation
 
-- if `tx_buffer == NULL` -> sends `0xFF`
-- if `rx_buffer != NULL` -> stores received bytes
+### I2C Examples
 
-### SPI Driver Architecture
+- `drivers/i2c/example.c`:
+: scan шини
+: sensor-like register read
+: LCD-like byte writes (без повного LCD driver)
+- `C18/examples/i2c_example.c`
+- `XC8/examples/i2c_example.c`
 
-- `drivers/spi/spi.c` — universal entry point + fallback
-- `C18/drivers/spi/spi.c` — C18-specific implementation
-- `XC8/drivers/spi/spi.c` — XC8-specific implementation
+## Інші драйвери
 
-### SPI Examples
-
-- `drivers/spi/example.c`:
-: sensor register read flow
-: external EEPROM/Flash command + address + data flow
-- `C18/examples/spi_example.c`
-- `XC8/examples/spi_example.c`
-
-## EEPROM Driver
-
-EEPROM driver provides safe internal data memory access:
-
-- byte read/write
-- block read/write
-- wear-aware update write
-
-Safe write sequence uses interrupt-off + EECON2 unlock (0x55, 0xAA).
-
-## Timer Drivers + Tick
-
-- Timer0, Timer1, Timer2, Timer3 unified APIs
-- Overflow callback support
-- Millisecond tick via `tick_init/tick_get/tick_delay`
-
-## Notes
-
-- No malloc
-- No float
-- Drivers are device-agnostic on API level
+У репозиторії також підготовлені базові драйвери GPIO, UART, UART debug, RS485, ADC, PWM, Timer, EEPROM, SPI.
