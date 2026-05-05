@@ -13,6 +13,9 @@
 static volatile uint8_t* g_onewire_port = (volatile uint8_t*)0;
 static volatile uint8_t* g_onewire_tris = (volatile uint8_t*)0;
 static uint8_t g_onewire_pin = 0u;
+static const uint8_t OW_CMD_READ_ROM = 0x33u;
+static const uint8_t OW_CMD_MATCH_ROM = 0x55u;
+static const uint8_t OW_CMD_SKIP_ROM = 0xCCu;
 
 static void onewire_set_low(void)
 {
@@ -127,6 +130,52 @@ uint8_t onewire_read_byte(void)
     }
 
     return value;
+}
+
+void onewire_skip_rom(void)
+{
+    onewire_write_byte(OW_CMD_SKIP_ROM);
+}
+
+void onewire_match_rom(uint8_t* rom)
+{
+    uint8_t i;
+
+    if (rom == (uint8_t*)0)
+    {
+        return;
+    }
+
+    onewire_write_byte(OW_CMD_MATCH_ROM);
+    for (i = 0u; i < 8u; i++)
+    {
+        onewire_write_byte(rom[i]);
+    }
+}
+
+void onewire_read_rom(uint8_t* rom)
+{
+    uint8_t i;
+
+    if (rom == (uint8_t*)0)
+    {
+        return;
+    }
+
+    onewire_write_byte(OW_CMD_READ_ROM);
+    for (i = 0u; i < 8u; i++)
+    {
+        rom[i] = onewire_read_byte();
+    }
+}
+
+uint8_t onewire_search_rom(uint8_t (*roms)[8], uint8_t max_devices)
+{
+    (void)roms;
+    (void)max_devices;
+
+    /* Placeholder: full ROM search tree traversal will be added later. */
+    return 0u;
 }
 
 #endif

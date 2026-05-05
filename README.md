@@ -65,6 +65,20 @@
 - Ќа час кожного б≥т-слоту перериванн€ тимчасово вимикаютьс€ через `DRV_INT_DISABLE()`
 - ѕ≥сл€ завершенн€ слоту перериванн€ знову вмикаютьс€ через `DRV_INT_ENABLE()`
 
+### 1-Wire ROM Commands
+
+ƒодано ROM-р≥вень команд:
+
+- `onewire_skip_rom()` Ч команда `0xCC` дл€ broadcast доступу
+- `onewire_match_rom(uint8_t* rom)` Ч команда `0x55` + 64-bit ROM адреса
+- `onewire_read_rom(uint8_t* rom)` Ч команда `0x33` (працюЇ дл€ single-device шини)
+- `onewire_search_rom(uint8_t (*roms)[8], uint8_t max_devices)` Ч API дл€ multi-device пошуку
+
+Multi-device зауваженн€:
+
+- `search_rom` нараз≥ реал≥зовано €к базовий placeholder (повертаЇ `0`)
+- API вже готовий дл€ подальшого розширенн€ без зм≥ни ≥нтерфейсу
+
 ### 1-Wire Architecture
 
 - `drivers/onewire/onewire.c` Ч universal entrypoint + fallback
@@ -73,4 +87,4 @@
 
 ### Example
 
-- `drivers/onewire/example.c` Ч reset + presence detect + write/read byte test + debug print
+- `drivers/onewire/example.c` Ч reset + presence detect + write/read byte + ROM read + search API usage

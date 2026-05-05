@@ -232,10 +232,10 @@
 
 ### ROM Commands
 
-- [ ] Skip ROM (0xCC)
-- [ ] Match ROM (0x55)
-- [ ] Read ROM (0x33)
-- [ ] Search ROM (basic support or placeholder)
+- [x] Skip ROM (0xCC)
+- [x] Match ROM (0x55)
+- [x] Read ROM (0x33)
+- [x] Search ROM (basic support or placeholder)
 
 ---
 
