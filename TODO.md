@@ -167,10 +167,10 @@
 
 ### Port Change Interrupt
 
-- [ ] PORTB change interrupt driver (`drivers/portb_change`)
-- [ ] Enable/disable change interrupt
-- [ ] Read changed pins
-- [ ] Example: keypad/buttons
+- [x] PORTB change interrupt driver (`drivers/portb_change`)
+- [x] Enable/disable change interrupt
+- [x] Read changed pins
+- [x] Example: keypad/buttons
 
 ### Watchdog Timer
 

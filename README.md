@@ -15,42 +15,41 @@
 - Compiler-specific реал≥зац≥њ у `C18/` ≥ `XC8/`
 - Fallback реал≥зац≥€, €кщо override не вибрано
 
-## External Interrupt Driver
+## PORTB Change Interrupt
 
-ƒрайвер п≥дтримуЇ зовн≥шн≥ перериванн€:
+ƒрайвер п≥дтримуЇ перериванн€ по зм≥н≥ на RB4ЦRB7.
 
-- INT0
-- INT1
-- INT2
+ўо робить драйвер:
 
-ћожливост≥:
+- init RB4..RB7 €к input
+- робить dummy read `PORTB` дл€ скиданн€ mismatch
+- керуЇ `RBIE` enable/disable
+- тримаЇ `last_state` та `changed_mask`
+- викликаЇ callback: `(changed_mask, current_state)`
 
-- enable / disable кожного каналу
-- edge config: falling / rising
-- callback дл€ кожного каналу
-- перев≥рка та очистка interrupt flag
-- Їдиний `ext_interrupt_irq_handler()`
+‘ормуванн€ маски зм≥н:
+
+- `changed_mask = (current ^ last_state) & 0xF0`
 
 ### ISR Integration
 
-ƒрайвер не створюЇ реальний ISR.
-–еальний ISR у вашому проЇкт≥ маЇ викликати:
+ƒрайвер не створюЇ ISR.
+” вашому ISR потр≥бно викликати:
 
-`ext_interrupt_irq_handler();`
+`portb_change_irq_handler();`
 
-### External Interrupt Architecture
+### PORTB Change Architecture
 
-- `drivers/ext_interrupt/ext_interrupt.c` Ч universal entrypoint + fallback
-- `C18/drivers/ext_interrupt/ext_interrupt.c` Ч C18-specific implementation
-- `XC8/drivers/ext_interrupt/ext_interrupt.c` Ч XC8-specific implementation
+- `drivers/portb_change/portb_change.c` Ч universal entrypoint + fallback
+- `C18/drivers/portb_change/portb_change.c` Ч C18-specific implementation
+- `XC8/drivers/portb_change/portb_change.c` Ч XC8-specific implementation
 
-### Button Interrupt Example
+### Examples
 
-- налаштувати edge (наприклад falling)
-- призначити callback
-- ув≥мкнути канал
-- у callback зм≥нити flag або toggle LED
+- `drivers/portb_change/example.c` Ч button/keypad style callback pattern
+- `C18/examples/portb_change_example.c`
+- `XC8/examples/portb_change_example.c`
 
 ## ≤нш≥ драйвери
 
-ƒоступн≥ базов≥ драйвери: GPIO, UART, UART debug, RS485, ADC, PWM, Timer, EEPROM, SPI, I2C.
+ƒоступн≥ базов≥ драйвери: GPIO, UART, UART debug, RS485, ADC, PWM, Timer, EEPROM, SPI, I2C, external interrupt.
