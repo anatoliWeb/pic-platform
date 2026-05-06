@@ -29,10 +29,10 @@ This repository is a driver platform, not an application.
 ```
 
 ## Quick Start
-1. Copy required drivers from `drivers/`.
-2. Copy `core/` and add include paths.
-3. Use C18/XC8-specific sources when needed.
-4. Include headers and call `init()`.
+1. Keep this library as an external folder (do not copy sources into your app project).
+2. Add required driver `.c` files to your MPLAB project from relative paths.
+3. Configure include paths for `../pic-platform`, `../pic-platform/core`, and `../pic-platform/drivers`.
+4. Include headers and call `init()` from your application code.
 
 ## Example
 ```c
@@ -57,6 +57,7 @@ void main(void)
 - Examples Guide: [docs/examples.md](docs/examples.md) | [UA](docs/examples.ua.md)
 - Porting Guide: [docs/porting.md](docs/porting.md) | [UA](docs/porting.ua.md)
 - Build Validation: [docs/build-validation.md](docs/build-validation.md) | [UA](docs/build-validation.ua.md)
+- MPLAB Integration: [docs/mplab-integration.md](docs/mplab-integration.md)
 
 ## Drivers
 - GPIO: [docs/drivers/gpio.md](docs/drivers/gpio.md)
