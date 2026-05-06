@@ -450,10 +450,10 @@
 
 ### Driver Documentation
 
-- [ ] Create docs/drivers folder
+- [x] Create docs/drivers folder
 - [ ] Add documentation file for each driver:
-  - [ ] gpio.md
-  - [ ] uart.md
+  - [x] gpio.md
+  - [x] uart.md
   - [ ] adc.md
   - [ ] spi.md
   - [ ] i2c.md
