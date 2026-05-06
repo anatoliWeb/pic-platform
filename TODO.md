@@ -530,18 +530,18 @@
 
 ### Documentation Rules
 
-- [ ] Each driver doc must include:
-  - [ ] Description
-  - [ ] API list
-  - [ ] Example
-  - [ ] Notes / особливості
-  - [ ] Dependencies
+- [x] Each driver doc must include:
+  - [x] Description
+  - [x] API list
+  - [x] Example
+  - [x] Notes / особливості
+  - [x] Dependencies
 
 ---
 
 ### Integration
 
-- [ ] Add links to driver docs in README.md
+- [x] Add links to driver docs in README.md
 
 ---
 
