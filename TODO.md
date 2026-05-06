@@ -451,26 +451,96 @@
 ### Driver Documentation
 
 - [x] Create docs/drivers folder
-- [ ] Add documentation file for each driver:
-  - [x] gpio.md
-  - [x] uart.md
-  - [x] adc.md
-  - [ ] spi.md
-  - [x] i2c.md
-  - [ ] rs485.md
-  - [ ] lcd_hd44780.md
-  - [ ] button.md
-  - [ ] encoder.md
-  - [ ] onewire.md
-  - [ ] ds18b20.md
-  - [ ] ring_buffer.md
-  - [ ] crc.md
+
+---
+
+### Core Drivers
+
+- [x] gpio.md
+- [x] uart.md
+- [x] adc.md
+- [x] spi.md
+- [x] i2c.md
+
+---
+
+### Communication / Data
+
+- [x] rs485.md
+- [x] ring_buffer.md
+- [x] crc.md
+
+---
+
+### UI / Input
+
+- [ ] button.md
+- [ ] encoder.md
+- [ ] adc_buttons.md
+
+---
+
+### Display
+
+- [ ] lcd_hd44780.md
+
+---
+
+### Sensors
+
+- [ ] onewire.md
+- [ ] ds18b20.md
+
+---
+
+### Timers / Core Hardware
+
+- [ ] timer0.md
+- [ ] timer1.md
+- [ ] timer2.md
+- [ ] timer3.md
+
+---
+
+### System / Control
+
+- [ ] pwm.md
+- [ ] comparator.md
+- [ ] ccp_capture.md
+- [ ] ccp_compare.md
+- [ ] ext_interrupt.md
+- [ ] portb_change.md
+- [ ] wdt.md
+- [ ] reset.md
+- [ ] clock.md
+
+---
+
+### Memory
+
+- [ ] eeprom.md
+
+---
+
+### Debug
+
+- [ ] uart_debug.md
+
+---
+
+### Documentation Rules
+
 - [ ] Each driver doc must include:
   - [ ] Description
   - [ ] API list
   - [ ] Example
-  - [ ] Notes / РѕСЃРѕР±РµРЅРѕСЃС‚С–
+  - [ ] Notes / особливості
   - [ ] Dependencies
+
+---
+
+### Integration
+
 - [ ] Add links to driver docs in README.md
 
 ---
