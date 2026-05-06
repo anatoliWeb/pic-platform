@@ -474,22 +474,22 @@
 
 ### UI / Input
 
-- [ ] button.md
-- [ ] encoder.md
-- [ ] adc_buttons.md
+- [x] button.md
+- [x] encoder.md
+- [x] adc_buttons.md
 
 ---
 
 ### Display
 
-- [ ] lcd_hd44780.md
+- [x] lcd_hd44780.md
 
 ---
 
 ### Sensors
 
-- [ ] onewire.md
-- [ ] ds18b20.md
+- [x] onewire.md
+- [x] ds18b20.md
 
 ---
 
