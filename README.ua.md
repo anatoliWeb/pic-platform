@@ -87,3 +87,7 @@ void main(void)
 - WDT: [docs/drivers/wdt.md](docs/drivers/wdt.ua.md)
 - Reset: [docs/drivers/reset.md](docs/drivers/reset.ua.md)
 - Clock: [docs/drivers/clock.md](docs/drivers/clock.ua.md)
+
+## Приклади Проєктів MPLAB
+- Українська: [examples-projects/README.ua.md](examples-projects/README.ua.md)
+- English: [examples-projects/README.md](examples-projects/README.md)

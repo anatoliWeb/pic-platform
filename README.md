@@ -58,6 +58,7 @@ void main(void)
 - Porting Guide: [docs/porting.md](docs/porting.md) | [UA](docs/porting.ua.md)
 - Build Validation: [docs/build-validation.md](docs/build-validation.md) | [UA](docs/build-validation.ua.md)
 - MPLAB Integration: [docs/mplab-integration.md](docs/mplab-integration.md)
+- Examples Projects: [examples-projects/README.md](examples-projects/README.md) | [UA](examples-projects/README.ua.md)
 
 ## Drivers
 - GPIO: [docs/drivers/gpio.md](docs/drivers/gpio.md)
