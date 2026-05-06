@@ -1,3 +1,4 @@
+> Навігація: [README (EN)](../README.md) | [README (UA)](../README.ua.md) | [Конвенції](driver-convention.md) | [Компілятори](compiler.md) | [Іменування](naming.md) | [Приклади](examples.md) | [Портинг](porting.md) | [Build Validation](build-validation.md)
 # Build Validation (MPLAB C18 / XC8)
 
 Цей файл описує ручну перевірку збірки в MPLAB X, оскільки в поточному середовищі немає доступу до toolchain C18/XC8.
@@ -58,3 +59,4 @@
 ## Примітка
 
 У цьому середовищі реальна збірка C18/XC8 не виконувалась.
+

@@ -1,36 +1,36 @@
 # TODO
 
-## Мета репозиторію
+## ���� ����������
 
-Цей репозиторій призначений тільки для драйверів і бібліотек для PIC-мікроконтролерів, з основним фокусом на PIC18/PIC18F458.
+��� ���������� ����������� ����� ��� �������� � ������� ��� PIC-��������������, � �������� ������� �� PIC18/PIC18F458.
 
-Це не готовий application-проєкт.  
-У майбутніх проєктах потрібні драйвери будуть копіюватися або підключатися звідси.
+�� �� ������� application-�����.  
+� ��������� ������� ������� �������� ������ ���������� ��� ����������� �����.
 
-## Основні правила
+## ������� �������
 
-- [x] Писати драйвери максимально універсально
-- [x] Підтримувати MPLAB C18
-- [x] Підтримувати MPLAB XC8
-- [x] Усі відмінності компіляторів винести в `core/compiler.h`
-- [x] Кожен драйвер має мати `.h`, `.c` та `example.c`
-- [x] У кожному `example.c` має бути мінімальний приклад підключення
-- [x] Не змішувати драйвери з логікою конкретного проєкту
-- [x] Не хардкодити піни без потреби
-- [x] Коментарі в коді писати англійською
-- [x] Документацію писати зрозумілою українською мовою
+- [x] ������ �������� ����������� ������������
+- [x] ϳ���������� MPLAB C18
+- [x] ϳ���������� MPLAB XC8
+- [x] �� �������� ���������� ������� � `core/compiler.h`
+- [x] ����� ������� �� ���� `.h`, `.c` �� `example.c`
+- [x] � ������� `example.c` �� ���� ���������� ������� ����������
+- [x] �� �������� �������� � ������ ����������� ������
+- [x] �� ���������� ��� ��� �������
+- [x] �������� � ��� ������ ����������
+- [x] ������������ ������ ��������� ���������� �����
 
 ---
 
 ## Core / Common
 
-- [x] `core/compiler.h` — абстракція компілятора C18/XC8
-- [x] `core/types.h` — спільні типи, статуси, помилки
-- [x] `core/bit_utils.h` — макроси для роботи з бітами
-- [x] `core/delay.h` — універсальні затримки
-- [x] `core/device.h` — базові налаштування MCU
-- [x] `core/interrupts.h` — допоміжні макроси для interrupt-логіки
-- [x] `core/config.h` — загальні feature flags
+- [x] `core/compiler.h` � ���������� ���������� C18/XC8
+- [x] `core/types.h` � ������ ����, �������, �������
+- [x] `core/bit_utils.h` � ������� ��� ������ � �����
+- [x] `core/delay.h` � ������������ ��������
+- [x] `core/device.h` � ����� ������������ MCU
+- [x] `core/interrupts.h` � �������� ������� ��� interrupt-�����
+- [x] `core/config.h` � �������� feature flags
 
 ---
 
@@ -69,7 +69,7 @@
   - [x] `DBG_PRINT()`
   - [x] `DBG_PRINTLN()`
   - [x] `DBG_WRITE_BYTE()`
-- [x] Optional formatted output (lightweight, без важкого printf)
+- [x] Optional formatted output (lightweight, ��� ������� printf)
 - [x] Redirect to UART driver
 - [x] No dynamic memory usage
 - [x] Minimal stack usage
@@ -338,7 +338,7 @@
 
 - [x] I2C LCD example (`drivers/lcd_hd44780/example_i2c.c`)
 - [x] Use existing I2C driver
-- [x] Implement minimal I2C → LCD bridge (local in example)
+- [x] Implement minimal I2C > LCD bridge (local in example)
 - [x] Support PCF8574 (0x27 / 0x3F)
 - [x] Example: print debug text via I2C
 
@@ -366,13 +366,13 @@
 - [x] Encoder driver (`drivers/encoder`)
 - [x] Quadrature decoding (A/B signals, direction detection)
 - [x] Interrupt support (EXT/PORTB change for A/B pins)
-- [x] Polling fallback (через scheduler, без interrupt)
+- [x] Polling fallback (����� scheduler, ��� interrupt)
 - [x] Step / delta detection (increment / decrement)
 - [x] Integrated button support (click / hold, reuse button logic)
 - [x] Example:
       - interrupt-based rotation (CW/CCW)
-      - button click → select
-      - button hold → enter/exit menu
+      - button click > select
+      - button hold > enter/exit menu
 
 
 ### Software Scheduler
@@ -434,17 +434,44 @@
 
 ### Core Docs (important)
 
-- [ ] `README.md` — overview + quick start
-- [ ] `docs/driver-convention.md` — how to write driver
-- [ ] `docs/porting.md` — how to use driver in new project
+- [x] `README.md` � overview + quick start
+- [ ] `docs/driver-convention.md` � how to write driver
+- [ ] `docs/porting.md` � how to use driver in new project
 
 ---
 
 ### Additional Docs (recommended)
 
-- [ ] `docs/compiler.md` — C18 vs XC8 differences
-- [ ] `docs/naming.md` — naming rules
-- [ ] `docs/examples.md` — how to use examples
+- [ ] `docs/compiler.md` � C18 vs XC8 differences
+- [ ] `docs/naming.md` � naming rules
+- [ ] `docs/examples.md` � how to use examples
+
+---
+
+### Driver Documentation
+
+- [ ] Create docs/drivers folder
+- [ ] Add documentation file for each driver:
+  - [ ] gpio.md
+  - [ ] uart.md
+  - [ ] adc.md
+  - [ ] spi.md
+  - [ ] i2c.md
+  - [ ] rs485.md
+  - [ ] lcd_hd44780.md
+  - [ ] button.md
+  - [ ] encoder.md
+  - [ ] onewire.md
+  - [ ] ds18b20.md
+  - [ ] ring_buffer.md
+  - [ ] crc.md
+- [ ] Each driver doc must include:
+  - [ ] Description
+  - [ ] API list
+  - [ ] Example
+  - [ ] Notes / особеності
+  - [ ] Dependencies
+- [ ] Add links to driver docs in README.md
 
 ---
 
@@ -476,11 +503,11 @@ TODO.md
 
 ## Future: Driver Builder / Integration System
 
-> Not implemented now — do NOT work on this yet
+> Not implemented now � do NOT work on this yet
 
 ### Planned Features
 
-- [ ] Driver dependency system (e.g. RS485 → UART)
+- [ ] Driver dependency system (e.g. RS485 > UART)
 - [ ] Driver packaging (self-contained modules)
 - [ ] Builder tool (CLI/script)
 - [ ] Auto dependency resolution
@@ -488,3 +515,4 @@ TODO.md
 - [ ] Build generation (MPLAB projects)
 - [ ] Validation tools (dependency checks)
 - [ ] Documentation for builder
+
