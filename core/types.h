@@ -3,19 +3,13 @@
 
 #include "core/compiler.h"
 
-/*
- * Common driver status codes used across the library.
- */
 typedef enum
 {
     DRV_STATUS_OK = 0,
-    DRV_STATUS_ERROR = 1,
-    DRV_STATUS_TIMEOUT = 2
+    DRV_STATUS_ERROR,
+    DRV_STATUS_TIMEOUT
 } drv_status_t;
 
-/*
- * Optional boolean wrapper for consistent driver APIs.
- */
 typedef enum
 {
     DRV_FALSE = 0,

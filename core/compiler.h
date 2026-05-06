@@ -1,4 +1,4 @@
-﻿#ifndef CORE_COMPILER_H
+#ifndef CORE_COMPILER_H
 #define CORE_COMPILER_H
 
 /*
@@ -43,7 +43,7 @@
 
 #if defined(DRV_COMPILER_XC8)
 
-    #include <xc.h>        /* MCU registers */
+    #include <xc.h>
     #include <stdint.h>
     #include <stdbool.h>
 

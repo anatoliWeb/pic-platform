@@ -2,15 +2,25 @@
 # MPLAB X
 # =========================================================
 
-dist/
-build/
-nbproject/private/
-nbproject/Makefile-*.mk
-nbproject/Package-*.bash
-nbproject/Package-*.bat
+# MPLAB private/project-local files
+**/nbproject/private/
+
+# MPLAB generated makefiles
+**/Makefile
+**/Makefile-*.mk
+**/Makefile-*.properties
+**/Package-*.bash
+**/Package-*.bat
 
 # =========================================================
-# MPLAB generated
+# Build directories
+# =========================================================
+
+**/build/
+**/dist/
+
+# =========================================================
+# Compiled / generated files
 # =========================================================
 
 *.cof
@@ -23,6 +33,7 @@ nbproject/Package-*.bat
 *.d
 *.s
 *.sym
+*.err
 
 # =========================================================
 # MPLAB user settings
@@ -33,17 +44,17 @@ nbproject/Package-*.bat
 *.settings/
 
 # =========================================================
-# OS
-# =========================================================
-
-Thumbs.db
-.DS_Store
-
-# =========================================================
 # VS Code
 # =========================================================
 
 .vscode/
+
+# =========================================================
+# Operating system files
+# =========================================================
+
+Thumbs.db
+.DS_Store
 
 # =========================================================
 # Logs
