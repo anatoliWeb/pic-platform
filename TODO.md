@@ -399,39 +399,58 @@
 - [x] Example: UART RX buffer
 
 ---
-
 ## Common Requirements For Every Driver
 
-- [ ] Define public API in `.h`
-- [ ] Implement source in `.c`
-- [ ] Add required `example.c`
-- [ ] Add include guard in every `.h`
-- [ ] Use clear function names
-- [ ] Avoid project-specific logic
-- [ ] Avoid unnecessary global variables
-- [ ] Add short English comments in code
-- [ ] Add Ukrainian notes in `docs/` where useful
-- [ ] Validate build with MPLAB C18
-- [ ] Validate build with MPLAB XC8
-- [ ] Keep compiler-specific code only in `core/compiler.h`
+### Core Requirements (must be true for every driver)
+
+- [x] Define public API in `.h`
+- [x] Implement source in `.c`
+- [x] Add required `example.c`
+- [x] Add include guard in every `.h`
+- [x] Keep compiler-specific code only in:
+  - `core/compiler.h`
+  - or `C18/` / `XC8/` folders
+
+---
+
+### Code Quality (in progress)
+
+- [x] Use clear and consistent function names (`driver_action()`)
+- [x] Avoid project-specific logic (no app/menu/scenario code)
+- [x] Avoid unnecessary global variables (prefer struct-based state)
+- [x] Add short English comments in code (what/why, not obvious things)
+- [x] Keep APIs consistent across drivers (init/read/write style)
+
+---
+
+### Validation
+
+- [ ] Validate build with MPLAB C18 (real build)
+- [ ] Validate build with MPLAB XC8 (real build)
 
 ---
 
 ## Documentation
 
-- [ ] `README.md` — загальний опис бібліотеки
-- [ ] `TODO.md` — список задач і статусів
-- [ ] `docs/compiler.md` — різниця між C18 та XC8
-- [ ] `docs/driver-convention.md` — правила створення драйвера
-- [ ] `docs/naming.md` — правила іменування
-- [ ] `docs/examples.md` — як користуватися прикладами
-- [ ] `docs/porting.md` — як переносити драйвер у новий проєкт
+### Core Docs (important)
+
+- [ ] `README.md` — overview + quick start
+- [ ] `docs/driver-convention.md` — how to write driver
+- [ ] `docs/porting.md` — how to use driver in new project
+
+---
+
+### Additional Docs (recommended)
+
+- [ ] `docs/compiler.md` — C18 vs XC8 differences
+- [ ] `docs/naming.md` — naming rules
+- [ ] `docs/examples.md` — how to use examples
 
 ---
 
 ## Folder Structure To Keep
 
-```text
+```
 /C18
 /XC8
 /core
@@ -445,73 +464,27 @@ TODO.md
 
 ---
 
-## Future Improvements
+## Future Improvements (not now)
 
-- [ ] Додати optional config headers для кожного драйвера
-- [ ] Додати спільний тип помилок/status для всіх драйверів
-- [ ] Додати host/simulation тестування там, де можливо
-- [ ] Додати CI build matrix для C18/XC8, якщо буде доступна автоматизація toolchain
-- [ ] Додати версіонування драйверів
-- [ ] Додати changelog
-- [ ] Додати шаблон нового драйвера
-- [ ] Додати приклад інтеграції драйверів у зовнішній PIC-проєкт
+- [ ] Add optional config headers per driver (e.g. `uart_config.h`)
+- [ ] Add common error/status type for all drivers
+- [ ] Add versioning system
+- [ ] Add CHANGELOG.md
+- [ ] Add template for new driver
 
+---
 
 ## Future: Driver Builder / Integration System
 
-> Not implemented now. Planned for future.
+> Not implemented now — do NOT work on this yet
 
-### Dependency Management
+### Planned Features
 
-- [ ] Define driver dependencies (e.g. RS485 → UART)
-- [ ] Add dependency description inside each driver (metadata file or header)
-- [ ] Ensure driver can declare required modules
-
-### Driver Packaging
-
-- [ ] Define standard driver structure for export/import
-- [ ] Ensure each driver is self-contained
-- [ ] Support copying driver with all required files
-
-### Builder Concept
-
-- [ ] Design driver builder tool (script or CLI)
-- [ ] Input:
-  - [ ] selected drivers
-  - [ ] target compiler (C18 / XC8)
-- [ ] Output:
-  - [ ] ready-to-use project structure
-  - [ ] only required drivers
-  - [ ] resolved dependencies
-
-### Auto Dependency Resolution
-
-- [ ] Automatically include required drivers
-- [ ] Avoid duplicate modules
-- [ ] Validate compatibility between drivers
-
-### Configuration System
-
-- [ ] Add per-driver config headers (e.g. `uart_config.h`)
-- [ ] Allow enabling/disabling features
-- [ ] Central config file for project
-
-### Build Integration
-
-- [ ] Prepare example builds for:
-  - [ ] C18
-  - [ ] XC8
-- [ ] Generate ready MPLAB project (optional)
-- [ ] Add simple build scripts (bat/sh)
-
-### Validation
-
-- [ ] Validate driver compatibility before build
-- [ ] Detect missing dependencies
-- [ ] Detect conflicting configurations
-
-### Documentation
-
-- [ ] Document how builder works
-- [ ] Document driver dependency system
-- [ ] Provide usage examples
+- [ ] Driver dependency system (e.g. RS485 → UART)
+- [ ] Driver packaging (self-contained modules)
+- [ ] Builder tool (CLI/script)
+- [ ] Auto dependency resolution
+- [ ] Project configuration system
+- [ ] Build generation (MPLAB projects)
+- [ ] Validation tools (dependency checks)
+- [ ] Documentation for builder

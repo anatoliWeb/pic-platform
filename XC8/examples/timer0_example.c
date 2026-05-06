@@ -1,10 +1,8 @@
 #include "core/compiler.h"
-#include "drivers/timer/timer.h"
+#include "drivers/timer0/timer0.h"
 
 void main(void)
 {
-    timer_placeholder();
-
     while (1)
     {
     }

@@ -1,10 +1,8 @@
 #include "core/compiler.h"
-#include "drivers/timer/timer.h"
+#include "drivers/lcd_hd44780/lcd.h"
 
 void main(void)
 {
-    timer_placeholder();
-
     while (1)
     {
     }
