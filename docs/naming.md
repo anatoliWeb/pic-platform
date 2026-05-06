@@ -1,29 +1,21 @@
-> Навігація: [README (EN)](../README.md) | [README (UA)](../README.ua.md) | [Конвенції](driver-convention.md) | [Компілятори](compiler.md) | [Іменування](naming.md) | [Приклади](examples.md) | [Портинг](porting.md) | [Build Validation](build-validation.md)
-# Правила Іменування
+п»ї[Ukrainian version](./naming.ua.md)
 
-## Загальний стиль
-- Імена мають бути короткі й однозначні
-- Формат: `snake_case`
+# Naming Rules
 
-## Функції
-- Формат: `driver_action()`
-- Приклади:
-  - `uart_init`
-  - `gpio_write_high`
-  - `adc_read`
+## Functions
+- Format: `driver_action()`
+- Examples: `uart_init`, `gpio_set_output`, `adc_read`
 
-## Типи
-- Для структур/типів: суфікс `_t`
-- Приклади:
-  - `button_t`
-  - `ring_buffer_t`
+## Types
+- Structures: `<driver>_t`
+- Enums: `<driver>_<name>_t`
 
-## Макроси
-- UPPER_CASE
-- Префікс драйвера/модуля бажаний
+## Macros
+- Prefix: `DRV_`
+- Style: `UPPER_SNAKE_CASE`
 
-## Заборонено
-- Випадкові назви без контексту
-- Змішування стилів в одному драйвері
-- Project-specific назви в драйверах
+## Files
+- Lowercase file names
+- Header/source names match driver name
+
 

@@ -45,3 +45,4 @@ Each `example.c` must:
 - Provide a minimal working example
 - Show how to include and initialize the driver
 - Demonstrate basic usage flow
+

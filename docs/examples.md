@@ -1,25 +1,20 @@
-> Навігація: [README (EN)](../README.md) | [README (UA)](../README.ua.md) | [Конвенції](driver-convention.md) | [Компілятори](compiler.md) | [Іменування](naming.md) | [Приклади](examples.md) | [Портинг](porting.md) | [Build Validation](build-validation.md)
-# Робота З Прикладами
+п»ї[Ukrainian version](./examples.ua.md)
 
-## Призначення прикладів
-Приклади показують базову інтеграцію драйвера, не повний application.
+# Examples Guide
 
-## Де шукати приклади
-- Universal: `drivers/<driver>/example.c`
-- C18: `C18/examples/<driver>_example.c`
-- XC8: `XC8/examples/<driver>_example.c`
+## Example Layers
+- Driver local: `drivers/<name>/example.c`
+- Common examples: `examples/common/`
+- Compiler examples: `C18/examples/`, `XC8/examples/`
 
-## Як запускати перевірку
-1. Обрати цільовий драйвер
-2. Відкрити відповідний `example.c`
-3. Перевірити include paths (`core`, `drivers`, `C18`/`XC8`)
-4. Зібрати в MPLAB X під потрібний компілятор
+## Validation Flow
+1. Build simple examples first (GPIO/UART)
+2. Build target driver example
+3. Build compiler-specific examples
 
-## Що перевіряти спочатку
-- `gpio`, `uart`, `timer`/`tick`
-- Потім `i2c`, `spi`, `adc`
-- Потім протокольні/складні (`rs485`, `onewire`, `encoder`)
+## Rules
+- Keep examples minimal
+- Show init + basic API usage
+- Avoid business logic
 
-## Порада
-Якщо є помилка, починайте з найпростішого прикладу для швидкої локалізації проблеми.
 

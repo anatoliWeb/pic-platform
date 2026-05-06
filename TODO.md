@@ -1,36 +1,36 @@
 # TODO
 
-## ���� ����������
+## пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-��� ���������� ����������� ����� ��� �������� � ������� ��� PIC-��������������, � �������� ������� �� PIC18/PIC18F458.
+пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ PIC-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ PIC18/PIC18F458.
 
-�� �� ������� application-�����.  
-� ��������� ������� ������� �������� ������ ���������� ��� ����������� �����.
+пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ application-пїЅпїЅпїЅпїЅпїЅ.  
+пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 
-## ������� �������
+## пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-- [x] ������ �������� ����������� ������������
-- [x] ϳ���������� MPLAB C18
-- [x] ϳ���������� MPLAB XC8
-- [x] �� �������� ���������� ������� � `core/compiler.h`
-- [x] ����� ������� �� ���� `.h`, `.c` �� `example.c`
-- [x] � ������� `example.c` �� ���� ���������� ������� ����������
-- [x] �� �������� �������� � ������ ����������� ������
-- [x] �� ���������� ��� ��� �������
-- [x] �������� � ��� ������ ����������
-- [x] ������������ ������ ��������� ���������� �����
+- [x] пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+- [x] ПіпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ MPLAB C18
+- [x] ПіпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ MPLAB XC8
+- [x] пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ `core/compiler.h`
+- [x] пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ `.h`, `.c` пїЅпїЅ `example.c`
+- [x] пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ `example.c` пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+- [x] пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+- [x] пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+- [x] пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+- [x] пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 ---
 
 ## Core / Common
 
-- [x] `core/compiler.h` � ���������� ���������� C18/XC8
-- [x] `core/types.h` � ������ ����, �������, �������
-- [x] `core/bit_utils.h` � ������� ��� ������ � �����
-- [x] `core/delay.h` � ������������ ��������
-- [x] `core/device.h` � ����� ������������ MCU
-- [x] `core/interrupts.h` � �������� ������� ��� interrupt-�����
-- [x] `core/config.h` � �������� feature flags
+- [x] `core/compiler.h` пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ C18/XC8
+- [x] `core/types.h` пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+- [x] `core/bit_utils.h` пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
+- [x] `core/delay.h` пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+- [x] `core/device.h` пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ MCU
+- [x] `core/interrupts.h` пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ interrupt-пїЅпїЅпїЅпїЅпїЅ
+- [x] `core/config.h` пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ feature flags
 
 ---
 
@@ -69,7 +69,7 @@
   - [x] `DBG_PRINT()`
   - [x] `DBG_PRINTLN()`
   - [x] `DBG_WRITE_BYTE()`
-- [x] Optional formatted output (lightweight, ��� ������� printf)
+- [x] Optional formatted output (lightweight, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ printf)
 - [x] Redirect to UART driver
 - [x] No dynamic memory usage
 - [x] Minimal stack usage
@@ -366,7 +366,7 @@
 - [x] Encoder driver (`drivers/encoder`)
 - [x] Quadrature decoding (A/B signals, direction detection)
 - [x] Interrupt support (EXT/PORTB change for A/B pins)
-- [x] Polling fallback (����� scheduler, ��� interrupt)
+- [x] Polling fallback (пїЅпїЅпїЅпїЅпїЅ scheduler, пїЅпїЅпїЅ interrupt)
 - [x] Step / delta detection (increment / decrement)
 - [x] Integrated button support (click / hold, reuse button logic)
 - [x] Example:
@@ -434,17 +434,17 @@
 
 ### Core Docs (important)
 
-- [x] `README.md` � overview + quick start
-- [ ] `docs/driver-convention.md` � how to write driver
-- [ ] `docs/porting.md` � how to use driver in new project
+- [x] `README.md` пїЅ overview + quick start
+- [x] `docs/driver-convention.md` пїЅ how to write driver
+- [x] `docs/porting.md` пїЅ how to use driver in new project
 
 ---
 
 ### Additional Docs (recommended)
 
-- [ ] `docs/compiler.md` � C18 vs XC8 differences
-- [ ] `docs/naming.md` � naming rules
-- [ ] `docs/examples.md` � how to use examples
+- [x] `docs/compiler.md` пїЅ C18 vs XC8 differences
+- [x] `docs/naming.md` пїЅ naming rules
+- [x] `docs/examples.md` пїЅ how to use examples
 
 ---
 
@@ -469,7 +469,7 @@
   - [ ] Description
   - [ ] API list
   - [ ] Example
-  - [ ] Notes / особеності
+  - [ ] Notes / РѕСЃРѕР±РµРЅРѕСЃС‚С–
   - [ ] Dependencies
 - [ ] Add links to driver docs in README.md
 
@@ -503,7 +503,7 @@ TODO.md
 
 ## Future: Driver Builder / Integration System
 
-> Not implemented now � do NOT work on this yet
+> Not implemented now пїЅ do NOT work on this yet
 
 ### Planned Features
 
@@ -515,4 +515,5 @@ TODO.md
 - [ ] Build generation (MPLAB projects)
 - [ ] Validation tools (dependency checks)
 - [ ] Documentation for builder
+
 

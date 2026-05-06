@@ -1,24 +1,20 @@
-> Навігація: [README (EN)](../README.md) | [README (UA)](../README.ua.md) | [Конвенції](driver-convention.md) | [Компілятори](compiler.md) | [Іменування](naming.md) | [Приклади](examples.md) | [Портинг](porting.md) | [Build Validation](build-validation.md)
-# Нотатки По Компіляторах (C18 vs XC8)
+п»ї[Ukrainian version](./compiler.ua.md)
 
-## Мета
-Забезпечити однаковий API драйверів для MPLAB C18 і MPLAB XC8.
+# Compiler Notes
 
-## Де ізольована специфіка
-- `core/compiler.h` — детекція компілятора та спільні макроси
-- `C18/drivers/*` — реалізації для C18
-- `XC8/drivers/*` — реалізації для XC8
+## Supported Toolchains
+- MPLAB C18
+- MPLAB XC8
 
-## Основні відмінності
-- Назви/доступ до регістрів можуть відрізнятись
-- Синтаксис деяких бітових полів може відрізнятись
-- Поведінка оптимізації/inline може відрізнятись
+## Main Principle
+Keep one public API and isolate compiler-specific implementation.
 
-## Практика
-- Спільний API тримати в `drivers/<driver>/<driver>.h`
-- Спільну логіку — в universal `drivers/<driver>/<driver>.c`
-- Специфічні відмінності — в `C18/` та `XC8/`
+## Locations
+- Abstraction macros: `core/compiler.h`
+- C18 sources: `C18/drivers/*`
+- XC8 sources: `XC8/drivers/*`
 
-## Важливо
-Не змішувати compiler-specific код з прикладною логікою.
+## Recommendation
+Use universal entrypoint in `drivers/<name>/<name>.c` and route by compiler macros.
+
 

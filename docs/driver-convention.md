@@ -1,37 +1,29 @@
-> Навігація: [README (EN)](../README.md) | [README (UA)](../README.ua.md) | [Конвенції](driver-convention.md) | [Компілятори](compiler.md) | [Іменування](naming.md) | [Приклади](examples.md) | [Портинг](porting.md) | [Build Validation](build-validation.md)
-# Конвенції Драйверів
+п»ї[Ukrainian version](./driver-convention.ua.md)
 
-## Призначення
-Цей документ визначає єдиний стиль створення драйверів у репозиторії.
+# Driver Convention
 
-## Обов'язкова структура драйвера
-Кожен драйвер має містити:
-- `<driver>.h` — public API
-- `<driver>.c` — реалізація
-- `example.c` — мінімальний приклад використання
+## Purpose
+This document defines a common standard for all platform drivers.
 
-Рекомендована структура:
-- `drivers/<driver>/...`
-- `C18/drivers/<driver>/...` (за потреби специфіки)
-- `XC8/drivers/<driver>/...` (за потреби специфіки)
+## Required Driver Structure
+- `drivers/<name>/<name>.h`
+- `drivers/<name>/<name>.c`
+- `drivers/<name>/example.c`
 
-## API стиль
-- Імена функцій: `driver_action()`
-- Базові групи API:
-  - `init()`
-  - `read()` / `write()`
-  - `enable()` / `disable()`
-- API має бути простим і стабільним.
+## API Rules
+- Keep API minimal and clear.
+- Use naming format: `driver_action()`.
+- Put only public declarations in `.h`.
 
-## Технічні правила
-- Без `malloc`
-- Мінімум глобального стану
-- Без бізнес-логіки у драйвері
-- Коментарі короткі, англійською
+## Restrictions
+- No project-specific business logic in drivers.
+- No hardcoded pins unless passed through init/config.
+- No dynamic memory (`malloc`/`free`).
 
-## Приклади
-- `example.c` має демонструвати:
-  - ініціалізацію
-  - базову операцію
-  - мінімальний робочий сценарій
+## Compiler Split
+- Shared logic: `drivers/<name>/`
+- C18-specific: `C18/drivers/<name>/`
+- XC8-specific: `XC8/drivers/<name>/`
+- Common abstraction: `core/compiler.h`
+
 
