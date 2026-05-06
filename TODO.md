@@ -495,36 +495,36 @@
 
 ### Timers / Core Hardware
 
-- [ ] timer0.md
-- [ ] timer1.md
-- [ ] timer2.md
-- [ ] timer3.md
+- [x] timer0.md
+- [x] timer1.md
+- [x] timer2.md
+- [x] timer3.md
 
 ---
 
 ### System / Control
 
-- [ ] pwm.md
-- [ ] comparator.md
-- [ ] ccp_capture.md
-- [ ] ccp_compare.md
-- [ ] ext_interrupt.md
-- [ ] portb_change.md
-- [ ] wdt.md
-- [ ] reset.md
-- [ ] clock.md
+- [x] pwm.md
+- [x] comparator.md
+- [x] ccp_capture.md
+- [x] ccp_compare.md
+- [x] ext_interrupt.md
+- [x] portb_change.md
+- [x] wdt.md
+- [x] reset.md
+- [x] clock.md
 
 ---
 
 ### Memory
 
-- [ ] eeprom.md
+- [x] eeprom.md
 
 ---
 
 ### Debug
 
-- [ ] uart_debug.md
+- [x] uart_debug.md
 
 ---
 
