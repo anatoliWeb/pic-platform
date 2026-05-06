@@ -454,9 +454,9 @@
 - [ ] Add documentation file for each driver:
   - [x] gpio.md
   - [x] uart.md
-  - [ ] adc.md
+  - [x] adc.md
   - [ ] spi.md
-  - [ ] i2c.md
+  - [x] i2c.md
   - [ ] rs485.md
   - [ ] lcd_hd44780.md
   - [ ] button.md
