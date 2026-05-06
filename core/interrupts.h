@@ -6,8 +6,7 @@
 /*
  * Global interrupt control helpers.
  * No ISR definitions are allowed in this header.
+ * DRV_INT_ENABLE()/DRV_INT_DISABLE() are centralized in compiler.h.
  */
-#define DRV_INT_ENABLE()   do { INTCONbits.GIE = 1; } while (0)
-#define DRV_INT_DISABLE()  do { INTCONbits.GIE = 0; } while (0)
 
 #endif /* CORE_INTERRUPTS_H */

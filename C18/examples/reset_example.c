@@ -1,5 +1,4 @@
-#include <p18f458.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "drivers/uart/uart.h"
 #include "drivers/uart_debug/uart_debug.h"
 #include "drivers/reset/reset.h"
@@ -22,3 +21,4 @@ void main(void)
     {
     }
 }
+

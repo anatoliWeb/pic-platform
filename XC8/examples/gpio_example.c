@@ -1,5 +1,4 @@
-#include <xc.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/gpio/gpio.h"
 
@@ -31,3 +30,4 @@ void main(void)
         DRV_DELAY_MS(100);
     }
 }
+

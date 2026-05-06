@@ -1,5 +1,4 @@
-#include <p18f458.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
 #include "drivers/comparator/comparator.h"
 #include "drivers/uart_debug/uart_debug.h"
@@ -28,3 +27,4 @@ void main(void)
         DBG_PRINTLN("");
     }
 }
+

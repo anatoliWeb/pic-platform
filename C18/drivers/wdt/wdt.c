@@ -2,7 +2,7 @@
 
 void wdt_clear(void)
 {
-#if defined(__18CXX)
+#if defined(DRV_COMPILER_C18)
     _asm CLRWDT _endasm
 #else
     CLRWDT();

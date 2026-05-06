@@ -1,5 +1,4 @@
-#include <xc.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
 #include "drivers/ccp_compare/ccp_compare.h"
 
@@ -28,3 +27,4 @@ void __interrupt() isr(void)
     ccp_compare_irq_handler();
 }
 */
+

@@ -1,5 +1,4 @@
-#include <xc.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "core/delay.h"
 #include "core/debug.h"
 #include "drivers/uart/uart.h"
@@ -21,3 +20,4 @@ void main(void)
         DRV_DELAY_MS(10);
     }
 }
+

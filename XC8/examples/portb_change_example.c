@@ -1,5 +1,4 @@
-#include <xc.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "drivers/portb_change/portb_change.h"
 
 static volatile uint8_t g_changed = 0u;
@@ -31,3 +30,4 @@ void __interrupt() isr(void)
     portb_change_irq_handler();
 }
 */
+

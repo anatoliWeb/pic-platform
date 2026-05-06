@@ -1,5 +1,4 @@
-#include <p18f458.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/uart/uart.h"
 #include "drivers/uart_debug/uart_debug.h"
@@ -25,3 +24,4 @@ void main(void)
         DRV_DELAY_MS(250);
     }
 }
+

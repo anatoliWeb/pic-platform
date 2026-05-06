@@ -1,62 +1,65 @@
-# DRIVER_GUIDELINES
+﻿# DRIVER_GUIDELINES
 
-пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ PIC Platform.
+> [Ukrainian version](DRIVER_GUIDELINES.ua.md)
 
-## 1. пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+This document defines the common driver development standard for `pic-platform`.
 
-- пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
-- ПіпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ MPLAB C18 пїЅ MPLAB XC8.
-- пїЅпїЅ compiler-specific пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ `core/compiler.h`.
-- пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
-- пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
-- пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ `malloc`/`free` пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+## 1. Core Principles
 
-## 2. пїЅпїЅпїЅпїЅ'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+- Drivers must be reusable and portable.
+- Both compilers are supported: MPLAB XC8 and MPLAB C18.
+- All compiler-specific differences must be isolated in `core/compiler.h`.
+- Drivers must not contain project-specific business logic.
+- Do not hardcode pins unless passed through explicit configuration/init.
+- Do not use dynamic memory (`malloc` / `free`).
+- Code comments must be short and in English.
 
-пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ `/drivers/<name>/` пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ:
+## 2. Required Driver Structure
+
+Each driver in `/drivers/<name>/` must include:
 
 - `<name>.h`
 - `<name>.c`
 - `example.c`
 
-## 3. пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+## 3. Forbidden Patterns
 
-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ API.
-- пїЅпїЅпїЅпїЅ-пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ application-пїЅпїЅпїЅпїЅ.
-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+- Changing public API without strong reason.
+- Mixing application/business logic into drivers.
+- Tight binding to one board unless explicitly parameterized.
 
 ## 4. Compiler-Specific Code
 
-пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ C18/XC8 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ:
+All XC8/C18 differences must be centralized in:
 
 - `core/compiler.h`
 
-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+Driver code must use only unified abstraction macros.
 
-## 5. API пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+## 5. API Style
 
-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ API:
+Recommended base API:
 
 - `<driver>_init()`
 - `<driver>_read()`
 - `<driver>_write()`
 
-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+Add extra functions only when required by the peripheral behavior.
 
 ## 6. Naming Rules
 
-- пїЅпїЅпїЅпїЅпїЅ: lower_snake_case (`uart.h`, `soft_i2c.c`).
-- пїЅпїЅпїЅпїЅ: `<driver>_t`.
-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: `UPPER_SNAKE_CASE`.
-- пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (`uart_init`, `uart_write`).
-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ `.c`: `static` + пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
+- Files: `lower_snake_case` (`uart.h`, `ring_buffer.c`).
+- Types: `<driver>_t`.
+- Macros/constants: `UPPER_SNAKE_CASE`.
+- Public functions: `<driver>_<action>` (`uart_init`, `gpio_toggle`).
+- Internal functions in `.c`: `static`.
 
-## 7. Example Rules
+## 7. example.c Rules
 
-`example.c` пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
+`example.c` must show a minimal working flow:
 
-- пїЅпїЅпїЅпїЅпїЅпїЅ include пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
-- пїЅпїЅпїЅпїЅпїЅпїЅ `init()`.
-- пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ API пїЅ пїЅпїЅпїЅпїЅ.
+- proper `#include` lines;
+- `init()` call;
+- basic API usage in a loop or simple sequence.
 
+Examples are for demonstration only and must not contain product-specific logic.

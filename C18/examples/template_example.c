@@ -1,5 +1,4 @@
-#include <p18f458.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "drivers/_template/template.h"
 
 void main(void)
@@ -12,3 +11,4 @@ void main(void)
         /* Driver call flow goes here */
     }
 }
+

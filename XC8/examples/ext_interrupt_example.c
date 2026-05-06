@@ -1,5 +1,4 @@
-#include <xc.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
 #include "drivers/ext_interrupt/ext_interrupt.h"
 
@@ -35,3 +34,4 @@ void __interrupt() isr(void)
     ext_interrupt_irq_handler();
 }
 */
+

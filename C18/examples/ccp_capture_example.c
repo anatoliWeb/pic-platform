@@ -1,5 +1,4 @@
-#include <p18f458.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "drivers/ccp_capture/ccp_capture.h"
 
 static volatile uint16_t last_capture = 0u;
@@ -27,3 +26,4 @@ void high_isr(void)
     ccp_capture_irq_handler();
 }
 */
+

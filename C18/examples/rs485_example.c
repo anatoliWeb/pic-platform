@@ -1,5 +1,4 @@
-#include <p18f458.h>
-#include "core/compiler.h"
+﻿#include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/uart/uart.h"
 #include "drivers/rs485/rs485.h"
@@ -20,3 +19,4 @@ void main(void)
         DRV_DELAY_MS(200);
     }
 }
+
