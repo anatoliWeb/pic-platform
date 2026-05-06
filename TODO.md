@@ -361,6 +361,20 @@
 - [x] Click/hold support
 - [x] Example: resistor ladder buttons
 
+### Encoder (Rotary Encoder + Button)
+
+- [x] Encoder driver (`drivers/encoder`)
+- [x] Quadrature decoding (A/B signals, direction detection)
+- [x] Interrupt support (EXT/PORTB change for A/B pins)
+- [x] Polling fallback (через scheduler, без interrupt)
+- [x] Step / delta detection (increment / decrement)
+- [x] Integrated button support (click / hold, reuse button logic)
+- [x] Example:
+      - interrupt-based rotation (CW/CCW)
+      - button click → select
+      - button hold → enter/exit menu
+
+
 ### Software Scheduler
 
 - [x] Lightweight scheduler (`drivers/scheduler`)

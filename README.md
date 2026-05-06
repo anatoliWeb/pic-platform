@@ -472,3 +472,43 @@ Overflow policy:
 Приклад:
 
 - `drivers/ring_buffer/example.c`
+
+### Encoder
+
+Додано універсальний драйвер `drivers/encoder` для rotary encoder (A/B) з інтегрованою кнопкою.
+
+Можливості:
+
+- quadrature decoding (CW/CCW)
+- direction delta (`+1` / `-1`)
+- неблокуючий режим
+- інтеграція кнопки через existing `button` driver
+
+Режими використання:
+
+- interrupt-based (recommended): виклик `encoder_update()` з ISR hook
+- polling fallback: виклик `encoder_update()` кожні 1-5 ms через tick/scheduler
+
+Quadrature:
+
+- CW:  `00 -> 01 -> 11 -> 10 -> 00`
+- CCW: `00 -> 10 -> 11 -> 01 -> 00`
+
+API:
+
+- `encoder_init(...)`
+- `encoder_update(...)`
+- `encoder_get_delta(...)`
+
+Button integration:
+
+- всередині `encoder_update()` викликається `button_update(&enc->button)`
+- зовні доступні `button_is_clicked(...)` / `button_is_held(...)`
+
+Приклад:
+
+- `drivers/encoder/example.c`
+  - CW -> next menu
+  - CCW -> prev menu
+  - click -> select
+  - hold -> enter/exit menu
