@@ -438,3 +438,37 @@ API:
 - `drivers/crc/example.c`
   - розрахунок CRC8, CRC16, checksum
   - валідація прикладу кадру
+
+### Ring Buffer
+
+Додано універсальний FIFO модуль `drivers/ring_buffer` для байтових черг (ISR-friendly).
+
+API:
+
+- `rb_init(...)`
+- `rb_push(...)`
+- `rb_pop(...)`
+- `rb_is_empty(...)`
+- `rb_is_full(...)`
+- `rb_available(...)`
+
+Принцип:
+
+- кільцевий буфер з `head`/`tail`
+- `head` і `tail` оголошені як `volatile`
+- короткі операції без блокуючих циклів
+
+Overflow policy:
+
+- керується `RB_OVERWRITE`
+- `RB_OVERWRITE = 0` (default): нові дані відхиляються, якщо FIFO повний
+- `RB_OVERWRITE = 1`: перезаписується найстаріший байт
+
+Використання з UART RX:
+
+- ISR: `rb_push(&rx_buffer, received_byte);`
+- main loop: `while (rb_pop(&rx_buffer, &data)) { ... }`
+
+Приклад:
+
+- `drivers/ring_buffer/example.c`

@@ -378,11 +378,11 @@
 
 ### Ring Buffer
 
-- [ ] Ring buffer helper (`drivers/ring_buffer`)
-- [ ] Byte buffer
-- [ ] Push/pop
-- [ ] Overflow handling
-- [ ] Example: UART RX buffer
+- [x] Ring buffer helper (`drivers/ring_buffer`)
+- [x] Byte buffer
+- [x] Push/pop
+- [x] Overflow handling
+- [x] Example: UART RX buffer
 
 ---
 
