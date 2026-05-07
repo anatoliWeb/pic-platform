@@ -28,6 +28,6 @@ void rtos_example_run(void)
             /* Periodic application action every 1000 ms. */
         }
 
-        rtos_delay_ms(10u);
+        rtos_sleep_ms(10u);
     }
 }

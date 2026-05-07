@@ -24,13 +24,14 @@ void rtos_init(void)
     g_rtos_fallback_tick_ms = 0u;
 }
 
-void rtos_delay_ms(uint32_t ms)
+void rtos_sleep_ms(uint32_t ms)
 {
 #if DRV_USE_FREERTOS
     /* Future hook: map to vTaskDelay() when RTOS backend is enabled. */
     while (ms != 0u)
     {
         delay_ms(1u);
+        rtos_yield_if_needed();
         ms--;
     }
 #else
@@ -38,9 +39,24 @@ void rtos_delay_ms(uint32_t ms)
     {
         delay_ms(1u);
         g_rtos_fallback_tick_ms++;
+        rtos_yield_if_needed();
         ms--;
     }
 #endif
+}
+
+void rtos_delay_ms(uint32_t ms)
+{
+    rtos_sleep_ms(ms);
+}
+
+void rtos_sleep_us(uint32_t us)
+{
+    while (us != 0u)
+    {
+        delay_us(1u);
+        us--;
+    }
 }
 
 uint32_t rtos_get_tick_ms(void)
@@ -75,8 +91,14 @@ void rtos_yield(void)
 #if DRV_USE_FREERTOS
     /* Future hook: taskYIELD(); */
 #else
-    /* Bare-metal mode: no scheduler yield operation. */
+    /* Bare-metal cooperative yield hook. */
+    DRV_RTOS_YIELD_HOOK();
 #endif
+}
+
+void rtos_yield_if_needed(void)
+{
+    rtos_yield();
 }
 
 void rtos_enter_critical(void)

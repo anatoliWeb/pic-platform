@@ -14,11 +14,14 @@
 
 void rtos_init(void);
 void rtos_delay_ms(uint32_t ms);
+void rtos_sleep_ms(uint32_t ms);
+void rtos_sleep_us(uint32_t us);
 uint32_t rtos_get_tick_ms(void);
 uint8_t rtos_is_enabled(void);
 
 /* Optional placeholders for future backend extensions. */
 void rtos_yield(void);
+void rtos_yield_if_needed(void);
 void rtos_enter_critical(void);
 void rtos_exit_critical(void);
 

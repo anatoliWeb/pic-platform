@@ -1,86 +1,79 @@
-#include "core/compiler.h"
+#include "core/rtos/rtos.h"
 #include "core/scheduler/scheduler.h"
-#include "drivers/timers/tick/tick.h"
-#include "drivers/communication/onewire/onewire.h"
-#include "libraries/sensors/ds18b20/ds18b20.h"
-#include "drivers/communication/uart/uart.h"
-#include "libraries/system/uart_debug/uart_debug.h"
 
-static volatile uint8_t g_led_state = 0u;
-
-static void task_blink_led(void)
+typedef struct
 {
-    g_led_state ^= 1u;
-    PORTBbits.RB0 = g_led_state;
+    uint8_t led_state;
+} app_ctx_t;
+
+static app_ctx_t g_app = { 0u };
+
+static void task_blink(void* ctx)
+{
+    app_ctx_t* app;
+
+    app = (app_ctx_t*)ctx;
+    app->led_state ^= 1u;
+
+    /* Application-specific GPIO toggle can be placed here. */
 }
 
-static void task_read_ds18b20(void)
+static void task_service(void* ctx)
 {
-    int16_t temp_x10;
+    (void)ctx;
 
-    if (ds18b20_read_temperature_celsius((uint8_t*)0, &temp_x10) != 0u)
-    {
-        DBG_PRINT("T(C): ");
-        DBG_PRINT_INT(temp_x10 / 10);
-        DBG_PRINT(".");
-        DBG_PRINT_INT((temp_x10 < 0) ? -(temp_x10 % 10) : (temp_x10 % 10));
-        DBG_PRINT("\r\n");
-    }
-    else
-    {
-        DBG_PRINT("DS18B20 read error\r\n");
-    }
+    /* Service polling/update task. */
 }
 
-static void task_debug_print(void)
+static void task_ui(void* ctx)
 {
-    DBG_PRINT("Scheduler alive\r\n");
+    (void)ctx;
+
+    /* UI/animation update task. */
 }
 
-void main(void)
+void scheduler_example_run(void)
 {
-    static task_t led_task;
-    static task_t ds_task;
-    static task_t dbg_task;
-    static uint32_t t1 = 0u;
+    scheduler_task_t blink_task;
+    scheduler_task_t service_task;
+    scheduler_task_t ui_task;
 
-    TRISBbits.TRISB0 = 0u;
-    PORTBbits.RB0 = 0u;
-
-    uart_init(9600u);
-    onewire_init(&PORTB, &TRISB, 1u);
-    tick_init();
+    rtos_init();
     scheduler_init();
 
-    led_task.callback = task_blink_led;
-    led_task.interval = 500u;
-    led_task.last_run = 0u;
-    led_task.enabled = 1u;
-    led_task.run_once = 0u;
+    blink_task.callback = task_blink;
+    blink_task.ctx = &g_app;
+    blink_task.interval_ms = 500u;
+    blink_task.last_run_ms = 0u;
+    blink_task.enabled = 1u;
+    blink_task.run_immediately = 1u;
 
-    ds_task.callback = task_read_ds18b20;
-    ds_task.interval = 1000u;
-    ds_task.last_run = 0u;
-    ds_task.enabled = 1u;
-    ds_task.run_once = 0u;
+    service_task.callback = task_service;
+    service_task.ctx = (void*)0;
+    service_task.interval_ms = 100u;
+    service_task.last_run_ms = 0u;
+    service_task.enabled = 1u;
+    service_task.run_immediately = 0u;
 
-    dbg_task.callback = task_debug_print;
-    dbg_task.interval = 2000u;
-    dbg_task.last_run = 0u;
-    dbg_task.enabled = 1u;
-    dbg_task.run_once = 1u; /* One-shot task example. */
+    ui_task.callback = task_ui;
+    ui_task.ctx = (void*)0;
+    ui_task.interval_ms = 20u;
+    ui_task.last_run_ms = 0u;
+    ui_task.enabled = 1u;
+    ui_task.run_immediately = 1u;
 
-    scheduler_add_task(&led_task);
-    scheduler_add_task(&ds_task);
-    scheduler_add_task(&dbg_task);
+    (void)scheduler_add_task(&blink_task);
+    (void)scheduler_add_task(&service_task);
+    (void)scheduler_add_task(&ui_task);
 
     while (1)
     {
-        scheduler_run();
+        uint32_t now;
 
-        if (timer_expired(&t1, 100u) != 0u)
-        {
-            /* 100 ms non-blocking timer task. */
-        }
+        now = rtos_get_tick_ms();
+        scheduler_update(now);
+
+        /* Optional low-cost cooperative sleep. */
+        rtos_delay_ms(1u);
     }
 }

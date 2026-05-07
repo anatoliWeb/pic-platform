@@ -4,25 +4,34 @@
 #include "core/compiler.h"
 #include "core/types.h"
 
-#define MAX_TASKS 10u
+typedef void (*scheduler_task_cb_t)(void* ctx);
 
-typedef void (*task_callback_t)(void);
+#ifndef SCHEDULER_MAX_TASKS
+#define SCHEDULER_MAX_TASKS 10u
+#endif
 
 typedef struct
 {
-    task_callback_t callback;
-    uint32_t interval;
-    uint32_t last_run;
+    scheduler_task_cb_t callback;
+    void* ctx;
+
+    uint32_t interval_ms;
+    uint32_t last_run_ms;
 
     uint8_t enabled;
-    uint8_t run_once;
-
-} task_t;
+    uint8_t run_immediately;
+} scheduler_task_t;
 
 void scheduler_init(void);
-void scheduler_add_task(task_t* task);
-void scheduler_run(void);
+uint8_t scheduler_add_task(scheduler_task_t* task);
+uint8_t scheduler_remove_task(scheduler_task_t* task);
 
-uint8_t timer_expired(uint32_t* last, uint32_t interval);
+void scheduler_update(uint32_t now_ms);
+
+uint8_t scheduler_pause_task(scheduler_task_t* task);
+uint8_t scheduler_resume_task(scheduler_task_t* task);
+
+uint8_t scheduler_set_interval(scheduler_task_t* task, uint32_t interval_ms);
+uint8_t scheduler_run_now(scheduler_task_t* task, uint32_t now_ms);
 
 #endif /* CORE_SCHEDULER_SCHEDULER_H */

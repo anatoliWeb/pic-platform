@@ -14,4 +14,12 @@
 #error "DRV_USE_FREERTOS must be 0 or 1"
 #endif
 
+/*
+ * Optional cooperative yield hook for bare-metal mode.
+ * Applications may define this macro to call scheduler/event pumping code.
+ */
+#ifndef DRV_RTOS_YIELD_HOOK
+#define DRV_RTOS_YIELD_HOOK() do { } while (0)
+#endif
+
 #endif /* CORE_RTOS_RTOS_PORT_H */
