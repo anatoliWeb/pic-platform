@@ -6,19 +6,25 @@
 #include "core/rtos/rtos_port.h"
 
 /*
- * Unified RTOS abstraction API.
+ * Lightweight RTOS abstraction for PIC18.
  *
- * Libraries should use only these APIs and must not call RTOS-native
- * functions directly. The current implementation is bare-metal compatible.
+ * Libraries must call only this API and must not use native RTOS calls
+ * directly. Bare-metal mode is always available.
  */
 
+void rtos_init(void);
 void rtos_delay_ms(uint32_t ms);
+uint32_t rtos_get_tick_ms(void);
+uint8_t rtos_is_enabled(void);
 
-/* Future synchronization API placeholders. */
+/* Optional placeholders for future backend extensions. */
+void rtos_yield(void);
+void rtos_enter_critical(void);
+void rtos_exit_critical(void);
+
+/* Backward-compatible placeholders (future extension points). */
 uint8_t rtos_mutex_lock(void* mutex, uint32_t timeout_ms);
 void rtos_mutex_unlock(void* mutex);
-
-/* Future queue API placeholders. */
 uint8_t rtos_queue_send(void* queue, const void* item, uint32_t timeout_ms);
 uint8_t rtos_queue_receive(void* queue, void* item, uint32_t timeout_ms);
 

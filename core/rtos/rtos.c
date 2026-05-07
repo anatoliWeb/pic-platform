@@ -1,10 +1,33 @@
 #include "core/rtos/rtos.h"
 #include "core/delay.h"
+#include "drivers/timers/tick/tick.h"
+
+/*
+ * Internal fallback counter used only when tick driver is not initialized
+ * by the application.
+ */
+static volatile uint32_t g_rtos_fallback_tick_ms = 0u;
+static uint8_t g_rtos_enabled = 0u;
+
+void rtos_init(void)
+{
+#if DRV_USE_FREERTOS
+    /*
+     * Future hook:
+     * FreeRTOS integration will initialize backend objects here.
+     */
+    g_rtos_enabled = 1u;
+#else
+    g_rtos_enabled = 0u;
+#endif
+
+    g_rtos_fallback_tick_ms = 0u;
+}
 
 void rtos_delay_ms(uint32_t ms)
 {
 #if DRV_USE_FREERTOS
-    /* TODO: map to vTaskDelay() when FreeRTOS backend is integrated. */
+    /* Future hook: map to vTaskDelay() when RTOS backend is enabled. */
     while (ms != 0u)
     {
         delay_ms(1u);
@@ -14,9 +37,56 @@ void rtos_delay_ms(uint32_t ms)
     while (ms != 0u)
     {
         delay_ms(1u);
+        g_rtos_fallback_tick_ms++;
         ms--;
     }
 #endif
+}
+
+uint32_t rtos_get_tick_ms(void)
+{
+#if DRV_USE_FREERTOS
+    /* Future hook: return RTOS tick converted to milliseconds. */
+    return g_rtos_fallback_tick_ms;
+#else
+    /*
+     * Preferred source is system tick driver.
+     * Fallback counter advances when rtos_delay_ms() is used.
+     */
+    uint32_t t;
+
+    t = tick_get();
+    if (t != 0u)
+    {
+        return t;
+    }
+
+    return g_rtos_fallback_tick_ms;
+#endif
+}
+
+uint8_t rtos_is_enabled(void)
+{
+    return g_rtos_enabled;
+}
+
+void rtos_yield(void)
+{
+#if DRV_USE_FREERTOS
+    /* Future hook: taskYIELD(); */
+#else
+    /* Bare-metal mode: no scheduler yield operation. */
+#endif
+}
+
+void rtos_enter_critical(void)
+{
+    DRV_INT_DISABLE();
+}
+
+void rtos_exit_critical(void)
+{
+    DRV_INT_ENABLE();
 }
 
 uint8_t rtos_mutex_lock(void* mutex, uint32_t timeout_ms)
@@ -24,15 +94,13 @@ uint8_t rtos_mutex_lock(void* mutex, uint32_t timeout_ms)
     (void)mutex;
     (void)timeout_ms;
 
-    /* TODO: implement backend-specific lock handling. */
+    /* Placeholder: always succeeds in bare-metal mode. */
     return 1u;
 }
 
 void rtos_mutex_unlock(void* mutex)
 {
     (void)mutex;
-
-    /* TODO: implement backend-specific unlock handling. */
 }
 
 uint8_t rtos_queue_send(void* queue, const void* item, uint32_t timeout_ms)
@@ -41,7 +109,7 @@ uint8_t rtos_queue_send(void* queue, const void* item, uint32_t timeout_ms)
     (void)item;
     (void)timeout_ms;
 
-    /* TODO: implement backend-specific queue send handling. */
+    /* Placeholder: queue backend not implemented yet. */
     return 0u;
 }
 
@@ -51,6 +119,6 @@ uint8_t rtos_queue_receive(void* queue, void* item, uint32_t timeout_ms)
     (void)item;
     (void)timeout_ms;
 
-    /* TODO: implement backend-specific queue receive handling. */
+    /* Placeholder: queue backend not implemented yet. */
     return 0u;
 }
