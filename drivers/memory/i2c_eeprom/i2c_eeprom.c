@@ -24,6 +24,7 @@ static i2c_eeprom_config_t g_cfg =
     I2C_EEPROM_DEFAULT_WRITE_MS
 };
 
+/* Build effective 7-bit control address for current memory address. */
 static uint8_t i2c_eeprom_build_control_addr(uint16_t address)
 {
     uint8_t ctrl = g_cfg.device_address;
@@ -36,6 +37,7 @@ static uint8_t i2c_eeprom_build_control_addr(uint16_t address)
     return ctrl;
 }
 
+/* Send memory address bytes based on configured address width. */
 static uint8_t i2c_eeprom_write_address(uint16_t address)
 {
     if (g_cfg.address_width == I2C_EEPROM_ADDR_WIDTH_16)
@@ -54,6 +56,7 @@ static uint8_t i2c_eeprom_write_address(uint16_t address)
     return 0u;
 }
 
+/* Poll EEPROM ACK to detect end of internal write cycle. */
 static uint8_t i2c_eeprom_wait_ready(uint16_t address)
 {
     uint8_t retries = g_cfg.ready_retries;
@@ -80,6 +83,7 @@ void i2c_eeprom_init(const i2c_eeprom_config_t* config)
         return;
     }
 
+    /* Store user configuration and sanitize defaults. */
     g_cfg = *config;
 
     if (g_cfg.page_size == 0u)
@@ -182,6 +186,7 @@ uint8_t i2c_eeprom_write_buffer(uint16_t address, const uint8_t* data, uint16_t 
         return 0u;
     }
 
+    /* Split writes by page boundary to avoid page wrap overwrite. */
     while (written < length)
     {
         uint16_t current = (uint16_t)(address + written);
