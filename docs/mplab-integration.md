@@ -81,13 +81,13 @@ For a simple GPIO blink test, add:
 For UART, also add:
 
 ```text
-../pic-platform/drivers/uart/uart.c
+../pic-platform/drivers/communication/uart/uart.c
 ```
 
 For ADC, add:
 
 ```text
-../pic-platform/drivers/adc/adc.c
+../pic-platform/drivers/analog/adc/adc.c
 ```
 
 ### Important
@@ -237,7 +237,7 @@ Required source files:
 #include <p18f452.h>
 
 #include "core/compiler.h"
-#include "drivers/uart/uart.h"
+#include "drivers/communication/uart/uart.h"
 
 #pragma config OSC = HS
 #pragma config WDT = OFF
@@ -257,7 +257,7 @@ void main(void)
 Required source files:
 
 ```text
-../pic-platform/drivers/uart/uart.c
+../pic-platform/drivers/communication/uart/uart.c
 ```
 
 If UART depends on other modules in your implementation, add those `.c` files too.

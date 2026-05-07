@@ -1,5 +1,5 @@
-﻿#include "core/compiler.h"
-#include "drivers/ccp_capture/ccp_capture.h"
+#include "core/compiler.h"
+#include "drivers/timers/ccp_capture/ccp_capture.h"
 
 static volatile uint16_t last_capture = 0u;
 

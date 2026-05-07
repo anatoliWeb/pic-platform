@@ -1,7 +1,7 @@
-﻿#include "core/compiler.h"
-#include "drivers/uart/uart.h"
-#include "drivers/uart_debug/uart_debug.h"
-#include "drivers/eeprom/eeprom.h"
+#include "core/compiler.h"
+#include "drivers/communication/uart/uart.h"
+#include "libraries/system/uart_debug/uart_debug.h"
+#include "drivers/memory/eeprom/eeprom.h"
 
 void main(void)
 {

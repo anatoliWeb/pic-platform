@@ -1,9 +1,9 @@
-﻿#include "core/compiler.h"
-#include "drivers/timer0/timer0.h"
-#include "drivers/timer1/timer1.h"
-#include "drivers/timer2/timer2.h"
-#include "drivers/timer3/timer3.h"
-#include "drivers/tick/tick.h"
+#include "core/compiler.h"
+#include "drivers/timers/timer0/timer0.h"
+#include "drivers/timers/timer1/timer1.h"
+#include "drivers/timers/timer2/timer2.h"
+#include "drivers/timers/timer3/timer3.h"
+#include "drivers/timers/tick/tick.h"
 
 void main(void)
 {

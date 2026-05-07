@@ -1,7 +1,7 @@
-﻿#include "core/compiler.h"
+#include "core/compiler.h"
 #include "core/delay.h"
-#include "drivers/uart/uart.h"
-#include "drivers/rs485/rs485.h"
+#include "drivers/communication/uart/uart.h"
+#include "drivers/communication/rs485/rs485.h"
 
 void main(void)
 {

@@ -1,5 +1,5 @@
 #include "core/compiler.h"
-#include "drivers/timer2/timer2.h"
+#include "drivers/timers/timer2/timer2.h"
 
 void main(void)
 {

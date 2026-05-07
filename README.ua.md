@@ -2,42 +2,44 @@
 
 > [English version](README.md)
 
-## Опис
-PIC Drivers Platform — це бібліотека повторно використовуваних embedded-драйверів для PIC мікроконтролерів (фокус на PIC18).
-Вона надає портативну базу для низькорівневих драйверів та інтерфейсів.
-Це драйверна платформа, а не application.
+Бібліотека для PIC18 з чітким поділом на низькорівневі драйвери та високорівневі бібліотеки компонентів.
+Це не прикладний застосунок.
 
-## Можливості
-- GPIO
-- UART / RS485
-- ADC
-- SPI / I2C
-- 1-Wire / DS18B20
-- LCD (GPIO + I2C)
-- Button / Encoder
-- Scheduler
-- CRC / Ring Buffer
+## Архітектура
+- `/core` - абстракція компілятора та спільні утиліти
+- `/drivers` - низькорівневий доступ до периферії та протоколів
+- `/libraries` - перевикористовувана логіка пристроїв/компонентів поверх драйверів
+- `/C18` - реалізації для MPLAB C18
+- `/XC8` - реалізації для MPLAB XC8
+- `/docs` - документація
+- `/examples-projects` - готові MPLAB-проєкти
 
-## Структура Проєкту
-```text
-/core
-/drivers
-/C18
-/XC8
-/examples
-/docs
-```
+## Групи драйверів
+- `drivers/gpio`
+- `drivers/communication/*` (`uart`, `spi`, `i2c`, `onewire`, `rs485`)
+- `drivers/analog/*` (`adc`, `comparator`)
+- `drivers/timers/*` (`timer0..3`, `pwm`, `ccp_capture`, `ccp_compare`, `timer`, `tick`)
+- `drivers/system/*` (`clock`, `wdt`, `reset`)
+- `drivers/interrupts/*` (`ext_interrupt`, `portb_change`)
+- `drivers/memory/*` (`eeprom`)
+- `drivers/utils/*` (`ring_buffer`, `crc`, `scheduler`)
 
-## Швидкий Старт
-1. Скопіювати потрібні драйвери з `drivers/`.
-2. Додати `core/` та include paths у проєкт.
-3. Підключити C18/XC8-реалізації за потреби.
-4. Підключити заголовки та викликати `init()`.
+## Групи бібліотек
+- `libraries/input/*` (`button`, `encoder`, `adc_buttons`)
+- `libraries/display/*` (`lcd_hd44780`)
+- `libraries/sensors/*` (`ds18b20`)
+- `libraries/system/*` (`uart_debug`)
+
+## Швидкий старт
+1. Тримайте `pic-platform` окремо від застосунку.
+2. Додавайте в MPLAB тільки потрібні `.c` у `Source Files`.
+3. Додайте include paths: `../pic-platform`, `../pic-platform/core`, `../pic-platform/drivers`, `../pic-platform/libraries`.
+4. Підключайте заголовки та викликайте `init()` у коді застосунку.
 
 ## Приклад
 ```c
 #include "core/compiler.h"
-#include "drivers/uart/uart.h"
+#include "drivers/communication/uart/uart.h"
 
 void main(void)
 {
@@ -46,48 +48,8 @@ void main(void)
 }
 ```
 
-## Підтримувані Компілятори
-- MPLAB C18
-- MPLAB XC8
-
 ## Документація
-- Конвенція драйверів: [docs/driver-convention.md](docs/driver-convention.md) | [UA](docs/driver-convention.ua.md)
-- Нотатки про компілятори: [docs/compiler.md](docs/compiler.md) | [UA](docs/compiler.ua.md)
-- Правила іменування: [docs/naming.md](docs/naming.md) | [UA](docs/naming.ua.md)
-- Гайд прикладів: [docs/examples.md](docs/examples.md) | [UA](docs/examples.ua.md)
-- Гайд портування: [docs/porting.md](docs/porting.md) | [UA](docs/porting.ua.md)
-- Валідація збірки: [docs/build-validation.md](docs/build-validation.md) | [UA](docs/build-validation.ua.md)
-
-## Драйвери
-- GPIO: [docs/drivers/gpio.md](docs/drivers/gpio.ua.md)
-- UART: [docs/drivers/uart.md](docs/drivers/uart.ua.md)
-- UART Debug: [docs/drivers/uart_debug.md](docs/drivers/uart_debug.ua.md)
-- ADC: [docs/drivers/adc.md](docs/drivers/adc.ua.md)
-- SPI: [docs/drivers/spi.md](docs/drivers/spi.ua.md)
-- I2C: [docs/drivers/i2c.md](docs/drivers/i2c.ua.md)
-- RS485: [docs/drivers/rs485.md](docs/drivers/rs485.ua.md)
-- 1-Wire: [docs/drivers/onewire.md](docs/drivers/onewire.ua.md)
-- DS18B20: [docs/drivers/ds18b20.md](docs/drivers/ds18b20.ua.md)
-- LCD HD44780: [docs/drivers/lcd_hd44780.md](docs/drivers/lcd_hd44780.ua.md)
-- Button: [docs/drivers/button.md](docs/drivers/button.ua.md)
-- Encoder: [docs/drivers/encoder.md](docs/drivers/encoder.ua.md)
-- CRC: [docs/drivers/crc.md](docs/drivers/crc.ua.md)
-- Ring Buffer: [docs/drivers/ring_buffer.md](docs/drivers/ring_buffer.ua.md)
-- Timer0: [docs/drivers/timer0.md](docs/drivers/timer0.ua.md)
-- Timer1: [docs/drivers/timer1.md](docs/drivers/timer1.ua.md)
-- Timer2: [docs/drivers/timer2.md](docs/drivers/timer2.ua.md)
-- Timer3: [docs/drivers/timer3.md](docs/drivers/timer3.ua.md)
-- PWM: [docs/drivers/pwm.md](docs/drivers/pwm.ua.md)
-- Comparator: [docs/drivers/comparator.md](docs/drivers/comparator.ua.md)
-- CCP Capture: [docs/drivers/ccp_capture.md](docs/drivers/ccp_capture.ua.md)
-- CCP Compare: [docs/drivers/ccp_compare.md](docs/drivers/ccp_compare.ua.md)
-- External Interrupt: [docs/drivers/ext_interrupt.md](docs/drivers/ext_interrupt.ua.md)
-- PORTB Change: [docs/drivers/portb_change.md](docs/drivers/portb_change.ua.md)
-- EEPROM: [docs/drivers/eeprom.md](docs/drivers/eeprom.ua.md)
-- WDT: [docs/drivers/wdt.md](docs/drivers/wdt.ua.md)
-- Reset: [docs/drivers/reset.md](docs/drivers/reset.ua.md)
-- Clock: [docs/drivers/clock.md](docs/drivers/clock.ua.md)
-
-## Приклади Проєктів MPLAB
-- Українська: [examples-projects/README.ua.md](examples-projects/README.ua.md)
-- English: [examples-projects/README.md](examples-projects/README.md)
+- Інтеграція з MPLAB: [docs/mplab-integration.ua.md](docs/mplab-integration.ua.md) | [EN](docs/mplab-integration.md)
+- Документація драйверів: [docs/drivers](docs/drivers)
+- Документація бібліотек: [docs/libraries](docs/libraries)
+- Приклади проєктів: [examples-projects/README.ua.md](examples-projects/README.ua.md) | [EN](examples-projects/README.md)

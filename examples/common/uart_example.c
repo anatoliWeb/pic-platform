@@ -1,7 +1,7 @@
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "core/debug.h"
-#include "drivers/uart/uart.h"
+#include "drivers/communication/uart/uart.h"
 
 void main(void)
 {

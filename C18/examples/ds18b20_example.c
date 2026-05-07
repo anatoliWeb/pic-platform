@@ -1,8 +1,8 @@
 #include "core/compiler.h"
-#include "drivers/uart/uart.h"
-#include "drivers/uart_debug/uart_debug.h"
-#include "drivers/onewire/onewire.h"
-#include "drivers/ds18b20/ds18b20.h"
+#include "drivers/communication/uart/uart.h"
+#include "libraries/system/uart_debug/uart_debug.h"
+#include "drivers/communication/onewire/onewire.h"
+#include "libraries/sensors/ds18b20/ds18b20.h"
 
 void main(void)
 {

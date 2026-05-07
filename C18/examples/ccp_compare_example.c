@@ -1,6 +1,6 @@
-﻿#include "core/compiler.h"
+#include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
-#include "drivers/ccp_compare/ccp_compare.h"
+#include "drivers/timers/ccp_compare/ccp_compare.h"
 
 static void compare_cb(void)
 {

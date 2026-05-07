@@ -1,8 +1,8 @@
-﻿#include "core/compiler.h"
+#include "core/compiler.h"
 #include "core/delay.h"
-#include "drivers/uart/uart.h"
-#include "drivers/uart_debug/uart_debug.h"
-#include "drivers/adc/adc.h"
+#include "drivers/communication/uart/uart.h"
+#include "libraries/system/uart_debug/uart_debug.h"
+#include "drivers/analog/adc/adc.h"
 
 void main(void)
 {

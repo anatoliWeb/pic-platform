@@ -1,7 +1,7 @@
-﻿#include "core/compiler.h"
+#include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
-#include "drivers/comparator/comparator.h"
-#include "drivers/uart_debug/uart_debug.h"
+#include "drivers/analog/comparator/comparator.h"
+#include "libraries/system/uart_debug/uart_debug.h"
 
 void main(void)
 {

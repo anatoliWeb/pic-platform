@@ -1,5 +1,5 @@
-﻿#include "core/compiler.h"
-#include "drivers/wdt/wdt.h"
+#include "core/compiler.h"
+#include "drivers/system/wdt/wdt.h"
 
 void main(void)
 {

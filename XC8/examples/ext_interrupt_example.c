@@ -1,6 +1,6 @@
-﻿#include "core/compiler.h"
+#include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
-#include "drivers/ext_interrupt/ext_interrupt.h"
+#include "drivers/interrupts/ext_interrupt/ext_interrupt.h"
 
 static volatile uint8_t g_int0_flag = 0u;
 

@@ -1,5 +1,5 @@
 #include "core/compiler.h"
-#include "drivers/encoder/encoder.h"
+#include "libraries/input/encoder/encoder.h"
 
 void main(void)
 {

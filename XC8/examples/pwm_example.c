@@ -1,6 +1,6 @@
-﻿#include "core/compiler.h"
+#include "core/compiler.h"
 #include "core/delay.h"
-#include "drivers/pwm/pwm.h"
+#include "drivers/timers/pwm/pwm.h"
 
 void main(void)
 {

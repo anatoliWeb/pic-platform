@@ -81,13 +81,13 @@ MPLAB НЕ компілює `.c` файли автоматично із зовн
 Для UART також додайте:
 
 ```text
-../pic-platform/drivers/uart/uart.c
+../pic-platform/drivers/communication/uart/uart.c
 ```
 
 Для ADC додайте:
 
 ```text
-../pic-platform/drivers/adc/adc.c
+../pic-platform/drivers/analog/adc/adc.c
 ```
 
 ### Важливо
@@ -237,7 +237,7 @@ void main(void)
 #include <p18f452.h>
 
 #include "core/compiler.h"
-#include "drivers/uart/uart.h"
+#include "drivers/communication/uart/uart.h"
 
 #pragma config OSC = HS
 #pragma config WDT = OFF
@@ -257,7 +257,7 @@ void main(void)
 Потрібні source files:
 
 ```text
-../pic-platform/drivers/uart/uart.c
+../pic-platform/drivers/communication/uart/uart.c
 ```
 
 Якщо UART залежить від інших модулів у вашій реалізації — також додайте відповідні `.c` файли.

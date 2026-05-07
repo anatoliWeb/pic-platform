@@ -1,5 +1,5 @@
 #include "core/compiler.h"
-#include "drivers/button/button.h"
+#include "libraries/input/button/button.h"
 
 void main(void)
 {

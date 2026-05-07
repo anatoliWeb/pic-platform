@@ -1,7 +1,7 @@
 #ifndef CORE_DEBUG_H
 #define CORE_DEBUG_H
 
-#include "drivers/uart_debug/uart_debug.h"
+#include "libraries/system/uart_debug/uart_debug.h"
 
 /* Backward-compatible aliases for previous debug macros. */
 #define DRV_DEBUG_INIT()       do { } while (0)
