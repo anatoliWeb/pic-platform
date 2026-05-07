@@ -1,11 +1,4 @@
 #include "libraries/sensors/ds18b20/ds18b20.h"
-
-#if defined(DRV_COMPILER_C18)
-    #include "../../../C18/libraries/sensors/ds18b20/ds18b20.c"
-#elif defined(DRV_COMPILER_XC8)
-    #include "../../../XC8/libraries/sensors/ds18b20/ds18b20.c"
-#else
-
 #include "drivers/communication/onewire/onewire.h"
 #include "core/delay.h"
 #include "core/crc/crc.h"
@@ -124,5 +117,3 @@ int16_t ds18b20_get_temperature_celsius_x10(uint8_t* rom)
     (void)ds18b20_read_temperature_celsius(rom, &temp_x10);
     return temp_x10;
 }
-
-#endif

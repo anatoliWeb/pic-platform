@@ -22,7 +22,7 @@ This repository is not an application.
 - `drivers/system/*` (`clock`, `wdt`, `reset`)
 - `drivers/interrupts/*` (`ext_interrupt`, `portb_change`)
 - `drivers/memory/*` (`eeprom`)
-- `drivers/utils/*` (`ring_buffer`, `crc`, `scheduler`)
+- `core/*` software utilities (`ring_buffer`, `crc`, `scheduler`)
 
 ## Library Groups
 - `libraries/input/*` (`button`, `encoder`, `adc_buttons`)
@@ -53,3 +53,16 @@ void main(void)
 - Drivers docs: [docs/drivers](docs/drivers)
 - Libraries docs: [docs/libraries](docs/libraries)
 - Examples projects: [examples-projects/README.md](examples-projects/README.md) | [UA](examples-projects/README.ua.md)
+
+## Architecture Separation
+- `core/` for portable software utilities and abstraction
+- `drivers/` for low-level hardware/protocol access
+- `libraries/` for high-level reusable component logic
+
+## RTOS Readiness
+- Optional abstraction in `core/rtos/` for future FreeRTOS support
+- Target API surface includes wrappers like `rtos_delay_ms()`, `rtos_mutex_lock()`, `rtos_queue_send()`
+- Current code remains bare-metal compatible
+
+## Architecture Doc
+- [docs/architecture.md](docs/architecture.md)

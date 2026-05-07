@@ -1,6 +1,6 @@
 # TODO
 
-> [Українська версія](TODO.ua.md)
+> [РЈРєСЂР°С—РЅСЃСЊРєР° РІРµСЂСЃС–СЏ](TODO.ua.md)
 
 ## Structure Refactor
 - [x] Split source tree into `/drivers` and `/libraries`
@@ -15,3 +15,13 @@
 - [ ] Validate MPLAB XC8 build after file moves
 - [ ] Validate MPLAB C18 build after file moves
 - [ ] Validate examples-projects `.X` projects with updated source references
+
+## Core Utility Relocation
+- [x] Moved CRC from `drivers/utils` to `core/crc`
+- [x] Moved ring buffer from `drivers/utils` to `core/ring_buffer`
+- [x] Moved scheduler from `drivers/utils` to `core/scheduler`
+
+## RTOS Preparation
+- [x] Added `core/rtos/rtos.h`
+- [x] Added `core/rtos/rtos_port.h`
+- [ ] Future FreeRTOS backend implementation (optional)

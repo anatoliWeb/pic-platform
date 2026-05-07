@@ -9,7 +9,7 @@
 #include "core/delay.h"
 #include "drivers/gpio/gpio.h"
 #include "drivers/communication/uart/uart.h"
-#include "drivers/utils/crc/crc.h"
+#include "core/crc/crc.h"
 
 #define RS485_START_BYTE       0xAAu
 #define RS485_TIMEOUT_TICKS    200u

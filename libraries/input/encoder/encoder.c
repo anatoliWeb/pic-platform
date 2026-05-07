@@ -1,9 +1,9 @@
 #include "libraries/input/encoder/encoder.h"
 
 #if defined(DRV_COMPILER_C18)
-    #include "../../C18/libraries/input/encoder/encoder.c"
+    #include "../../../C18/libraries/input/encoder/encoder.c"
 #elif defined(DRV_COMPILER_XC8)
-    #include "../../XC8/libraries/input/encoder/encoder.c"
+    #include "../../../XC8/libraries/input/encoder/encoder.c"
 #else
 
 #include "core/bit_utils.h"

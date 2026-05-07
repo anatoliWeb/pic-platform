@@ -1,9 +1,9 @@
 #include "libraries/input/button/button.h"
 
 #if defined(DRV_COMPILER_C18)
-    #include "../../C18/libraries/input/button/button.c"
+    #include "../../../C18/libraries/input/button/button.c"
 #elif defined(DRV_COMPILER_XC8)
-    #include "../../XC8/libraries/input/button/button.c"
+    #include "../../../XC8/libraries/input/button/button.c"
 #else
 
 #include "core/bit_utils.h"

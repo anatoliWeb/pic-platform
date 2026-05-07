@@ -1,11 +1,5 @@
 #include "libraries/display/lcd_hd44780/lcd.h"
 
-#if defined(DRV_COMPILER_C18)
-    #include "../../../C18/libraries/display/lcd_hd44780/lcd.c"
-#elif defined(DRV_COMPILER_XC8)
-    #include "../../../XC8/libraries/display/lcd_hd44780/lcd.c"
-#else
-
 #include "core/bit_utils.h"
 #include "core/delay.h"
 
@@ -170,4 +164,4 @@ void lcd_write_string(const char* str)
     }
 }
 
-#endif
+

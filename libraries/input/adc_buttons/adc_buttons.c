@@ -1,9 +1,9 @@
 #include "libraries/input/adc_buttons/adc_buttons.h"
 
 #if defined(DRV_COMPILER_C18)
-    #include "../../C18/libraries/input/adc_buttons/adc_buttons.c"
+    #include "../../../C18/libraries/input/adc_buttons/adc_buttons.c"
 #elif defined(DRV_COMPILER_XC8)
-    #include "../../XC8/libraries/input/adc_buttons/adc_buttons.c"
+    #include "../../../XC8/libraries/input/adc_buttons/adc_buttons.c"
 #else
 
 #include "drivers/analog/adc/adc.h"

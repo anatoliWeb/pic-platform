@@ -1,5 +1,5 @@
 #include "core/compiler.h"
-#include "drivers/utils/crc/crc.h"
+#include "core/crc/crc.h"
 
 void main(void)
 {

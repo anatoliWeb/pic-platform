@@ -1,9 +1,9 @@
 #include "libraries/system/uart_debug/uart_debug.h"
 
 #if defined(DRV_COMPILER_C18)
-    #include "../../C18/libraries/system/uart_debug/uart_debug.c"
+    #include "../../../C18/libraries/system/uart_debug/uart_debug.c"
 #elif defined(DRV_COMPILER_XC8)
-    #include "../../XC8/libraries/system/uart_debug/uart_debug.c"
+    #include "../../../XC8/libraries/system/uart_debug/uart_debug.c"
 #else
 
 #if defined(DRV_DEBUG_ENABLE) && (DRV_DEBUG_ENABLE == 1) && defined(DRV_USE_UART) && (DRV_USE_UART == 1)
