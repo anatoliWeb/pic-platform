@@ -2,12 +2,11 @@
 #define CORE_RTOS_RTOS_PORT_H
 
 /*
- * Port selection for RTOS abstraction.
+ * RTOS mode switch.
  *
- * DRV_USE_FREERTOS = 0 -> bare-metal wrappers.
- * DRV_USE_FREERTOS = 1 -> map wrappers to FreeRTOS APIs.
+ * DRV_USE_FREERTOS = 0: bare-metal mode (default)
+ * DRV_USE_FREERTOS = 1: reserved for future FreeRTOS backend
  */
-
 #ifndef DRV_USE_FREERTOS
 #define DRV_USE_FREERTOS 0
 #endif
