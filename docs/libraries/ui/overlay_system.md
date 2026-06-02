@@ -1,4 +1,4 @@
-[???? Ukrainian version](./overlay_system.ua.md)
+[Ukrainian version](./overlay_system.ua.md)
 
 # Overlay System Library
 

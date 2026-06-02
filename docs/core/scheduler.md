@@ -1,4 +1,4 @@
-[???? Ukrainian version](./scheduler.ua.md)
+[Ukrainian version](./scheduler.ua.md)
 
 # Cooperative Scheduler (Core)
 

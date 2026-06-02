@@ -1,4 +1,4 @@
-[???? Ukrainian version](./rtos.ua.md)
+[Ukrainian version](./rtos.ua.md)
 
 # RTOS Abstraction (Core)
 

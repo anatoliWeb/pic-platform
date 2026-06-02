@@ -13,6 +13,7 @@ This repository is a driver/library platform, not an application.
 - `/XC8` - compiler-specific sources for MPLAB XC8
 - `/docs` - documentation
 - `/examples-projects` - complete MPLAB example projects
+- `/prompts` - reusable AI prompt context files
 
 ## Core Layer
 - `core/compiler.h`, `core/types.h`, `core/bit_utils.h`, `core/delay.*`
@@ -40,3 +41,4 @@ This repository is a driver/library platform, not an application.
 - Architecture: [docs/architecture.md](docs/architecture.md) | [UA](docs/architecture.ua.md)
 - MPLAB integration: [docs/mplab-integration.md](docs/mplab-integration.md) | [UA](docs/mplab-integration.ua.md)
 - Examples projects: [examples-projects/README.md](examples-projects/README.md) | [UA](examples-projects/README.ua.md)
+- Prompt kit: [docs/prompts.md](docs/prompts.md) | [UA](docs/prompts.ua.md)

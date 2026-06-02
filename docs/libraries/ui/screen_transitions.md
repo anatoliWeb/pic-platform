@@ -1,4 +1,4 @@
-[???? Ukrainian version](./screen_transitions.ua.md)
+[Ukrainian version](./screen_transitions.ua.md)
 
 # Screen Transitions Library
 
