@@ -40,5 +40,6 @@ This repository is a driver/library platform, not an application.
 ## Documentation
 - Architecture: [docs/architecture.md](docs/architecture.md) | [UA](docs/architecture.ua.md)
 - MPLAB integration: [docs/mplab-integration.md](docs/mplab-integration.md) | [UA](docs/mplab-integration.ua.md)
+- PIC18F452 configuration: [docs/configuration/pic18f452-config-bits.md](docs/configuration/pic18f452-config-bits.md) | [UA](docs/configuration/pic18f452-config-bits.ua.md)
 - Examples projects: [examples-projects/README.md](examples-projects/README.md) | [UA](examples-projects/README.ua.md)
 - Prompt kit: [docs/prompts.md](docs/prompts.md) | [UA](docs/prompts.ua.md)

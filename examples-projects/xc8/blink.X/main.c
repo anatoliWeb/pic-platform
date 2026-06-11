@@ -1,5 +1,6 @@
 #include <xc.h>
 
+#include "project_config.h"
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/gpio/gpio.h"
@@ -31,7 +32,7 @@ void main(void)
      *   1 = input
      *   0 = output
      */
-    gpio_set_output(&TRISB, 0);
+    gpio_set_output(&TRISB, 1);
 
     while (1)
     {
@@ -40,7 +41,7 @@ void main(void)
          *   LOW  -> HIGH
          *   HIGH -> LOW
          */
-        gpio_toggle(&PORTB, 0);
+        gpio_toggle(&PORTB, 1);
 
         /* Delay 500 milliseconds */
         delay_ms(500);

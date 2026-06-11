@@ -48,5 +48,6 @@
 
 - Архітектура: [docs/architecture.ua.md](docs/architecture.ua.md) | [EN](docs/architecture.md)
 - MPLAB інтеграція: [docs/mplab-integration.ua.md](docs/mplab-integration.ua.md) | [EN](docs/mplab-integration.md)
+- Конфігурація PIC18F452: [docs/configuration/pic18f452-config-bits.ua.md](docs/configuration/pic18f452-config-bits.ua.md) | [EN](docs/configuration/pic18f452-config-bits.md)
 - Приклади проєктів: [examples-projects/README.ua.md](examples-projects/README.ua.md) | [EN](examples-projects/README.md)
 - Набір промптів: [docs/prompts.ua.md](docs/prompts.ua.md) | [EN](docs/prompts.md)

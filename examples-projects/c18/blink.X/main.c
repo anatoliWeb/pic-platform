@@ -1,5 +1,6 @@
 #include <p18f452.h>
 
+#include "project_config.h"
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/gpio/gpio.h"
@@ -21,19 +22,6 @@
  *   - RB0 must have LED + resistor connected
  *   - This example is intended for MPLAB C18
  */
-
-/*
- * Configuration bits
- */
-
-/* High Speed oscillator */
-#pragma config OSC = HS
-
-/* Disable Watchdog Timer */
-#pragma config WDT = OFF
-
-/* Disable Low Voltage Programming */
-#pragma config LVP = OFF
 
 void main(void)
 {
