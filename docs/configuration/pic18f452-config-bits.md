@@ -16,6 +16,10 @@ The project controls two related things:
 
 - `core/config/project_config_template.h`
 - `core/config/platform_config_check.h`
+- `core/config/library_requirements.md`
+- `core/config/example.c`
+- `templates/config/pic18f452/xc8/config_bits.c`
+- `templates/config/pic18f452/c18/config_bits.c`
 - `examples-projects/xc8/blink.X/project_config.h`
 - `examples-projects/xc8/blink.X/config_bits.c`
 - `examples-projects/c18/blink.X/project_config.h`
@@ -26,6 +30,8 @@ The project controls two related things:
 - `PIC_PLATFORM_CLOCK_HZ` is the project clock in Hz.
 - `DRV_XTAL_FREQ` is the platform clock value used by drivers.
 - `_XTAL_FREQ` is the compiler-facing clock value used by delay and timing code.
+- `PIC_PLATFORM_WDT_ENABLED`, `PIC_PLATFORM_LVP_ENABLED`, and
+  `PIC_PLATFORM_BOR_ENABLED` are simple helper flags for checks and notes.
 
 For PIC18 projects, these values should stay aligned.
 
@@ -68,7 +74,7 @@ Libraries must not emit `#pragma config`.
 - XC8 may use either direct or macro-based config values, but the project
   keeps the final choice.
 
-## Relation to `TOD0.md`
+## Relation to `TODO.md`
 
 This layer is considered implemented when the project templates, checker, docs,
 and example-project integration are present.

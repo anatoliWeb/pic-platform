@@ -136,4 +136,20 @@
 #define PIC_PLATFORM_CONFIG_EBTRB OFF
 #endif
 
+/*
+ * Simple helper flags for build-time checks and documentation.
+ * Update these in the project if the final CONFIG state changes.
+ */
+#ifndef PIC_PLATFORM_WDT_ENABLED
+#define PIC_PLATFORM_WDT_ENABLED 0
+#endif
+
+#ifndef PIC_PLATFORM_LVP_ENABLED
+#define PIC_PLATFORM_LVP_ENABLED 0
+#endif
+
+#ifndef PIC_PLATFORM_BOR_ENABLED
+#define PIC_PLATFORM_BOR_ENABLED 1
+#endif
+
 #endif /* CORE_CONFIG_PROJECT_CONFIG_TEMPLATE_H */

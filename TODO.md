@@ -96,9 +96,12 @@
 - [x] Add `project_config.h` template for application-level options.
 - [x] Add `config_bits.c` template for PIC18F452 XC8 projects.
 - [x] Add `config_bits.c` template for PIC18F452 C18 projects.
+- [x] Add reusable PIC18F452 `templates/config/.../config_bits.c` reference templates.
 - [x] Add central place for final CONFIG bit values selected by the project.
 - [x] Add optional library requirements/recommendations convention.
 - [x] Add configuration checker for required project options.
+- [x] Add `core/config/library_requirements.md` for CONFIG conventions.
+- [x] Add `core/config/example.c` reference configuration example.
 - [x] Document that libraries must not directly emit `#pragma config`.
 - [x] Document that libraries may declare CONFIG requirements or recommendations.
 - [x] Document that the project has final priority over recommended CONFIG values.

@@ -16,6 +16,10 @@
 
 - `core/config/project_config_template.h`
 - `core/config/platform_config_check.h`
+- `core/config/library_requirements.md`
+- `core/config/example.c`
+- `templates/config/pic18f452/xc8/config_bits.c`
+- `templates/config/pic18f452/c18/config_bits.c`
 - `examples-projects/xc8/blink.X/project_config.h`
 - `examples-projects/xc8/blink.X/config_bits.c`
 - `examples-projects/c18/blink.X/project_config.h`
@@ -26,6 +30,8 @@
 - `PIC_PLATFORM_CLOCK_HZ` - частота проєкту в Hz.
 - `DRV_XTAL_FREQ` - значення частоти, яке використовують драйвери.
 - `_XTAL_FREQ` - значення частоти, яке використовують delay/timing виклики.
+- `PIC_PLATFORM_WDT_ENABLED`, `PIC_PLATFORM_LVP_ENABLED` і
+  `PIC_PLATFORM_BOR_ENABLED` - прості допоміжні прапорці для перевірок і нотаток.
 
 Для PIC18 ці значення мають бути узгоджені.
 
