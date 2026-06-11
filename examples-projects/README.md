@@ -76,7 +76,9 @@ examples-projects/
 | Displays | `lcd_hd44780.X` | Text LCD example |
 | Core utilities | `ring_buffer.X`, `crc.X`, `clock.X` | Lightweight core utility wrappers |
 | System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `rs485_basic.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | System, timing, and communication examples |
-| 1-Wire / sensors | `ds18b20.X` | Standalone DS18B20 wrapper |
+| 1-Wire / sensors | `ds18b20.X`, `ds18b20_multi_read.X` | Standalone DS18B20 wrapper and multi-sensor bus example |
+
+The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7k pull-up resistor. ROM search and Match ROM support are required for real multi-drop use; Proteus validation is still pending.
 
 ## Build Instructions
 

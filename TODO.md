@@ -132,16 +132,19 @@
 - [x] Create full `.X` example projects for UART debug.
 - [x] Create full `.X` example projects for ADC/I2C/SPI.
 - [x] Create full `.X` example projects for DS18B20.
+- [x] Create DS18B20 multi-sensor `.X` example projects.
 - [ ] Create full `.X` example projects for display/UI demos.
 - [ ] Verify `.X` project source references use external `pic-platform` paths.
 - [ ] Validate the new `.X` projects in MPLAB.
+- [ ] Validate DS18B20 multi-sensor example in MPLAB XC8.
+- [ ] Validate DS18B20 multi-sensor example in MPLAB C18.
 - [ ] Add Proteus simulations for the new examples.
 
 ## Proteus Simulation
 
 - [x] Add Proteus projects for basic GPIO blink.
 - [ ] Add Proteus projects for UART debug.
-- [ ] Add Proteus projects for LCD/DS18B20 where practical.
+- [ ] Add Proteus projects for LCD/DS18B20 and DS18B20 multi-sensor where practical.
 - [ ] Document Proteus setup and expected HEX loading steps.
 
 ## Documentation
