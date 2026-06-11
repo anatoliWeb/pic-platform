@@ -1,15 +1,16 @@
-[🇺🇦 Українська версія](./README.ua.md)
+[🇺🇦 Ukrainian version](./README.ua.md)
 
 # examples-projects
 
 ## What is examples-projects
 
-`examples-projects` contains complete MPLAB X example projects for validating and testing the external `pic-platform` driver library.
+`examples-projects` contains complete MPLAB X project wrappers for the
+external `pic-platform` repository.
 
-- Includes full project-level examples, not just source snippets.
-- Used to test driver integration in real MPLAB project setups.
-- Used to validate compatibility with both XC8 and C18.
-- Examples are separated by compiler.
+- Each folder is a standalone `.X` project.
+- The projects are meant for integration checks, not for library source code.
+- They validate the same codebase under MPLAB XC8 and MPLAB C18.
+- Example folders are split by compiler.
 
 ## Project Structure
 
@@ -19,75 +20,81 @@ examples-projects/
 │   ├── blink.X/
 │   ├── uart_debug.X/
 │   ├── adc_read.X/
-│   ├── i2c_scan.X/
-│   ├── spi_loopback.X/
-│   ├── rs485_echo.X/
-│   ├── ds18b20_read.X/
-│   └── ...
+│   ├── ...
+│   └── gpio.X/
 │
 ├── c18/
 │   ├── blink.X/
 │   ├── uart_debug.X/
 │   ├── adc_read.X/
-│   ├── i2c_scan.X/
-│   ├── spi_loopback.X/
-│   ├── rs485_echo.X/
-│   ├── ds18b20_read.X/
-│   └── ...
+│   ├── ...
+│   └── gpio.X/
 ```
 
 ## Folder Structure Explanation
 
-- `xc8/` contains MPLAB XC8 example projects.
-- `c18/` contains MPLAB C18 example projects.
-- Each `.X` folder is a standalone MPLAB X project.
-- Generated MPLAB folders such as `build/`, `dist/`, and `debug/` are
-  intentionally not stored in the repository.
+- `xc8/` contains MPLAB XC8 project wrappers.
+- `c18/` contains MPLAB C18 project wrappers.
+- Every `.X` folder is a separate MPLAB X project.
+- Generated folders such as `build/`, `dist/`, `debug/`, and
+  `nbproject/private/` are not tracked.
 
-## Important Rules
+## Project Rules
 
-- Do not copy drivers into example project folders.
-- Use relative paths only.
-- Projects must use the external `../pic-platform` library.
-- Add required `.c` source files manually in MPLAB X.
+- Do not copy drivers into example folders.
+- Keep all paths relative.
+- Keep `pic-platform` external to the example projects.
+- Add required `.c` files manually through MPLAB X project metadata.
 - Keep application setup in `main.c`, `project_config.h`, and `config_bits.c`.
 - Keep CONFIG bits in `config_bits.c` only.
 
 ## Integration Notes
 
-- Projects depend on `../pic-platform`.
-- Include paths are configured in MPLAB project properties.
-- Driver implementation files (`.c`) must be added to **Source Files**.
+- The project wrappers depend on `../pic-platform`.
+- Include paths must allow access to:
+  - repository root
+  - `core/`
+  - `drivers/`
+  - `libraries/`
+- Source files are referenced in `nbproject/configurations.xml`.
+- The durable source of truth is the MPLAB project metadata, not the generated
+  `Makefile-default.mk` file.
 
 ## Supported Compilers
 
 - MPLAB XC8
 - MPLAB C18
 
-## Example Projects
+## Example Project Families
 
-| Example | XC8 | C18 | Purpose |
-|---|---|---|---|
-| blink | `blink.X` | `blink.X` | GPIO output sanity check |
-| uart_debug | `uart_debug.X` | `uart_debug.X` | UART and debug helper validation |
-| adc_read | `adc_read.X` | `adc_read.X` | ADC input read example |
-| i2c_scan | `i2c_scan.X` | `i2c_scan.X` | I2C bus scan example |
-| spi_loopback | `spi_loopback.X` | `spi_loopback.X` | SPI transfer loopback example |
-| rs485_echo | `rs485_echo.X` | `rs485_echo.X` | RS485 byte echo example |
-| ds18b20_read | `ds18b20_read.X` | `ds18b20_read.X` | 1-Wire temperature sensor example |
+| Family | Example wrappers | Purpose |
+|---|---|---|
+| Validation set | `blink.X`, `uart_debug.X`, `adc_read.X`, `i2c_scan.X`, `spi_loopback.X`, `rs485_echo.X`, `ds18b20_read.X` | Core integration and legacy validation projects |
+| Common wrappers | `delay.X`, `template.X` | Simple baseline examples |
+| GPIO / UART | `gpio.X`, `uart.X` | Basic peripheral access wrappers |
+| Analog / input | `adc.X`, `adc_buttons.X`, `button.X`, `encoder.X` | Input and sensor-style examples |
+| Displays | `lcd_hd44780.X` | Text LCD example |
+| Core utilities | `ring_buffer.X`, `crc.X`, `clock.X` | Lightweight core utility wrappers |
+| System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | System, timing, and communication examples |
+| 1-Wire / sensors | `ds18b20.X` | Standalone DS18B20 wrapper |
 
-## Build Instructions (MPLAB X)
+## Build Instructions
 
 1. Open the selected `.X` project in MPLAB X.
-2. Select target device and tool.
-3. Select toolchain (`XC8` or `C18`) according to project folder.
-4. Verify include paths point to `../pic-platform`, `../pic-platform/core`, `../pic-platform/drivers`.
-5. Verify required `.c` source files are present under **Source Files**.
-6. Build the project.
-7. Add Proteus simulations later manually if you need circuit-level testing.
+2. Select the target device and programmer/debugger.
+3. Select the matching toolchain folder:
+   - `xc8/` for MPLAB XC8
+   - `c18/` for MPLAB C18
+4. Verify include paths for the repository root, `core/`, `drivers/`, and
+   `libraries/`.
+5. Verify the required `.c` files are present in **Source Files**.
+6. Build the project in MPLAB X.
+7. Add Proteus circuits separately if you need schematic-level testing.
 
 ## Recommended Workflow
 
-- Keep application projects separate from the reusable library.
-- Keep `pic-platform` external and shared across projects.
-- Do not patch drivers per project; configure projects and paths instead.
+- Keep application projects separate from the reusable platform library.
+- Keep `pic-platform` shared and external.
+- Do not patch drivers per project; update project metadata instead.
+- Keep source references in `nbproject/configurations.xml`.
+
