@@ -18,11 +18,21 @@ examples-projects/
 ├── xc8/
 │   ├── blink.X/
 │   ├── uart_debug.X/
+│   ├── adc_read.X/
+│   ├── i2c_scan.X/
+│   ├── spi_loopback.X/
+│   ├── rs485_echo.X/
+│   ├── ds18b20_read.X/
 │   └── ...
 │
 ├── c18/
 │   ├── blink.X/
 │   ├── uart_debug.X/
+│   ├── adc_read.X/
+│   ├── i2c_scan.X/
+│   ├── spi_loopback.X/
+│   ├── rs485_echo.X/
+│   ├── ds18b20_read.X/
 │   └── ...
 ```
 
@@ -31,6 +41,8 @@ examples-projects/
 - `xc8/` містить приклади для MPLAB XC8.
 - `c18/` містить приклади для MPLAB C18.
 - Кожна папка `.X` є самостійним проєктом MPLAB X.
+- Згенеровані папки MPLAB на кшталт `build/`, `dist/` і `debug/`
+  навмисно не зберігаються в репозиторії.
 
 ## Важливі правила
 
@@ -55,12 +67,12 @@ examples-projects/
 | Приклад | XC8 | C18 | Призначення |
 |---|---|---|---|
 | blink | `blink.X` | `blink.X` | Базова перевірка GPIO |
-| uart_debug | `uart_debug.X` | `uart_debug.X` | Перевірка UART і debug-макросів |
-| adc | `adc.X` | `adc.X` | Перевірка аналогового вводу |
-| i2c | `i2c.X` | `i2c.X` | Перевірка I2C master |
-| spi | `spi.X` | `spi.X` | Перевірка SPI передачі |
-| rs485 | `rs485.X` | `rs485.X` | Перевірка RS485 поверх UART |
-| ds18b20 | `ds18b20.X` | `ds18b20.X` | Інтеграція 1-Wire датчика температури |
+| uart_debug | `uart_debug.X` | `uart_debug.X` | Перевірка UART і debug-помічника |
+| adc_read | `adc_read.X` | `adc_read.X` | Приклад читання ADC |
+| i2c_scan | `i2c_scan.X` | `i2c_scan.X` | Приклад сканування I2C шини |
+| spi_loopback | `spi_loopback.X` | `spi_loopback.X` | Приклад SPI loopback |
+| rs485_echo | `rs485_echo.X` | `rs485_echo.X` | Приклад echo для RS485 |
+| ds18b20_read | `ds18b20_read.X` | `ds18b20_read.X` | Приклад температурного датчика 1-Wire |
 
 ## Інструкція збірки (MPLAB X)
 
@@ -70,10 +82,10 @@ examples-projects/
 4. Перевірте include paths: `../pic-platform`, `../pic-platform/core`, `../pic-platform/drivers`.
 5. Перевірте наявність потрібних `.c` файлів у **Source Files**.
 6. Запустіть збірку.
+7. Симуляції Proteus додавайте пізніше вручну, якщо потрібна перевірка схеми.
 
 ## Рекомендований workflow
 
 - Тримайте прикладні проєкти окремо від бібліотеки.
 - Тримайте `pic-platform` зовнішнім і спільним для різних проєктів.
 - Не модифікуйте драйвери під кожен проєкт; налаштовуйте лише конфігурацію проєкту.
-

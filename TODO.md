@@ -122,11 +122,13 @@
 - [x] XC8 example `.c` files exist under `XC8/examples/`.
 - [x] MPLAB `.X` example project exists for `examples-projects/xc8/blink.X`.
 - [x] MPLAB `.X` example project exists for `examples-projects/c18/blink.X`.
-- [ ] Create full `.X` example projects for UART debug.
-- [ ] Create full `.X` example projects for ADC/I2C/SPI.
-- [ ] Create full `.X` example projects for DS18B20.
+- [x] Create full `.X` example projects for UART debug.
+- [x] Create full `.X` example projects for ADC/I2C/SPI.
+- [x] Create full `.X` example projects for DS18B20.
 - [ ] Create full `.X` example projects for display/UI demos.
 - [ ] Verify `.X` project source references use external `pic-platform` paths.
+- [ ] Validate the new `.X` projects in MPLAB.
+- [ ] Add Proteus simulations for the new examples.
 
 ## Proteus Simulation
 
@@ -151,8 +153,9 @@
 ## Validation
 
 - [x] Repository structure has been scanned and TODO rebuilt from current files.
-- [x] Existing `.X` projects detected only for C18 blink and XC8 blink.
+- [x] Existing `.X` projects now include blink plus the new UART debug, ADC read, I2C scan, SPI loopback, RS485 echo, and DS18B20 read examples.
 - [x] Proteus blink project files were detected under `examples-projects/proteus/blink/`.
+- [x] New `.X` example projects were created for UART debug, ADC/I2C/SPI, and DS18B20.
 - [ ] Run MPLAB XC8 build validation.
 - [ ] Run MPLAB C18 build validation.
 - [ ] Validate include paths and source-file lists in `.X` projects.

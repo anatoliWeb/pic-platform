@@ -18,11 +18,21 @@ examples-projects/
 ├── xc8/
 │   ├── blink.X/
 │   ├── uart_debug.X/
+│   ├── adc_read.X/
+│   ├── i2c_scan.X/
+│   ├── spi_loopback.X/
+│   ├── rs485_echo.X/
+│   ├── ds18b20_read.X/
 │   └── ...
 │
 ├── c18/
 │   ├── blink.X/
 │   ├── uart_debug.X/
+│   ├── adc_read.X/
+│   ├── i2c_scan.X/
+│   ├── spi_loopback.X/
+│   ├── rs485_echo.X/
+│   ├── ds18b20_read.X/
 │   └── ...
 ```
 
@@ -31,6 +41,8 @@ examples-projects/
 - `xc8/` contains MPLAB XC8 example projects.
 - `c18/` contains MPLAB C18 example projects.
 - Each `.X` folder is a standalone MPLAB X project.
+- Generated MPLAB folders such as `build/`, `dist/`, and `debug/` are
+  intentionally not stored in the repository.
 
 ## Important Rules
 
@@ -55,12 +67,12 @@ examples-projects/
 | Example | XC8 | C18 | Purpose |
 |---|---|---|---|
 | blink | `blink.X` | `blink.X` | GPIO output sanity check |
-| uart_debug | `uart_debug.X` | `uart_debug.X` | UART + debug macro validation |
-| adc | `adc.X` | `adc.X` | Analog input and conversion checks |
-| i2c | `i2c.X` | `i2c.X` | I2C master communication checks |
-| spi | `spi.X` | `spi.X` | SPI transfer validation |
-| rs485 | `rs485.X` | `rs485.X` | UART-based RS485 frame flow |
-| ds18b20 | `ds18b20.X` | `ds18b20.X` | 1-Wire temperature sensor integration |
+| uart_debug | `uart_debug.X` | `uart_debug.X` | UART and debug helper validation |
+| adc_read | `adc_read.X` | `adc_read.X` | ADC input read example |
+| i2c_scan | `i2c_scan.X` | `i2c_scan.X` | I2C bus scan example |
+| spi_loopback | `spi_loopback.X` | `spi_loopback.X` | SPI transfer loopback example |
+| rs485_echo | `rs485_echo.X` | `rs485_echo.X` | RS485 byte echo example |
+| ds18b20_read | `ds18b20_read.X` | `ds18b20_read.X` | 1-Wire temperature sensor example |
 
 ## Build Instructions (MPLAB X)
 
@@ -70,10 +82,10 @@ examples-projects/
 4. Verify include paths point to `../pic-platform`, `../pic-platform/core`, `../pic-platform/drivers`.
 5. Verify required driver `.c` files are present under **Source Files**.
 6. Build the project.
+7. Add Proteus simulations later manually if you need circuit-level testing.
 
 ## Recommended Workflow
 
 - Keep application projects separate from the reusable library.
 - Keep `pic-platform` external and shared across projects.
 - Do not patch drivers per project; configure projects and paths instead.
-
