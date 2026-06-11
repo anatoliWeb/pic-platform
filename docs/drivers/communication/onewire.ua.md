@@ -21,6 +21,8 @@
 - `onewire_search_rom()`
 - `onewire_crc8()`
 
+`onewire_search_rom()` реалізує пошук Dallas/Maxim Search ROM і повертає знайдені ROM-коди.
+
 ## Приклад
 
 ```c
@@ -37,6 +39,7 @@ if (onewire_reset() != 0u)
 
 - Протокол чутливий до таймінгів; використовує затримки у мікросекундах.
 - ROM-команди покривають сценарії single-device і адресного доступу.
+- `onewire_search_rom()` підтримує multi-drop enumeration на спільній шині.
 
 ## Залежності
 
@@ -44,4 +47,3 @@ if (onewire_reset() != 0u)
 - `core/types.h`
 - `core/delay.h`
 - `core/interrupts.h`
-

@@ -18,7 +18,7 @@ Implements bus reset/presence, bit/byte transfer, and ROM-level commands.
 - `onewire_skip_rom()`
 - `onewire_match_rom()`
 - `onewire_read_rom()`
-- `onewire_search_rom()`
+- `onewire_search_rom()` - performs Dallas/Maxim Search ROM and returns discovered ROM codes
 - `onewire_crc8()`
 
 ## Example
@@ -37,6 +37,7 @@ if (onewire_reset() != 0u)
 
 - Timing-sensitive protocol; uses microsecond delays.
 - ROM commands support single-device and addressed-device flows.
+- `onewire_search_rom()` supports multi-drop enumeration on a shared 1-Wire bus.
 
 ## Dependencies
 
@@ -44,4 +45,3 @@ if (onewire_reset() != 0u)
 - `core/types.h`
 - `core/delay.h`
 - `core/interrupts.h`
-

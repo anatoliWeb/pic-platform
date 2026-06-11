@@ -1,4 +1,4 @@
-# TODO
+﻿# TODO
 
 ## Structure
 
@@ -133,6 +133,8 @@
 - [x] Create full `.X` example projects for ADC/I2C/SPI.
 - [x] Create full `.X` example projects for DS18B20.
 - [x] Create DS18B20 multi-sensor `.X` example projects.
+- [x] Implement real 1-Wire Search ROM algorithm.
+- [x] Support DS18B20 multi-sensor discovery by ROM search.
 - [ ] Create full `.X` example projects for display/UI demos.
 - [ ] Verify `.X` project source references use external `pic-platform` paths.
 - [ ] Validate the new `.X` projects in MPLAB.
@@ -166,10 +168,12 @@
 - [x] Existing `.X` projects now include the original validation set plus expanded wrapper projects for common and compiler-specific examples.
 - [x] Proteus blink project files were detected under `examples-projects/proteus/blink/`.
 - [x] New `.X` example wrapper projects were created for the example sources under `examples/common`, `XC8/examples`, and `C18/examples`.
-- [ ] Run MPLAB XC8 build validation.
+- [x] Run MPLAB XC8 build validation.
 - [ ] Run MPLAB C18 build validation.
 - [ ] Validate the new `.X` projects in MPLAB.
+- [x] Validate DS18B20 multi-sensor example in MPLAB XC8.
 - [x] Validate include paths and source-file lists in `.X` projects.
+- [x] Export successful XC8 HEX files to `examples-projects/hex/xc8/<project>/<project>.hex`.
 - [x] Normalize MPLAB `.X` project logical source tree structure.
 - [x] Ensure example `main.c` files include headers only and not `.c` files.
 - [ ] Validate timing-sensitive modules: 1-Wire, DHT, WS2812, IR receiver.
@@ -185,3 +189,5 @@
 - [ ] Proteus simulation coverage.
 - [ ] Legacy module cleanup after build validation.
 - [ ] Board/profile configuration templates for more PIC18 devices.
+
+

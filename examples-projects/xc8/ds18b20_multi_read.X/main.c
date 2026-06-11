@@ -46,6 +46,20 @@ static void print_temp_x10(int16_t temp_x10)
     DBG_PRINT_INT((int)frac);
 }
 
+static void print_rom(const uint8_t* rom)
+{
+    uint8_t i;
+
+    for (i = 0u; i < 8u; i++)
+    {
+        DBG_PRINT_HEX(rom[i]);
+        if (i < 7u)
+        {
+            DBG_PRINT(":");
+        }
+    }
+}
+
 void main(void)
 {
     uint8_t roms[4][8];
@@ -94,6 +108,12 @@ void main(void)
 
                 for (i = 0u; i < count; i++)
                 {
+                    DBG_PRINT("ROM[");
+                    DBG_PRINT_INT((int)i);
+                    DBG_PRINT("] = ");
+                    print_rom(roms[i]);
+                    DBG_PRINTLN("");
+
                     if (ds18b20_read_scratchpad(roms[i], scratchpad) != 0u)
                     {
                         temp_raw = (int16_t)(((uint16_t)scratchpad[1] << 8u) | scratchpad[0]);

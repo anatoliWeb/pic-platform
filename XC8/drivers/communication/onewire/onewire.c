@@ -27,7 +27,7 @@ static uint8_t onewire_read_line(void)
     return (uint8_t)READ_BIT((*g_onewire_port), g_onewire_pin);
 }
 
-static DRV_INLINE void ow_delay_us(uint16_t us)
+DRV_INLINE void ow_delay_us(uint16_t us)
 {
     DRV_DELAY_US(us);
 }
@@ -169,11 +169,132 @@ void onewire_read_rom(uint8_t* rom)
 
 uint8_t onewire_search_rom(uint8_t (*roms)[8], uint8_t max_devices)
 {
-    (void)roms;
-    (void)max_devices;
+    uint8_t found_devices = 0u;
+    uint8_t search_rom[8] = {0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u};
+    uint8_t last_discrepancy = 0u;
+    uint8_t last_device_flag = 0u;
+    uint8_t last_family_discrepancy = 0u;
+    uint8_t search_result = 0u;
+    uint8_t id_bit_number;
+    uint8_t last_zero;
+    uint8_t rom_byte_number;
+    uint8_t rom_byte_mask;
+    uint8_t id_bit;
+    uint8_t cmp_id_bit;
+    uint8_t search_direction;
 
-    /* Search ROM not implemented yet. */
-    return 0u;
+    if ((roms == (uint8_t(*)[8])0) || (max_devices == 0u))
+    {
+        return 0u;
+    }
+
+    while ((last_device_flag == 0u) && (found_devices < max_devices))
+    {
+        last_zero = 0u;
+        id_bit_number = 1u;
+        rom_byte_number = 0u;
+        rom_byte_mask = 1u;
+
+        search_result = onewire_reset();
+        if (search_result == 0u)
+        {
+            break;
+        }
+
+        onewire_write_byte(0xF0u);
+
+        while (rom_byte_number < 8u)
+        {
+            id_bit = onewire_read_bit();
+            cmp_id_bit = onewire_read_bit();
+
+            if ((id_bit != 0u) && (cmp_id_bit != 0u))
+            {
+                search_result = 0u;
+                break;
+            }
+
+            if (id_bit != cmp_id_bit)
+            {
+                search_direction = id_bit;
+            }
+            else
+            {
+                if (id_bit_number < last_discrepancy)
+                {
+                    search_direction = (uint8_t)((search_rom[rom_byte_number] & rom_byte_mask) != 0u);
+                }
+                else
+                {
+                    search_direction = (uint8_t)((id_bit_number == last_discrepancy) ? 1u : 0u);
+                }
+
+                if (search_direction == 0u)
+                {
+                    last_zero = id_bit_number;
+                    if (last_zero < 9u)
+                    {
+                        last_family_discrepancy = last_zero;
+                    }
+                }
+            }
+
+            if (search_direction != 0u)
+            {
+                search_rom[rom_byte_number] |= rom_byte_mask;
+            }
+            else
+            {
+                search_rom[rom_byte_number] &= (uint8_t)~rom_byte_mask;
+            }
+
+            onewire_write_bit(search_direction);
+
+            id_bit_number++;
+            rom_byte_mask <<= 1u;
+            if (rom_byte_mask == 0u)
+            {
+                rom_byte_number++;
+                rom_byte_mask = 1u;
+            }
+
+            if (id_bit_number > 64u)
+            {
+                break;
+            }
+        }
+
+        if ((search_result == 0u) || (id_bit_number <= 64u))
+        {
+            break;
+        }
+
+        if (onewire_crc8(search_rom, 8u) == 0u)
+        {
+            roms[found_devices][0u] = search_rom[0u];
+            roms[found_devices][1u] = search_rom[1u];
+            roms[found_devices][2u] = search_rom[2u];
+            roms[found_devices][3u] = search_rom[3u];
+            roms[found_devices][4u] = search_rom[4u];
+            roms[found_devices][5u] = search_rom[5u];
+            roms[found_devices][6u] = search_rom[6u];
+            roms[found_devices][7u] = search_rom[7u];
+            found_devices++;
+        }
+
+        last_discrepancy = last_zero;
+        if (last_discrepancy == 0u)
+        {
+            last_device_flag = 1u;
+        }
+
+        if (last_family_discrepancy == 0u)
+        {
+            /* No family-level discrepancy was tracked for this scan. */
+        }
+    }
+
+    return found_devices;
 }
 
 uint8_t onewire_crc8(const uint8_t* data, uint8_t len)

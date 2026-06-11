@@ -1,11 +1,10 @@
-[🇺🇦 Ukrainian version](./README.ua.md)
+﻿[🇺🇦 Ukrainian version](./README.ua.md)
 
 # examples-projects
 
 ## What is examples-projects
 
-`examples-projects` contains complete MPLAB X project wrappers for the
-external `pic-platform` repository.
+`examples-projects` contains complete MPLAB X project wrappers for the external `pic-platform` repository.
 
 - Each folder is a standalone `.X` project.
 - The projects are meant for integration checks, not for library source code.
@@ -29,6 +28,9 @@ examples-projects/
 │   ├── adc_read.X/
 │   ├── ...
 │   └── gpio.X/
+│
+└── hex/
+    └── xc8/
 ```
 
 ## Folder Structure Explanation
@@ -36,8 +38,7 @@ examples-projects/
 - `xc8/` contains MPLAB XC8 project wrappers.
 - `c18/` contains MPLAB C18 project wrappers.
 - Every `.X` folder is a separate MPLAB X project.
-- Generated folders such as `build/`, `dist/`, `debug/`, and
-  `nbproject/private/` are not tracked.
+- Generated folders such as `build/`, `dist/`, `debug/`, and `nbproject/private/` are not tracked.
 
 ## Project Rules
 
@@ -57,8 +58,7 @@ examples-projects/
   - `drivers/`
   - `libraries/`
 - Source files are referenced in `nbproject/configurations.xml`.
-- The durable source of truth is the MPLAB project metadata, not the generated
-  `Makefile-default.mk` file.
+- The durable source of truth is the MPLAB project metadata, not the generated `Makefile-default.mk` file.
 
 ## Supported Compilers
 
@@ -80,6 +80,16 @@ examples-projects/
 
 The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7k pull-up resistor. ROM search and Match ROM support are required for real multi-drop use; Proteus validation is still pending.
 
+## HEX Exports
+
+Successful XC8 builds are exported to:
+
+- `examples-projects/hex/xc8/<project>/<project>.hex`
+
+Use these HEX files for Proteus or other simulator setups. Regenerate them after rebuilding the matching `.X` project.
+
+See also: [HEX exports README](./hex/README.md).
+
 ## Build Instructions
 
 1. Open the selected `.X` project in MPLAB X.
@@ -87,11 +97,11 @@ The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7k pull-
 3. Select the matching toolchain folder:
    - `xc8/` for MPLAB XC8
    - `c18/` for MPLAB C18
-4. Verify include paths for the repository root, `core/`, `drivers/`, and
-   `libraries/`.
-5. Verify the required `.c` files are present in **Source Files**.
+4. Verify include paths for the repository root, `core/`, `drivers/`, and `libraries/`.
+5. Verify the required `.c` files are added to **Source Files**.
 6. Build the project in MPLAB X.
-7. Add Proteus circuits separately if you need schematic-level testing.
+7. Copy the exported HEX into `examples-projects/hex/` if you need a reusable simulator artifact.
+8. Add Proteus circuits separately if you need schematic-level testing.
 
 ## Recommended Workflow
 
@@ -99,3 +109,5 @@ The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7k pull-
 - Keep `pic-platform` shared and external.
 - Do not patch drivers per project; update project metadata instead.
 - Keep source references in `nbproject/configurations.xml`.
+
+
