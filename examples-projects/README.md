@@ -50,6 +50,8 @@ examples-projects/
 - Use relative paths only.
 - Projects must use the external `../pic-platform` library.
 - Add required `.c` source files manually in MPLAB X.
+- Keep application setup in `main.c`, `project_config.h`, and `config_bits.c`.
+- Keep CONFIG bits in `config_bits.c` only.
 
 ## Integration Notes
 

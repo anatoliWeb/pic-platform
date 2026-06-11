@@ -159,6 +159,8 @@
 - [ ] Run MPLAB XC8 build validation.
 - [ ] Run MPLAB C18 build validation.
 - [x] Validate include paths and source-file lists in `.X` projects.
+- [x] Normalize MPLAB `.X` project logical source tree structure.
+- [x] Ensure example `main.c` files include headers only and not `.c` files.
 - [ ] Validate timing-sensitive modules: 1-Wire, DHT, WS2812, IR receiver.
 - [ ] Validate memory usage for PIC18F452.
 
