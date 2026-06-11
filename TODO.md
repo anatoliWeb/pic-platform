@@ -158,7 +158,7 @@
 - [x] New `.X` example projects were created for UART debug, ADC/I2C/SPI, and DS18B20.
 - [ ] Run MPLAB XC8 build validation.
 - [ ] Run MPLAB C18 build validation.
-- [ ] Validate include paths and source-file lists in `.X` projects.
+- [x] Validate include paths and source-file lists in `.X` projects.
 - [ ] Validate timing-sensitive modules: 1-Wire, DHT, WS2812, IR receiver.
 - [ ] Validate memory usage for PIC18F452.
 

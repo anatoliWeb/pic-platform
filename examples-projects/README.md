@@ -49,7 +49,7 @@ examples-projects/
 - Do not copy drivers into example project folders.
 - Use relative paths only.
 - Projects must use the external `../pic-platform` library.
-- Add required driver `.c` files manually in MPLAB X.
+- Add required `.c` source files manually in MPLAB X.
 
 ## Integration Notes
 
@@ -80,7 +80,7 @@ examples-projects/
 2. Select target device and tool.
 3. Select toolchain (`XC8` or `C18`) according to project folder.
 4. Verify include paths point to `../pic-platform`, `../pic-platform/core`, `../pic-platform/drivers`.
-5. Verify required driver `.c` files are present under **Source Files**.
+5. Verify required `.c` source files are present under **Source Files**.
 6. Build the project.
 7. Add Proteus simulations later manually if you need circuit-level testing.
 
