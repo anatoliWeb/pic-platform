@@ -1,10 +1,3 @@
-/*
- * PIC18F452 C18 CONFIG template.
- *
- * C18 projects can use direct literal CONFIG values in the example template
- * so the configuration remains simple and compatible with older tooling.
- */
-
 #include <p18f452.h>
 
 #include "project_config.h"

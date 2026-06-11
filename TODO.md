@@ -111,8 +111,14 @@
 - [x] Add notes for special CONFIG bits affected by modules, such as WDT and CCP2MUX.
 - [x] Update XC8 `blink.X` to use `project_config.h` and `config_bits.c`.
 - [x] Update C18 `blink.X` to use `project_config.h` and `config_bits.c`.
-- [ ] Validate whether XC8 accepts macros inside `#pragma config`.
+- [x] Validate whether XC8 accepts macros inside `#pragma config`.
 - [ ] Validate whether C18 accepts macros inside `#pragma config`.
+- [x] Use direct literal CONFIG bits in XC8 example projects after macro pragma validation failed.
+- [x] Use direct literal CONFIG bits in C18 example projects.
+- [x] Keep `project_config.h` limited to clock/timing values and helper flags.
+- [x] Keep `config_bits.c` as the only source file that emits CONFIG bits.
+- [x] Remove macro-based CONFIG pragmas from PIC18F452 XC8 example projects.
+- [x] Remove macro-based CONFIG pragmas from PIC18F452 template files.
 - [ ] If C18 does not support config macros reliably, keep C18 direct CONFIG bit template.
 
 ## Examples

@@ -3,11 +3,6 @@
 #include "project_config.h"
 #include "../../../core/config/platform_config_check.h"
 
-/*
- * Direct CONFIG bit emission for the C18 example template.
- * The project owns the final values.
- */
-
 #pragma config OSC = HS
 #pragma config OSCS = OFF
 #pragma config PWRT = OFF

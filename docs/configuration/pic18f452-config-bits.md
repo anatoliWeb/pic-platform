@@ -37,6 +37,8 @@ For PIC18 projects, these values should stay aligned.
 
 ## Recommended PIC18F452 Defaults
 
+Use literal CONFIG values in `config_bits.c`:
+
 - `OSC = HS`
 - `OSCS = OFF`
 - `PWRT = OFF`
@@ -53,7 +55,7 @@ For PIC18 projects, these values should stay aligned.
 
 1. `project_config.h` stores project-level values.
 2. `platform_config_check.h` checks that required values exist.
-3. `config_bits.c` emits the real `#pragma config` lines.
+3. `config_bits.c` emits the real `#pragma config` lines with literal values.
 4. The application has final priority over library recommendations.
 
 ## Library Requirements Convention
@@ -61,18 +63,18 @@ For PIC18 projects, these values should stay aligned.
 Libraries may declare requirements or recommendations such as:
 
 - `PIC_PLATFORM_REQUIRES_CLOCK_HZ`
-- `PIC_PLATFORM_REQUIRES_WDT_CONFIG`
+- `PIC_PLATFORM_REQUIRES_WDT_ENABLED`
 - `PIC_PLATFORM_RECOMMENDS_WDT_ON`
-- `PIC_PLATFORM_REQUIRES_CCP2MUX_CONFIG`
+- `PIC_PLATFORM_REQUIRES_CCP2MUX_ENABLED`
 
 Libraries must not emit `#pragma config`.
 
 ## Compiler Notes
 
 - XC8 and C18 use separate `config_bits.c` templates.
-- C18 uses direct `#pragma config` lines in the example template.
-- XC8 may use either direct or macro-based config values, but the project
-  keeps the final choice.
+- XC8 macro-based `#pragma config` values were not reliable on PIC18F452.
+- Use literal CONFIG values in `config_bits.c` for both compilers.
+- `project_config.h` remains for clock, timing, and helper flags.
 
 ## Relation to `TODO.md`
 

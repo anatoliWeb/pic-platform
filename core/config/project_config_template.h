@@ -7,8 +7,8 @@
  * Copy this file into the application project as project_config.h and adjust
  * the values to match the real hardware setup.
  *
- * Libraries must not emit #pragma config. The application/project layer owns
- * the final CONFIG bit selection.
+ * Keep clock/timing values and helper flags here.
+ * Emit the real CONFIG bits only in config_bits.c with literal values.
  */
 
 #ifndef PIC_PLATFORM_CLOCK_HZ
@@ -21,119 +21,6 @@
 
 #ifndef _XTAL_FREQ
 #define _XTAL_FREQ PIC_PLATFORM_CLOCK_HZ
-#endif
-
-/* PIC18F452-friendly defaults. */
-#ifndef PIC_PLATFORM_CONFIG_OSC
-#define PIC_PLATFORM_CONFIG_OSC HS
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_OSCS
-#define PIC_PLATFORM_CONFIG_OSCS OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_PWRT
-#define PIC_PLATFORM_CONFIG_PWRT OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_BOR
-#define PIC_PLATFORM_CONFIG_BOR ON
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_BORV
-#define PIC_PLATFORM_CONFIG_BORV 20
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_WDT
-#define PIC_PLATFORM_CONFIG_WDT OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_WDTPS
-#define PIC_PLATFORM_CONFIG_WDTPS 128
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_CCP2MUX
-#define PIC_PLATFORM_CONFIG_CCP2MUX ON
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_STVR
-#define PIC_PLATFORM_CONFIG_STVR ON
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_LVP
-#define PIC_PLATFORM_CONFIG_LVP OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_CP0
-#define PIC_PLATFORM_CONFIG_CP0 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_CP1
-#define PIC_PLATFORM_CONFIG_CP1 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_CP2
-#define PIC_PLATFORM_CONFIG_CP2 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_CP3
-#define PIC_PLATFORM_CONFIG_CP3 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_CPB
-#define PIC_PLATFORM_CONFIG_CPB OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_CPD
-#define PIC_PLATFORM_CONFIG_CPD OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_WRT0
-#define PIC_PLATFORM_CONFIG_WRT0 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_WRT1
-#define PIC_PLATFORM_CONFIG_WRT1 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_WRT2
-#define PIC_PLATFORM_CONFIG_WRT2 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_WRT3
-#define PIC_PLATFORM_CONFIG_WRT3 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_WRTC
-#define PIC_PLATFORM_CONFIG_WRTC OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_WRTB
-#define PIC_PLATFORM_CONFIG_WRTB OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_WRTD
-#define PIC_PLATFORM_CONFIG_WRTD OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_EBTR0
-#define PIC_PLATFORM_CONFIG_EBTR0 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_EBTR1
-#define PIC_PLATFORM_CONFIG_EBTR1 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_EBTR2
-#define PIC_PLATFORM_CONFIG_EBTR2 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_EBTR3
-#define PIC_PLATFORM_CONFIG_EBTR3 OFF
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_EBTRB
-#define PIC_PLATFORM_CONFIG_EBTRB OFF
 #endif
 
 /*
@@ -150,6 +37,10 @@
 
 #ifndef PIC_PLATFORM_BOR_ENABLED
 #define PIC_PLATFORM_BOR_ENABLED 1
+#endif
+
+#ifndef PIC_PLATFORM_CCP2MUX_ENABLED
+#define PIC_PLATFORM_CCP2MUX_ENABLED 1
 #endif
 
 #endif /* CORE_CONFIG_PROJECT_CONFIG_TEMPLATE_H */

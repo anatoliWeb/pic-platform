@@ -35,7 +35,8 @@ They should stay compiler-safe for older MPLAB C18 projects.
 1. Create `project_config.h` in the application project.
 2. Set the clock and CONFIG bit values there.
 3. Include the configuration checker from the project-level `config_bits.c`.
-4. Build the project with the real CONFIG values selected by the application.
+4. Emit the real CONFIG values as literal `#pragma config` lines in `config_bits.c`.
+5. Build the project with the real CONFIG values selected by the application.
 
 ## Notes
 

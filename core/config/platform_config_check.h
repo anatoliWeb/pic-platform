@@ -4,13 +4,13 @@
 /*
  * Lightweight project configuration checker.
  *
- * Libraries may define requirement hints such as:
+ * Libraries may declare requirement hints such as:
  *   PIC_PLATFORM_REQUIRES_CLOCK_HZ
- *   PIC_PLATFORM_REQUIRES_WDT_CONFIG
- *   PIC_PLATFORM_REQUIRES_CCP2MUX_CONFIG
+ *   PIC_PLATFORM_REQUIRES_WDT_ENABLED
+ *   PIC_PLATFORM_REQUIRES_CCP2MUX_ENABLED
  *
- * Recommendations are documented, but the project keeps final control.
- * The checks stay simple so older C18 preprocessing stays safe.
+ * The project keeps final control over the selected CONFIG bits.
+ * Real CONFIG values must stay in config_bits.c as literal pragmas.
  */
 
 #ifndef PIC_PLATFORM_CLOCK_HZ
@@ -25,28 +25,20 @@
 #error "_XTAL_FREQ is required by project_config.h"
 #endif
 
-#ifndef PIC_PLATFORM_CONFIG_OSC
-#error "PIC_PLATFORM_CONFIG_OSC is required by project_config.h"
+#ifndef PIC_PLATFORM_WDT_ENABLED
+#error "PIC_PLATFORM_WDT_ENABLED is required by project_config.h"
 #endif
 
-#ifndef PIC_PLATFORM_CONFIG_WDT
-#error "PIC_PLATFORM_CONFIG_WDT is required by project_config.h"
+#ifndef PIC_PLATFORM_LVP_ENABLED
+#error "PIC_PLATFORM_LVP_ENABLED is required by project_config.h"
 #endif
 
-#ifndef PIC_PLATFORM_CONFIG_LVP
-#error "PIC_PLATFORM_CONFIG_LVP is required by project_config.h"
+#ifndef PIC_PLATFORM_BOR_ENABLED
+#error "PIC_PLATFORM_BOR_ENABLED is required by project_config.h"
 #endif
 
-#ifndef PIC_PLATFORM_CONFIG_BOR
-#error "PIC_PLATFORM_CONFIG_BOR is required by project_config.h"
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_STVR
-#error "PIC_PLATFORM_CONFIG_STVR is required by project_config.h"
-#endif
-
-#ifndef PIC_PLATFORM_CONFIG_CCP2MUX
-#error "PIC_PLATFORM_CONFIG_CCP2MUX is required by project_config.h"
+#ifndef PIC_PLATFORM_CCP2MUX_ENABLED
+#error "PIC_PLATFORM_CCP2MUX_ENABLED is required by project_config.h"
 #endif
 
 #ifdef PIC_PLATFORM_REQUIRES_CLOCK_HZ
@@ -55,15 +47,15 @@
 #endif
 #endif
 
-#ifdef PIC_PLATFORM_REQUIRES_WDT_CONFIG
-#ifndef PIC_PLATFORM_CONFIG_WDT
-#error "PIC_PLATFORM_CONFIG_WDT is required by the active library"
+#ifdef PIC_PLATFORM_REQUIRES_WDT_ENABLED
+#ifndef PIC_PLATFORM_WDT_ENABLED
+#error "PIC_PLATFORM_WDT_ENABLED is required by the active library"
 #endif
 #endif
 
-#ifdef PIC_PLATFORM_REQUIRES_CCP2MUX_CONFIG
-#ifndef PIC_PLATFORM_CONFIG_CCP2MUX
-#error "PIC_PLATFORM_CONFIG_CCP2MUX is required by the active library"
+#ifdef PIC_PLATFORM_REQUIRES_CCP2MUX_ENABLED
+#ifndef PIC_PLATFORM_CCP2MUX_ENABLED
+#error "PIC_PLATFORM_CCP2MUX_ENABLED is required by the active library"
 #endif
 #endif
 
