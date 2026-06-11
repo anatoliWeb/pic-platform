@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>rs485_c18</name>
+            <name>rs485_basic_c18</name>
             <creation-uuid>04dec79f-af70-45ec-b433-9966f52dcb5b</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
@@ -15,7 +15,7 @@
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>rs485_c18</name>
+                    <name>rs485_basic_c18</name>
                     <type>2</type>
                 </confElem>
             </confList>

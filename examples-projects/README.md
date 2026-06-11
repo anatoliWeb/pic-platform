@@ -75,7 +75,7 @@ examples-projects/
 | Analog / input | `adc.X`, `adc_buttons.X`, `button.X`, `encoder.X` | Input and sensor-style examples |
 | Displays | `lcd_hd44780.X` | Text LCD example |
 | Core utilities | `ring_buffer.X`, `crc.X`, `clock.X` | Lightweight core utility wrappers |
-| System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | System, timing, and communication examples |
+| System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `rs485_basic.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | System, timing, and communication examples |
 | 1-Wire / sensors | `ds18b20.X` | Standalone DS18B20 wrapper |
 
 ## Build Instructions
@@ -97,4 +97,3 @@ examples-projects/
 - Keep `pic-platform` shared and external.
 - Do not patch drivers per project; update project metadata instead.
 - Keep source references in `nbproject/configurations.xml`.
-

@@ -76,7 +76,7 @@ examples-projects/
 | Аналог / input | `adc.X`, `adc_buttons.X`, `button.X`, `encoder.X` | Приклади для входів і датчиків |
 | Дисплеї | `lcd_hd44780.X` | Приклад текстового LCD |
 | Core utilities | `ring_buffer.X`, `crc.X`, `clock.X` | Легкі утиліти ядра |
-| System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | Приклади системи, таймінгу та зв'язку |
+| Системи / таймінг | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `rs485_basic.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | Приклади системи, таймінгу та зв'язку |
 | 1-Wire / sensors | `ds18b20.X` | Окремий wrapper для DS18B20 |
 
 ## Інструкція зі збірки
@@ -98,4 +98,3 @@ examples-projects/
 - Тримайте `pic-platform` спільним і зовнішнім.
 - Не патчте драйвери під кожен проєкт; змінюйте лише метадані проєкту.
 - Тримайте source references у `nbproject/configurations.xml`.
-
