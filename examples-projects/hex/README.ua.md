@@ -8,6 +8,8 @@
 - Перегенеровуйте їх після повторної збірки відповідного `.X` проєкту.
 - Тут мають зберігатися лише файли після успішної збірки.
 
+У поточному проході оновлено XC8 HEX-файли для `adc`, `adc_buttons`, `adc_read`, `blink`, `button`, `ccp_capture` та `ccp_compare`.
+
 Дивіться також:
 - [README examples-projects](../README.md)
 - [README examples-projects (UA)](../README.ua.md)

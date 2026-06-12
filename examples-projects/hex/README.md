@@ -8,6 +8,8 @@ This folder stores HEX files exported from successful XC8 and C18 example builds
 - Regenerate them after rebuilding the matching `.X` project.
 - Only successful builds should produce files here.
 
+The current XC8 validation pass refreshed the HEX exports for `adc`, `adc_buttons`, `adc_read`, `blink`, `button`, `ccp_capture`, and `ccp_compare`.
+
 See also:
 - [examples-projects README](../README.md)
 - [examples-projects README (UA)](../README.ua.md)

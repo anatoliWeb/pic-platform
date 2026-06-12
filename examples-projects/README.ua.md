@@ -95,6 +95,8 @@ Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire ш
 Симуляції Proteus зберігаються в `examples-projects/proteus/` і використовують спільні HEX-файли з `examples-projects/hex/`. Кожна папка Proteus містить README-файли та `proteus-version.txt`; firmware там не дублюється.
 У папках HEX зберігаються лише файли після успішної збірки.
 
+У цьому проході оновлено XC8 HEX-файли для `adc`, `adc_buttons`, `adc_read`, `blink`, `button`, `ccp_capture` та `ccp_compare`.
+
 Дивіться також: [HEX exports README](./hex/README.ua.md).
 
 ## Інструкція зі збірки
