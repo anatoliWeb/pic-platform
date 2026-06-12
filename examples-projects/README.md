@@ -1,4 +1,4 @@
-﻿[🇺🇦 Ukrainian version](./README.ua.md)
+[🇺🇦 Ukrainian version](./README.ua.md)
 
 # examples-projects
 
@@ -91,6 +91,8 @@ Successful C18 builds are exported to:
 - `examples-projects/hex/c18/<project>/<project>.hex`
 
 Use these HEX files for Proteus or other simulator setups. Regenerate them after rebuilding the matching `.X` project.
+
+Proteus simulations live under `examples-projects/proteus/` and use shared HEX files from `examples-projects/hex/`. Each Proteus folder contains README files and a `proteus-version.txt` note; firmware is not duplicated there.
 Only successful builds are stored in the HEX folders.
 
 See also: [HEX exports README](./hex/README.md).

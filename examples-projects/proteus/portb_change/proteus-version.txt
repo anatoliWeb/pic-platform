@@ -1,0 +1,17 @@
+Proteus version used: pending
+Project file: 
+pending
+Preferred XC8 firmware: ../../hex/xc8/
+portb_change
+/
+portb_change
+.hex
+C18 firmware: ../../hex/c18/
+portb_change
+/
+portb_change
+.hex if available
+Notes:
+- Update this file after creating or saving the Proteus project.
+- Do not duplicate HEX files in this folder.
+- Commit real .pdsprj/.dsn files when manually created.

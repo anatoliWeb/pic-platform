@@ -1,4 +1,4 @@
-﻿# Exported HEX Files
+# Exported HEX Files
 
 This folder stores HEX files exported from successful XC8 and C18 example builds.
 

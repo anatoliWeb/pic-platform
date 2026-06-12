@@ -1,4 +1,4 @@
-﻿[🇬🇧 English version](./README.md)
+[🇬🇧 English version](./README.md)
 
 # examples-projects
 
@@ -91,6 +91,8 @@ Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire ш
 - `examples-projects/hex/c18/<project>/<project>.hex`
 
 Ці HEX-файли зручно використовувати для Proteus або інших симуляторів. Перегенеровуйте їх після повторної збірки відповідного `.X` проєкту.
+
+Симуляції Proteus зберігаються в `examples-projects/proteus/` і використовують спільні HEX-файли з `examples-projects/hex/`. Кожна папка Proteus містить README-файли та `proteus-version.txt`; firmware там не дублюється.
 У папках HEX зберігаються лише файли після успішної збірки.
 
 Дивіться також: [HEX exports README](./hex/README.ua.md).

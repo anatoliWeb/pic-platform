@@ -1,5 +1,7 @@
 #include <xc.h>
 
+#define PIC_PLATFORM_CLOCK_HZ 4000000UL
+
 #include "project_config.h"
 #include "../../../core/config/platform_config_check.h"
 

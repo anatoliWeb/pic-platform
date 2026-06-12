@@ -144,6 +144,9 @@
 
 ## Proteus Simulation
 
+- [x] Organize Proteus example folder structure for all example projects.
+- [x] Document shared HEX usage for Proteus examples.
+- [x] Add Proteus README/proteus-version placeholders for all example projects.
 - [x] Add Proteus projects for basic GPIO blink.
 - [ ] Add Proteus projects for UART debug.
 - [ ] Add Proteus projects for LCD/DS18B20 and DS18B20 multi-sensor where practical.
