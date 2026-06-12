@@ -1,4 +1,4 @@
-﻿# TODO
+# TODO
 
 ## Structure
 
@@ -169,7 +169,10 @@
 - [x] Proteus blink project files were detected under `examples-projects/proteus/blink/`.
 - [x] New `.X` example wrapper projects were created for the example sources under `examples/common`, `XC8/examples`, and `C18/examples`.
 - [x] Run MPLAB XC8 build validation.
+- [x] Run MPLAB C18 build validation pass for all C18 example projects.
 - [ ] Run MPLAB C18 build validation.
+  - Attempted for all 40 C18 example projects after resolving the local Windows/Application Control permission issue that previously blocked `_mplink.exe`; 13 passed and 27 failed with project-specific compile/link issues.
+- [x] Export successful C18 HEX files to `examples-projects/hex/c18/<project>/<project>.hex`.
 - [ ] Validate the new `.X` projects in MPLAB.
 - [x] Validate DS18B20 multi-sensor example in MPLAB XC8.
 - [x] Validate include paths and source-file lists in `.X` projects.
@@ -189,5 +192,3 @@
 - [ ] Proteus simulation coverage.
 - [ ] Legacy module cleanup after build validation.
 - [ ] Board/profile configuration templates for more PIC18 devices.
-
-

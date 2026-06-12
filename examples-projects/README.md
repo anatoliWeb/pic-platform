@@ -86,7 +86,12 @@ Successful XC8 builds are exported to:
 
 - `examples-projects/hex/xc8/<project>/<project>.hex`
 
+Successful C18 builds are exported to:
+
+- `examples-projects/hex/c18/<project>/<project>.hex`
+
 Use these HEX files for Proteus or other simulator setups. Regenerate them after rebuilding the matching `.X` project.
+Only successful builds are stored in the HEX folders.
 
 See also: [HEX exports README](./hex/README.md).
 

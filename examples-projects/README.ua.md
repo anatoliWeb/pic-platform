@@ -86,7 +86,12 @@ Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire ш
 
 - `examples-projects/hex/xc8/<project>/<project>.hex`
 
+Успішні збірки C18 експортуються до:
+
+- `examples-projects/hex/c18/<project>/<project>.hex`
+
 Ці HEX-файли зручно використовувати для Proteus або інших симуляторів. Перегенеровуйте їх після повторної збірки відповідного `.X` проєкту.
+У папках HEX зберігаються лише файли після успішної збірки.
 
 Дивіться також: [HEX exports README](./hex/README.ua.md).
 
