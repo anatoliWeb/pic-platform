@@ -1,14 +1,39 @@
 #include "drivers/system/clock/clock.h"
 
-#if defined(DRV_COMPILER_C18)
-    #include "../../../C18/drivers/system/clock/clock.c"
-#elif defined(DRV_COMPILER_XC8)
-    #include "../../../XC8/drivers/system/clock/clock.c"
-#else
-
+/*
+ * Backward-compatible function.
+ */
 uint32_t clock_get_frequency(void)
 {
-    return DRV_XTAL_FREQ;
+    return clock_get_frequency_hz();
 }
 
-#endif
+uint32_t clock_get_frequency_hz(void)
+{
+    return (uint32_t)CLOCK_FREQUENCY;
+}
+
+uint32_t clock_get_frequency_khz(void)
+{
+    return (uint32_t)(CLOCK_FREQUENCY / 1000UL);
+}
+
+uint32_t clock_get_frequency_mhz(void)
+{
+    return (uint32_t)(CLOCK_FREQUENCY / 1000000UL);
+}
+
+uint32_t clock_get_instruction_frequency_hz(void)
+{
+    return (uint32_t)CLOCK_INSTRUCTION_FREQUENCY;
+}
+
+uint32_t clock_get_instruction_frequency_khz(void)
+{
+    return (uint32_t)(CLOCK_INSTRUCTION_FREQUENCY / 1000UL);
+}
+
+uint32_t clock_get_instruction_frequency_mhz(void)
+{
+    return (uint32_t)(CLOCK_INSTRUCTION_FREQUENCY / 1000000UL);
+}
