@@ -117,7 +117,6 @@ void input_adapter_update(input_adapter_t* adapter)
             input_adapter_push(adapter, INPUT_EVENT_UP);
         }
 
-        button_update(&adapter->encoder->button);
         if (button_is_clicked(&adapter->encoder->button) != 0u)
         {
             input_adapter_push(adapter, INPUT_EVENT_SELECT);
