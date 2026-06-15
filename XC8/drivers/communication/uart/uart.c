@@ -63,13 +63,18 @@ void uart_init(uint32_t baudrate)
     TXSTAbits.SYNC = 0u;
     TXSTAbits.BRGH = 1u;
 
+    /*
+     * High-speed async mode is used for PIC18F452 UART timing.
+     * At Fosc = 10 MHz and 9600 baud, the 8-bit generator is around SPBRG = 64.
+     * If BRG16 is available, the 16-bit pair SPBRGH:SPBRG lands around 259.
+     */
 #ifdef BAUDCON
     BAUDCONbits.BRG16 = 1u;
-    brg = (_XTAL_FREQ / (4u * baudrate)) - 1u;
+    brg = (DRV_XTAL_FREQ / (4u * baudrate)) - 1u;
     SPBRGH = (uint8_t)((brg >> 8) & 0xFFu);
     SPBRG = (uint8_t)(brg & 0xFFu);
 #else
-    brg = (_XTAL_FREQ / (16u * baudrate)) - 1u;
+    brg = (DRV_XTAL_FREQ / (16u * baudrate)) - 1u;
     SPBRG = (uint8_t)(brg & 0xFFu);
 #endif
 

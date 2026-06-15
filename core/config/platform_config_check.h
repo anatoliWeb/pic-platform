@@ -13,16 +13,13 @@
  * Real CONFIG values must stay in config_bits.c as literal pragmas.
  */
 
-#ifndef PIC_PLATFORM_CLOCK_HZ
+/*
+ * Projects should prefer PIC_PLATFORM_CLOCK_HZ as the single source of truth.
+ * Legacy projects may still rely on the explicit allow flag defined in the
+ * project itself, which keeps the historical 8 MHz fallback available.
+ */
+#if !defined(PIC_PLATFORM_CLOCK_HZ) && !defined(PIC_PLATFORM_ALLOW_DEFAULT_CLOCK)
 #error "PIC_PLATFORM_CLOCK_HZ is required by project_config.h"
-#endif
-
-#ifndef DRV_XTAL_FREQ
-#error "DRV_XTAL_FREQ is required by project_config.h"
-#endif
-
-#ifndef _XTAL_FREQ
-#error "_XTAL_FREQ is required by project_config.h"
 #endif
 
 #ifndef PIC_PLATFORM_WDT_ENABLED

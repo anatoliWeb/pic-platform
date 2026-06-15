@@ -1,3 +1,4 @@
+/* C18/drivers/communication/onewire/onewire.c */
 #include "drivers/communication/onewire/onewire.h"
 #include "core/delay.h"
 #include "core/bit_utils.h"
@@ -173,7 +174,6 @@ uint8_t onewire_search_rom(uint8_t (*roms)[8], uint8_t max_devices)
     uint8_t search_rom[8] = {0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u};
     uint8_t last_discrepancy = 0u;
     uint8_t last_device_flag = 0u;
-    uint8_t last_family_discrepancy = 0u;
     uint8_t search_result = 0u;
     uint8_t id_bit_number;
     uint8_t last_zero;
@@ -232,10 +232,6 @@ uint8_t onewire_search_rom(uint8_t (*roms)[8], uint8_t max_devices)
                 if (search_direction == 0u)
                 {
                     last_zero = id_bit_number;
-                    if (last_zero < 9u)
-                    {
-                        last_family_discrepancy = last_zero;
-                    }
                 }
             }
 
@@ -286,11 +282,6 @@ uint8_t onewire_search_rom(uint8_t (*roms)[8], uint8_t max_devices)
         if (last_discrepancy == 0u)
         {
             last_device_flag = 1u;
-        }
-
-        if (last_family_discrepancy == 0u)
-        {
-            /* No family-level discrepancy was tracked for this scan. */
         }
     }
 

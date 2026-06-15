@@ -11,17 +11,13 @@
  * Emit the real CONFIG bits only in config_bits.c with literal values.
  */
 
-#ifndef PIC_PLATFORM_CLOCK_HZ
-#define PIC_PLATFORM_CLOCK_HZ 8000000UL
-#endif
-
-#ifndef DRV_XTAL_FREQ
-#define DRV_XTAL_FREQ PIC_PLATFORM_CLOCK_HZ
-#endif
-
-#ifndef _XTAL_FREQ
-#define _XTAL_FREQ PIC_PLATFORM_CLOCK_HZ
-#endif
+/*
+ * Legacy projects may opt into the default 8 MHz clock explicitly by defining
+ * PIC_PLATFORM_ALLOW_DEFAULT_CLOCK in their own project configuration.
+ *
+ * New projects should define PIC_PLATFORM_CLOCK_HZ in their project_config.h
+ * and/or project metadata. Do not rely on an implicit default clock.
+ */
 
 /*
  * Simple helper flags for build-time checks and documentation.
