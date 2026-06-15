@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="65">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="HeaderFiles" displayName="Header Files" projectFiles="true">
@@ -76,7 +76,7 @@
         <property key="call-prologues" value="false" />
         <property key="default-bitfield-type" value="true" />
         <property key="default-char-type" value="true" />
-        <property key="define-macros" value="" />
+        <property key="define-macros" value="PIC_PLATFORM_CLOCK_HZ=10000000UL"/>
         <property key="disable-optimizations" value="true" />
         <property key="extra-include-directories" value="..\..\..;..\..\..\core;..\..\..\drivers;..\..\..\libraries" />
         <property key="favor-optimization-for" value="-speed,+space" />

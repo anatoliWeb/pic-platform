@@ -12,14 +12,14 @@
  *   PIC18F452
  *
  * Function:
- *   Toggle LED connected to RB0 every 500 ms.
+ *   Toggle LED connected to RB1 every 500 ms.
  *
  * Required:
  *   - gpio.c
  *   - delay.c
  *
  * Notes:
- *   - RB0 must have LED + resistor connected
+ *   - RB1 must have LED + resistor connected
  *   - Oscillator frequency must match real hardware
  */
 

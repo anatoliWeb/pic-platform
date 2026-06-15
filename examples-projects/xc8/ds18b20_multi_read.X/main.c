@@ -1,4 +1,5 @@
 #include "project_config.h"
+
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/communication/onewire/onewire.h"
@@ -6,28 +7,8 @@
 #include "libraries/sensors/ds18b20/ds18b20.h"
 #include "libraries/system/uart_debug/uart_debug.h"
 
-#if defined(DRV_COMPILER_C18)
-#include <p18f452.h>
-#endif
-
-/*
- * Example: DS18B20 multi-sensor read on one 1-Wire bus
- * MCU: PIC18F452 DIP-40
- * Compiler: XC8 or C18
- * Oscillator: external HS crystal
- * Purpose:
- *   Demonstrate how multiple DS18B20 sensors can share one 1-Wire data line.
- * Hardware notes:
- *   - All DS18B20 DQ pins share the same 1-Wire data line.
- *   - Use one pull-up resistor on the data line, typically 4.7k to VDD.
- *   - Each sensor has a unique 64-bit ROM address.
- * Proteus notes:
- *   - Add multiple DS18B20 devices on the same DQ net.
- *   - Verify ROM addressing or bus scan support before relying on readings.
- * Status:
- *   - Project skeleton prepared.
- *   - Build/hardware/Proteus validation may still be required.
- */
+#define DS18B20_DQ_PIN        1u
+#define DS18B20_MAX_SENSORS   4u
 
 static void print_temp_x10(int16_t temp_x10)
 {
@@ -36,6 +17,7 @@ static void print_temp_x10(int16_t temp_x10)
 
     whole = (int16_t)(temp_x10 / 10);
     frac = (int16_t)(temp_x10 % 10);
+
     if (frac < 0)
     {
         frac = (int16_t)(-frac);
@@ -50,9 +32,15 @@ static void print_rom(const uint8_t* rom)
 {
     uint8_t i;
 
+    if (rom == (const uint8_t*)0)
+    {
+        return;
+    }
+
     for (i = 0u; i < 8u; i++)
     {
         DBG_PRINT_HEX(rom[i]);
+
         if (i < 7u)
         {
             DBG_PRINT(":");
@@ -60,84 +48,129 @@ static void print_rom(const uint8_t* rom)
     }
 }
 
-void main(void)
+static void print_clock_info(void)
 {
-    uint8_t roms[4][8];
-    uint8_t scratchpad[9];
-    uint8_t count;
+#ifdef PIC_PLATFORM_CLOCK_HZ
+    DBG_PRINT("PIC_PLATFORM_CLOCK_HZ=");
+    DBG_PRINT_INT((int)(PIC_PLATFORM_CLOCK_HZ / 1000000UL));
+    DBG_PRINTLN(" MHz");
+#endif
+
+#ifdef _XTAL_FREQ
+    DBG_PRINT("_XTAL_FREQ=");
+    DBG_PRINT_INT((int)(_XTAL_FREQ / 1000000UL));
+    DBG_PRINTLN(" MHz");
+#endif
+
+#ifdef DRV_XTAL_FREQ
+    DBG_PRINT("DRV_XTAL_FREQ=");
+    DBG_PRINT_INT((int)(DRV_XTAL_FREQ / 1000000UL));
+    DBG_PRINTLN(" MHz");
+#endif
+}
+
+static void print_sensor_list(uint8_t roms[][8], uint8_t count)
+{
     uint8_t i;
-    int16_t temp_raw;
-    int16_t temp_x10;
 
-    uart_init(9600u);
-    onewire_init(&PORTB, &TRISB, 1u);
-
-    DBG_PRINTLN("DS18B20 multi-sensor example ready");
-
-    /*
-     * TODO: onewire_search_rom() is currently a placeholder in the driver.
-     * When real ROM search is available, this example will enumerate devices
-     * and read each sensor by its unique 64-bit ROM address.
-     */
-    if (onewire_reset() != 0u)
-    {
-        count = onewire_search_rom(roms, 4u);
-    }
-    else
-    {
-        count = 0u;
-    }
-
-    DBG_PRINT("Found ROMs: ");
+    DBG_PRINT("Found DS18B20 sensors: ");
     DBG_PRINT_INT((int)count);
     DBG_PRINTLN("");
 
-    while (1)
+    for (i = 0u; i < count; i++)
     {
-        if (count != 0u)
+        DBG_PRINT("ROM[");
+        DBG_PRINT_INT((int)i);
+        DBG_PRINT("] = ");
+        print_rom(roms[i]);
+        DBG_PRINTLN("");
+    }
+}
+
+static void read_all_sensors(uint8_t roms[][8], uint8_t count)
+{
+    uint8_t i;
+    int16_t temp_x10;
+
+    if (count == 0u)
+    {
+        DBG_PRINTLN("No DS18B20 sensors found");
+        return;
+    }
+
+    /*
+     * Start temperature conversion on all sensors at once.
+     * SKIP_ROM is valid here because every DS18B20 on the bus
+     * must start conversion at the same time.
+     */
+    if (ds18b20_start_conversion_skip_rom() == 0u)
+    {
+        DBG_PRINTLN("CONVERT_T error");
+        return;
+    }
+
+    /*
+     * Use 1000 ms for Proteus-safe 12-bit conversion.
+     */
+    delay_ms(1000u);
+
+    for (i = 0u; i < count; i++)
+    {
+        /*
+         * Read each sensor by its unique ROM address.
+         */
+        if (ds18b20_read_temperature_celsius(roms[i], &temp_x10) != 0u)
         {
-            if (onewire_reset() != 0u)
-            {
-                /*
-                 * Start a conversion for every sensor on the shared bus.
-                 * This uses Skip ROM because the bus search is still a stub.
-                 */
-                onewire_skip_rom();
-                onewire_write_byte(0x44u);
-                delay_ms(750u);
-
-                for (i = 0u; i < count; i++)
-                {
-                    DBG_PRINT("ROM[");
-                    DBG_PRINT_INT((int)i);
-                    DBG_PRINT("] = ");
-                    print_rom(roms[i]);
-                    DBG_PRINTLN("");
-
-                    if (ds18b20_read_scratchpad(roms[i], scratchpad) != 0u)
-                    {
-                        temp_raw = (int16_t)(((uint16_t)scratchpad[1] << 8u) | scratchpad[0]);
-                        temp_x10 = (int16_t)((temp_raw * 10) / 16);
-
-                        DBG_PRINT("ROM[");
-                        DBG_PRINT_INT((int)i);
-                        DBG_PRINT("] T(C): ");
-                        print_temp_x10(temp_x10);
-                        DBG_PRINTLN("");
-                    }
-                    else
-                    {
-                        DBG_PRINT("ROM[");
-                        DBG_PRINT_INT((int)i);
-                        DBG_PRINTLN("] read error");
-                    }
-                }
-            }
+            DBG_PRINT("T[");
+            DBG_PRINT_INT((int)i);
+            DBG_PRINT("] ");
+            print_rom(roms[i]);
+            DBG_PRINT(" = ");
+            print_temp_x10(temp_x10);
+            DBG_PRINTLN(" C");
         }
         else
         {
-            DBG_PRINTLN("TODO: Multi-sensor support needs ROM search / Match ROM support.");
-            delay_ms(1000u);
+            DBG_PRINT("T[");
+            DBG_PRINT_INT((int)i);
+            DBG_PRINT("] ");
+            print_rom(roms[i]);
+            DBG_PRINTLN(" read error");
         }
+    }
+}
+
+void main(void)
+{
+    uint8_t roms[DS18B20_MAX_SENSORS][8];
+    uint8_t count;
+
+    uart_init(9600u);
+
+    /*
+     * DS18B20 DQ:
+     * RB1 / PIC18F452 pin 34.
+     */
+    onewire_init(&PORTB, &TRISB, DS18B20_DQ_PIN);
+
+    /*
+     * Required for the validated PIC18F452 + XC8 + Proteus + 10 MHz setup.
+     */
+    onewire_use_proteus_pic18f452_timing();
+
+    DBG_PRINTLN("");
+    DBG_PRINTLN("PIC18F452 DS18B20 multi-sensor example");
+    DBG_PRINTLN("DQ = RB1 / pin 34");
+    DBG_PRINTLN("Flow: SEARCH_ROM -> SKIP_ROM CONVERT_T -> MATCH_ROM READ TEMPERATURE");
+    print_clock_info();
+
+    count = ds18b20_search(roms, DS18B20_MAX_SENSORS);
+    print_sensor_list(roms, count);
+
+    while (1)
+    {
+        DBG_PRINTLN("---");
+        read_all_sensors(roms, count);
+        delay_ms(1000u);
     }
 }

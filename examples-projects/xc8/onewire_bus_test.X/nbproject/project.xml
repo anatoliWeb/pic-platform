@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>eeprom_xc8</name>
+            <name>onewire_bus_test_xc8</name>
             <creation-uuid>04a4ea94-bf8b-469e-bd90-f4b1fa2179a3</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
@@ -25,3 +25,5 @@
         </data>
     </configuration>
 </project>
+
+

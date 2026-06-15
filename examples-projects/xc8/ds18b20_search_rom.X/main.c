@@ -7,37 +7,10 @@
 #include "libraries/sensors/ds18b20/ds18b20.h"
 #include "libraries/system/uart_debug/uart_debug.h"
 
-#ifndef DS18B20_EXAMPLE_DEBUG
-#define DS18B20_EXAMPLE_DEBUG 0u
-#endif
+#define DS18B20_PIN        1u
+#define DS18B20_ROM_LENGTH 8u
+#define DS18B20_MAX_ROM    4u
 
-#define DS18B20_PIN         1u
-#define DS18B20_ROM_LENGTH  8u
-
-static uint8_t g_ds18b20_rom[DS18B20_ROM_LENGTH];
-static uint8_t g_ds18b20_has_rom = 0u;
-
-static void app_print_temperature_x10(int16_t temp_x10)
-{
-    int16_t whole;
-    int16_t frac;
-
-    if (temp_x10 < 0)
-    {
-        DBG_PRINT("-");
-        temp_x10 = (int16_t)(-temp_x10);
-    }
-
-    whole = (int16_t)(temp_x10 / 10);
-    frac = (int16_t)(temp_x10 % 10);
-
-    DBG_PRINT_INT((int)whole);
-    DBG_PRINT(".");
-    DBG_PRINT_INT((int)frac);
-    DBG_PRINTLN(" C");
-}
-
-#if defined(DS18B20_EXAMPLE_DEBUG) && (DS18B20_EXAMPLE_DEBUG != 0u)
 static void app_print_hex_nibble(uint8_t value)
 {
     value &= 0x0Fu;
@@ -107,52 +80,34 @@ static void app_print_clock_info(void)
     DBG_PRINTLN(" MHz");
 #endif
 }
-#endif
 
-static void app_probe_sensor(void)
+static void app_search_roms(void)
 {
-    if (ds18b20_find_first(g_ds18b20_rom) != 0u)
-    {
-        g_ds18b20_has_rom = 1u;
-        DBG_PRINTLN("DS18B20 OK");
+    uint8_t roms[DS18B20_MAX_ROM][DS18B20_ROM_LENGTH];
+    uint8_t found;
+    uint8_t i;
 
-#if defined(DS18B20_EXAMPLE_DEBUG) && (DS18B20_EXAMPLE_DEBUG != 0u)
-        DBG_PRINT("DS18B20 ROM: ");
-        app_print_rom(g_ds18b20_rom);
+    DBG_PRINTLN("Scanning for DS18B20 ROMs...");
+    found = ds18b20_search(roms, DS18B20_MAX_ROM);
+    DBG_PRINT("Found ");
+    DBG_PRINT_INT((int)found);
+    DBG_PRINTLN(" device(s)");
+
+    for (i = 0u; i < found; i++)
+    {
+        DBG_PRINT("DS18B20 ROM[");
+        DBG_PRINT_INT((int)i);
+        DBG_PRINT("]= ");
+        app_print_rom(roms[i]);
         DBG_PRINTLN("");
-        app_print_clock_info();
-#endif
-    }
-    else
-    {
-        g_ds18b20_has_rom = 0u;
-        DBG_PRINTLN("DS18B20 SEARCH FAILED");
-    }
-}
 
-static void app_measure_once(void)
-{
-    int16_t temp_x10;
-
-    if (g_ds18b20_has_rom != 0u)
-    {
-        if (ds18b20_read_temperature_celsius(g_ds18b20_rom, &temp_x10) == 0u)
-        {
-            DBG_PRINTLN("READ_FAILED");
-            return;
-        }
+        DBG_PRINT("Family=0x");
+        app_print_hex_byte(roms[i][0]);
+        DBG_PRINT(" valid_family=");
+        DBG_PRINTLN(ds18b20_is_valid_family(roms[i]) != 0u ? "YES" : "NO");
+        DBG_PRINT("ROM valid=");
+        DBG_PRINTLN(ds18b20_is_valid_rom(roms[i]) != 0u ? "YES" : "NO");
     }
-    else
-    {
-        if (ds18b20_read_temperature_celsius_skip_rom(&temp_x10) == 0u)
-        {
-            DBG_PRINTLN("READ_FAILED");
-            return;
-        }
-    }
-
-    DBG_PRINT("TEMP=");
-    app_print_temperature_x10(temp_x10);
 }
 
 void main(void)
@@ -173,17 +128,14 @@ void main(void)
      */
     onewire_use_proteus_pic18f452_timing();
 
-    DBG_PRINTLN("PIC18F452 DS18B20 library test");
-
-#if defined(DS18B20_EXAMPLE_DEBUG) && (DS18B20_EXAMPLE_DEBUG != 0u)
+    DBG_PRINTLN("");
+    DBG_PRINTLN("PIC18F452 DS18B20 search example");
+    DBG_PRINTLN("Flow: ds18b20_search() -> ROM listing");
     app_print_clock_info();
-#endif
-
-    app_probe_sensor();
+    app_search_roms();
 
     while (1)
     {
-        app_measure_once();
         delay_ms(2000u);
     }
 }

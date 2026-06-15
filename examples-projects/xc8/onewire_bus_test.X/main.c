@@ -4,40 +4,12 @@
 #include "core/delay.h"
 #include "drivers/communication/uart/uart.h"
 #include "drivers/communication/onewire/onewire.h"
-#include "libraries/sensors/ds18b20/ds18b20.h"
 #include "libraries/system/uart_debug/uart_debug.h"
 
-#ifndef DS18B20_EXAMPLE_DEBUG
-#define DS18B20_EXAMPLE_DEBUG 0u
-#endif
+#define BUS_TEST_PIN        1u
+#define BUS_TEST_ROM_LENGTH 8u
+#define BUS_TEST_MAX_ROM    4u
 
-#define DS18B20_PIN         1u
-#define DS18B20_ROM_LENGTH  8u
-
-static uint8_t g_ds18b20_rom[DS18B20_ROM_LENGTH];
-static uint8_t g_ds18b20_has_rom = 0u;
-
-static void app_print_temperature_x10(int16_t temp_x10)
-{
-    int16_t whole;
-    int16_t frac;
-
-    if (temp_x10 < 0)
-    {
-        DBG_PRINT("-");
-        temp_x10 = (int16_t)(-temp_x10);
-    }
-
-    whole = (int16_t)(temp_x10 / 10);
-    frac = (int16_t)(temp_x10 % 10);
-
-    DBG_PRINT_INT((int)whole);
-    DBG_PRINT(".");
-    DBG_PRINT_INT((int)frac);
-    DBG_PRINTLN(" C");
-}
-
-#if defined(DS18B20_EXAMPLE_DEBUG) && (DS18B20_EXAMPLE_DEBUG != 0u)
 static void app_print_hex_nibble(uint8_t value)
 {
     value &= 0x0Fu;
@@ -76,7 +48,7 @@ static void app_print_rom(const uint8_t* rom)
         return;
     }
 
-    for (i = 0u; i < DS18B20_ROM_LENGTH; i++)
+    for (i = 0u; i < BUS_TEST_ROM_LENGTH; i++)
     {
         if (i != 0u)
         {
@@ -107,52 +79,57 @@ static void app_print_clock_info(void)
     DBG_PRINTLN(" MHz");
 #endif
 }
-#endif
 
-static void app_probe_sensor(void)
+static void app_probe_bus(void)
 {
-    if (ds18b20_find_first(g_ds18b20_rom) != 0u)
-    {
-        g_ds18b20_has_rom = 1u;
-        DBG_PRINTLN("DS18B20 OK");
+    DBG_PRINTLN("OneWire reset/presence check...");
 
-#if defined(DS18B20_EXAMPLE_DEBUG) && (DS18B20_EXAMPLE_DEBUG != 0u)
-        DBG_PRINT("DS18B20 ROM: ");
-        app_print_rom(g_ds18b20_rom);
-        DBG_PRINTLN("");
-        app_print_clock_info();
-#endif
+    if (onewire_reset() != 0u)
+    {
+        DBG_PRINTLN("Presence detected");
     }
     else
     {
-        g_ds18b20_has_rom = 0u;
-        DBG_PRINTLN("DS18B20 SEARCH FAILED");
+        DBG_PRINTLN("No device present");
     }
 }
 
-static void app_measure_once(void)
+static void app_search_roms(void)
 {
-    int16_t temp_x10;
+    uint8_t roms[BUS_TEST_MAX_ROM][BUS_TEST_ROM_LENGTH];
+    uint8_t found;
+    uint8_t i;
+    uint8_t crc;
 
-    if (g_ds18b20_has_rom != 0u)
+    DBG_PRINTLN("SEARCH_ROM scan...");
+    found = onewire_search_rom(roms, BUS_TEST_MAX_ROM);
+    DBG_PRINT("Found ");
+    DBG_PRINT_INT((int)found);
+    DBG_PRINTLN(" device(s)");
+
+    for (i = 0u; i < found; i++)
     {
-        if (ds18b20_read_temperature_celsius(g_ds18b20_rom, &temp_x10) == 0u)
+        DBG_PRINT("ROM[");
+        DBG_PRINT_INT((int)i);
+        DBG_PRINT("]= ");
+        app_print_rom(roms[i]);
+        DBG_PRINTLN("");
+
+        crc = onewire_crc8(roms[i], 7u);
+        DBG_PRINT("Family=0x");
+        app_print_hex_byte(roms[i][0]);
+        DBG_PRINT(" ROM_CRC=");
+        if (crc == roms[i][7])
         {
-            DBG_PRINTLN("READ_FAILED");
-            return;
+            DBG_PRINTLN("OK");
+        }
+        else
+        {
+            DBG_PRINT("BAD expected=");
+            app_print_hex_byte(roms[i][7]);
+            DBG_PRINTLN("");
         }
     }
-    else
-    {
-        if (ds18b20_read_temperature_celsius_skip_rom(&temp_x10) == 0u)
-        {
-            DBG_PRINTLN("READ_FAILED");
-            return;
-        }
-    }
-
-    DBG_PRINT("TEMP=");
-    app_print_temperature_x10(temp_x10);
 }
 
 void main(void)
@@ -160,10 +137,10 @@ void main(void)
     uart_init(9600u);
 
     /*
-     * DS18B20 DQ:
+     * OneWire DQ:
      * RB1 / PIC18F452 pin 34.
      */
-    onewire_init(&PORTB, &TRISB, DS18B20_PIN);
+    onewire_init(&PORTB, &TRISB, BUS_TEST_PIN);
 
     /*
      * Validated Proteus/PIC18F452 timing preset:
@@ -173,17 +150,14 @@ void main(void)
      */
     onewire_use_proteus_pic18f452_timing();
 
-    DBG_PRINTLN("PIC18F452 DS18B20 library test");
-
-#if defined(DS18B20_EXAMPLE_DEBUG) && (DS18B20_EXAMPLE_DEBUG != 0u)
+    DBG_PRINTLN("");
+    DBG_PRINTLN("PIC18F452 OneWire bus test");
     app_print_clock_info();
-#endif
-
-    app_probe_sensor();
+    app_probe_bus();
+    app_search_roms();
 
     while (1)
     {
-        app_measure_once();
         delay_ms(2000u);
     }
 }
