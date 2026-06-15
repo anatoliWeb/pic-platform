@@ -1,27 +1,39 @@
-# blink Симуляція Proteus
+# blink Proteus simulation
 
 ## Статус
-Проєкт Proteus: вже існують реальні файли проєкту: blink.pdsprj, _blink_.pdsprj.
+Реальні Proteus-файли вже існують: `blink.pdsprj`, `_blink_.pdsprj`.
 
 ## Firmware
 
-Шлях до XC8 HEX:
+XC8 HEX:
 
 `../../hex/xc8/blink/blink.hex`
 
-- `../../hex/c18/blink/blink.hex`
+C18 HEX:
 
-## MPLAB проєкти
+`../../hex/c18/blink/blink.hex`
+
+## MPLAB-проєкти
 
 - `../../xc8/blink.X`
 - `../../c18/blink.X`
 
-## Нотатки для Proteus
+## Підключення до PIC18F452
 
-Використайте світлодіод або логічний пробник на вихідному піні.
+| Сигнал | Ніжка PIC18F452 | Підключення в Proteus |
+|---|---:|---|
+| Вихід LED | RB1 / pin 34 | LED + послідовний резистор на GND |
+| VDD | pins 11, 32 | +5V |
+| VSS | pins 12, 31 | GND |
+| MCLR | pin 1 | Pull-up reset за потреби |
+
+## Очікуваний результат
+
+RB1 перемикається кожні 500 ms, LED блимає стабільно.
 
 ## Примітки
+
 - Не копіюйте HEX у цю папку.
-- Перезбирайте MPLAB проєкт, щоб оновити HEX.
+- Після збірки оновлюйте HEX через MPLAB-проєкт.
 - Proteus має завантажувати HEX із спільної папки `hex/`.
-- Оновіть `proteus-version.txt` після створення або збереження проєкту Proteus.
+- Оновлюйте `proteus-version.txt` після ручного збереження проєкту Proteus.

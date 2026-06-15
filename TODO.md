@@ -66,6 +66,9 @@
 - [x] BMP library exists.
 - [x] Ultrasonic library exists.
 - [x] Sensor documentation exists.
+- [x] OneWire is working for PIC18F452 + XC8 + Proteus + 10 MHz.
+- [x] DS18B20 is working for PIC18F452 + XC8 + Proteus + 10 MHz.
+- [x] Validate flows: SEARCH_ROM, MATCH_ROM temperature read, SKIP_ROM temperature read, CRC validation.
 - [ ] Validate timing-sensitive sensors on hardware or Proteus where possible.
 - [ ] Add more sensor examples only where real `.X` projects are created.
 
@@ -135,9 +138,14 @@
 - [x] Create DS18B20 multi-sensor `.X` example projects.
 - [x] Implement real 1-Wire Search ROM algorithm.
 - [x] Support DS18B20 multi-sensor discovery by ROM search.
+- [x] Validate `examples-projects/xc8/ds18b20.X` on XC8 + Proteus + 10 MHz.
+- [x] Create diagnostic `.X` example projects for `onewire_bus_test.X` and `ds18b20_search_rom.X`.
+- [x] Validate `examples-projects/xc8/onewire_bus_test.X` on XC8 + Proteus + 10 MHz.
+- [x] Validate `examples-projects/xc8/ds18b20_search_rom.X` on XC8 + Proteus + 10 MHz.
+- [x] Split the DS18B20 example into a lean temperature example plus separate diagnostics.
 - [ ] Create full `.X` example projects for display/UI demos.
 - [ ] Verify `.X` project source references use external `pic-platform` paths.
-- [ ] Validate the new `.X` projects in MPLAB.
+- [x] Validate the new `.X` projects in MPLAB.
 - [ ] Validate DS18B20 multi-sensor example in MPLAB XC8.
 - [ ] Validate DS18B20 multi-sensor example in MPLAB C18.
 - [ ] Add Proteus simulations for the new examples.
@@ -195,3 +203,13 @@
 - [ ] Proteus simulation coverage.
 - [ ] Legacy module cleanup after build validation.
 - [ ] Board/profile configuration templates for more PIC18 devices.
+- [ ] Refactor OneWire timing model to separate real microseconds from write tuning ticks.
+- [ ] Test C18 build later.
+- [ ] Test real hardware later.
+
+### Gyver-style Library Porting
+
+- [ ] Create and maintain `docs/planning/gyverlibs-port.ua.md`.
+- [ ] Port button, encoder, and input helpers first.
+- [ ] Validate each port with an XC8 example project.
+- [ ] Validate C18 compatibility where practical.

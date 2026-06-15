@@ -76,7 +76,7 @@ examples-projects/
 | Displays | `lcd_hd44780.X` | Приклад текстового LCD |
 | Core utilities | `ring_buffer.X`, `crc.X`, `clock.X` | Легкі утиліти ядра |
 | System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `rs485_basic.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | Системні, таймінгові та комунікаційні приклади |
-| 1-Wire / sensors | `ds18b20.X`, `ds18b20_multi_read.X` | Окремий wrapper для DS18B20 та приклад для кількох датчиків |
+| 1-Wire / sensors | `ds18b20.X`, `ds18b20_multi_read.X`, `ds18b20_search_rom.X`, `onewire_bus_test.X` | Окремий wrapper для DS18B20 та 1-Wire діагностичні приклади |
 
 Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire шину з підтягувальним резистором 4.7k до VDD. Для реальної роботи з кількома датчиками потрібні ROM search і Match ROM; перевірка в Proteus ще не завершена.
 

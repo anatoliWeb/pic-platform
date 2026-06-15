@@ -43,3 +43,11 @@ This repository is a driver/library platform, not an application.
 - PIC18F452 configuration: [docs/configuration/pic18f452-config-bits.md](docs/configuration/pic18f452-config-bits.md) | [UA](docs/configuration/pic18f452-config-bits.ua.md)
 - Examples projects: [examples-projects/README.md](examples-projects/README.md) | [UA](examples-projects/README.ua.md)
 - Prompt kit: [docs/prompts.md](docs/prompts.md) | [UA](docs/prompts.ua.md)
+
+## Validated Example Status
+- OneWire and DS18B20 are working for PIC18F452 + XC8 + Proteus + 10 MHz.
+- Validated flows: SEARCH_ROM, MATCH_ROM temperature read, SKIP_ROM temperature read, CRC validation.
+- Validated Proteus timing preset uses real microseconds for reset/read and raw tuning ticks for write slots.
+- Reference example: `examples-projects/xc8/ds18b20.X` (lean temperature example)
+- Diagnostic examples: `examples-projects/xc8/onewire_bus_test.X` and `examples-projects/xc8/ds18b20_search_rom.X`
+- Reference docs: `docs/libraries/sensors/ds18b20.md` and `docs/libraries/sensors/ds18b20.ua.md`

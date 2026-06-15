@@ -24,3 +24,4 @@ Preferred firmware is the XC8 HEX because XC8 builds are already validated. C18 
 - Do not commit generated backup/cache files.
 - Update `proteus-version.txt` after saving a manual Proteus project.
 - Keep manual Proteus notes short and practical.
+- Each example folder should document the PIC18F452 pin mapping, the HEX path, and the expected output for that demo.

@@ -1,11 +1,11 @@
 # ds18b20_read Proteus Simulation
 
 ## Status
-Proteus project: pending/manual.
+Manual Proteus setup.
 
 ## Firmware
 
-XC8 HEX path:
+XC8 HEX:
 
 `../../hex/xc8/ds18b20_read/ds18b20_read.hex`
 
@@ -16,11 +16,21 @@ C18 HEX is not available yet for this project.
 - `../../xc8/ds18b20_read.X`
 - `../../c18/ds18b20_read.X`
 
-## Proteus Notes
+## PIC18F452 Connections
 
-Use a 4.7k pull-up resistor on the shared 1-Wire data line.
+| Signal | PIC18F452 pin | Proteus connection |
+|---|---:|---|
+| DS18B20 DQ | RB1 / pin 34 | 1-Wire data line with 4.7k pull-up to +5V |
+| VDD | pins 11, 32 | +5V |
+| VSS | pins 12, 31 | GND |
+| MCLR | pin 1 | Reset pull-up as required |
+
+## Expected Result
+
+The UART prints valid DS18B20 temperatures using the single-sensor read flow.
 
 ## Notes
+
 - Do not copy HEX into this folder.
 - Rebuild the MPLAB project to refresh HEX.
 - Proteus should load HEX from the shared `hex/` folder.

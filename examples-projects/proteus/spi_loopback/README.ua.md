@@ -1,27 +1,39 @@
-# spi_loopback Симуляція Proteus
+# spi_loopback Proteus simulation
 
 ## Статус
-Проєкт Proteus: очікує ручного створення.
+Потрібне ручне налаштування Proteus.
 
 ## Firmware
 
-Шлях до XC8 HEX:
+XC8 HEX:
 
 `../../hex/xc8/spi_loopback/spi_loopback.hex`
 
-C18 HEX ще не доступний для цього проєкту.
+C18 HEX поки недоступний для цього проєкту.
 
-## MPLAB проєкти
+## MPLAB-проєкти
 
 - `../../xc8/spi_loopback.X`
 - `../../c18/spi_loopback.X`
 
-## Нотатки для Proteus
+## Підключення до PIC18F452
 
-Використайте loopback-підключення або модель SPI-периферії.
+| Сигнал | Ніжка PIC18F452 | Підключення в Proteus |
+|---|---:|---|
+| SPI SCK | RC3 / pin 18 | Лінія SPI clock |
+| SPI SDI | RC4 / pin 23 | З’єднати зі SPI SDO для loopback |
+| SPI SDO | RC5 / pin 24 | З’єднати зі SPI SDI для loopback |
+| VDD | pins 11, 32 | +5V |
+| VSS | pins 12, 31 | GND |
+| MCLR | pin 1 | Pull-up reset за потреби |
+
+## Очікуваний результат
+
+UART друкує тестовий байт, отриманий назад через SPI loopback wiring.
 
 ## Примітки
+
 - Не копіюйте HEX у цю папку.
-- Перезбирайте MPLAB проєкт, щоб оновити HEX.
+- Після збірки оновлюйте HEX через MPLAB-проєкт.
 - Proteus має завантажувати HEX із спільної папки `hex/`.
-- Оновіть `proteus-version.txt` після створення або збереження проєкту Proteus.
+- Оновлюйте `proteus-version.txt` після ручного збереження проєкту Proteus.
