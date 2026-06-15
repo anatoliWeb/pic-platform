@@ -72,3 +72,6 @@ Thumbs.db
 *.bak
 *.tmp
 *.workspace
+
+# Proteus project backup folders
+**/Project Backups/
