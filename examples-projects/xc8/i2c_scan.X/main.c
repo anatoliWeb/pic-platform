@@ -5,6 +5,27 @@
 #include "drivers/communication/uart/uart.h"
 #include "libraries/system/uart_debug/uart_debug.h"
 
+static void print_clock_info(void)
+{
+#ifdef PIC_PLATFORM_CLOCK_HZ
+    DBG_PRINT("PIC_PLATFORM_CLOCK_HZ=");
+    DBG_PRINT_INT((int)(PIC_PLATFORM_CLOCK_HZ / 1000000UL));
+    DBG_PRINTLN(" MHz");
+#endif
+
+#ifdef _XTAL_FREQ
+    DBG_PRINT("_XTAL_FREQ=");
+    DBG_PRINT_INT((int)(_XTAL_FREQ / 1000000UL));
+    DBG_PRINTLN(" MHz");
+#endif
+
+#ifdef DRV_XTAL_FREQ
+    DBG_PRINT("DRV_XTAL_FREQ=");
+    DBG_PRINT_INT((int)(DRV_XTAL_FREQ / 1000000UL));
+    DBG_PRINTLN(" MHz");
+#endif
+}
+
 /*
  * I2C scan example
  *
@@ -20,8 +41,20 @@ void main(void)
     uint8_t i;
 
     uart_init(9600u);
+    
+    DBG_PRINTLN("");
+    DBG_PRINTLN("PIC18F452 I2C scan");
+    DBG_PRINTLN("SCL=RC3/pin18, SDA=RC4/pin23");
+    
+    print_clock_info();
+    
+    DBG_PRINTLN("");
+    /*
+     * Use 100 kHz because the scanner already worked at this speed.
+     * After this debug test works, try 100 kHz again.
+     */
     i2c_init(100000u);
-
+    DBG_PRINTLN("Speed=100 kHz");   
     DBG_PRINTLN("I2C scan example ready");
 
     while (1)
