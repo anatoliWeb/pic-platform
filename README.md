@@ -43,6 +43,7 @@ This repository is a driver/library platform, not an application.
 - PIC18F452 configuration: [docs/configuration/pic18f452-config-bits.md](docs/configuration/pic18f452-config-bits.md) | [UA](docs/configuration/pic18f452-config-bits.ua.md)
 - Examples projects: [examples-projects/README.md](examples-projects/README.md) | [UA](examples-projects/README.ua.md)
 - Prompt kit: [docs/prompts.md](docs/prompts.md) | [UA](docs/prompts.ua.md)
+- Phase 1 examples audit: [docs/audits/phase-1-examples-validation.md](docs/audits/phase-1-examples-validation.md) | [UA](docs/audits/phase-1-examples-validation.ua.md)
 
 ## Validated Example Status
 - OneWire and DS18B20 are working for PIC18F452 + XC8 + Proteus + 10 MHz.

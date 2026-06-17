@@ -33,7 +33,8 @@
 - [x] Interrupt drivers exist: external interrupt and PORTB change interrupt.
 - [x] Memory drivers exist: EEPROM and I2C EEPROM.
 - [x] System drivers/helpers exist: clock, reset, WDT.
-- [x] Driver documentation exists under `docs/drivers/`.
+- [x] Driver documentation exists under docs/drivers/.
+- [x] Phase 1 examples validation audit created under docs/audits/.
 - [ ] Validate driver builds with MPLAB XC8.
 - [ ] Validate driver builds with MPLAB C18.
 - [ ] Review compiler-specific coverage for newer modules and decide whether universal implementations are enough.

@@ -51,3 +51,4 @@
 - Конфігурація PIC18F452: [docs/configuration/pic18f452-config-bits.ua.md](docs/configuration/pic18f452-config-bits.ua.md) | [EN](docs/configuration/pic18f452-config-bits.md)
 - Приклади проєктів: [examples-projects/README.ua.md](examples-projects/README.ua.md) | [EN](examples-projects/README.md)
 - Набір промптів: [docs/prompts.ua.md](docs/prompts.ua.md) | [EN](docs/prompts.md)
+- Аудит прикладів Phase 1: [docs/audits/phase-1-examples-validation.ua.md](docs/audits/phase-1-examples-validation.ua.md) | [EN](docs/audits/phase-1-examples-validation.md)
