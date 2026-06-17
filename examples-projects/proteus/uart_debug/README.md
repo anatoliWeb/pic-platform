@@ -1,7 +1,7 @@
-# uart_debug Proteus Simulation
+﻿# uart_debug Proteus Simulation
 
 ## Status
-Manual Proteus setup.
+Verified in Proteus (XC8 + 10 MHz).
 
 ## Firmware
 

@@ -1,7 +1,7 @@
-# ds18b20_multi_read Proteus Simulation
+﻿# ds18b20_multi_read Proteus Simulation
 
 ## Status
-Proteus project: pending/manual.
+Needs review / Proteus and C18 validation.
 
 ## Firmware
 

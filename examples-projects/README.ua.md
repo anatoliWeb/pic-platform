@@ -85,6 +85,32 @@ Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire ш
 - Очікують експорту XC8 HEX: `ds18b20_search_rom.X` і `onewire_bus_test.X`.
 - `ds18b20_multi_read.X` ще потребує подальшої перевірки в Proteus і C18.
 
+## Стан перевірки прикладів
+
+| Приклад | Що тестує | Proteus components / pins | Статус |
+|---|---|---|---|
+| `blink.X` | Миготіння GPIO-LED | RB0 LED | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `uart_debug.X` | Debug-обгортки UART | RC6/TX до Virtual Terminal RXD, RC7/RX опційно | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `adc_read.X` | Зчитування ADC | Джерело аналогового сигналу на AN0/AN1 | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `ds18b20_read.X` | Температура DS18B20 | RB1 1-Wire data line, підтягувальний резистор 4.7 кΩ | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `ring_buffer.X` | UART RX FIFO | UART RX/TX шлях | Підтверджено через UART-вивід у Proteus (XC8 + 10 MHz) |
+| `rs485_basic.X` | Передача RS485 frame | MAX487 / UART / DE-RE керування | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `rs485_echo.X` | Напівдуплексний RS485 echo | Два MAX487 вузли, UART-зв’язок | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `spi.X` | Базовий SPI-вихід | 74HC595, SPI pins, LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `spi_loopback.X` | SPI loopback self-test | RC5/SDO до RC4/SDI | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `tick.X` | Мілісекундний tick | Timer1 ISR / Timer1 forwarding | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `timer0.X` | Timer0 interrupt counter | RB0..RB3 LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `timer1.X` | Timer1 interrupt counter | RB0..RB3 LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `timer2.X` | Timer2 interrupt counter | RB0..RB3 LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `timer3.X` | Timer3 interrupt counter | RB0..RB3 LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `uart.X` | UART echo | RC6/TX до Virtual Terminal RXD, RC7/RX опційно | Підтверджено в Proteus (XC8 + 10 MHz) |
+| `wdt.X` | Поведінка watchdog reset | RB0 alive LED, RB1 кнопка | Готовий до перевірки в Proteus |
+| `ds18b20_search_rom.X` | DS18B20 ROM search | 1-Wire diagnostics | Підтверджено в Proteus; XC8 HEX export очікується |
+| `onewire_bus_test.X` | Низькорівневий OneWire test | 1-Wire diagnostics | Підтверджено в Proteus; XC8 HEX export очікується |
+| `ds18b20_multi_read.X` | Multi-drop DS18B20 discovery | Спільна 1-Wire шина, підтягування 4.7 кΩ | Потребує перегляду / перевірки в Proteus і C18 |
+
+У всіх поточних папках Proteus уже є відповідні `README.md` і `README.ua.md`. Прогалин у документації для поточних папок не знайдено.
+
 ## HEX-експорт
 
 Успішні збірки XC8 експортуються до:
@@ -123,3 +149,4 @@ Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire ш
 - Тримайте `pic-platform` спільним і зовнішнім.
 - Не патчте драйвери під кожен окремий проєкт; змінюйте метадані проєкту.
 - Зберігайте source references у `nbproject/configurations.xml`.
+

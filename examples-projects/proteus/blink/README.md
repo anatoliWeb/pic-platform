@@ -1,7 +1,7 @@
-# blink Proteus Simulation
+﻿# blink Proteus Simulation
 
 ## Status
-Real Proteus project file(s) already exist: `blink.pdsprj`, `_blink_.pdsprj`.
+Verified in Proteus (XC8 + 10 MHz).
 
 ## Firmware
 

@@ -1,7 +1,7 @@
-# tick Proteus Simulation
+﻿# tick Proteus Simulation
 
 ## Status
-Proteus project: pending/manual.
+Verified in Proteus (XC8 + 10 MHz).
 
 ## Firmware
 

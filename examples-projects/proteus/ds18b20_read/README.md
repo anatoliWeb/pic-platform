@@ -1,7 +1,7 @@
-# ds18b20_read Proteus Simulation
+﻿# ds18b20_read Proteus Simulation
 
 ## Status
-Manual Proteus setup.
+Verified in Proteus (XC8 + 10 MHz).
 
 ## Firmware
 

@@ -1,7 +1,7 @@
-# rs485_echo Proteus Simulation
+﻿# rs485_echo Proteus Simulation
 
 ## Status
-Manual Proteus setup.
+Verified in Proteus (XC8 + 10 MHz).
 
 ## Firmware
 

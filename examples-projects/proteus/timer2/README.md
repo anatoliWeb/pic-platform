@@ -1,7 +1,7 @@
-# timer2 Proteus Simulation
+﻿# timer2 Proteus Simulation
 
 ## Status
-Proteus project: pending/manual.
+Verified in Proteus (XC8 + 10 MHz).
 
 ## Firmware
 

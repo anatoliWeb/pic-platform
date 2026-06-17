@@ -1,7 +1,7 @@
-# ring_buffer Proteus Simulation
+﻿# ring_buffer Proteus Simulation
 
 ## Status
-Proteus project: pending/manual.
+Verified in Proteus through UART output (XC8 + 10 MHz).
 
 ## Firmware
 

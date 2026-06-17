@@ -1,7 +1,7 @@
-# adc_read Proteus Simulation
+﻿# adc_read Proteus Simulation
 
 ## Status
-Manual Proteus setup.
+Verified in Proteus (XC8 + 10 MHz).
 
 ## Firmware
 

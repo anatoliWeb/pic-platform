@@ -1,7 +1,7 @@
-# rs485_basic Proteus Simulation
+﻿# rs485_basic Proteus Simulation
 
 ## Status
-Proteus project: pending/manual.
+Verified in Proteus (XC8 + 10 MHz).
 
 ## Firmware
 

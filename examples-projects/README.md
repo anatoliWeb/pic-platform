@@ -85,6 +85,32 @@ The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7 kΩ pu
 - Pending XC8 HEX exports: `ds18b20_search_rom.X` and `onewire_bus_test.X`.
 - `ds18b20_multi_read.X` still needs further Proteus and C18 follow-up.
 
+## Example Validation Snapshot
+
+| Example | What it tests | Proteus components / pins | Status |
+|---|---|---|---|
+| `blink.X` | GPIO LED blink | RB0 LED | Verified in Proteus (XC8 + 10 MHz) |
+| `uart_debug.X` | Debug UART helpers | RC6/TX to Virtual Terminal RXD, RC7/RX optional | Verified in Proteus (XC8 + 10 MHz) |
+| `adc_read.X` | ADC readout | Analog input source on AN0/AN1 | Verified in Proteus (XC8 + 10 MHz) |
+| `ds18b20_read.X` | DS18B20 temperature read | RB1 1-Wire data line, 4.7 kΩ pull-up | Verified in Proteus (XC8 + 10 MHz) |
+| `ring_buffer.X` | UART RX FIFO | UART RX/TX path | Verified in Proteus through UART output (XC8 + 10 MHz) |
+| `rs485_basic.X` | RS485 frame TX | MAX487 / UART / DE-RE control | Verified in Proteus (XC8 + 10 MHz) |
+| `rs485_echo.X` | Half-duplex RS485 echo | Two MAX487 nodes, UART link | Verified in Proteus (XC8 + 10 MHz) |
+| `spi.X` | SPI basic output | 74HC595, SPI pins, LEDs | Verified in Proteus (XC8 + 10 MHz) |
+| `spi_loopback.X` | SPI loopback self-test | RC5/SDO to RC4/SDI | Verified in Proteus (XC8 + 10 MHz) |
+| `tick.X` | Millisecond tick | Timer1 ISR / Timer1 forwarding | Verified in Proteus (XC8 + 10 MHz) |
+| `timer0.X` | Timer0 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
+| `timer1.X` | Timer1 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
+| `timer2.X` | Timer2 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
+| `timer3.X` | Timer3 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
+| `uart.X` | UART echo | RC6/TX to Virtual Terminal RXD, RC7/RX optional | Verified in Proteus (XC8 + 10 MHz) |
+| `wdt.X` | Watchdog reset behavior | RB0 alive LED, RB1 pushbutton | Ready for Proteus validation |
+| `ds18b20_search_rom.X` | DS18B20 ROM search | 1-Wire bus diagnostics | Verified in Proteus; XC8 HEX export pending |
+| `onewire_bus_test.X` | Low-level OneWire bus test | 1-Wire bus diagnostics | Verified in Proteus; XC8 HEX export pending |
+| `ds18b20_multi_read.X` | Multi-drop DS18B20 discovery | Shared 1-Wire bus, 4.7 kΩ pull-up | Needs review / Proteus and C18 validation |
+
+All current Proteus folders already have matching `README.md` and `README.ua.md` files. No README gap was found during this pass.
+
 ## HEX Exports
 
 Successful XC8 builds are exported to:
@@ -123,3 +149,4 @@ See also: [HEX exports README](./hex/README.md).
 - Keep `pic-platform` shared and external.
 - Do not patch drivers per project; update project metadata instead.
 - Keep source references in `nbproject/configurations.xml`.
+

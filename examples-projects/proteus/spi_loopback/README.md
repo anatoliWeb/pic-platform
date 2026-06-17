@@ -1,7 +1,7 @@
-# spi_loopback Proteus Simulation
+﻿# spi_loopback Proteus Simulation
 
 ## Status
-Manual Proteus setup.
+Verified in Proteus (XC8 + 10 MHz).
 
 ## Firmware
 

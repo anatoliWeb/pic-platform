@@ -1,7 +1,7 @@
-# wdt Proteus Simulation
+﻿# wdt Proteus Simulation
 
 ## Status
-Proteus project: pending/manual.
+Ready for Proteus validation.
 
 ## Firmware
 
