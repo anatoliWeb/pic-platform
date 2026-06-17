@@ -40,4 +40,4 @@
 
 ## Статус
 
-Ready for Proteus validation.
+Готово до перевірки в Proteus.
