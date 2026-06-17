@@ -1,4 +1,4 @@
-# TODO
+﻿# TODO
 
 ## Structure
 
@@ -144,12 +144,19 @@
 - [x] Validate `examples-projects/xc8/ds18b20_search_rom.X` on XC8 + Proteus + 10 MHz.
 - [x] Split the DS18B20 example into a lean temperature example plus separate diagnostics.
 - [ ] Create full `.X` example projects for display/UI demos.
-- [ ] Verify `.X` project source references use external `pic-platform` paths.
+- [x] Verify `.X` project source references use external `pic-platform` paths.
 - [x] Validate the new `.X` projects in MPLAB.
 - [ ] Validate DS18B20 multi-sensor example in MPLAB XC8.
 - [ ] Validate DS18B20 multi-sensor example in MPLAB C18.
 - [ ] Add Proteus simulations for the new examples.
 
+### Example Status Snapshot
+
+- [x] Verified in Proteus: blink, uart_debug, adc_read, ds18b20_read, ring_buffer, rs485_basic, rs485_echo, spi_basic, spi_loopback, tick, timer0, timer1, timer2, timer3, uart, wdt, onewire_bus_test, ds18b20_search_rom.
+- [ ] Export XC8 HEX files for `ds18b20_search_rom.X` and `onewire_bus_test.X`.
+- [x] Proteus README coverage is complete for the current example folders.
+- [x] Source Files cleanup audit found no missing external `pic-platform` paths.
+- [ ] Revisit `ds18b20_multi_read.X` in Proteus and C18 later.
 ## Proteus Simulation
 
 - [x] Organize Proteus example folder structure for all example projects.
@@ -213,3 +220,5 @@
 - [ ] Port button, encoder, and input helpers first.
 - [ ] Validate each port with an XC8 example project.
 - [ ] Validate C18 compatibility where practical.
+
+

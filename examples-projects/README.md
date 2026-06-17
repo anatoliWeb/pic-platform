@@ -1,13 +1,13 @@
-[🇺🇦 Ukrainian version](./README.ua.md)
+﻿[🇺🇦 Ukrainian version](./README.ua.md)
 
 # examples-projects
 
 ## What is examples-projects
 
-`examples-projects` contains complete MPLAB X project wrappers for the external `pic-platform` repository.
+`examples-projects` contains standalone MPLAB X wrapper projects for the external `pic-platform` repository.
 
-- Each folder is a standalone `.X` project.
-- The projects are meant for integration checks, not for library source code.
+- Each `.X` folder is a self-contained project.
+- The projects are used for integration checks, not as the library source tree.
 - They validate the same codebase under MPLAB XC8 and MPLAB C18.
 - Example folders are split by compiler.
 
@@ -19,24 +19,22 @@ examples-projects/
 │   ├── blink.X/
 │   ├── uart_debug.X/
 │   ├── adc_read.X/
-│   ├── ...
-│   └── gpio.X/
-│
+│   └── ...
 ├── c18/
 │   ├── blink.X/
 │   ├── uart_debug.X/
 │   ├── adc_read.X/
-│   ├── ...
-│   └── gpio.X/
-│
-└── hex/
-    └── xc8/
+│   └── ...
+├── hex/
+│   ├── xc8/
+│   └── c18/
+└── proteus/
 ```
 
 ## Folder Structure Explanation
 
-- `xc8/` contains MPLAB XC8 project wrappers.
-- `c18/` contains MPLAB C18 project wrappers.
+- `xc8/` contains MPLAB XC8 wrapper projects.
+- `c18/` contains MPLAB C18 wrapper projects.
 - Every `.X` folder is a separate MPLAB X project.
 - Generated folders such as `build/`, `dist/`, `debug/`, and `nbproject/private/` are not tracked.
 
@@ -78,7 +76,14 @@ examples-projects/
 | System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `rs485_basic.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | System, timing, and communication examples |
 | 1-Wire / sensors | `ds18b20.X`, `ds18b20_multi_read.X`, `ds18b20_search_rom.X`, `onewire_bus_test.X` | Standalone DS18B20 wrapper and 1-Wire diagnostic examples |
 
-The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7k pull-up resistor. ROM search and Match ROM support are required for real multi-drop use; Proteus validation is still pending.
+The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7 kΩ pull-up resistor. ROM search and Match ROM support are required for real multi-drop use. Proteus validation for the multi-drop setup is still pending.
+
+## Validation Snapshot
+
+- Proteus README coverage is complete for the current `examples-projects/proteus/` folders.
+- Static source-file audit for the XC8 `.X` projects found no missing external `pic-platform` paths.
+- Pending XC8 HEX exports: `ds18b20_search_rom.X` and `onewire_bus_test.X`.
+- `ds18b20_multi_read.X` still needs further Proteus and C18 follow-up.
 
 ## HEX Exports
 
@@ -118,5 +123,3 @@ See also: [HEX exports README](./hex/README.md).
 - Keep `pic-platform` shared and external.
 - Do not patch drivers per project; update project metadata instead.
 - Keep source references in `nbproject/configurations.xml`.
-
-
