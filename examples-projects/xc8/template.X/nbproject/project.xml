@@ -8,14 +8,14 @@
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
-                        <sourceRootList>
+            <sourceRootList>
                 <sourceRootElem>../../../core</sourceRootElem>
                 <sourceRootElem>../../../drivers</sourceRootElem>
                 <sourceRootElem>../../../libraries</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>template_xc8</name>
+                    <name>default</name>
                     <type>2</type>
                 </confElem>
             </confList>
