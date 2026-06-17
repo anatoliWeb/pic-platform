@@ -82,7 +82,7 @@ Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire ш
 
 - Покриття README для папок `examples-projects/proteus/` вже є для всіх поточних прикладів.
 - Статична перевірка source-file посилань для XC8 `.X` проєктів не знайшла відсутніх зовнішніх шляхів `pic-platform`.
-- Очікують експорту XC8 HEX: `ds18b20_search_rom.X` і `onewire_bus_test.X`.
+- Відкладено / postponed на зараз: XC8 HEX-експорт для `ds18b20_search_rom.X` і `onewire_bus_test.X`.
 - `ds18b20_multi_read.X` ще потребує подальшої перевірки в Proteus і C18.
 
 ## Стан перевірки прикладів
@@ -104,7 +104,7 @@ Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire ш
 | `timer2.X` | Timer2 interrupt counter | RB0..RB3 LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
 | `timer3.X` | Timer3 interrupt counter | RB0..RB3 LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
 | `uart.X` | UART echo | RC6/TX до Virtual Terminal RXD, RC7/RX опційно | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `wdt.X` | Поведінка watchdog reset | RB0 alive LED, RB1 кнопка | Готовий до перевірки в Proteus |
+| `wdt.X` | Поведінка watchdog reset | RB0 alive LED, RB1 кнопка | Перевірено в Proteus; поведінку reset через Watchdog підтверджено |
 | `ds18b20_search_rom.X` | DS18B20 ROM search | 1-Wire diagnostics | Підтверджено в Proteus; XC8 HEX export очікується |
 | `onewire_bus_test.X` | Низькорівневий OneWire test | 1-Wire diagnostics | Підтверджено в Proteus; XC8 HEX export очікується |
 | `ds18b20_multi_read.X` | Multi-drop DS18B20 discovery | Спільна 1-Wire шина, підтягування 4.7 кΩ | Потребує перегляду / перевірки в Proteus і C18 |
@@ -149,4 +149,5 @@ Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire ш
 - Тримайте `pic-platform` спільним і зовнішнім.
 - Не патчте драйвери під кожен окремий проєкт; змінюйте метадані проєкту.
 - Зберігайте source references у `nbproject/configurations.xml`.
+
 

@@ -1,7 +1,7 @@
 ﻿# wdt Proteus Simulation
 
 ## Status
-Ready for Proteus validation.
+Verified in Proteus.
 
 ## Firmware
 
@@ -16,11 +16,14 @@ C18 HEX is not available yet for this project.
 - `../../xc8/wdt.X`
 - `../../c18/wdt.X`
 
+## Expected Behavior
+
+- Normal operation clears WDT regularly.
+- Simulated hang stops calling `wdt_clear()`.
+- MCU resets and the startup indication repeats.
+
 ## Proteus Notes
 
-Keep the MCU, power, and required peripheral wiring consistent with the example.
-
-## Notes
 - Do not copy HEX into this folder.
 - Rebuild the MPLAB project to refresh HEX.
 - Proteus should load HEX from the shared `hex/` folder.

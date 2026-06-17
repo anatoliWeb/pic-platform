@@ -153,8 +153,8 @@
 ### Example Status Snapshot
 
 - [x] Verified in Proteus: blink, uart_debug, adc_read, ds18b20_read, ring_buffer, rs485_basic, rs485_echo, spi, spi_loopback, tick, timer0, timer1, timer2, timer3, uart.
-- [ ] Ready for Proteus validation: wdt.
-- [ ] Export XC8 HEX files for `ds18b20_search_rom.X` and `onewire_bus_test.X`.
+- [x] Verified in Proteus: wdt.
+- [ ] Deferred/postponed for now: export XC8 HEX files for `ds18b20_search_rom.X` and `onewire_bus_test.X`.
 - [ ] Needs review / Proteus and C18 validation: `ds18b20_multi_read.X`.
 - [x] Proteus README coverage is complete for the current example folders.
 - [x] Source Files cleanup audit found no missing external `pic-platform` paths.
@@ -221,6 +221,7 @@
 - [ ] Port button, encoder, and input helpers first.
 - [ ] Validate each port with an XC8 example project.
 - [ ] Validate C18 compatibility where practical.
+
 
 
 

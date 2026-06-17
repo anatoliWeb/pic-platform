@@ -82,7 +82,7 @@ The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7 kΩ pu
 
 - Proteus README coverage is complete for the current `examples-projects/proteus/` folders.
 - Static source-file audit for the XC8 `.X` projects found no missing external `pic-platform` paths.
-- Pending XC8 HEX exports: `ds18b20_search_rom.X` and `onewire_bus_test.X`.
+- Deferred/postponed for now: `ds18b20_search_rom.X` and `onewire_bus_test.X` XC8 HEX exports.
 - `ds18b20_multi_read.X` still needs further Proteus and C18 follow-up.
 
 ## Example Validation Snapshot
@@ -104,7 +104,7 @@ The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7 kΩ pu
 | `timer2.X` | Timer2 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
 | `timer3.X` | Timer3 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
 | `uart.X` | UART echo | RC6/TX to Virtual Terminal RXD, RC7/RX optional | Verified in Proteus (XC8 + 10 MHz) |
-| `wdt.X` | Watchdog reset behavior | RB0 alive LED, RB1 pushbutton | Ready for Proteus validation |
+| `wdt.X` | Watchdog reset behavior | RB0 alive LED, RB1 pushbutton | Verified in Proteus; watchdog reset behavior verified |
 | `ds18b20_search_rom.X` | DS18B20 ROM search | 1-Wire bus diagnostics | Verified in Proteus; XC8 HEX export pending |
 | `onewire_bus_test.X` | Low-level OneWire bus test | 1-Wire bus diagnostics | Verified in Proteus; XC8 HEX export pending |
 | `ds18b20_multi_read.X` | Multi-drop DS18B20 discovery | Shared 1-Wire bus, 4.7 kΩ pull-up | Needs review / Proteus and C18 validation |
@@ -149,4 +149,5 @@ See also: [HEX exports README](./hex/README.md).
 - Keep `pic-platform` shared and external.
 - Do not patch drivers per project; update project metadata instead.
 - Keep source references in `nbproject/configurations.xml`.
+
 
