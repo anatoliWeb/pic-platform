@@ -40,4 +40,6 @@ Stand-alone phase 1 quadrature encoder example for PIC18F452.
 
 ## Status
 
-Ready for Proteus validation.
+Verified in Proteus.
+
+Manual Proteus validation completed successfully.

@@ -117,9 +117,9 @@ These are phase 1 input examples. Menu navigation is planned for Phase 2 and is 
 
 | Example | Purpose | Proteus components / pins | Status |
 |---|---|---|---|
-| `button.X` | Stand-alone button debounce and LED toggle example | RB0 active-low button with 10 k pull-up, RB1 LED, optional Virtual Terminal | Ready for Proteus validation |
-| `encoder.X` | Quadrature rotation, delta, position, and encoder button events | RB0 A, RB1 B, RB2 SW, optional pull-ups, optional Virtual Terminal | Ready for Proteus validation |
-| `adc_buttons.X` | ADC resistor-ladder keyboard on one analog input | RA0/AN0 ladder input, RB0..RB3 LEDs, Timer1 tick, optional Virtual Terminal | Ready for Proteus validation |
+| `button.X` | Stand-alone button debounce and LED toggle example | RB0 active-low button with 10 k pull-up, RB1 LED, optional Virtual Terminal | Verified in Proteus |
+| `encoder.X` | Quadrature rotation, delta, position, and encoder button events | RB0 A, RB1 B, RB2 SW, optional pull-ups, optional Virtual Terminal | Verified in Proteus |
+| `adc_buttons.X` | ADC resistor-ladder keyboard on one analog input | RA0/AN0 ladder input, RB0..RB3 LEDs, Timer1 tick, optional Virtual Terminal | Verified in Proteus |
 
 Phase 2 menu libraries are tracked separately and do not change the phase 1 input example scope.
 ## HEX Exports

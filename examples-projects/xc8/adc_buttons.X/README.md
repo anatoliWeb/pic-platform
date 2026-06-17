@@ -43,4 +43,6 @@ ADC ladder button example for a single analog input on PIC18F452.
 
 ## Status
 
-Ready for Proteus validation.
+Verified in Proteus.
+
+Manual Proteus validation completed successfully.

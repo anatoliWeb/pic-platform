@@ -117,9 +117,9 @@ Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire ш
 
 | Приклад | Призначення | Proteus components / pins | Статус |
 |---|---|---|---|
-| `button.X` | Окремий приклад debounce кнопки та перемикання LED | Кнопка на RB0 з підтягуванням 10 k до +5V, LED на RB1, опційний Virtual Terminal | Готово до перевірки в Proteus |
-| `encoder.X` | Обертання quadrature, delta, position і події кнопки енкодера | A на RB0, B на RB1, SW на RB2, опційні pull-up, опційний Virtual Terminal | Готово до перевірки в Proteus |
-| `adc_buttons.X` | Клавіатура на одному ADC вході через resistor ladder | Ланцюжок на RA0/AN0, LED на RB0..RB3, tick Timer1, опційний Virtual Terminal | Готово до перевірки в Proteus |
+| `button.X` | Окремий приклад debounce кнопки та перемикання LED | Кнопка на RB0 з підтягуванням 10 k до +5V, LED на RB1, опційний Virtual Terminal | Перевірено в Proteus |
+| `encoder.X` | Обертання quadrature, delta, position і події кнопки енкодера | A на RB0, B на RB1, SW на RB2, опційні pull-up, опційний Virtual Terminal | Перевірено в Proteus |
+| `adc_buttons.X` | Клавіатура на одному ADC вході через resistor ladder | Ланцюжок на RA0/AN0, LED на RB0..RB3, tick Timer1, опційний Virtual Terminal | Перевірено в Proteus |
 
 Menu libraries для Phase 2 ведуться окремо і не змінюють scope фази 1 для input-прикладів.
 ## HEX-експорт
