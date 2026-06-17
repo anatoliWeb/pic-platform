@@ -1,4 +1,4 @@
-﻿[🇺🇦 Ukrainian version](./README.ua.md)
+[🇺🇦 Ukrainian version](./README.ua.md)
 
 # examples-projects
 
@@ -111,6 +111,17 @@ The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7 kΩ pu
 
 All current Proteus folders already have matching `README.md` and `README.ua.md` files. No README gap was found during this pass.
 
+## Input Example Status
+
+These are phase 1 input examples. Menu navigation is planned for Phase 2 and is intentionally not part of these projects.
+
+| Example | Purpose | Proteus components / pins | Status |
+|---|---|---|---|
+| `button.X` | Stand-alone button debounce and LED toggle example | RB0 active-low button with 10 k pull-up, RB1 LED, optional Virtual Terminal | Ready for Proteus validation |
+| `encoder.X` | Quadrature rotation, delta, position, and encoder button events | RB0 A, RB1 B, RB2 SW, optional pull-ups, optional Virtual Terminal | Ready for Proteus validation |
+| `adc_buttons.X` | ADC resistor-ladder keyboard on one analog input | RA0/AN0 ladder input, RB0..RB3 LEDs, Timer1 tick, optional Virtual Terminal | Ready for Proteus validation |
+
+Phase 2 menu libraries are tracked separately and do not change the phase 1 input example scope.
 ## HEX Exports
 
 Successful XC8 builds are exported to:

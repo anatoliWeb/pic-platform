@@ -1,4 +1,4 @@
-﻿# TODO
+# TODO
 
 ## Structure
 
@@ -158,6 +158,20 @@
 - [ ] Needs review / Proteus and C18 validation: `ds18b20_multi_read.X`.
 - [x] Proteus README coverage is complete for the current example folders.
 - [x] Source Files cleanup audit found no missing external `pic-platform` paths.
+## Input examples documentation
+
+- [x] Create and synchronize bilingual README files for `button.X`, `encoder.X`, and `adc_buttons.X`.
+- [x] Document phase 1 input behavior without introducing menu logic.
+- [ ] Add Proteus verification notes when manual validation is recorded.
+
+## Phase 2 menu libraries
+
+- [ ] Encoder menu demo (Planned for Phase 2)
+- [ ] Button/encoder navigation layer (Planned for Phase 2)
+- [ ] LCD menu library (Planned for Phase 2)
+- [ ] OLED menu library (Planned for Phase 2)
+- [ ] Display-specific menu examples (Planned for Phase 2)
+- [ ] Keep menu libraries separate from phase 1 input example docs.
 ## Proteus Simulation
 
 - [x] Organize Proteus example folder structure for all example projects.

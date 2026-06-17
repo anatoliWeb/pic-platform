@@ -4,8 +4,7 @@
 
 ## Description
 
-Non-blocking button driver with debounce and Gyver-style event flags.
-It is intended for UI actions such as press, release, click, double click, hold, and hold repeat.
+Phase 1 non-blocking button driver with debounce. It is intended for stand-alone input examples. Phase 2 menu navigation layers will build on top of this library, but they are not part of it.
 
 ## API
 
@@ -42,10 +41,11 @@ while (1)
 
 ## Notes
 
-- Active-low input is expected by the driver.
-- Debounce uses a polling model and `tick_get()`.
+- Active-low input is expected.
+- Debounce uses polling and `tick_get()`.
 - Hold repeat and click count are lightweight and static.
 - `button_is_clicked()` and `button_is_held()` remain available for older code.
+- Phase 2 menu/navigation layers are not part of this library.
 
 ## Dependencies
 

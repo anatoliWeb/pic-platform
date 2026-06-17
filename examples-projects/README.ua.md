@@ -1,4 +1,4 @@
-﻿[🇬🇧 English version](./README.md)
+[🇬🇧 English version](./README.md)
 
 # examples-projects
 
@@ -111,6 +111,17 @@ Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire ш
 
 У всіх поточних папках Proteus уже є відповідні `README.md` і `README.ua.md`. Прогалин у документації для поточних папок не знайдено.
 
+## Стан input-прикладів
+
+Це приклади фази 1 для input. Menu navigation заплановано окремо на Phase 2 і свідомо не входить до цих проєктів.
+
+| Приклад | Призначення | Proteus components / pins | Статус |
+|---|---|---|---|
+| `button.X` | Окремий приклад debounce кнопки та перемикання LED | Кнопка на RB0 з підтягуванням 10 k до +5V, LED на RB1, опційний Virtual Terminal | Ready for Proteus validation |
+| `encoder.X` | Обертання quadrature, delta, position і події кнопки енкодера | A на RB0, B на RB1, SW на RB2, опційні pull-up, опційний Virtual Terminal | Ready for Proteus validation |
+| `adc_buttons.X` | Клавіатура на одному ADC вході через resistor ladder | Ланцюжок на RA0/AN0, LED на RB0..RB3, tick Timer1, опційний Virtual Terminal | Ready for Proteus validation |
+
+Menu libraries для Phase 2 ведуться окремо і не змінюють scope фази 1 для input-прикладів.
 ## HEX-експорт
 
 Успішні збірки XC8 експортуються до:

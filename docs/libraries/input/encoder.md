@@ -4,9 +4,7 @@
 
 ## Description
 
-Quadrature encoder driver with direction, delta, and absolute position tracking.
-The encoder button is integrated through the existing `button_t` driver.
-This version is polling-based and does not require interrupts.
+Phase 1 quadrature encoder driver with direction, delta, and absolute position tracking. The encoder button is integrated through the existing `button_t` driver. Menu logic is planned separately for Phase 2 and is not part of this library.
 
 ## API
 
@@ -45,6 +43,7 @@ while (1)
 - `encoder_get_position()` returns the accumulated signed position counter.
 - The button is handled by the embedded `button_t` state machine.
 - Polling every 1-5 ms is recommended.
+- Phase 2 menu navigation is intentionally out of scope for this library.
 
 ## Dependencies
 

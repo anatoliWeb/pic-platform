@@ -4,8 +4,7 @@
 
 ## Опис
 
-Неблокуючий драйвер кнопки з debounce та Gyver-style подіями.
-Підходить для UI-дій: press, release, click, double click, hold і hold repeat.
+Фаза 1: неблокуючий драйвер кнопки з debounce. Він призначений для окремих input-прикладів. Шари menu navigation для Phase 2 будуть побудовані поверх цієї бібліотеки, але не входять до її складу.
 
 ## API
 
@@ -44,8 +43,9 @@ while (1)
 
 - Очікується active-low кнопка.
 - Debounce працює через polling і `tick_get()`.
-- Hold repeat і click count зроблені компактно, без динамічної пам'яті.
-- `button_is_clicked()` та `button_is_held()` лишаються для старого коду.
+- Hold repeat і click count реалізовані компактно, без динамічної пам’яті.
+- `button_is_clicked()` та `button_is_held()` залишаються для старого коду.
+- Шари Phase 2 menu/navigation не входять до цієї бібліотеки.
 
 ## Залежності
 
