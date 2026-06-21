@@ -73,7 +73,7 @@ examples-projects/
 | Analog / input | `adc.X`, `adc_buttons.X`, `button.X`, `encoder.X` | Input and sensor-style examples |
 | Displays | `lcd_hd44780.X` | Text LCD example |
 | Core utilities | `ring_buffer.X`, `crc.X`, `clock.X` | Lightweight core utility wrappers |
-| System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `rs485_basic.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | System, timing, and communication examples |
+| System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `rs485_basic.X`, `software_pwm.X`, `ac_phase_control.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | System, timing, and communication examples |
 | 1-Wire / sensors | `ds18b20.X`, `ds18b20_multi_read.X`, `ds18b20_search_rom.X`, `onewire_bus_test.X` | Standalone DS18B20 wrapper and 1-Wire diagnostic examples |
 
 The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7 kΩ pull-up resistor. ROM search and Match ROM support are required for real multi-drop use. Proteus validation for the multi-drop setup is still pending.
@@ -105,6 +105,7 @@ The DS18B20 multi-sensor wrapper assumes one shared 1-Wire bus with a 4.7 kΩ pu
 | `timer3.X` | Timer3 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
 | `uart.X` | UART echo | RC6/TX to Virtual Terminal RXD, RC7/RX optional | Verified in Proteus (XC8 + 10 MHz) |
 | `wdt.X` | Watchdog reset behavior | RB0 alive LED, RB1 pushbutton | Verified in Proteus; watchdog reset behavior verified |
+| `ac_phase_control.X` | Low-voltage phase-control brightness timing | RB0 / INT0 fake zero-cross input, RD0 gate pulse, RD1 optional activity LED | Ready for Proteus validation |
 | `ds18b20_search_rom.X` | DS18B20 ROM search | 1-Wire bus diagnostics | Verified in Proteus; XC8 HEX export pending |
 | `onewire_bus_test.X` | Low-level OneWire bus test | 1-Wire bus diagnostics | Verified in Proteus; XC8 HEX export pending |
 | `ds18b20_multi_read.X` | Multi-drop DS18B20 discovery | Shared 1-Wire bus, 4.7 kΩ pull-up | Needs review / Proteus and C18 validation |

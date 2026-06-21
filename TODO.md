@@ -236,7 +236,287 @@
 - [ ] Port button, encoder, and input helpers first.
 - [ ] Validate each port with an XC8 example project.
 - [ ] Validate C18 compatibility where practical.
+## Platform Extensions
 
+### Software PWM
 
+* [x] Create initial `libraries/output/software_pwm/` library for arbitrary GPIO channels driven by one timer-based PWM group.
+* [x] Create `docs/libraries/output/software_pwm.md`.
+* [x] Create `docs/libraries/output/software_pwm.ua.md`.
+* [x] Create `examples-projects/xc8/software_pwm.X` as the initial XC8 example project.
+* [x] Create `examples-projects/proteus/software_pwm/README.md`.
+* [x] Create `examples-projects/proteus/software_pwm/README.ua.md`.
+* [x] Validate `software_pwm.X` in Proteus.
+* [x] Confirm software PWM works correctly in Proteus simulation.
+* [ ] Extend timer-source validation for Timer0, Timer1, and Timer3.
+* [ ] Add more software PWM examples for common use cases:
 
+  * [ ] LED brightness control.
+  * [ ] RGB LED control.
+  * [ ] Multiple GPIO PWM outputs on PORTD.
+  * [ ] Servo-style pulse output example.
+  * [ ] Slow heater / relay / SSR control example.
 
+### Gyver-style / Arduino-like Library Expansion
+
+Rule: if a similar module already exists in `pic-platform`, extend and clean it first instead of duplicating logic in a new folder.
+
+#### Input / Buttons / Navigation
+
+* [ ] Add button helper library.
+
+  * [ ] Debounce.
+  * [ ] Click.
+  * [ ] Hold.
+  * [ ] Long press.
+  * [ ] Multi-click.
+  * [ ] Non-blocking update model.
+  * [ ] Minimal XC8 example: `button_click_hold.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add rotary encoder helper library.
+
+  * [ ] Direction detection.
+  * [ ] Step counting.
+  * [ ] Optional acceleration.
+  * [ ] Button + encoder combined navigation.
+  * [ ] Minimal XC8 example: `encoder_basic.X`.
+  * [ ] Minimal XC8 example: `encoder_menu.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add ADC buttons helper library.
+
+  * [ ] Resistor ladder buttons on one ADC input.
+  * [ ] Threshold table.
+  * [ ] Noise tolerance / hysteresis.
+  * [ ] Optional calibration notes.
+  * [ ] Minimal XC8 example: `adc_buttons_basic.X`.
+  * [ ] Minimal XC8 example: `adc_buttons_menu.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add matrix keypad helper library.
+
+  * [ ] 2x2 keypad scan.
+  * [ ] 3x4 keypad scan.
+  * [ ] 4x4 keypad scan.
+  * [ ] Debounce.
+  * [ ] Non-blocking scan model.
+  * [ ] Minimal XC8 example: `keypad_matrix.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+#### Timing / Scheduler / Control Helpers
+
+* [ ] Add millis-like timing helpers.
+
+  * [ ] Shared system tick.
+  * [ ] `millis()` style counter.
+  * [ ] `elapsed` helper.
+  * [ ] Non-blocking timer helper.
+  * [ ] Minimal XC8 example: `millis_demo.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add relay helper library.
+
+  * [ ] Simple ON/OFF.
+  * [ ] Pulse mode.
+  * [ ] Delayed OFF.
+  * [ ] Delayed ON.
+  * [ ] Non-blocking timer-based control.
+  * [ ] Minimal XC8 example: `relay_pulse.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add buzzer / beeper helper library.
+
+  * [ ] Single beep.
+  * [ ] Beep pattern.
+  * [ ] Short melody / tone pattern.
+  * [ ] Non-blocking playback.
+  * [ ] Minimal XC8 example: `buzzer_pattern.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+#### Output Helpers
+
+* [ ] Add hardware PWM / CCP helper examples.
+
+  * [ ] CCP1 PWM example on RC2.
+  * [ ] CCP2 PWM example on RC1.
+  * [ ] CCP2 alternative output note for RB3 / CCP2MUX.
+  * [ ] Comparison note: hardware PWM vs software PWM.
+  * [ ] Minimal XC8 example: `ccp_pwm_basic.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add servo output helper.
+
+  * [ ] 1 servo output.
+  * [ ] Multiple servo outputs if timing allows.
+  * [ ] 1000-2000 us pulse control.
+  * [ ] 20 ms frame documentation.
+  * [ ] Minimal XC8 example: `servo_basic.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add LED effects helper.
+
+  * [ ] Blink pattern.
+  * [ ] Fade using software PWM.
+  * [ ] RGB status LED.
+  * [ ] Smooth transition helper.
+  * [ ] Minimal XC8 example: `led_effects.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add MOSFET output usage notes.
+
+  * [ ] Low-voltage DC load examples only.
+  * [ ] Gate resistor note.
+  * [ ] Gate pulldown note.
+  * [ ] Flyback diode note for inductive loads.
+  * [ ] Separate real AC/mains usage from Phase 1.
+
+#### Filters / Regulators
+
+* [ ] Add filter helper library.
+
+  * [ ] Average filter.
+  * [ ] Running average filter.
+  * [ ] Median filter.
+  * [ ] Exponential / IIR filter.
+  * [ ] Integer math only by default.
+  * [ ] Minimal XC8 example: `filters_demo.X`.
+  * [ ] Proteus or UART-output validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add PID / regulator helper library.
+
+  * [ ] P regulator.
+  * [ ] PI regulator.
+  * [ ] PID regulator.
+  * [ ] Output limits.
+  * [ ] Integral clamp / anti-windup.
+  * [ ] Integer or fixed-point math by default.
+  * [ ] Minimal XC8 example: `pid_regulator.X`.
+  * [ ] Proteus or UART-output validation.
+  * [ ] C18 compatibility check where practical.
+
+#### Sensors / Analog Helpers
+
+* [ ] Add NTC thermistor helper.
+
+  * [ ] ADC reading conversion.
+  * [ ] Compact lookup-table mode.
+  * [ ] Optional beta-formula mode if code size allows.
+  * [ ] Integer or fixed-point math by default.
+  * [ ] Minimal XC8 example: `ntc_read.X`.
+  * [ ] Proteus or UART-output validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add joystick helper.
+
+  * [ ] X axis ADC read.
+  * [ ] Y axis ADC read.
+  * [ ] Button debounce.
+  * [ ] Dead-zone handling.
+  * [ ] Direction mapping.
+  * [ ] Minimal XC8 example: `joystick_xy.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+#### IO Expansion
+
+* [ ] Add 74HC595 output shift register helper.
+
+  * [ ] Bit-bang mode.
+  * [ ] Optional SPI-backed mode.
+  * [ ] Single chip output.
+  * [ ] Multiple chained chips.
+  * [ ] Minimal XC8 example: `shift_register_595.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+* [ ] Add 74HC165 input shift register helper.
+
+  * [ ] Bit-bang mode.
+  * [ ] Optional SPI-backed mode.
+  * [ ] Single chip input.
+  * [ ] Multiple chained chips.
+  * [ ] Minimal XC8 example: `shift_register_165.X`.
+  * [ ] Proteus validation.
+  * [ ] C18 compatibility check where practical.
+
+#### Menu / UI Helpers
+
+* [ ] Add menu core helper.
+
+  * [ ] Menu item model.
+  * [ ] Cursor position.
+  * [ ] Enter/back navigation.
+  * [ ] Value edit mode.
+  * [ ] Keep display rendering separate from menu logic.
+  * [ ] Minimal XC8 example: `menu_core_demo.X`.
+
+* [ ] Add input adapter for menu navigation.
+
+  * [ ] Button navigation.
+  * [ ] Encoder navigation.
+  * [ ] ADC buttons navigation.
+  * [ ] Keypad navigation.
+  * [ ] Minimal XC8 example: `menu_input_demo.X`.
+
+* [ ] Add display-specific menu examples only after RAM review.
+
+  * [ ] LCD HD44780 menu example.
+  * [ ] SSD1306 menu example.
+  * [ ] Seven-segment simple menu/status example.
+  * [ ] Review RAM usage before adding TFT/graphics-heavy examples.
+
+### AC Phase Control / Heater Control
+
+* [x] Create `libraries/output/ac_phase_control/` module skeleton.
+* [x] Create `docs/libraries/output/ac_phase_control.md`.
+* [x] Create `docs/libraries/output/ac_phase_control.ua.md`.
+* [x] Implement low-voltage zero-cross phase-control state machine.
+* [x] Implement configurable gate output pulse.
+* [x] Implement percent-to-phase-delay brightness control.
+  * [x] Add multi-channel phase-control group support.
+  * [x] Add configurable output pins per channel.
+  * [x] Add independent power level per channel.
+  * [x] Keep one shared zero-cross input for the group.
+  * [x] Move timer selection into the phase-control library API.
+  * [x] Add `ac_phase_control_init_group()` / group-based API.
+  * [x] Add library-owned timer IRQ dispatch helper.
+  * [x] Create `examples-projects/xc8/ac_phase_control.X`.
+  * [x] Add selectable timer source in the XC8 example.
+  * [x] Add non-blocking slow brightness fade example.
+* [x] Create Proteus documentation:
+  * [x] `docs/libraries/output/ac_phase_control.md`
+  * [x] `docs/libraries/output/ac_phase_control.ua.md`
+  * [x] `examples-projects/proteus/ac_phase_control/README.md`
+  * [x] `examples-projects/proteus/ac_phase_control/README.ua.md`
+* [ ] Validate multiple phase-control channels in Proteus.
+* [ ] Validate Timer0 source in Proteus.
+* [ ] Validate Timer1 source in Proteus.
+* [ ] Validate Timer2 source in Proteus.
+* [ ] Validate Timer3 source in Proteus.
+* [ ] Validate slow brightness fade waveform in Proteus.
+* [ ] Implement burst-fire heater control as a separate future module.
+* [ ] Keep real mains examples out of Phase 1.
+* [ ] Start with low-voltage Proteus-first validation only.
+* [ ] Add safety notes before any real AC/mains documentation or examples.
+
+### Future Output Extensions
+
+* [ ] Add more software PWM examples.
+* [ ] Add hardware PWM / CCP examples.
+* [ ] Add servo output helper.
+* [ ] Add relay output helper.
+* [ ] Add buzzer / tone output helper.
+* [ ] Add LED effects helper.
+* [ ] Add MOSFET output usage notes.

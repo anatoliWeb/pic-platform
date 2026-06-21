@@ -1,164 +1,165 @@
-[🇬🇧 English version](./README.md)
+[рџ‡¬рџ‡§ English version](./README.md)
 
 # examples-projects
 
-## Що таке examples-projects
+## Р©Рѕ С‚Р°РєРµ examples-projects
 
-`examples-projects` містить окремі wrapper-проєкти MPLAB X для зовнішнього репозиторію `pic-platform`.
+`examples-projects` РјС–СЃС‚РёС‚СЊ РѕРєСЂРµРјС– wrapper-РїСЂРѕС”РєС‚Рё MPLAB X РґР»СЏ Р·РѕРІРЅС–С€РЅСЊРѕРіРѕ СЂРµРїРѕР·РёС‚РѕСЂС–СЋ `pic-platform`.
 
-- Кожна папка `.X` є самостійним проєктом.
-- Проєкти потрібні для перевірки інтеграції, а не для зберігання коду бібліотеки.
-- Вони перевіряють той самий код під MPLAB XC8 і MPLAB C18.
-- Приклади розділені за компілятором.
+- РљРѕР¶РЅР° РїР°РїРєР° `.X` С” СЃР°РјРѕСЃС‚С–Р№РЅРёРј РїСЂРѕС”РєС‚РѕРј.
+- РџСЂРѕС”РєС‚Рё РїРѕС‚СЂС–Р±РЅС– РґР»СЏ РїРµСЂРµРІС–СЂРєРё С–РЅС‚РµРіСЂР°С†С–С—, Р° РЅРµ СЏРє РґРµСЂРµРІРѕ РІРёС…С–РґРЅРѕРіРѕ РєРѕРґСѓ Р±С–Р±Р»С–РѕС‚РµРєРё.
+- Р’РѕРЅРё РїРµСЂРµРІС–СЂСЏСЋС‚СЊ С‚РѕР№ СЃР°РјРёР№ РєРѕРґ РїС–Рґ MPLAB XC8 С– MPLAB C18.
+- РџСЂРёРєР»Р°РґРё СЂРѕР·РґС–Р»РµРЅС– Р·Р° РєРѕРјРїС–Р»СЏС‚РѕСЂРѕРј.
 
-## Структура проєкту
+## РЎС‚СЂСѓРєС‚СѓСЂР° РїСЂРѕС”РєС‚С–РІ
 
 ```text
 examples-projects/
-├── xc8/
-│   ├── blink.X/
-│   ├── uart_debug.X/
-│   ├── adc_read.X/
-│   └── ...
-├── c18/
-│   ├── blink.X/
-│   ├── uart_debug.X/
-│   ├── adc_read.X/
-│   └── ...
-├── hex/
-│   ├── xc8/
-│   └── c18/
-└── proteus/
+в”њв”Ђв”Ђ xc8/
+в”‚   в”њв”Ђв”Ђ blink.X/
+в”‚   в”њв”Ђв”Ђ uart_debug.X/
+в”‚   в”њв”Ђв”Ђ adc_read.X/
+в”‚   в””в”Ђв”Ђ ...
+в”њв”Ђв”Ђ c18/
+в”‚   в”њв”Ђв”Ђ blink.X/
+в”‚   в”њв”Ђв”Ђ uart_debug.X/
+в”‚   в”њв”Ђв”Ђ adc_read.X/
+в”‚   в””в”Ђв”Ђ ...
+в”њв”Ђв”Ђ hex/
+в”‚   в”њв”Ђв”Ђ xc8/
+в”‚   в””в”Ђв”Ђ c18/
+в””в”Ђв”Ђ proteus/
 ```
 
-## Пояснення структури папок
+## РџРѕСЏСЃРЅРµРЅРЅСЏ СЃС‚СЂСѓРєС‚СѓСЂРё РїР°РїРѕРє
 
-- `xc8/` містить wrapper-проєкти для MPLAB XC8.
-- `c18/` містить wrapper-проєкти для MPLAB C18.
-- Кожна папка `.X` є окремим MPLAB X-проєктом.
-- Згенеровані папки `build/`, `dist/`, `debug/` та `nbproject/private/` не зберігаються в репозиторії.
+- `xc8/` РјС–СЃС‚РёС‚СЊ wrapper-РїСЂРѕС”РєС‚Рё РґР»СЏ MPLAB XC8.
+- `c18/` РјС–СЃС‚РёС‚СЊ wrapper-РїСЂРѕС”РєС‚Рё РґР»СЏ MPLAB C18.
+- РљРѕР¶РЅР° РїР°РїРєР° `.X` С” РѕРєСЂРµРјРёРј MPLAB X-РїСЂРѕС”РєС‚РѕРј.
+- Р—РіРµРЅРµСЂРѕРІР°РЅС– РїР°РїРєРё `build/`, `dist/`, `debug/` С– `nbproject/private/` РЅРµ Р·Р±РµСЂС–РіР°СЋС‚СЊСЃСЏ РІ СЂРµРїРѕР·РёС‚РѕСЂС–С—.
 
-## Правила проєктів
+## РџСЂР°РІРёР»Р° РїСЂРѕС”РєС‚С–РІ
 
-- Не копіюйте драйвери в папки прикладів.
-- Використовуйте лише відносні шляхи.
-- `pic-platform` має залишатися зовнішнім для прикладних проєктів.
-- Додавайте потрібні `.c` файли вручну через метадані MPLAB X.
-- Тримайте налаштування застосунку в `main.c`, `project_config.h` та `config_bits.c`.
-- CONFIG bits зберігайте тільки в `config_bits.c`.
+- РќРµ РєРѕРїС–СЋР№С‚Рµ РґСЂР°Р№РІРµСЂРё РІ РїР°РїРєРё РїСЂРёРєР»Р°РґС–РІ.
+- Р’РёРєРѕСЂРёСЃС‚РѕРІСѓР№С‚Рµ Р»РёС€Рµ РІС–РґРЅРѕСЃРЅС– С€Р»СЏС…Рё.
+- `pic-platform` РјР°С” Р·Р°Р»РёС€Р°С‚РёСЃСЏ Р·РѕРІРЅС–С€РЅС–Рј РґР»СЏ РїСЂРёРєР»Р°РґРЅРёС… РїСЂРѕС”РєС‚С–РІ.
+- РџРѕС‚СЂС–Р±РЅС– `.c` С„Р°Р№Р»Рё РґРѕРґР°РІР°Р№С‚Рµ РІСЂСѓС‡РЅСѓ С‡РµСЂРµР· metadata MPLAB X.
+- РўСЂРёРјР°Р№С‚Рµ РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ Р·Р°СЃС‚РѕСЃСѓРЅРєСѓ РІ `main.c`, `project_config.h` С– `config_bits.c`.
+- CONFIG bits Р·Р±РµСЂС–РіР°Р№С‚Рµ С‚С–Р»СЊРєРё РІ `config_bits.c`.
 
-## Нотатки з інтеграції
+## РќРѕС‚Р°С‚РєРё С–РЅС‚РµРіСЂР°С†С–С—
 
-- Wrapper-проєкти залежать від `../pic-platform`.
-- Include paths мають давати доступ до:
-  - кореня репозиторію
+- Wrapper-РїСЂРѕС”РєС‚Рё Р·Р°Р»РµР¶Р°С‚СЊ РІС–Рґ `../pic-platform`.
+- Include paths РјР°СЋС‚СЊ РґР°РІР°С‚Рё РґРѕСЃС‚СѓРї РґРѕ:
+  - РєРѕСЂРµРЅСЏ СЂРµРїРѕР·РёС‚РѕСЂС–СЋ
   - `core/`
   - `drivers/`
   - `libraries/`
-- Посилання на source files зберігаються в `nbproject/configurations.xml`.
-- Надійне джерело правди — це метадані MPLAB-проєкту, а не згенерований файл `Makefile-default.mk`.
+- РџРѕСЃРёР»Р°РЅРЅСЏ РЅР° source files Р·Р±РµСЂС–РіР°СЋС‚СЊСЃСЏ РІ `nbproject/configurations.xml`.
+- РќР°РґС–Р№РЅРёРј РґР¶РµСЂРµР»РѕРј РїСЂР°РІРґРё С” MPLAB project metadata, Р° РЅРµ Р·РіРµРЅРµСЂРѕРІР°РЅРёР№ `Makefile-default.mk`.
 
-## Підтримувані компілятори
+## РџС–РґС‚СЂРёРјСѓРІР°РЅС– РєРѕРјРїС–Р»СЏС‚РѕСЂРё
 
 - MPLAB XC8
 - MPLAB C18
 
-## Сімейства прикладів
+## РЎС–РјРµР№СЃС‚РІР° РїСЂРёРєР»Р°РґС–РІ
 
-| Сімейство | Wrapper-проєкти | Призначення |
+| РЎС–РјРµР№СЃС‚РІРѕ | Wrapper-РїСЂРѕС”РєС‚Рё | РџСЂРёР·РЅР°С‡РµРЅРЅСЏ |
 |---|---|---|
-| Базова перевірка | `blink.X`, `uart_debug.X`, `adc_read.X`, `i2c_scan.X`, `spi_loopback.X`, `rs485_echo.X`, `ds18b20_read.X` | Базові інтеграційні та перевірочні проєкти |
-| Common wrappers | `delay.X`, `template.X` | Простий стартовий набір |
-| GPIO / UART | `gpio.X`, `uart.X` | Базова робота з периферією |
-| Аналог / вхід | `adc.X`, `adc_buttons.X`, `button.X`, `encoder.X` | Приклади для входів і сенсорів |
-| Дисплеї | `lcd_hd44780.X` | Приклад текстового LCD |
-| Ядро / утиліти | `ring_buffer.X`, `crc.X`, `clock.X` | Легкі допоміжні модулі ядра |
-| Система / таймінг | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `rs485_basic.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | Системні, таймінгові та комунікаційні приклади |
-| 1-Wire / датчики | `ds18b20.X`, `ds18b20_multi_read.X`, `ds18b20_search_rom.X`, `onewire_bus_test.X` | Окремий wrapper для DS18B20 та діагностичні 1-Wire приклади |
+| Validation set | `blink.X`, `uart_debug.X`, `adc_read.X`, `i2c_scan.X`, `spi_loopback.X`, `rs485_echo.X`, `ds18b20_read.X` | Р‘Р°Р·РѕРІС– С–РЅС‚РµРіСЂР°С†С–Р№РЅС– С‚Р° legacy-РїСЂРѕС”РєС‚Рё РїРµСЂРµРІС–СЂРєРё |
+| Common wrappers | `delay.X`, `template.X` | РџСЂРѕСЃС‚С– СЃС‚Р°СЂС‚РѕРІС– РїСЂРёРєР»Р°РґРё |
+| GPIO / UART | `gpio.X`, `uart.X` | Р‘Р°Р·РѕРІР° СЂРѕР±РѕС‚Р° Р· РїРµСЂРёС„РµСЂС–С”СЋ |
+| Analog / input | `adc.X`, `adc_buttons.X`, `button.X`, `encoder.X` | РџСЂРёРєР»Р°РґРё РґР»СЏ РІС…РѕРґС–РІ С– СЃРµРЅСЃРѕСЂС–РІ |
+| Displays | `lcd_hd44780.X` | РўРµРєСЃС‚РѕРІРёР№ LCD-РїСЂРёРєР»Р°Рґ |
+| Core utilities | `ring_buffer.X`, `crc.X`, `clock.X` | Р›РµРіРєС– РґРѕРїРѕРјС–Р¶РЅС– РјРѕРґСѓР»С– СЏРґСЂР° |
+| System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `rs485_basic.X`, `software_pwm.X`, `ac_phase_control.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | РЎРёСЃС‚РµРјРЅС–, С‚Р°Р№РјС–РЅРіРѕРІС– С‚Р° РєРѕРјСѓРЅС–РєР°С†С–Р№РЅС– РїСЂРёРєР»Р°РґРё |
+| 1-Wire / sensors | `ds18b20.X`, `ds18b20_multi_read.X`, `ds18b20_search_rom.X`, `onewire_bus_test.X` | РћРєСЂРµРјРёР№ wrapper РґР»СЏ DS18B20 С– 1-Wire РґС–Р°РіРЅРѕСЃС‚РёРєРё |
 
-Wrapper `ds18b20_multi_read.X` використовує спільну 1-Wire шину з підтягувальним резистором 4.7 кΩ до VDD. Для реальної роботи з кількома датчиками потрібні ROM search і Match ROM. Перевірка в Proteus для багатодатчикового сценарію ще не завершена.
+Wrapper `ds18b20_multi_read.X` РІРёРєРѕСЂРёСЃС‚РѕРІСѓС” СЃРїС–Р»СЊРЅСѓ 1-Wire С€РёРЅСѓ Р· РїС–РґС‚СЏРіСѓРІР°Р»СЊРЅРёРј СЂРµР·РёСЃС‚РѕСЂРѕРј 4.7 РєРћРј РґРѕ VDD. Р”Р»СЏ СЂРµР°Р»СЊРЅРѕС— СЂРѕР±РѕС‚Рё Р· РєС–Р»СЊРєРѕРјР° РґР°С‚С‡РёРєР°РјРё РїРѕС‚СЂС–Р±РЅС– ROM search С– Match ROM. РџРµСЂРµРІС–СЂРєР° РІ Proteus РґР»СЏ Р±Р°РіР°С‚РѕРґР°С‚С‡РёРєРѕРІРѕРіРѕ СЃС†РµРЅР°СЂС–СЋ С‰Рµ РЅРµ Р·Р°РІРµСЂС€РµРЅР°.
 
-## Статус перевірки
+## Р—РЅС–РјРѕРє РІР°Р»С–РґР°С†С–С—
 
-- Покриття README для папок `examples-projects/proteus/` вже є для всіх поточних прикладів.
-- Статична перевірка source-file посилань для XC8 `.X` проєктів не знайшла відсутніх зовнішніх шляхів `pic-platform`.
-- Відкладено / postponed на зараз: XC8 HEX-експорт для `ds18b20_search_rom.X` і `onewire_bus_test.X`.
-- `ds18b20_multi_read.X` ще потребує подальшої перевірки в Proteus і C18.
+- РџРѕРєСЂРёС‚С‚СЏ README РґР»СЏ РїР°РїРѕРє `examples-projects/proteus/` РІР¶Рµ С” РґР»СЏ РІСЃС–С… РїРѕС‚РѕС‡РЅРёС… РїСЂРёРєР»Р°РґС–РІ.
+- РЎС‚Р°С‚РёС‡РЅР° РїРµСЂРµРІС–СЂРєР° source-file РїРѕСЃРёР»Р°РЅСЊ РґР»СЏ XC8 `.X` РїСЂРѕС”РєС‚С–РІ РЅРµ Р·РЅР°Р№С€Р»Р° РІС–РґСЃСѓС‚РЅС–С… Р·РѕРІРЅС–С€РЅС–С… С€Р»СЏС…С–РІ `pic-platform`.
+- Р’С–РґРєР»Р°РґРµРЅРѕ РЅР° Р·Р°СЂР°Р·: XC8 HEX-РµРєСЃРїРѕСЂС‚ РґР»СЏ `ds18b20_search_rom.X` С– `onewire_bus_test.X`.
+- `ds18b20_multi_read.X` С‰Рµ РїРѕС‚СЂРµР±СѓС” РїРѕРґР°Р»СЊС€РѕС— РїРµСЂРµРІС–СЂРєРё РІ Proteus С– C18.
 
-## Стан перевірки прикладів
+## РЎС‚Р°С‚СѓСЃ РїСЂРёРєР»Р°РґС–РІ
 
-| Приклад | Що тестує | Proteus components / pins | Статус |
+| РџСЂРёРєР»Р°Рґ | Р©Рѕ С‚РµСЃС‚СѓС” | РљРѕРјРїРѕРЅРµРЅС‚Рё Proteus / РїС–РЅРё | РЎС‚Р°С‚СѓСЃ |
 |---|---|---|---|
-| `blink.X` | Миготіння GPIO-LED | RB0 LED | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `uart_debug.X` | Debug-обгортки UART | RC6/TX до Virtual Terminal RXD, RC7/RX опційно | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `adc_read.X` | Зчитування ADC | Джерело аналогового сигналу на AN0/AN1 | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `ds18b20_read.X` | Температура DS18B20 | RB1 1-Wire data line, підтягувальний резистор 4.7 кΩ | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `ring_buffer.X` | UART RX FIFO | UART RX/TX шлях | Підтверджено через UART-вивід у Proteus (XC8 + 10 MHz) |
-| `rs485_basic.X` | Передача RS485 frame | MAX487 / UART / DE-RE керування | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `rs485_echo.X` | Напівдуплексний RS485 echo | Два MAX487 вузли, UART-зв’язок | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `spi.X` | Базовий SPI-вихід | 74HC595, SPI pins, LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `spi_loopback.X` | SPI loopback self-test | RC5/SDO до RC4/SDI | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `tick.X` | Мілісекундний tick | Timer1 ISR / Timer1 forwarding | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `timer0.X` | Timer0 interrupt counter | RB0..RB3 LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `timer1.X` | Timer1 interrupt counter | RB0..RB3 LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `timer2.X` | Timer2 interrupt counter | RB0..RB3 LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `timer3.X` | Timer3 interrupt counter | RB0..RB3 LEDs | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `uart.X` | UART echo | RC6/TX до Virtual Terminal RXD, RC7/RX опційно | Підтверджено в Proteus (XC8 + 10 MHz) |
-| `wdt.X` | Поведінка watchdog reset | RB0 alive LED, RB1 кнопка | Перевірено в Proteus; поведінку reset через Watchdog підтверджено |
-| `ds18b20_search_rom.X` | DS18B20 ROM search | 1-Wire diagnostics | Підтверджено в Proteus; XC8 HEX export очікується |
-| `onewire_bus_test.X` | Низькорівневий OneWire test | 1-Wire diagnostics | Підтверджено в Proteus; XC8 HEX export очікується |
-| `ds18b20_multi_read.X` | Multi-drop DS18B20 discovery | Спільна 1-Wire шина, підтягування 4.7 кΩ | Потребує перегляду / перевірки в Proteus і C18 |
+| `blink.X` | РњРёРіРѕС‚С–РЅРЅСЏ GPIO LED | RB0 LED | Verified in Proteus (XC8 + 10 MHz) |
+| `uart_debug.X` | Debug-РѕР±РіРѕСЂС‚РєРё UART | RC6/TX РґРѕ Virtual Terminal RXD, RC7/RX РѕРїС†С–РѕРЅР°Р»СЊРЅРѕ | Verified in Proteus (XC8 + 10 MHz) |
+| `adc_read.X` | Р—С‡РёС‚СѓРІР°РЅРЅСЏ ADC | Р”Р¶РµСЂРµР»Рѕ Р°РЅР°Р»РѕРіРѕРІРѕРіРѕ СЃРёРіРЅР°Р»Сѓ РЅР° AN0/AN1 | Verified in Proteus (XC8 + 10 MHz) |
+| `ds18b20_read.X` | РўРµРјРїРµСЂР°С‚СѓСЂР° DS18B20 | RB1 1-Wire data line, РїС–РґС‚СЏРіСѓРІР°Р»СЊРЅРёР№ СЂРµР·РёСЃС‚РѕСЂ 4.7 РєРћРј | Verified in Proteus (XC8 + 10 MHz) |
+| `ring_buffer.X` | UART RX FIFO | UART RX/TX С€Р»СЏС… | Verified in Proteus С‡РµСЂРµР· UART output (XC8 + 10 MHz) |
+| `rs485_basic.X` | РџРµСЂРµРґР°С‡Р° RS485 frame | MAX487 / UART / DE-RE РєРµСЂСѓРІР°РЅРЅСЏ | Verified in Proteus (XC8 + 10 MHz) |
+| `rs485_echo.X` | РќР°РїС–РІРґСѓРїР»РµРєСЃРЅРёР№ RS485 echo | Р”РІР° MAX487 РІСѓР·Р»Рё, UART-Р·РІвЂ™СЏР·РѕРє | Verified in Proteus (XC8 + 10 MHz) |
+| `spi.X` | Р‘Р°Р·РѕРІРёР№ SPI-РІРёС…С–Рґ | 74HC595, SPI pins, LEDs | Verified in Proteus (XC8 + 10 MHz) |
+| `spi_loopback.X` | SPI loopback self-test | RC5/SDO РґРѕ RC4/SDI | Verified in Proteus (XC8 + 10 MHz) |
+| `tick.X` | РњС–Р»С–СЃРµРєСѓРЅРґРЅРёР№ tick | Timer1 ISR / Timer1 forwarding | Verified in Proteus (XC8 + 10 MHz) |
+| `timer0.X` | Timer0 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
+| `timer1.X` | Timer1 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
+| `timer2.X` | Timer2 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
+| `timer3.X` | Timer3 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
+| `uart.X` | UART echo | RC6/TX РґРѕ Virtual Terminal RXD, RC7/RX РѕРїС†С–РѕРЅР°Р»СЊРЅРѕ | Verified in Proteus (XC8 + 10 MHz) |
+| `wdt.X` | РџРѕРІРµРґС–РЅРєР° watchdog reset | RB0 alive LED, RB1 button | Verified in Proteus; watchdog reset behavior verified |
+| `ac_phase_control.X` | РќРёР·СЊРєРѕРІРѕР»СЊС‚РЅРёР№ phase-control brightness timing | RB0 / INT0 fake zero-cross input, RD0 gate pulse, RD1 optional activity LED | Готово до перевірки в Proteus |
+| `ds18b20_search_rom.X` | DS18B20 ROM search | 1-Wire diagnostics | Verified in Proteus; XC8 HEX export pending |
+| `onewire_bus_test.X` | РќРёР·СЊРєРѕСЂС–РІРЅРµРІРёР№ OneWire test | 1-Wire diagnostics | Verified in Proteus; XC8 HEX export pending |
+| `ds18b20_multi_read.X` | Multi-drop DS18B20 discovery | РЎРїС–Р»СЊРЅР° 1-Wire С€РёРЅР°, РїС–РґС‚СЏРіСѓРІР°РЅРЅСЏ 4.7 РєРћРј | Needs review / Proteus and C18 validation |
 
-У всіх поточних папках Proteus уже є відповідні `README.md` і `README.ua.md`. Прогалин у документації для поточних папок не знайдено.
+РЈ РІСЃС–С… РїРѕС‚РѕС‡РЅРёС… РїР°РїРєР°С… Proteus СѓР¶Рµ С” РІС–РґРїРѕРІС–РґРЅС– `README.md` С– `README.ua.md`. РџСЂРѕРіР°Р»РёРЅ Сѓ РґРѕРєСѓРјРµРЅС‚Р°С†С–С— РґР»СЏ РїРѕС‚РѕС‡РЅРёС… РїР°РїРѕРє РЅРµ Р·РЅР°Р№РґРµРЅРѕ.
 
-## Стан input-прикладів
+## РЎС‚Р°С‚СѓСЃ input-РїСЂРёРєР»Р°РґС–РІ
 
-Це приклади фази 1 для input. Menu navigation заплановано окремо на Phase 2 і свідомо не входить до цих проєктів.
+Р¦Рµ РїСЂРёРєР»Р°РґРё С„Р°Р·Рё 1 РґР»СЏ input. Menu navigation Р·Р°РїР»Р°РЅРѕРІР°РЅРѕ РѕРєСЂРµРјРѕ РЅР° Phase 2 С– СЃРІС–РґРѕРјРѕ РЅРµ РІС…РѕРґРёС‚СЊ Сѓ С†С– РїСЂРѕС”РєС‚Рё.
 
-| Приклад | Призначення | Proteus components / pins | Статус |
+| РџСЂРёРєР»Р°Рґ | РџСЂРёР·РЅР°С‡РµРЅРЅСЏ | РљРѕРјРїРѕРЅРµРЅС‚Рё Proteus / РїС–РЅРё | РЎС‚Р°С‚СѓСЃ |
 |---|---|---|---|
-| `button.X` | Окремий приклад debounce кнопки та перемикання LED | Кнопка на RB0 з підтягуванням 10 k до +5V, LED на RB1, опційний Virtual Terminal | Перевірено в Proteus |
-| `encoder.X` | Обертання quadrature, delta, position і події кнопки енкодера | A на RB0, B на RB1, SW на RB2, опційні pull-up, опційний Virtual Terminal | Перевірено в Proteus |
-| `adc_buttons.X` | Клавіатура на одному ADC вході через resistor ladder | Ланцюжок на RA0/AN0, LED на RB0..RB3, tick Timer1, опційний Virtual Terminal | Перевірено в Proteus |
+| `button.X` | РћРєСЂРµРјРёР№ РїСЂРёРєР»Р°Рґ debounce РєРЅРѕРїРєРё С‚Р° РїРµСЂРµРјРёРєР°РЅРЅСЏ LED | РљРЅРѕРїРєР° РЅР° RB0 Р· РїС–РґС‚СЏРіСѓРІР°РЅРЅСЏРј 10 k РґРѕ +5V, LED РЅР° RB1, РѕРїС†С–РѕРЅР°Р»СЊРЅРёР№ Virtual Terminal | Verified in Proteus |
+| `encoder.X` | РћР±РµСЂС‚Р°РЅРЅСЏ quadrature, delta, position С– РїРѕРґС–С— РєРЅРѕРїРєРё РµРЅРєРѕРґРµСЂР° | A РЅР° RB0, B РЅР° RB1, SW РЅР° RB2, РѕРїС†С–РѕРЅР°Р»СЊРЅС– pull-up, РѕРїС†С–РѕРЅР°Р»СЊРЅРёР№ Virtual Terminal | Verified in Proteus |
+| `adc_buttons.X` | РљР»Р°РІС–Р°С‚СѓСЂР° РЅР° РѕРґРЅРѕРјСѓ ADC РІС…РѕРґС– С‡РµСЂРµР· resistor ladder | Р›Р°РЅС†СЋР¶РѕРє РЅР° RA0/AN0, LED РЅР° RB0..RB3, tick Timer1, РѕРїС†С–РѕРЅР°Р»СЊРЅРёР№ Virtual Terminal | Verified in Proteus |
 
-Menu libraries для Phase 2 ведуться окремо і не змінюють scope фази 1 для input-прикладів.
-## HEX-експорт
+Menu libraries РґР»СЏ Phase 2 РІРµРґСѓС‚СЊСЃСЏ РѕРєСЂРµРјРѕ С– РЅРµ Р·РјС–РЅСЋСЋС‚СЊ scope С„Р°Р·Рё 1 РґР»СЏ input-РїСЂРёРєР»Р°РґС–РІ.
 
-Успішні збірки XC8 експортуються до:
+## HEX-РµРєСЃРїРѕСЂС‚
+
+РЈСЃРїС–С€РЅС– XC8 Р·Р±С–СЂРєРё РµРєСЃРїРѕСЂС‚СѓСЋС‚СЊСЃСЏ РґРѕ:
 
 - `examples-projects/hex/xc8/<project>/<project>.hex`
 
-Успішні збірки C18 експортуються до:
+РЈСЃРїС–С€РЅС– C18 Р·Р±С–СЂРєРё РµРєСЃРїРѕСЂС‚СѓСЋС‚СЊСЃСЏ РґРѕ:
 
 - `examples-projects/hex/c18/<project>/<project>.hex`
 
-Використовуйте ці HEX-файли для Proteus або інших симуляторів. Після повторної збірки відповідного `.X` проєкту HEX потрібно згенерувати ще раз.
+Р’РёРєРѕСЂРёСЃС‚РѕРІСѓР№С‚Рµ С†С– HEX-С„Р°Р№Р»Рё РґР»СЏ Proteus Р°Р±Рѕ С–РЅС€РёС… СЃРёРјСѓР»СЏС‚РѕСЂС–РІ. РџС–СЃР»СЏ РїРѕРІС‚РѕСЂРЅРѕС— Р·Р±С–СЂРєРё РІС–РґРїРѕРІС–РґРЅРѕРіРѕ `.X` РїСЂРѕС”РєС‚Сѓ HEX РїРѕС‚СЂС–Р±РЅРѕ Р·РіРµРЅРµСЂСѓРІР°С‚Рё С‰Рµ СЂР°Р·.
 
-Симуляції Proteus зберігаються в `examples-projects/proteus/` і використовують спільні HEX-файли з `examples-projects/hex/`. Кожна папка Proteus містить README-файли та нотатку `proteus-version.txt`; прошивки там не дублюються.
-У папках HEX зберігаються тільки файли після успішної збірки.
+Proteus simulation Р·Р±РµСЂС–РіР°СЋС‚СЊСЃСЏ Сѓ `examples-projects/proteus/` С– РІРёРєРѕСЂРёСЃС‚РѕРІСѓСЋС‚СЊ СЃРїС–Р»СЊРЅС– HEX-С„Р°Р№Р»Рё Р· `examples-projects/hex/`. РљРѕР¶РЅР° РїР°РїРєР° Proteus РјС–СЃС‚РёС‚СЊ README-С„Р°Р№Р»Рё С‚Р° РЅРѕС‚Р°С‚РєСѓ `proteus-version.txt`; РїСЂРѕС€РёРІРєРё С‚Р°Рј РЅРµ РґСѓР±Р»СЋСЋС‚СЊСЃСЏ.
+РЈ РїР°РїРєР°С… HEX Р·Р±РµСЂС–РіР°СЋС‚СЊСЃСЏ Р»РёС€Рµ С„Р°Р№Р»Рё РїС–СЃР»СЏ СѓСЃРїС–С€РЅРѕС— Р·Р±С–СЂРєРё.
 
-У цьому проході оновлено XC8 HEX-файли для `adc`, `adc_buttons`, `adc_read`, `blink`, `button`, `ccp_capture` та `ccp_compare`.
+РЈ С†СЊРѕРјСѓ РїСЂРѕС…РѕРґС– РѕРЅРѕРІР»РµРЅРѕ XC8 HEX-С„Р°Р№Р»Рё РґР»СЏ `adc`, `adc_buttons`, `adc_read`, `blink`, `button`, `ccp_capture` С– `ccp_compare`.
 
-Дивіться також: [HEX exports README](./hex/README.ua.md).
+Р”РёРІС–С‚СЊСЃСЏ С‚Р°РєРѕР¶: [HEX exports README](./hex/README.ua.md).
 
-## Інструкція зі збірки
+## Р†РЅСЃС‚СЂСѓРєС†С–СЏ Р·С– Р·Р±С–СЂРєРё
 
-1. Відкрийте потрібний `.X` проєкт у MPLAB X.
-2. Виберіть цільовий MCU та програматор/налагоджувач.
-3. Виберіть потрібну папку toolchain:
-   - `xc8/` для MPLAB XC8
-   - `c18/` для MPLAB C18
-4. Перевірте include paths для кореня репозиторію, `core/`, `drivers/` і `libraries/`.
-5. Переконайтеся, що потрібні `.c` файли додані до **Source Files**.
-6. Зберіть проєкт у MPLAB X.
-7. За потреби скопіюйте експортований HEX у `examples-projects/hex/` для повторного використання в симуляторі.
-8. Окремо додавайте схеми Proteus, якщо потрібна перевірка на рівні схеми.
+1. Р’С–РґРєСЂРёР№С‚Рµ РїРѕС‚СЂС–Р±РЅРёР№ `.X` РїСЂРѕС”РєС‚ Сѓ MPLAB X.
+2. Р’РёР±РµСЂС–С‚СЊ С†С–Р»СЊРѕРІРёР№ MCU С‚Р° РїСЂРѕРіСЂР°РјР°С‚РѕСЂ/РЅР°Р»Р°РіРѕРґР¶СѓРІР°С‡.
+3. Р’РёР±РµСЂС–С‚СЊ РїРѕС‚СЂС–Р±РЅСѓ РїР°РїРєСѓ toolchain:
+   - `xc8/` РґР»СЏ MPLAB XC8
+   - `c18/` РґР»СЏ MPLAB C18
+4. РџРµСЂРµРІС–СЂС‚Рµ include paths РґР»СЏ РєРѕСЂРµРЅСЏ СЂРµРїРѕР·РёС‚РѕСЂС–СЋ, `core/`, `drivers/` С– `libraries/`.
+5. РџРµСЂРµРєРѕРЅР°Р№С‚РµСЃСЏ, С‰Рѕ РїРѕС‚СЂС–Р±РЅС– `.c` С„Р°Р№Р»Рё РґРѕРґР°РЅС– РґРѕ **Source Files**.
+6. Р—Р±РµСЂС–С‚СЊ РїСЂРѕС”РєС‚ Сѓ MPLAB X.
+7. Р—Р° РїРѕС‚СЂРµР±Рё СЃРєРѕРїС–СЋР№С‚Рµ РµРєСЃРїРѕСЂС‚РѕРІР°РЅРёР№ HEX Сѓ `examples-projects/hex/` РґР»СЏ РїРѕРІС‚РѕСЂРЅРѕРіРѕ РІРёРєРѕСЂРёСЃС‚Р°РЅРЅСЏ РІ СЃРёРјСѓР»СЏС‚РѕСЂС–.
+8. РћРєСЂРµРјРѕ РґРѕРґР°Р№С‚Рµ СЃС…РµРјРё Proteus, СЏРєС‰Рѕ РїРѕС‚СЂС–Р±РЅР° РїРµСЂРµРІС–СЂРєР° РЅР° СЂС–РІРЅС– СЃС…РµРјРё.
 
-## Рекомендований workflow
+## Р РµРєРѕРјРµРЅРґРѕРІР°РЅРёР№ workflow
 
-- Тримайте прикладні проєкти окремо від повторно використовуваної платформи.
-- Тримайте `pic-platform` спільним і зовнішнім.
-- Не патчте драйвери під кожен окремий проєкт; змінюйте метадані проєкту.
-- Зберігайте source references у `nbproject/configurations.xml`.
-
+- РўСЂРёРјР°Р№С‚Рµ РїСЂРёРєР»Р°РґРЅС– РїСЂРѕС”РєС‚Рё РѕРєСЂРµРјРѕ РІС–Рґ РїРѕРІС‚РѕСЂРЅРѕ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°РЅРѕС— РїР»Р°С‚С„РѕСЂРјРё.
+- РўСЂРёРјР°Р№С‚Рµ `pic-platform` СЃРїС–Р»СЊРЅРёРј С– Р·РѕРІРЅС–С€РЅС–Рј.
+- РќРµ РїР°С‚С‡С‚Рµ РґСЂР°Р№РІРµСЂРё РїС–Рґ РєРѕР¶РµРЅ РѕРєСЂРµРјРёР№ РїСЂРѕС”РєС‚; Р·РјС–РЅСЋР№С‚Рµ metadata РїСЂРѕС”РєС‚Сѓ.
+- Р—Р±РµСЂС–РіР°Р№С‚Рµ source references Сѓ `nbproject/configurations.xml`.
 
