@@ -257,6 +257,18 @@
   * [ ] Servo-style pulse output example.
   * [ ] Slow heater / relay / SSR control example.
 
+### Seven-segment display and shared-line buttons
+* [ ] Create the `seven_segment` library for single-digit and multi-digit displays.
+* [ ] Add common-anode/common-cathode support, multiplex refresh, decimal point, and brightness control.
+* [ ] Include only the `0–9` digit table by default; allow the user to provide an optional custom symbol table.
+* [ ] Create the `seven_segment_basic.X` and `seven_segment_multiplex.X` examples.
+* [ ] Create the `segment_keys` library for buttons connected to shared segment lines.
+* [ ] Support regular buttons and buttons encoded by multiple segment lines through diodes.
+* [ ] Pass decoded button states to the existing `button` library for click, double-click, hold, and other supported events.
+* [ ] Create the combined `seven_segment_keys.X` example.
+* [ ] Add Proteus examples and documentation in English and Ukrainian.
+* [ ] After manual validation, mark the examples as `Verified in Proteus`.
+
 ### Gyver-style / Arduino-like Library Expansion
 
 Rule: if a similar module already exists in `pic-platform`, extend and clean it first instead of duplicating logic in a new folder.
