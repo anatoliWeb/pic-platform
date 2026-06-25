@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/button/button.h
+ */
+
 #ifndef DRIVERS_BUTTON_BUTTON_H
 #define DRIVERS_BUTTON_BUTTON_H
 
@@ -9,6 +13,8 @@ typedef struct
     volatile uint8_t* port;
     volatile uint8_t* tris;
     uint8_t pin;
+    uint8_t raw_state;
+    uint8_t use_external_state;
 
     uint8_t state;
     uint8_t last_state;
@@ -32,6 +38,8 @@ void button_init(button_t* btn,
                  volatile uint8_t* port,
                  volatile uint8_t* tris,
                  uint8_t pin);
+void button_init_external(button_t* btn, uint8_t initial_raw_state);
+void button_set_raw_state(button_t* btn, uint8_t raw_state);
 
 void button_update(button_t* btn);
 

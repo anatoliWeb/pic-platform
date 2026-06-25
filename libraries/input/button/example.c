@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/button/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/timers/tick/tick.h"
 #include "libraries/input/button/button.h"

@@ -1,14 +1,16 @@
-[🇬🇧 English version](./button.md)
+[English version](./button.md)
 
-# Button Driver
+# Драйвер button
 
 ## Опис
 
-Фаза 1: неблокуючий драйвер кнопки з debounce. Він призначений для окремих input-прикладів. Шари menu navigation для Phase 2 будуть побудовані поверх цієї бібліотеки, але не входять до її складу.
+Неблокуючий active-low драйвер кнопки з debounce, click, double-click, hold і hold-repeat.
 
 ## API
 
 - `button_init()`
+- `button_init_external()`
+- `button_set_raw_state()`
 - `button_update()`
 - `button_pressed()`
 - `button_released()`
@@ -17,8 +19,8 @@
 - `button_held()`
 - `button_hold_repeated()`
 - `button_get_click_count()`
-- `button_is_clicked()` - wrapper для сумісності
-- `button_is_held()` - wrapper для сумісності
+- `button_is_clicked()`
+- `button_is_held()`
 
 ## Приклад
 
@@ -30,25 +32,37 @@ while (1)
 {
     button_update(&btn);
 
-    if (button_pressed(&btn)) { /* press action */ }
-    if (button_released(&btn)) { /* release action */ }
-    if (button_clicked(&btn)) { /* click action */ }
-    if (button_double_clicked(&btn)) { /* double click action */ }
-    if (button_held(&btn)) { /* hold action */ }
-    if (button_hold_repeated(&btn)) { /* repeat action */ }
+    if (button_clicked(&btn))
+    {
+        /* handle click */
+    }
 }
 ```
 
-## Особливості
+## Режим зовнішнього стану
 
-- Очікується active-low кнопка.
-- Debounce працює через polling і `tick_get()`.
-- Hold repeat і click count реалізовані компактно, без динамічної пам’яті.
-- `button_is_clicked()` та `button_is_held()` залишаються для старого коду.
-- Шари Phase 2 menu/navigation не входять до цієї бібліотеки.
+Використовуйте `button_init_external()`, коли інша бібліотека вже декодує електричний стан і потрібні лише події кнопки.
+
+```c
+button_init_external(&btn, 1u);
+button_set_raw_state(&btn, 0u);
+button_update(&btn);
+```
+
+## Примітки
+
+- Використовується active-low логіка: `0 = pressed`, `1 = released`.
+- Таймінги базуються на `tick_get()`.
+- Режим зовнішнього стану використовується helpers для shared-line input, зокрема `segment_keys`.
+- `button` лишається єдиним місцем для debounce і event-логіки навіть тоді, коли електричним скануванням керує інший helper.
+- Це дозволяє перевикористовувати ту саму click/hold-поведінку і для прямих GPIO-кнопок, і для shared-line декодерів.
+
+## Пов'язані приклади
+
+- `examples-projects/xc8/button.X`
+- `examples-projects/xc8/seven_segment/keys_single_line.X`
+- `examples-projects/xc8/seven_segment/keys_diode_coded.X`
 
 ## Залежності
 
-- `core/compiler.h`
-- `core/types.h`
 - `drivers/timers/tick`

@@ -1,14 +1,16 @@
-[🇺🇦 Ukrainian version](./button.ua.md)
+[Ukrainian version](./button.ua.md)
 
 # Button Driver
 
 ## Description
 
-Phase 1 non-blocking button driver with debounce. It is intended for stand-alone input examples. Phase 2 menu navigation layers will build on top of this library, but they are not part of it.
+Non-blocking active-low button driver with debounce, click, double-click, hold, and hold-repeat support.
 
 ## API
 
 - `button_init()`
+- `button_init_external()`
+- `button_set_raw_state()`
 - `button_update()`
 - `button_pressed()`
 - `button_released()`
@@ -17,8 +19,8 @@ Phase 1 non-blocking button driver with debounce. It is intended for stand-alone
 - `button_held()`
 - `button_hold_repeated()`
 - `button_get_click_count()`
-- `button_is_clicked()` - compatibility wrapper
-- `button_is_held()` - compatibility wrapper
+- `button_is_clicked()`
+- `button_is_held()`
 
 ## Example
 
@@ -30,25 +32,37 @@ while (1)
 {
     button_update(&btn);
 
-    if (button_pressed(&btn)) { /* press action */ }
-    if (button_released(&btn)) { /* release action */ }
-    if (button_clicked(&btn)) { /* click action */ }
-    if (button_double_clicked(&btn)) { /* double click action */ }
-    if (button_held(&btn)) { /* hold action */ }
-    if (button_hold_repeated(&btn)) { /* repeat action */ }
+    if (button_clicked(&btn))
+    {
+        /* handle click */
+    }
 }
+```
+
+## External-State Mode
+
+Use `button_init_external()` when another library already decodes the electrical state and only needs button events.
+
+```c
+button_init_external(&btn, 1u);
+button_set_raw_state(&btn, 0u);
+button_update(&btn);
 ```
 
 ## Notes
 
-- Active-low input is expected.
-- Debounce uses polling and `tick_get()`.
-- Hold repeat and click count are lightweight and static.
-- `button_is_clicked()` and `button_is_held()` remain available for older code.
-- Phase 2 menu/navigation layers are not part of this library.
+- Active-low logic is used: `0 = pressed`, `1 = released`.
+- Timing is based on `tick_get()`.
+- External-state mode is used by shared-line input helpers such as `segment_keys`.
+- `button` remains the single place for debounce and event logic even when the electrical scan is owned by another helper.
+- This makes it safe to reuse the same click/hold behavior across direct GPIO buttons and shared-line button decoders.
+
+## Related Examples
+
+- `examples-projects/xc8/button.X`
+- `examples-projects/xc8/seven_segment/keys_single_line.X`
+- `examples-projects/xc8/seven_segment/keys_diode_coded.X`
 
 ## Dependencies
 
-- `core/compiler.h`
-- `core/types.h`
 - `drivers/timers/tick`
