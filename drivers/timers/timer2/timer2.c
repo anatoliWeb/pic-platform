@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/timer2/timer2.c
+ */
+
 #include "drivers/timers/timer2/timer2.h"
 
 #if defined(DRV_COMPILER_C18)
@@ -7,6 +11,20 @@
 #else
 
 static void (*timer2_cb)(void) = (void(*)(void))0;
+
+static uint8_t timer2_postscaler_bits(uint8_t postscaler)
+{
+    if (postscaler < 1u)
+    {
+        postscaler = 1u;
+    }
+    else if (postscaler > 16u)
+    {
+        postscaler = 16u;
+    }
+
+    return (uint8_t)(postscaler - 1u);
+}
 
 static uint8_t timer2_ps_bits(uint16_t prescaler)
 {
@@ -47,7 +65,19 @@ void timer2_enable_interrupt(void)
 }
 
 void timer2_disable_interrupt(void) { PIE1bits.TMR2IE = 0u; }
+void timer2_clear_interrupt_flag(void) { PIR1bits.TMR2IF = 0u; }
 void timer2_set_callback(void (*cb)(void)) { timer2_cb = cb; }
+void (*timer2_get_callback(void))(void) { return timer2_cb; }
+
+void timer2_set_period(uint8_t value)
+{
+    PR2 = value;
+}
+
+void timer2_set_postscaler(uint8_t value)
+{
+    T2CONbits.TOUTPS = timer2_postscaler_bits(value);
+}
 
 void timer2_irq_handler(void)
 {

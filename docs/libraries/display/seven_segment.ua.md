@@ -1,73 +1,146 @@
+# seven_segment
+
 [English version](./seven_segment.md)
 
-# Р‘С–Р±Р»С–РѕС‚РµРєР° СЃРµРјРёСЃРµРіРјРµРЅС‚РЅРѕРіРѕ С–РЅРґРёРєР°С‚РѕСЂР°
+## Опис
 
-## РћРїРёСЃ
-РџРѕРІС‚РѕСЂРЅРѕ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°РЅР° Р±С–Р±Р»С–РѕС‚РµРєР° РґР»СЏ РѕРґРЅРѕСЂРѕР·СЂСЏРґРЅРѕРіРѕ СЃРµРјРёСЃРµРіРјРµРЅС‚РЅРѕРіРѕ С–РЅРґРёРєР°С‚РѕСЂР°.
-РџС–РґС‚СЂРёРјСѓС” С–РЅРґРёРєР°С‚РѕСЂРё С–Р· Р·Р°РіР°Р»СЊРЅРёРј РєР°С‚РѕРґРѕРј С‚Р° Р·Р°РіР°Р»СЊРЅРёРј Р°РЅРѕРґРѕРј Р· РЅР°Р»Р°С€С‚РѕРІСѓРІР°РЅРёРј РјР°РїСѓРІР°РЅРЅСЏРј РїС–РЅС–РІ.
+Буферизована бібліотека seven-segment індикаторів для однорозрядних і мультиплексованих дисплеїв.
+Бібліотека підтримує два режими володіння refresh:
 
-## РџСѓР±Р»С–С‡РЅРёР№ API
+- `SEVEN_SEGMENT_REFRESH_MANUAL`
+- `SEVEN_SEGMENT_REFRESH_TIMER`
+
+У manual mode оновлення лишається в головному циклі застосунку.
+У timer mode бібліотека сама бере на себе refresh і прив'язує один екземпляр дисплея до одного апаратного timer backend.
+
+## API
+
 - `seven_segment_init()`
-- `seven_segment_set_digit()`
-- `seven_segment_set_hex()`
-- `seven_segment_set_raw()`
-- `seven_segment_clear()`
-- `seven_segment_set_dot()`
+- `seven_segment_refresh()`
+- `seven_segment_process()`
+- `seven_segment_stop()`
+- `seven_segment_deinit()`
+- `seven_segment_irq_handler()`
+- `seven_segment_is_timer_running()`
+- `seven_segment_get_refresh_count()`
+- `seven_segment_set_number()`
+- `seven_segment_set_number_formatted()`
+- `seven_segment_set_fixed()`
+- `seven_segment_set_fixed_formatted()`
+- `seven_segment_set_time_hhmm()`
+- `seven_segment_set_brightness()`
+- `seven_segment_set_blink_mask()`
+- `seven_segment_set_blink_period_ms()`
+- `seven_segment_set_blink_enabled()`
 
-## РџС–РґС‚СЂРёРјСѓРІР°РЅС– С‚РёРїРё С–РЅРґРёРєР°С‚РѕСЂС–РІ
-- Р—Р°РіР°Р»СЊРЅРёР№ РєР°С‚РѕРґ
-- Р—Р°РіР°Р»СЊРЅРёР№ Р°РЅРѕРґ
+## Власник Refresh
 
-## РџС–РґС‚СЂРёРјРєР° РІС–РґРѕР±СЂР°Р¶РµРЅРЅСЏ
-- С†РёС„СЂРё `0..9`
-- hex `A..F`
-- Р·РЅР°Рє РјС–РЅСѓСЃР° (raw pattern `0x40`)
-- РїРѕСЂРѕР¶РЅС–Р№ СЃС‚Р°РЅ (`clear`)
+### Ручний Режим
 
-## РџРѕР·РЅР°С‡РµРЅРЅСЏ СЃРµРіРјРµРЅС‚С–РІ
-РџРѕСЂСЏРґРѕРє Р±С–С‚С–РІ Сѓ raw pattern:
-- bit0: A
-- bit1: B
-- bit2: C
-- bit3: D
-- bit4: E
-- bit5: F
-- bit6: G
+Використовуйте manual mode, коли мультиплексний крок виконує сам застосунок:
 
-## РњРѕРґРµР»СЊ РєРѕРЅС„С–РіСѓСЂР°С†С–С—
-Р’РёРєРѕСЂРёСЃС‚РѕРІСѓР№С‚Рµ `seven_segment_config_t`:
-- РїС–РЅРё СЃРµРіРјРµРЅС‚С–РІ `seg_a..seg_g`
-- РЅРµРѕР±РѕРІвЂ™СЏР·РєРѕРІРёР№ РїС–РЅ `dot` + `has_dot`
-- С‚РёРї С–РЅРґРёРєР°С‚РѕСЂР° (`SEVEN_SEGMENT_COMMON_CATHODE` Р°Р±Рѕ `SEVEN_SEGMENT_COMMON_ANODE`)
-
-## РџСЂРёРєР»Р°Рґ РїС–РґРєР»СЋС‡РµРЅРЅСЏ
-РўРёРїРѕРІРµ РїС–РґРєР»СЋС‡РµРЅРЅСЏ РѕРґРЅРѕСЂРѕР·СЂСЏРґРЅРѕРіРѕ С–РЅРґРёРєР°С‚РѕСЂР°:
-- MCU GPIO -> СЂРµР·РёСЃС‚РѕСЂРё СЃРµРіРјРµРЅС‚С–РІ -> A..G (С– РЅРµРѕР±РѕРІвЂ™СЏР·РєРѕРІРѕ DP)
-- Р—Р°РіР°Р»СЊРЅРёР№ РїС–РЅ:
-  - GND РґР»СЏ Р·Р°РіР°Р»СЊРЅРѕРіРѕ РєР°С‚РѕРґР°
-  - VCC РґР»СЏ Р·Р°РіР°Р»СЊРЅРѕРіРѕ Р°РЅРѕРґР°
-
-## РџСЂРёРєР»Р°Рґ GPIO-РјР°РїСѓРІР°РЅРЅСЏ
 ```c
-static const seven_segment_config_t cfg =
+config.refresh_mode = SEVEN_SEGMENT_REFRESH_MANUAL;
+config.timer = SEVEN_SEGMENT_TIMER_NONE;
+config.refresh_period_us = 0U;
+
+seven_segment_init(&display, &config);
+
+while (1)
 {
-    { &PORTB, &TRISB, 0u },
-    { &PORTB, &TRISB, 1u },
-    { &PORTB, &TRISB, 2u },
-    { &PORTB, &TRISB, 3u },
-    { &PORTB, &TRISB, 4u },
-    { &PORTB, &TRISB, 5u },
-    { &PORTB, &TRISB, 6u },
-    { &PORTB, &TRISB, 7u },
-    1u,
-    SEVEN_SEGMENT_COMMON_CATHODE
-};
+    seven_segment_process(&display);
+    seven_segment_blink_update(&display, now_ms);
+}
 ```
 
-## РџС–РґРіРѕС‚РѕРІРєР° РґРѕ РјСѓР»СЊС‚РёРїР»РµРєСЃСѓРІР°РЅРЅСЏ
-РџРѕС‚РѕС‡РЅР° СЂРµР°Р»С–Р·Р°С†С–СЏ РїС–РґС‚СЂРёРјСѓС” Р»РёС€Рµ РѕРґРёРЅ СЂРѕР·СЂСЏРґ.
-API С‚Р° РјРѕРґРµР»СЊ РєРѕРЅС„С–РіСѓСЂР°С†С–С— РїС–РґС…РѕРґСЏС‚СЊ РґР»СЏ РјР°Р№Р±СѓС‚РЅСЊРѕРіРѕ СЂРѕР·С€РёСЂРµРЅРЅСЏ Р· РїС–РґС‚СЂРёРјРєРѕСЋ Р±Р°РіР°С‚РѕСЂРѕР·СЂСЏРґРЅРѕРіРѕ РјСѓР»СЊС‚РёРїР»РµРєСЃСѓРІР°РЅРЅСЏ.
+Поведінка:
 
-## Р—Р°Р»РµР¶РЅРѕСЃС‚С–
-- `core/*`
-- `drivers/gpio/*`
+- `seven_segment_process()` виконує один реальний refresh step;
+- `seven_segment_refresh()` еквівалентний `seven_segment_process()`;
+- blink timing просувається лише через `seven_segment_blink_update()` у main context.
+
+### Режим Від Таймера
+
+Використовуйте timer mode, коли refresh має належати бібліотеці:
+
+```c
+config.refresh_mode = SEVEN_SEGMENT_REFRESH_TIMER;
+config.timer = SEVEN_SEGMENT_TIMER2;
+config.refresh_period_us = 1000U;
+
+seven_segment_init(&display, &config);
+
+INTCONbits.PEIE = 1U;
+INTCONbits.GIE = 1U;
+
+while (1)
+{
+    /* No manual display refresh call is required here. */
+}
+```
+
+Поведінка:
+
+- бібліотека конфігурує вибраний timer backend;
+- бібліотека реєструє внутрішній timer callback;
+- timer callback напряму викликає приватний refresh core;
+- `seven_segment_process()` і `seven_segment_refresh()` стають safe no-op;
+- blink timing автоматично просувається всередині timer-owned шляху.
+
+## Вибір Таймера
+
+Підтримані runtime-вибори:
+
+- `SEVEN_SEGMENT_TIMER0`
+- `SEVEN_SEGMENT_TIMER1`
+- `SEVEN_SEGMENT_TIMER2`
+- `SEVEN_SEGMENT_TIMER3`
+
+Поточне обмеження:
+
+- кожен timer driver має лише один callback slot;
+- один timer backend може обслуговувати лише один `seven_segment_t` одночасно;
+- `seven_segment_init()` повертає помилку, якщо вибраний таймер уже зайнятий іншим власником callback.
+
+## Видимість Конфігурації Проєкту
+
+Для timer-enabled збірки бібліотеки `project_config.h` має бути видимий і для library translation units.
+У MPLAB example projects додайте директорію проєкту в include paths, наприклад:
+
+```text
+.;../../../../;../../../../core;../../../../drivers;../../../../libraries
+```
+
+Так `seven_segment.c` бачить локальну конфігурацію проєкту та backend macros на кшталт `SEVEN_SEGMENT_ENABLE_TIMER2`.
+
+## Вимоги До Переривань
+
+Бібліотека не встановлює глобальний MCU ISR замість застосунку.
+Застосунок усе одно має передавати переривання в dispatcher бібліотеки:
+
+```c
+void __interrupt() isr(void)
+{
+    seven_segment_irq_handler();
+}
+```
+
+Що має зробити application у timer mode:
+
+- надати глобальний ISR;
+- увімкнути `PEIE` і `GIE` після завершення ініціалізації.
+
+## Діагностика
+
+Для timer-owned перевірки:
+
+- `seven_segment_is_timer_running()` повідомляє, чи належить вибраний timer slot поточному екземпляру дисплея;
+- `seven_segment_get_refresh_count()` повертає read-only refresh counter, який оновлюється з timer callback після реального refresh step.
+
+Ці helper-и призначені для діагностики й Proteus bring-up, а не для основної логіки дисплея.
+
+## Примітки
+
+- оновлення буфера й далі захищене від tearing під час refresh;
+- timer-owned shared-line key queueing лишається окремим pending-кроком інтеграції;
+- timer mode варто спочатку перевіряти на мінімальному прикладі з постійним вмістом, а вже потім повертати складніші сцени.
