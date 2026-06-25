@@ -1,4 +1,8 @@
-﻿#include "core/compiler.h"
+/*
+ * File: libraries/ui/ui_events/example.c
+ */
+
+#include "core/compiler.h"
 #include "libraries/system/uart_debug/uart_debug.h"
 #include "libraries/ui/ui_events/ui_events.h"
 

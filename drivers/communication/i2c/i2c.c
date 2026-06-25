@@ -1,3 +1,7 @@
+/*
+ * File: drivers/communication/i2c/i2c.c
+ */
+
 #include "drivers/communication/i2c/i2c.h"
 
 #if defined(DRV_COMPILER_C18)

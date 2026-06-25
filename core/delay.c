@@ -1,3 +1,7 @@
+/*
+ * File: core/delay.c
+ */
+
 #include "core/delay.h"
 
 #if defined(DRV_COMPILER_C18)

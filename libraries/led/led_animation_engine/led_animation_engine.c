@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/led_animation_engine/led_animation_engine.c
+ */
+
 #include "libraries/led/led_animation_engine/led_animation_engine.h"
 
 static uint16_t led_anim_target_length(const led_animation_t* anim)

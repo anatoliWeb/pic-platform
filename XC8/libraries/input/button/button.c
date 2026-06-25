@@ -1,3 +1,7 @@
+/*
+ * File: XC8/libraries/input/button/button.c
+ */
+
 #include "libraries/input/button/button.h"
 #include "core/bit_utils.h"
 #include "drivers/timers/tick/tick.h"

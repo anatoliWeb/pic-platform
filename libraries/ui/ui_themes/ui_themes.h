@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_UI_THEMES_H
+/*
+ * File: libraries/ui/ui_themes/ui_themes.h
+ */
+
+#ifndef LIBRARIES_UI_UI_THEMES_H
 #define LIBRARIES_UI_UI_THEMES_H
 
 #include "core/compiler.h"

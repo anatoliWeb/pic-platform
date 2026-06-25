@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/timer3/timer3.c
+ */
+
 #include "drivers/timers/timer3/timer3.h"
 
 #if defined(DRV_COMPILER_C18)
@@ -51,6 +55,7 @@ void timer3_enable_interrupt(void)
 
 void timer3_disable_interrupt(void) { PIE2bits.TMR3IE = 0u; }
 void timer3_set_callback(void (*cb)(void)) { timer3_cb = cb; }
+void (*timer3_get_callback(void))(void) { return timer3_cb; }
 
 void timer3_irq_handler(void)
 {

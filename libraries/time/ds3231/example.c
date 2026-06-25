@@ -1,3 +1,7 @@
+/*
+ * File: libraries/time/ds3231/example.c
+ */
+
 #include "core/compiler.h"
 #include "core/debug.h"
 #include "drivers/communication/i2c/i2c.h"

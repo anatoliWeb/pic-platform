@@ -1,3 +1,7 @@
+/*
+ * File: libraries/time/ds1302/ds1302.c
+ */
+
 #include "libraries/time/ds1302/ds1302.h"
 
 #include "core/delay.h"

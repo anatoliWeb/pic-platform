@@ -1,3 +1,7 @@
+/*
+ * File: C18/drivers/memory/eeprom/eeprom.c
+ */
+
 #include "drivers/memory/eeprom/eeprom.h"
 
 static void eeprom_write_raw(uint16_t address, uint8_t value)

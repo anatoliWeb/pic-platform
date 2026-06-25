@@ -1,3 +1,7 @@
+/*
+ * File: libraries/ui/overlay_system/overlay_system.c
+ */
+
 #include "libraries/ui/overlay_system/overlay_system.h"
 
 /* Find overlay by id in the local fixed-size overlay list. */

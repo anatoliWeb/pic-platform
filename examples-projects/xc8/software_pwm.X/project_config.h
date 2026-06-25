@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/xc8/software_pwm.X/project_config.h
+ */
+
 #ifndef EXAMPLES_PROJECTS_XC8_SOFTWARE_PWM_PROJECT_CONFIG_H
 #define EXAMPLES_PROJECTS_XC8_SOFTWARE_PWM_PROJECT_CONFIG_H
 

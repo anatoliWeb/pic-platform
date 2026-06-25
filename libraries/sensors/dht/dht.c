@@ -1,3 +1,7 @@
+/*
+ * File: libraries/sensors/dht/dht.c
+ */
+
 #include "libraries/sensors/dht/dht.h"
 
 #include "core/delay.h"

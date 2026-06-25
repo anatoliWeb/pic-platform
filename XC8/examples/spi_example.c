@@ -1,3 +1,7 @@
+/*
+ * File: XC8/examples/spi_example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/communication/spi/spi.h"
 #include "drivers/communication/uart/uart.h"

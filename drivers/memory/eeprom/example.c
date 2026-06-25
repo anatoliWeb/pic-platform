@@ -1,3 +1,7 @@
+/*
+ * File: drivers/memory/eeprom/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/memory/eeprom/eeprom.h"
 #include "drivers/communication/uart/uart.h"

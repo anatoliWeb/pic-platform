@@ -1,3 +1,7 @@
+/*
+ * File: core/config.h
+ */
+
 #ifndef CORE_CONFIG_H
 #define CORE_CONFIG_H
 

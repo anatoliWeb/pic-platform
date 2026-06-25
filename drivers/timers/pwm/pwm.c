@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/pwm/pwm.c
+ */
+
 #include "drivers/timers/pwm/pwm.h"
 
 #if defined(DRV_COMPILER_C18)

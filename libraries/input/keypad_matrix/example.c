@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/keypad_matrix/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/communication/uart/uart.h"
 #include "libraries/input/keypad_matrix/keypad_matrix.h"

@@ -1,3 +1,7 @@
+/*
+ * File: drivers/system/wdt/wdt.h
+ */
+
 #ifndef DRIVERS_WDT_WDT_H
 #define DRIVERS_WDT_WDT_H
 

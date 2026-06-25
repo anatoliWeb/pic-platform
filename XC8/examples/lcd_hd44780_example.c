@@ -1,3 +1,7 @@
+/*
+ * File: XC8/examples/lcd_hd44780_example.c
+ */
+
 #include "core/compiler.h"
 #include "libraries/display/lcd_hd44780/lcd.h"
 

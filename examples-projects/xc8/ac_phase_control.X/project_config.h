@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/xc8/ac_phase_control.X/project_config.h
+ */
+
 #ifndef EXAMPLES_PROJECTS_XC8_AC_PHASE_CONTROL_PROJECT_CONFIG_H
 #define EXAMPLES_PROJECTS_XC8_AC_PHASE_CONTROL_PROJECT_CONFIG_H
 

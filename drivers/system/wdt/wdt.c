@@ -1,3 +1,7 @@
+/*
+ * File: drivers/system/wdt/wdt.c
+ */
+
 #include "drivers/system/wdt/wdt.h"
 
 #if defined(DRV_COMPILER_C18)

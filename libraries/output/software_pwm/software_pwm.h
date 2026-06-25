@@ -1,3 +1,7 @@
+/*
+ * File: libraries/output/software_pwm/software_pwm.h
+ */
+
 #ifndef LIBRARIES_OUTPUT_SOFTWARE_PWM_H
 #define LIBRARIES_OUTPUT_SOFTWARE_PWM_H
 

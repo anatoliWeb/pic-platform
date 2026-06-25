@@ -1,3 +1,7 @@
+/*
+ * File: XC8/libraries/led/rgb_utils/rgb_utils.c
+ */
+
 #include "libraries/led/rgb_utils/rgb_utils.h"
 
 static uint8_t rgb_scale_u8(uint8_t value, uint8_t scale)

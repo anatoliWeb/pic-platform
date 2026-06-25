@@ -1,3 +1,7 @@
+/*
+ * File: XC8/drivers/system/wdt/wdt.c
+ */
+
 #include "drivers/system/wdt/wdt.h"
 
 void wdt_clear(void)

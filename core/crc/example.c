@@ -1,3 +1,7 @@
+/*
+ * File: core/crc/example.c
+ */
+
 #include "core/compiler.h"
 #include "core/crc/crc.h"
 #include "drivers/communication/uart/uart.h"

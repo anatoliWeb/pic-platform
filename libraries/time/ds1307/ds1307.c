@@ -1,3 +1,7 @@
+/*
+ * File: libraries/time/ds1307/ds1307.c
+ */
+
 #include "libraries/time/ds1307/ds1307.h"
 
 #include "drivers/communication/i2c/i2c.h"

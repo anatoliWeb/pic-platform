@@ -1,3 +1,7 @@
+/*
+ * File: core/compiler.h
+ */
+
 #ifndef CORE_COMPILER_H
 #define CORE_COMPILER_H
 

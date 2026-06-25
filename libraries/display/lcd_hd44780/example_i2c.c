@@ -1,3 +1,7 @@
+/*
+ * File: libraries/display/lcd_hd44780/example_i2c.c
+ */
+
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/communication/i2c/i2c.h"

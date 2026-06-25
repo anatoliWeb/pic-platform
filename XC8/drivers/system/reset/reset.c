@@ -1,3 +1,7 @@
+/*
+ * File: XC8/drivers/system/reset/reset.c
+ */
+
 #include "drivers/system/reset/reset.h"
 
 /*

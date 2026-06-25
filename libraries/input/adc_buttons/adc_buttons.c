@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/adc_buttons/adc_buttons.c
+ */
+
 #include "libraries/input/adc_buttons/adc_buttons.h"
 
 #if defined(DRV_COMPILER_C18)

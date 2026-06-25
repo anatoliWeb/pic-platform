@@ -1,3 +1,7 @@
+/*
+ * File: core/config/project_config_template.h
+ */
+
 #ifndef CORE_CONFIG_PROJECT_CONFIG_TEMPLATE_H
 #define CORE_CONFIG_PROJECT_CONFIG_TEMPLATE_H
 

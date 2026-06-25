@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/c18/spi_loopback.X/project_config.h
+ */
+
 #ifndef PROJECT_CONFIG_H
 #define PROJECT_CONFIG_H
 

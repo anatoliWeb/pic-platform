@@ -1,3 +1,7 @@
+/*
+ * File: libraries/display/seven_segment_mux/seven_segment_mux.c
+ */
+
 #include "libraries/display/seven_segment_mux/seven_segment_mux.h"
 
 #if defined(DRV_COMPILER_C18)

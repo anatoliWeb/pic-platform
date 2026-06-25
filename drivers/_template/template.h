@@ -1,3 +1,7 @@
+/*
+ * File: drivers/_template/template.h
+ */
+
 #ifndef TEMPLATE_H
 #define TEMPLATE_H
 

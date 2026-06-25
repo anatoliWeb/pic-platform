@@ -1,3 +1,7 @@
+/*
+ * File: XC8/libraries/display/seven_segment_mux/seven_segment_mux.c
+ */
+
 #include "libraries/display/seven_segment_mux/seven_segment_mux.h"
 #include "drivers/gpio/gpio.h"
 

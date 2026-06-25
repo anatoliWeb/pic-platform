@@ -1,3 +1,7 @@
+/*
+ * File: drivers/analog/comparator/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
 #include "drivers/analog/comparator/comparator.h"

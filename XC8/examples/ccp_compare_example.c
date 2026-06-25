@@ -1,3 +1,7 @@
+/*
+ * File: XC8/examples/ccp_compare_example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
 #include "drivers/timers/ccp_compare/ccp_compare.h"

@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/ui_events/ui_events.h"
+/*
+ * File: libraries/ui/ui_events/ui_events.c
+ */
+
+#include "libraries/ui/ui_events/ui_events.h"
 
 static uint8_t ui_events_next_index(uint8_t idx)
 {

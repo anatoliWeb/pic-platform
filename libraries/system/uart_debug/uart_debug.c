@@ -1,3 +1,7 @@
+/*
+ * File: libraries/system/uart_debug/uart_debug.c
+ */
+
 #include "libraries/system/uart_debug/uart_debug.h"
 
 #if defined(DRV_COMPILER_C18)

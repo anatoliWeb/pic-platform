@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/c18/ccp_compare.X/main.c
+ */
+
 #include "project_config.h"
 #include "core/compiler.h"
 #include "drivers/gpio/gpio.h"

@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/xc8/adc_buttons.X/main.c
+ */
+
 #include "project_config.h"
 #include "core/compiler.h"
 #include "drivers/analog/adc/adc.h"

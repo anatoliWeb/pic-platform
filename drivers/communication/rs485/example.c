@@ -1,3 +1,7 @@
+/*
+ * File: drivers/communication/rs485/example.c
+ */
+
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/communication/uart/uart.h"

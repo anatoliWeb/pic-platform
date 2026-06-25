@@ -1,3 +1,7 @@
+/*
+ * File: libraries/ui/screen_transitions/screen_transitions.h
+ */
+
 #ifndef LIBRARIES_UI_SCREEN_TRANSITIONS_H
 #define LIBRARIES_UI_SCREEN_TRANSITIONS_H
 

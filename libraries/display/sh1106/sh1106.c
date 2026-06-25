@@ -1,4 +1,8 @@
-﻿#include "libraries/display/sh1106/sh1106.h"
+/*
+ * File: libraries/display/sh1106/sh1106.c
+ */
+
+#include "libraries/display/sh1106/sh1106.h"
 
 #include "drivers/communication/i2c/i2c.h"
 

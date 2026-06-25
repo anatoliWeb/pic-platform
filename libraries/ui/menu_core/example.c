@@ -1,4 +1,8 @@
-﻿#include "core/compiler.h"
+/*
+ * File: libraries/ui/menu_core/example.c
+ */
+
+#include "core/compiler.h"
 #include "libraries/system/uart_debug/uart_debug.h"
 #include "libraries/ui/menu_core/menu_core.h"
 

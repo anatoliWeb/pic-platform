@@ -1,3 +1,7 @@
+/*
+ * File: drivers/analog/adc/adc.c
+ */
+
 #include "drivers/analog/adc/adc.h"
 
 #if defined(DRV_COMPILER_C18)

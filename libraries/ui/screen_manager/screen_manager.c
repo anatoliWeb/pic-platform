@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/screen_manager/screen_manager.h"
+/*
+ * File: libraries/ui/screen_manager/screen_manager.c
+ */
+
+#include "libraries/ui/screen_manager/screen_manager.h"
 
 static screen_t* screen_manager_current(screen_manager_t* mgr)
 {

@@ -1,3 +1,7 @@
+/*
+ * File: C18/libraries/system/uart_debug/uart_debug.c
+ */
+
 #include "libraries/system/uart_debug/uart_debug.h"
 
 #if defined(DRV_DEBUG_ENABLE) && (DRV_DEBUG_ENABLE == 1) && defined(DRV_USE_UART) && (DRV_USE_UART == 1)

@@ -1,3 +1,7 @@
+/*
+ * File: XC8/examples/crc_example.c
+ */
+
 #include "core/compiler.h"
 #include "core/crc/crc.h"
 

@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/ccp_compare/ccp_compare.c
+ */
+
 #include "drivers/timers/ccp_compare/ccp_compare.h"
 
 #if defined(DRV_COMPILER_C18)

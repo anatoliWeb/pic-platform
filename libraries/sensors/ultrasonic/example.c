@@ -1,3 +1,7 @@
+/*
+ * File: libraries/sensors/ultrasonic/example.c
+ */
+
 #include "core/compiler.h"
 #include "core/debug.h"
 #include "drivers/timers/tick/tick.h"

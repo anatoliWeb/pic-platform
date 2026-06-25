@@ -1,3 +1,7 @@
+/*
+ * File: core/interrupts.h
+ */
+
 #ifndef CORE_INTERRUPTS_H
 #define CORE_INTERRUPTS_H
 

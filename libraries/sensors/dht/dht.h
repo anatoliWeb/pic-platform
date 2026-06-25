@@ -1,3 +1,7 @@
+/*
+ * File: libraries/sensors/dht/dht.h
+ */
+
 #ifndef LIBRARIES_SENSORS_DHT_H
 #define LIBRARIES_SENSORS_DHT_H
 

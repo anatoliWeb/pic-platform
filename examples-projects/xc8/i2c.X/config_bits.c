@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/xc8/i2c.X/config_bits.c
+ */
+
 #include <xc.h>
 
 #include "project_config.h"

@@ -1,4 +1,8 @@
-﻿#include "core/compiler.h"
+/*
+ * File: libraries/ui/sprite_buffer/example.c
+ */
+
+#include "core/compiler.h"
 #include "drivers/timers/tick/tick.h"
 #include "libraries/display/bitmap/bitmap.h"
 #include "libraries/display/graphics/graphics.h"

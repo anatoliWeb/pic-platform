@@ -1,3 +1,7 @@
+/*
+ * File: drivers/gpio/example.c
+ */
+
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/gpio/gpio.h"

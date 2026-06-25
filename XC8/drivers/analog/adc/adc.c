@@ -1,3 +1,7 @@
+/*
+ * File: XC8/drivers/analog/adc/adc.c
+ */
+
 #include "drivers/analog/adc/adc.h"
 #include "core/delay.h"
 

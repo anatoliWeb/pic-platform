@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/pwm/pwm.h
+ */
+
 #ifndef DRIVERS_PWM_PWM_H
 #define DRIVERS_PWM_PWM_H
 

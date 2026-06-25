@@ -1,3 +1,7 @@
+/*
+ * File: libraries/time/ds1302/ds1302.h
+ */
+
 #ifndef LIBRARIES_TIME_DS1302_H
 #define LIBRARIES_TIME_DS1302_H
 

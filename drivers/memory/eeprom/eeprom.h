@@ -1,3 +1,7 @@
+/*
+ * File: drivers/memory/eeprom/eeprom.h
+ */
+
 #ifndef DRIVERS_EEPROM_EEPROM_H
 #define DRIVERS_EEPROM_EEPROM_H
 

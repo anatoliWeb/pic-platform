@@ -1,3 +1,7 @@
+/*
+ * File: XC8/drivers/timers/ccp_capture/ccp_capture.c
+ */
+
 #include "drivers/timers/ccp_capture/ccp_capture.h"
 
 static ccp_capture_callback_t g_capture_cb = 0;

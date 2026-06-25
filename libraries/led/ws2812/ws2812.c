@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/ws2812/ws2812.c
+ */
+
 #include "libraries/led/ws2812/ws2812.h"
 
 #if defined(DRV_COMPILER_C18)

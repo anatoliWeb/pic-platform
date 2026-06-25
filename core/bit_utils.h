@@ -1,3 +1,7 @@
+/*
+ * File: core/bit_utils.h
+ */
+
 #ifndef CORE_BIT_UTILS_H
 #define CORE_BIT_UTILS_H
 

@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/c18/lcd_hd44780.X/project_config.h
+ */
+
 #ifndef EXAMPLES_PROJECTS_PROJECT_CONFIG_H
 #define EXAMPLES_PROJECTS_PROJECT_CONFIG_H
 

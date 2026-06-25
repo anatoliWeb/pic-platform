@@ -1,3 +1,7 @@
+/*
+ * File: C18/core/ring_buffer/ring_buffer.c
+ */
+
 #include "core/ring_buffer/ring_buffer.h"
 
 static uint16_t rb_next_index(uint16_t index, uint16_t size)

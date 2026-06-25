@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/led_effects/led_effects.h
+ */
+
 #ifndef LIBRARIES_LED_LED_EFFECTS_H
 #define LIBRARIES_LED_LED_EFFECTS_H
 

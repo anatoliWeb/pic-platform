@@ -1,4 +1,8 @@
 /*
+ * File: core/config/example.c
+ */
+
+/*
  * Example project configuration flow.
  *
  * This file is a reference only. Copy the pattern into an application project

@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/timer0/timer0.h
+ */
+
 #ifndef DRIVERS_TIMER0_TIMER0_H
 #define DRIVERS_TIMER0_TIMER0_H
 
@@ -13,6 +17,7 @@ uint16_t timer0_get(void);
 void timer0_enable_interrupt(void);
 void timer0_disable_interrupt(void);
 void timer0_set_callback(void (*cb)(void));
+void (*timer0_get_callback(void))(void);
 
 /* Call this from MCU ISR when TMR0 overflow flag is set. */
 void timer0_irq_handler(void);

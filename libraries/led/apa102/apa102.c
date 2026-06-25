@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/apa102/apa102.c
+ */
+
 #include "libraries/led/apa102/apa102.h"
 
 static uint8_t apa102_scale_u8(uint8_t value, uint8_t scale)

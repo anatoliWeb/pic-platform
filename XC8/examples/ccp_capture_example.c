@@ -1,3 +1,7 @@
+/*
+ * File: XC8/examples/ccp_capture_example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/timers/ccp_capture/ccp_capture.h"
 

@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/c18/ccp_capture.X/main.c
+ */
+
 #include "project_config.h"
 #include "core/compiler.h"
 #include "drivers/timers/ccp_capture/ccp_capture.h"

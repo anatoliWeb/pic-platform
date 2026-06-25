@@ -1,3 +1,7 @@
+/*
+ * File: libraries/time/ds12c887/ds12c887.c
+ */
+
 #include "libraries/time/ds12c887/ds12c887.h"
 
 #include "core/delay.h"

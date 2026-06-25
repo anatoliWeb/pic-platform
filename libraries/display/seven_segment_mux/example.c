@@ -1,3 +1,7 @@
+/*
+ * File: libraries/display/seven_segment_mux/example.c
+ */
+
 #include "core/compiler.h"
 #include "libraries/display/seven_segment_mux/seven_segment_mux.h"
 

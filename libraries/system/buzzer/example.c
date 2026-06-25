@@ -1,4 +1,8 @@
-﻿#include "core/compiler.h"
+/*
+ * File: libraries/system/buzzer/example.c
+ */
+
+#include "core/compiler.h"
 #include "drivers/timers/tick/tick.h"
 #include "libraries/system/buzzer/buzzer.h"
 

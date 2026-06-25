@@ -1,4 +1,8 @@
-﻿#include "core/compiler.h"
+/*
+ * File: libraries/ui/input_adapter/example.c
+ */
+
+#include "core/compiler.h"
 #include "libraries/system/uart_debug/uart_debug.h"
 #include "libraries/ui/input_adapter/input_adapter.h"
 

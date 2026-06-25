@@ -1,4 +1,8 @@
-﻿#include "libraries/display/ssd1306/ssd1306.h"
+/*
+ * File: libraries/display/ssd1306/ssd1306.c
+ */
+
+#include "libraries/display/ssd1306/ssd1306.h"
 
 #include "drivers/communication/i2c/i2c.h"
 

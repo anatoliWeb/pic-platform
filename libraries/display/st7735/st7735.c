@@ -1,4 +1,8 @@
-﻿#include "libraries/display/st7735/st7735.h"
+/*
+ * File: libraries/display/st7735/st7735.c
+ */
+
+#include "libraries/display/st7735/st7735.h"
 
 #include "core/delay.h"
 #include "drivers/communication/spi/spi.h"

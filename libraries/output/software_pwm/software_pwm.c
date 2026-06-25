@@ -1,3 +1,7 @@
+/*
+ * File: libraries/output/software_pwm/software_pwm.c
+ */
+
 #include "libraries/output/software_pwm/software_pwm.h"
 
 static void software_pwm_write_channel(const software_pwm_channel_t* channel,

@@ -1,3 +1,7 @@
+/*
+ * File: XC8/drivers/communication/i2c/i2c.c
+ */
+
 #include "drivers/communication/i2c/i2c.h"
 #include "core/device.h"
 

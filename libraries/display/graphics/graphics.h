@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_DISPLAY_GRAPHICS_H
+/*
+ * File: libraries/display/graphics/graphics.h
+ */
+
+#ifndef LIBRARIES_DISPLAY_GRAPHICS_H
 #define LIBRARIES_DISPLAY_GRAPHICS_H
 
 #include "core/compiler.h"

@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/popup_manager/popup_manager.h"
+/*
+ * File: libraries/ui/popup_manager/popup_manager.c
+ */
+
+#include "libraries/ui/popup_manager/popup_manager.h"
 
 static uint8_t popup_queue_next(uint8_t idx)
 {

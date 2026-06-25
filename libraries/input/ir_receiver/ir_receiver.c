@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/ir_receiver/ir_receiver.c
+ */
+
 #include "libraries/input/ir_receiver/ir_receiver.h"
 
 #include "drivers/gpio/gpio.h"

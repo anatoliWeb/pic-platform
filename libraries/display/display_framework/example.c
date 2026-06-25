@@ -1,3 +1,7 @@
+/*
+ * File: libraries/display/display_framework/example.c
+ */
+
 #include "core/compiler.h"
 #include "libraries/display/display_framework/display_framework.h"
 #include "libraries/led/ws2812/ws2812.h"

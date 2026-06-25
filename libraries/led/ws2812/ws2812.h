@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/ws2812/ws2812.h
+ */
+
 #ifndef LIBRARIES_LED_WS2812_H
 #define LIBRARIES_LED_WS2812_H
 

@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/encoder/encoder.c
+ */
+
 #include "libraries/input/encoder/encoder.h"
 
 #if defined(DRV_COMPILER_C18)

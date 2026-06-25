@@ -1,3 +1,7 @@
+/*
+ * File: C18/libraries/input/encoder/encoder.c
+ */
+
 #include "libraries/input/encoder/encoder.h"
 #include "core/bit_utils.h"
 

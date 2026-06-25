@@ -1,3 +1,7 @@
+/*
+ * File: core/scheduler/scheduler.h
+ */
+
 #ifndef CORE_SCHEDULER_SCHEDULER_H
 #define CORE_SCHEDULER_SCHEDULER_H
 

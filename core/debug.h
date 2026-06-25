@@ -1,3 +1,7 @@
+/*
+ * File: core/debug.h
+ */
+
 #ifndef CORE_DEBUG_H
 #define CORE_DEBUG_H
 

@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/timer0/timer0.c
+ */
+
 #include "drivers/timers/timer0/timer0.h"
 
 #if defined(DRV_COMPILER_C18)
@@ -56,6 +60,7 @@ void timer0_enable_interrupt(void)
 
 void timer0_disable_interrupt(void) { INTCONbits.TMR0IE = 0u; }
 void timer0_set_callback(void (*cb)(void)) { timer0_cb = cb; }
+void (*timer0_get_callback(void))(void) { return timer0_cb; }
 
 void timer0_irq_handler(void)
 {

@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/c18/adc.X/main.c
+ */
+
 #include "project_config.h"
 #include "core/compiler.h"
 #include "core/delay.h"

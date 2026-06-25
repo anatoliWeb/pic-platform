@@ -1,3 +1,7 @@
+/*
+ * File: XC8/examples/timer2_example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/timers/timer2/timer2.h"
 

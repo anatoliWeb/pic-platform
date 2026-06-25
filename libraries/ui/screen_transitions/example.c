@@ -1,3 +1,7 @@
+/*
+ * File: libraries/ui/screen_transitions/example.c
+ */
+
 #include "libraries/ui/screen_transitions/screen_transitions.h"
 
 #include "core/tick.h"

@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_DISPLAY_SH1106_H
+/*
+ * File: libraries/display/sh1106/sh1106.h
+ */
+
+#ifndef LIBRARIES_DISPLAY_SH1106_H
 #define LIBRARIES_DISPLAY_SH1106_H
 
 #include "core/compiler.h"

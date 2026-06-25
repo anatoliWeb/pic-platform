@@ -1,3 +1,7 @@
+/*
+ * File: libraries/display/lcd_hd44780/lcd.c
+ */
+
 #include "libraries/display/lcd_hd44780/lcd.h"
 
 #if defined(DRV_COMPILER_C18)

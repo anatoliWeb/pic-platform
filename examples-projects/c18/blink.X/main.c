@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/c18/blink.X/main.c
+ */
+
 #include <p18f452.h>
 
 #include "project_config.h"

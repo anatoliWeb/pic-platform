@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/encoder/example.c
+ */
+
 #include "core/compiler.h"
 #include "libraries/input/encoder/encoder.h"
 #include "drivers/timers/tick/tick.h"

@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/icon_pack/icon_pack.h"
+/*
+ * File: libraries/ui/icon_pack/icon_pack.c
+ */
+
+#include "libraries/ui/icon_pack/icon_pack.h"
 
 /* 8x8 monochrome 1bpp icons, row-based, MSB-first. */
 static const uint8_t g_icon_settings[]    = {0x18,0x3C,0x5A,0xE7,0xE7,0x5A,0x3C,0x18};

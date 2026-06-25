@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_DISPLAY_ILI9341_H
+/*
+ * File: libraries/display/ili9341/ili9341.h
+ */
+
+#ifndef LIBRARIES_DISPLAY_ILI9341_H
 #define LIBRARIES_DISPLAY_ILI9341_H
 
 #include "core/compiler.h"

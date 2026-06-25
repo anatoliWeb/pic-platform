@@ -1,3 +1,7 @@
+/*
+ * File: core/config/platform_config_check.h
+ */
+
 #ifndef CORE_CONFIG_PLATFORM_CONFIG_CHECK_H
 #define CORE_CONFIG_PLATFORM_CONFIG_CHECK_H
 

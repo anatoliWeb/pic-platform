@@ -1,3 +1,7 @@
+/*
+ * File: libraries/time/ntp_sync/ntp_sync.c
+ */
+
 #include "libraries/time/ntp_sync/ntp_sync.h"
 
 #define NTP_PACKET_SIZE 48u

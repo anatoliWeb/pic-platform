@@ -1,3 +1,7 @@
+/*
+ * File: core/ring_buffer/ring_buffer.h
+ */
+
 #ifndef DRIVERS_RING_BUFFER_RING_BUFFER_H
 #define DRIVERS_RING_BUFFER_RING_BUFFER_H
 

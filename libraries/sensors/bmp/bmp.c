@@ -1,3 +1,7 @@
+/*
+ * File: libraries/sensors/bmp/bmp.c
+ */
+
 #include "libraries/sensors/bmp/bmp.h"
 
 #include "core/delay.h"

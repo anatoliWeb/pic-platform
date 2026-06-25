@@ -1,3 +1,7 @@
+/*
+ * File: C18/libraries/display/lcd_hd44780/lcd.c
+ */
+
 #include "libraries/display/lcd_hd44780/lcd.h"
 
 #include "core/bit_utils.h"

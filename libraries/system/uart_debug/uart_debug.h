@@ -1,3 +1,7 @@
+/*
+ * File: libraries/system/uart_debug/uart_debug.h
+ */
+
 #ifndef DRIVERS_UART_DEBUG_UART_DEBUG_H
 #define DRIVERS_UART_DEBUG_UART_DEBUG_H
 

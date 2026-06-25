@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/ui_themes/ui_themes.h"
+/*
+ * File: libraries/ui/ui_themes/ui_themes.c
+ */
+
+#include "libraries/ui/ui_themes/ui_themes.h"
 
 /*
  * Themes use generic 16-bit color values.

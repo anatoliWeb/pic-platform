@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_DISPLAY_BITMAP_H
+/*
+ * File: libraries/display/bitmap/bitmap.h
+ */
+
+#ifndef LIBRARIES_DISPLAY_BITMAP_H
 #define LIBRARIES_DISPLAY_BITMAP_H
 
 #include "core/compiler.h"

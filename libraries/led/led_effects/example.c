@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/led_effects/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
 #include "libraries/led/ws2812/ws2812.h"

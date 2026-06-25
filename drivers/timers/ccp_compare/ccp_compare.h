@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/ccp_compare/ccp_compare.h
+ */
+
 #ifndef DRIVERS_CCP_COMPARE_CCP_COMPARE_H
 #define DRIVERS_CCP_COMPARE_CCP_COMPARE_H
 

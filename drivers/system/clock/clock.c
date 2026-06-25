@@ -1,3 +1,7 @@
+/*
+ * File: drivers/system/clock/clock.c
+ */
+
 #include "drivers/system/clock/clock.h"
 
 /*

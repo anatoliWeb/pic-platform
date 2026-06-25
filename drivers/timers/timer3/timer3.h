@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/timer3/timer3.h
+ */
+
 #ifndef DRIVERS_TIMER3_TIMER3_H
 #define DRIVERS_TIMER3_TIMER3_H
 
@@ -13,6 +17,7 @@ uint16_t timer3_get(void);
 void timer3_enable_interrupt(void);
 void timer3_disable_interrupt(void);
 void timer3_set_callback(void (*cb)(void));
+void (*timer3_get_callback(void))(void);
 
 /* Call this from MCU ISR when TMR3 overflow flag is set. */
 void timer3_irq_handler(void);

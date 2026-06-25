@@ -1,3 +1,7 @@
+/*
+ * File: XC8/drivers/communication/uart/uart.c
+ */
+
 #include "drivers/communication/uart/uart.h"
 #include "core/device.h"
 

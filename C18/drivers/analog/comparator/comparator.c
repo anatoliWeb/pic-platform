@@ -1,3 +1,7 @@
+/*
+ * File: C18/drivers/analog/comparator/comparator.c
+ */
+
 #include "drivers/analog/comparator/comparator.h"
 
 static comparator_mode_t g_cmp_mode = CMP_MODE_OFF;

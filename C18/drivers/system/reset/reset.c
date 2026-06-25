@@ -1,3 +1,7 @@
+/*
+ * File: C18/drivers/system/reset/reset.c
+ */
+
 #include "drivers/system/reset/reset.h"
 
 static reset_cause_t g_reset_cause = RESET_CAUSE_UNKNOWN;

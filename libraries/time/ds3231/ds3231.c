@@ -1,3 +1,7 @@
+/*
+ * File: libraries/time/ds3231/ds3231.c
+ */
+
 #include "libraries/time/ds3231/ds3231.h"
 
 #include "drivers/communication/i2c/i2c.h"

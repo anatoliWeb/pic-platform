@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/encoder/encoder.h
+ */
+
 #ifndef DRIVERS_ENCODER_ENCODER_H
 #define DRIVERS_ENCODER_ENCODER_H
 

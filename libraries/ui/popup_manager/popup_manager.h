@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_POPUP_MANAGER_H
+/*
+ * File: libraries/ui/popup_manager/popup_manager.h
+ */
+
+#ifndef LIBRARIES_UI_POPUP_MANAGER_H
 #define LIBRARIES_UI_POPUP_MANAGER_H
 
 #include "core/compiler.h"

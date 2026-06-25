@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/ccp_compare/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
 #include "drivers/timers/ccp_compare/ccp_compare.h"

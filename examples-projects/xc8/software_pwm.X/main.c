@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/xc8/software_pwm.X/main.c
+ */
+
 #include "project_config.h"
 
 #include "core/compiler.h"

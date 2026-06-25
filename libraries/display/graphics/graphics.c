@@ -1,4 +1,8 @@
-﻿#include "libraries/display/graphics/graphics.h"
+/*
+ * File: libraries/display/graphics/graphics.c
+ */
+
+#include "libraries/display/graphics/graphics.h"
 
 /* 5x7 font, ASCII 0x20..0x7F. */
 static const uint8_t g_font_5x7[96][5] =

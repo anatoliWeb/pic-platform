@@ -1,3 +1,7 @@
+/*
+ * File: C18/examples/pwm_example.c
+ */
+
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/timers/pwm/pwm.h"

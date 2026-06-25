@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/menu_widgets/menu_widgets.h"
+/*
+ * File: libraries/ui/menu_widgets/menu_widgets.c
+ */
+
+#include "libraries/ui/menu_widgets/menu_widgets.h"
 
 static uint8_t widget_color(const ui_theme_t* theme, ui_color_role_t role)
 {

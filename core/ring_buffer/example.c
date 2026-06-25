@@ -1,3 +1,7 @@
+/*
+ * File: core/ring_buffer/example.c
+ */
+
 #include "core/compiler.h"
 #include "core/ring_buffer/ring_buffer.h"
 #include "drivers/communication/uart/uart.h"

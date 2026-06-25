@@ -1,3 +1,7 @@
+/*
+ * File: core/scheduler/scheduler.c
+ */
+
 #include "core/scheduler/scheduler.h"
 #include "core/rtos/rtos.h"
 

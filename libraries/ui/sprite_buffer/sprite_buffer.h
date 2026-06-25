@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_SPRITE_BUFFER_H
+/*
+ * File: libraries/ui/sprite_buffer/sprite_buffer.h
+ */
+
+#ifndef LIBRARIES_UI_SPRITE_BUFFER_H
 #define LIBRARIES_UI_SPRITE_BUFFER_H
 
 #include "core/compiler.h"

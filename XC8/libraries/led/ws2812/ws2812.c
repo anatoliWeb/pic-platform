@@ -1,3 +1,7 @@
+/*
+ * File: XC8/libraries/led/ws2812/ws2812.c
+ */
+
 #include "libraries/led/ws2812/ws2812.h"
 #include "core/delay.h"
 #include "drivers/gpio/gpio.h"

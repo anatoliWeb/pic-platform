@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_ICON_PACK_H
+/*
+ * File: libraries/ui/icon_pack/icon_pack.h
+ */
+
+#ifndef LIBRARIES_UI_ICON_PACK_H
 #define LIBRARIES_UI_ICON_PACK_H
 
 #include "core/compiler.h"

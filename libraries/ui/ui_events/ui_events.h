@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_UI_EVENTS_H
+/*
+ * File: libraries/ui/ui_events/ui_events.h
+ */
+
+#ifndef LIBRARIES_UI_UI_EVENTS_H
 #define LIBRARIES_UI_UI_EVENTS_H
 
 #include "core/compiler.h"

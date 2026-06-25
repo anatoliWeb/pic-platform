@@ -1,4 +1,8 @@
-﻿#include "libraries/system/servo/servo.h"
+/*
+ * File: libraries/system/servo/servo.c
+ */
+
+#include "libraries/system/servo/servo.h"
 
 static uint16_t servo_clamp_u16(uint16_t v, uint16_t lo, uint16_t hi)
 {

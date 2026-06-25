@@ -1,3 +1,7 @@
+/*
+ * File: XC8/libraries/led/led_effects/led_effects.c
+ */
+
 #include "libraries/led/led_effects/led_effects.h"
 
 /* Convert generic RGB utility color to WS2812 pixel color. */

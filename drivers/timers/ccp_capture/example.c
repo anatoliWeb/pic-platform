@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/ccp_capture/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/timers/ccp_capture/ccp_capture.h"
 

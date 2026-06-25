@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/c18/timer3.X/project_config.h
+ */
+
 #ifndef EXAMPLES_PROJECTS_PROJECT_CONFIG_H
 #define EXAMPLES_PROJECTS_PROJECT_CONFIG_H
 

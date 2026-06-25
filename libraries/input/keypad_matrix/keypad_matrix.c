@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/keypad_matrix/keypad_matrix.c
+ */
+
 #include "libraries/input/keypad_matrix/keypad_matrix.h"
 
 #if defined(DRV_COMPILER_C18)

@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/xc8/encoder.X/main.c
+ */
+
 #include <xc.h>
 
 #include "project_config.h"

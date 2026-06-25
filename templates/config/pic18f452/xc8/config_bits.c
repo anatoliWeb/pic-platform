@@ -1,3 +1,7 @@
+/*
+ * File: templates/config/pic18f452/xc8/config_bits.c
+ */
+
 #include <xc.h>
 
 #include "project_config.h"

@@ -1,3 +1,7 @@
+/*
+ * File: C18/drivers/timers/ccp_compare/ccp_compare.c
+ */
+
 #include "drivers/timers/ccp_compare/ccp_compare.h"
 
 static ccp_compare_callback_t g_compare_cb = 0;

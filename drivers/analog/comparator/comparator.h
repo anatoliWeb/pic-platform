@@ -1,3 +1,7 @@
+/*
+ * File: drivers/analog/comparator/comparator.h
+ */
+
 #ifndef DRIVERS_COMPARATOR_COMPARATOR_H
 #define DRIVERS_COMPARATOR_COMPARATOR_H
 

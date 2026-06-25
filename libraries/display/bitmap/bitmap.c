@@ -1,4 +1,8 @@
-﻿#include "libraries/display/bitmap/bitmap.h"
+/*
+ * File: libraries/display/bitmap/bitmap.c
+ */
+
+#include "libraries/display/bitmap/bitmap.h"
 
 static uint8_t bitmap_get_1bpp_row_pixel(const bitmap_t* bmp, uint16_t x, uint16_t y)
 {

@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/ccp_capture/ccp_capture.c
+ */
+
 #include "drivers/timers/ccp_capture/ccp_capture.h"
 
 #if defined(DRV_COMPILER_C18)

@@ -1,3 +1,7 @@
+/*
+ * File: C18/examples/wdt_example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/system/wdt/wdt.h"
 

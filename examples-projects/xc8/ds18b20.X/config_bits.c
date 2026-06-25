@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/xc8/ds18b20.X/config_bits.c
+ */
+
 #include <xc.h>
 
 #include "project_config.h"

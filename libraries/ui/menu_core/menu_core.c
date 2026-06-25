@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/menu_core/menu_core.h"
+/*
+ * File: libraries/ui/menu_core/menu_core.c
+ */
+
+#include "libraries/ui/menu_core/menu_core.h"
 
 static menu_item_t* menu_first_child_or_self(menu_item_t* item)
 {

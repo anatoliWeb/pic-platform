@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/xc8/ds18b20_search_rom.X/config_bits.c
+ */
+
 #include <xc.h>
 
 #include "project_config.h"

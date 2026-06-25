@@ -1,3 +1,7 @@
+/*
+ * File: C18/drivers/timers/pwm/pwm.c
+ */
+
 #include "drivers/timers/pwm/pwm.h"
 #include "core/device.h"
 

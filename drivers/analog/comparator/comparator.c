@@ -1,3 +1,7 @@
+/*
+ * File: drivers/analog/comparator/comparator.c
+ */
+
 #include "drivers/analog/comparator/comparator.h"
 
 #if defined(DRV_COMPILER_C18)

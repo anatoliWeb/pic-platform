@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/ws2812_matrix/ws2812_matrix.c
+ */
+
 #include "libraries/led/ws2812_matrix/ws2812_matrix.h"
 
 static ws2812_color_t ws2812_matrix_to_ws_color(rgb_color_t color)

@@ -1,3 +1,7 @@
+/*
+ * File: drivers/communication/uart/uart.h
+ */
+
 #ifndef DRIVERS_UART_UART_H
 #define DRIVERS_UART_UART_H
 

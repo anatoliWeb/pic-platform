@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_DISPLAY_ST7735_H
+/*
+ * File: libraries/display/st7735/st7735.h
+ */
+
+#ifndef LIBRARIES_DISPLAY_ST7735_H
 #define LIBRARIES_DISPLAY_ST7735_H
 
 #include "core/compiler.h"

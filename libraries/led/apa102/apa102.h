@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/apa102/apa102.h
+ */
+
 #ifndef LIBRARIES_LED_APA102_H
 #define LIBRARIES_LED_APA102_H
 

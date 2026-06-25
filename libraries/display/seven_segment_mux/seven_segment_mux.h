@@ -1,3 +1,7 @@
+/*
+ * File: libraries/display/seven_segment_mux/seven_segment_mux.h
+ */
+
 #ifndef LIBRARIES_DISPLAY_SEVEN_SEGMENT_MUX_H
 #define LIBRARIES_DISPLAY_SEVEN_SEGMENT_MUX_H
 

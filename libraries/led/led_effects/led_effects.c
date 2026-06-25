@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/led_effects/led_effects.c
+ */
+
 #include "libraries/led/led_effects/led_effects.h"
 
 #if defined(DRV_COMPILER_C18)

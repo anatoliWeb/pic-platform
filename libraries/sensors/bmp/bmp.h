@@ -1,3 +1,7 @@
+/*
+ * File: libraries/sensors/bmp/bmp.h
+ */
+
 #ifndef LIBRARIES_SENSORS_BMP_H
 #define LIBRARIES_SENSORS_BMP_H
 

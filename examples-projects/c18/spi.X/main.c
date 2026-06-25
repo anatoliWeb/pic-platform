@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/c18/spi.X/main.c
+ */
+
 #include "project_config.h"
 #include "core/compiler.h"
 #include "drivers/communication/spi/spi.h"

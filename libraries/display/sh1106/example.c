@@ -1,4 +1,8 @@
-﻿#include "core/compiler.h"
+/*
+ * File: libraries/display/sh1106/example.c
+ */
+
+#include "core/compiler.h"
 #include "drivers/timers/tick/tick.h"
 #include "libraries/display/bitmap/bitmap.h"
 #include "libraries/display/display_framework/display_framework.h"

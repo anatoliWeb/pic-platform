@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/shared_segment_buttons/example.c
+ */
+
 #include "core/compiler.h"
 #include "libraries/display/seven_segment_mux/seven_segment_mux.h"
 #include "libraries/input/shared_segment_buttons/shared_segment_buttons.h"

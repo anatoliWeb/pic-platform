@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/led_animation_engine/led_animation_engine.h
+ */
+
 #ifndef LIBRARIES_LED_LED_ANIMATION_ENGINE_H
 #define LIBRARIES_LED_LED_ANIMATION_ENGINE_H
 

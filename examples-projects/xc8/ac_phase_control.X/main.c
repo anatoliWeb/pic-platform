@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/xc8/ac_phase_control.X/main.c
+ */
+
 #include "project_config.h"
 
 #include "core/compiler.h"

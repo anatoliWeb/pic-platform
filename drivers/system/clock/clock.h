@@ -1,3 +1,7 @@
+/*
+ * File: drivers/system/clock/clock.h
+ */
+
 #ifndef DRIVERS_CLOCK_CLOCK_H
 #define DRIVERS_CLOCK_CLOCK_H
 

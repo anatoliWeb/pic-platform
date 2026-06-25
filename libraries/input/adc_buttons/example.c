@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/adc_buttons/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/analog/adc/adc.h"
 #include "drivers/timers/tick/tick.h"

@@ -1,3 +1,7 @@
+/*
+ * File: drivers/system/clock/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/system/clock/clock.h"
 #include "drivers/communication/uart/uart.h"

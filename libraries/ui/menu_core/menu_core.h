@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_MENU_CORE_H
+/*
+ * File: libraries/ui/menu_core/menu_core.h
+ */
+
+#ifndef LIBRARIES_UI_MENU_CORE_H
 #define LIBRARIES_UI_MENU_CORE_H
 
 #include "core/compiler.h"

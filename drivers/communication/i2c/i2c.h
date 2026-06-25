@@ -1,3 +1,7 @@
+/*
+ * File: drivers/communication/i2c/i2c.h
+ */
+
 #ifndef DRIVERS_I2C_I2C_H
 #define DRIVERS_I2C_I2C_H
 

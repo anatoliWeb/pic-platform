@@ -1,3 +1,7 @@
+/*
+ * File: drivers/communication/spi/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/communication/spi/spi.h"
 #include "libraries/system/uart_debug/uart_debug.h"

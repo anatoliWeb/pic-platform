@@ -1,3 +1,7 @@
+/*
+ * File: drivers/communication/uart/uart.c
+ */
+
 #include "drivers/communication/uart/uart.h"
 
 #if defined(DRV_COMPILER_C18)

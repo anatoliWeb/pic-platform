@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/menu_navigation/menu_navigation.h"
+/*
+ * File: libraries/ui/menu_navigation/menu_navigation.c
+ */
+
+#include "libraries/ui/menu_navigation/menu_navigation.h"
 
 uint8_t menu_navigation_init(menu_navigation_t* nav, menu_t* menu, input_adapter_t* input)
 {

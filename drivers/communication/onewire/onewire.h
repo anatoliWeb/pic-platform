@@ -1,3 +1,7 @@
+/*
+ * File: drivers/communication/onewire/onewire.h
+ */
+
 #ifndef DRIVERS_COMMUNICATION_ONEWIRE_ONEWIRE_H
 /* drivers/communication/onewire/onewire.h */
 #define DRIVERS_COMMUNICATION_ONEWIRE_ONEWIRE_H

@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_DISPLAY_SSD1306_H
+/*
+ * File: libraries/display/ssd1306/ssd1306.h
+ */
+
+#ifndef LIBRARIES_DISPLAY_SSD1306_H
 #define LIBRARIES_DISPLAY_SSD1306_H
 
 #include "core/compiler.h"

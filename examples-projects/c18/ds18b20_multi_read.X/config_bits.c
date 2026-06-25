@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/c18/ds18b20_multi_read.X/config_bits.c
+ */
+
 #include <p18f452.h>
 
 #include "project_config.h"

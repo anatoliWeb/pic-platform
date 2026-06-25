@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_MENU_WIDGETS_H
+/*
+ * File: libraries/ui/menu_widgets/menu_widgets.h
+ */
+
+#ifndef LIBRARIES_UI_MENU_WIDGETS_H
 #define LIBRARIES_UI_MENU_WIDGETS_H
 
 #include "core/compiler.h"

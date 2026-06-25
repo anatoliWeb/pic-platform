@@ -1,3 +1,7 @@
+/*
+ * File: core/rtos/rtos.c
+ */
+
 #include "core/rtos/rtos.h"
 #include "core/delay.h"
 #include "drivers/timers/tick/tick.h"

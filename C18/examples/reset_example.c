@@ -1,3 +1,7 @@
+/*
+ * File: C18/examples/reset_example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/communication/uart/uart.h"
 #include "libraries/system/uart_debug/uart_debug.h"

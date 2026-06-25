@@ -1,3 +1,7 @@
+/*
+ * File: libraries/display/lcd_hd44780/example.c
+ */
+
 #include "core/compiler.h"
 #include "libraries/display/lcd_hd44780/lcd.h"
 

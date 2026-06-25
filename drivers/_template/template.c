@@ -1,3 +1,7 @@
+/*
+ * File: drivers/_template/template.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/_template/template.h"
 

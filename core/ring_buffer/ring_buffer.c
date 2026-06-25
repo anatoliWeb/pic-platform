@@ -1,3 +1,7 @@
+/*
+ * File: core/ring_buffer/ring_buffer.c
+ */
+
 #include "core/ring_buffer/ring_buffer.h"
 
 #if defined(DRV_COMPILER_C18)

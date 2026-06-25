@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/timer1/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/timers/timer1/timer1.h"
 #include "drivers/timers/tick/tick.h"

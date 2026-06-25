@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_INPUT_ADAPTER_H
+/*
+ * File: libraries/ui/input_adapter/input_adapter.h
+ */
+
+#ifndef LIBRARIES_UI_INPUT_ADAPTER_H
 #define LIBRARIES_UI_INPUT_ADAPTER_H
 
 #include "core/compiler.h"

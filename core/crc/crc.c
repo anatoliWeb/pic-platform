@@ -1,3 +1,7 @@
+/*
+ * File: core/crc/crc.c
+ */
+
 #include "core/crc/crc.h"
 
 #if defined(DRV_COMPILER_C18)

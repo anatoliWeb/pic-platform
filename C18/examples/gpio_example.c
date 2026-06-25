@@ -1,4 +1,8 @@
-﻿#include "core/compiler.h"
+/*
+ * File: C18/examples/gpio_example.c
+ */
+
+#include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/gpio/gpio.h"
 

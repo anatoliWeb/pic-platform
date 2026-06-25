@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/sprite_buffer/sprite_buffer.h"
+/*
+ * File: libraries/ui/sprite_buffer/sprite_buffer.c
+ */
+
+#include "libraries/ui/sprite_buffer/sprite_buffer.h"
 
 static uint16_t sprite_bytes_per_row(const sprite_t* sprite)
 {

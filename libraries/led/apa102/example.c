@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/apa102/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/communication/spi/spi.h"
 #include "libraries/led/rgb_utils/rgb_utils.h"

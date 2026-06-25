@@ -1,3 +1,7 @@
+/*
+ * File: drivers/analog/adc/adc.h
+ */
+
 #ifndef DRIVERS_ADC_ADC_H
 #define DRIVERS_ADC_ADC_H
 

@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/tick/tick.h
+ */
+
 #ifndef DRIVERS_TICK_TICK_H
 #define DRIVERS_TICK_TICK_H
 

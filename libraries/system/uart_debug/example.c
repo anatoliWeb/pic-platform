@@ -1,3 +1,7 @@
+/*
+ * File: libraries/system/uart_debug/example.c
+ */
+
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "drivers/communication/uart/uart.h"

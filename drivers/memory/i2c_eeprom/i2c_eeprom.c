@@ -1,3 +1,7 @@
+/*
+ * File: drivers/memory/i2c_eeprom/i2c_eeprom.c
+ */
+
 #include "drivers/memory/i2c_eeprom/i2c_eeprom.h"
 
 #if defined(DRV_COMPILER_C18)

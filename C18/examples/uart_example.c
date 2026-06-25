@@ -1,3 +1,7 @@
+/*
+ * File: C18/examples/uart_example.c
+ */
+
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "core/debug.h"

@@ -1,3 +1,7 @@
+/*
+ * File: drivers/memory/eeprom/eeprom.c
+ */
+
 #include "drivers/memory/eeprom/eeprom.h"
 
 #if defined(DRV_COMPILER_C18)

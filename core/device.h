@@ -1,3 +1,7 @@
+/*
+ * File: core/device.h
+ */
+
 #ifndef CORE_DEVICE_H
 #define CORE_DEVICE_H
 

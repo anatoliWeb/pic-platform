@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_SCREEN_MANAGER_H
+/*
+ * File: libraries/ui/screen_manager/screen_manager.h
+ */
+
+#ifndef LIBRARIES_UI_SCREEN_MANAGER_H
 #define LIBRARIES_UI_SCREEN_MANAGER_H
 
 #include "core/compiler.h"

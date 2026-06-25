@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/menu_renderer/menu_renderer.h"
+/*
+ * File: libraries/ui/menu_renderer/menu_renderer.c
+ */
+
+#include "libraries/ui/menu_renderer/menu_renderer.h"
 
 static menu_item_t* menu_renderer_first_visible(const menu_t* menu)
 {

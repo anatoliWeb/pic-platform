@@ -1,3 +1,7 @@
+/*
+ * File: examples-projects/xc8/adc.X/config_bits.c
+ */
+
 #include <xc.h>
 
 #define PIC_PLATFORM_CLOCK_HZ 4000000UL

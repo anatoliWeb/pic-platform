@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/shared_segment_buttons/shared_segment_buttons.c
+ */
+
 #include "libraries/input/shared_segment_buttons/shared_segment_buttons.h"
 
 #if defined(DRV_COMPILER_C18)

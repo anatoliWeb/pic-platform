@@ -1,3 +1,7 @@
+/*
+ * File: drivers/communication/spi/spi.c
+ */
+
 #include "drivers/communication/spi/spi.h"
 
 #if defined(DRV_COMPILER_C18)

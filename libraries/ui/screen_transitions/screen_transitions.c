@@ -1,3 +1,7 @@
+/*
+ * File: libraries/ui/screen_transitions/screen_transitions.c
+ */
+
 #include "libraries/ui/screen_transitions/screen_transitions.h"
 
 /* Draw current transition marker without large framebuffers.

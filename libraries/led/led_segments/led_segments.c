@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/led_segments/led_segments.c
+ */
+
 #include "libraries/led/led_segments/led_segments.h"
 
 static ws2812_color_t led_segment_to_ws_color(rgb_color_t color)

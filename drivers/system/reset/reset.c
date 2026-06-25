@@ -1,3 +1,7 @@
+/*
+ * File: drivers/system/reset/reset.c
+ */
+
 #include "drivers/system/reset/reset.h"
 
 #if defined(DRV_COMPILER_C18)

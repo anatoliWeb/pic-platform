@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_MENU_RENDERER_H
+/*
+ * File: libraries/ui/menu_renderer/menu_renderer.h
+ */
+
+#ifndef LIBRARIES_UI_MENU_RENDERER_H
 #define LIBRARIES_UI_MENU_RENDERER_H
 
 #include "core/compiler.h"

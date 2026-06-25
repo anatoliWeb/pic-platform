@@ -1,3 +1,7 @@
+/*
+ * File: drivers/communication/rs485/rs485.c
+ */
+
 #include "drivers/communication/rs485/rs485.h"
 
 #if defined(DRV_COMPILER_C18)

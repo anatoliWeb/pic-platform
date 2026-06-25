@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/ws2812/example.c
+ */
+
 #include "core/compiler.h"
 #include "core/delay.h"
 #include "libraries/led/ws2812/ws2812.h"

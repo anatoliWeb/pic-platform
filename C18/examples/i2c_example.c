@@ -1,3 +1,7 @@
+/*
+ * File: C18/examples/i2c_example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/communication/i2c/i2c.h"
 #include "drivers/communication/uart/uart.h"

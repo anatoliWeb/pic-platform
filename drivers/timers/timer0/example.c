@@ -1,3 +1,7 @@
+/*
+ * File: drivers/timers/timer0/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/gpio/gpio.h"
 #include "drivers/timers/timer0/timer0.h"

@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/led_animation_engine/example.c
+ */
+
 #include "core/compiler.h"
 #include "libraries/led/ws2812/ws2812.h"
 #include "libraries/led/rgb_utils/rgb_utils.h"

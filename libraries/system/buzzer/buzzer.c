@@ -1,4 +1,8 @@
-﻿#include "libraries/system/buzzer/buzzer.h"
+/*
+ * File: libraries/system/buzzer/buzzer.c
+ */
+
+#include "libraries/system/buzzer/buzzer.h"
 
 #include "drivers/gpio/gpio.h"
 

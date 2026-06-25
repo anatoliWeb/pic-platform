@@ -1,4 +1,8 @@
-﻿#include "libraries/ui/input_adapter/input_adapter.h"
+/*
+ * File: libraries/ui/input_adapter/input_adapter.c
+ */
+
+#include "libraries/ui/input_adapter/input_adapter.h"
 
 static void input_adapter_push(input_adapter_t* adapter, input_event_t ev)
 {

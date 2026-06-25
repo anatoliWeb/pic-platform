@@ -1,4 +1,8 @@
-﻿#include "libraries/display/ili9341/ili9341.h"
+/*
+ * File: libraries/display/ili9341/ili9341.c
+ */
+
+#include "libraries/display/ili9341/ili9341.h"
 
 #include "core/delay.h"
 #include "drivers/communication/spi/spi.h"

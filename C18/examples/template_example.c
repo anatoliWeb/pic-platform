@@ -1,4 +1,8 @@
-﻿#include "core/compiler.h"
+/*
+ * File: C18/examples/template_example.c
+ */
+
+#include "core/compiler.h"
 #include "drivers/_template/template.h"
 
 void main(void)

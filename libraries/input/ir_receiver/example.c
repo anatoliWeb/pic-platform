@@ -1,3 +1,7 @@
+/*
+ * File: libraries/input/ir_receiver/example.c
+ */
+
 #include "core/compiler.h"
 #include "core/debug.h"
 #include "libraries/input/ir_receiver/ir_receiver.h"

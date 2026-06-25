@@ -1,3 +1,7 @@
+/*
+ * File: drivers/memory/i2c_eeprom/example.c
+ */
+
 #include "core/compiler.h"
 #include "drivers/communication/i2c/i2c.h"
 #include "drivers/memory/i2c_eeprom/i2c_eeprom.h"

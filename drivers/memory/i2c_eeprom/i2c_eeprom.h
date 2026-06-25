@@ -1,3 +1,7 @@
+/*
+ * File: drivers/memory/i2c_eeprom/i2c_eeprom.h
+ */
+
 #ifndef DRIVERS_MEMORY_I2C_EEPROM_H
 #define DRIVERS_MEMORY_I2C_EEPROM_H
 

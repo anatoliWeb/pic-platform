@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_SYSTEM_BUZZER_H
+/*
+ * File: libraries/system/buzzer/buzzer.h
+ */
+
+#ifndef LIBRARIES_SYSTEM_BUZZER_H
 #define LIBRARIES_SYSTEM_BUZZER_H
 
 #include "core/compiler.h"

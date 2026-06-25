@@ -1,4 +1,8 @@
-﻿#ifndef LIBRARIES_UI_MENU_NAVIGATION_H
+/*
+ * File: libraries/ui/menu_navigation/menu_navigation.h
+ */
+
+#ifndef LIBRARIES_UI_MENU_NAVIGATION_H
 #define LIBRARIES_UI_MENU_NAVIGATION_H
 
 #include "core/compiler.h"

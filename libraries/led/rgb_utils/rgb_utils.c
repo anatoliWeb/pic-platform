@@ -1,3 +1,7 @@
+/*
+ * File: libraries/led/rgb_utils/rgb_utils.c
+ */
+
 #include "libraries/led/rgb_utils/rgb_utils.h"
 
 #if defined(DRV_COMPILER_C18)
