@@ -1,54 +1,45 @@
+[English version](./README.md)
+
 # PIC Drivers Platform (C18 + XC8)
 
-> [English version](README.md)
+Повторно використовувана платформа для PIC18 із чітким розділенням на `core`, `drivers` і `libraries`.
 
-Р‘Р°РіР°С‚РѕСЂР°Р·РѕРІР° embedded-РїР»Р°С‚С„РѕСЂРјР° РґР»СЏ PIC18 Р· С‡С–С‚РєРёРј СЂРѕР·РґС–Р»РµРЅРЅСЏРј С€Р°СЂС–РІ С–
-РїРµСЂРµРЅРѕСЃРёРјРѕСЋ Р°СЂС…С–С‚РµРєС‚СѓСЂРѕСЋ.
+## Архітектура
 
-Р¦Рµ РїР»Р°С‚С„РѕСЂРјР° РґСЂР°Р№РІРµСЂС–РІ С– Р±С–Р±Р»С–РѕС‚РµРє, Р° РЅРµ РїСЂРёРєР»Р°РґРЅРёР№ Р·Р°СЃС‚РѕСЃСѓРЅРѕРє.
+- `core/` - абстракція компілятора, затримки, типи, CRC, ring buffer, scheduler, RTOS wrapper
+- `drivers/` - низькорівневі драйвери периферії та протоколів
+- `libraries/` - повторно використовувані компоненти вищого рівня поверх drivers і core
+- `C18/` - compiler-specific файли для MPLAB C18
+- `XC8/` - compiler-specific файли для MPLAB XC8
+- `docs/` - документація
+- `examples-projects/` - wrapper-проєкти MPLAB
+- `prompts/` - готові prompt-файли для AI-чатів
 
-## РђСЂС…С–С‚РµРєС‚СѓСЂР°
+## Швидкий старт
 
-- `/core` - Р°Р±СЃС‚СЂР°РєС†С–СЏ РєРѕРјРїС–Р»СЏС‚РѕСЂР° С‚Р° РїСЂРѕРіСЂР°РјРЅС– СѓС‚РёР»С–С‚Рё
-- `/drivers` - РЅРёР·СЊРєРѕСЂС–РІРЅРµРІС– hardware/protocol РјРѕРґСѓР»С–
-- `/libraries` - РІРёСЃРѕРєРѕСЂС–РІРЅРµРІС– Р±Р°РіР°С‚РѕСЂР°Р·РѕРІС– РєРѕРјРїРѕРЅРµРЅС‚Рё
-- `/C18` - compiler-specific С„Р°Р№Р»Рё РґР»СЏ MPLAB C18
-- `/XC8` - compiler-specific С„Р°Р№Р»Рё РґР»СЏ MPLAB XC8
-- `/docs` - РґРѕРєСѓРјРµРЅС‚Р°С†С–СЏ
-- `/examples-projects` - РіРѕС‚РѕРІС– MPLAB РїСЂРёРєР»Р°РґРё
-- `/prompts` - РіРѕС‚РѕРІС– prompt-С„Р°Р№Р»Рё РґР»СЏ AI-С‡Р°С‚С–РІ
-
-## РЁР°СЂ Core
-
-- `core/compiler.h`, `core/types.h`, `core/bit_utils.h`, `core/delay.*`
-- `core/crc/*`, `core/ring_buffer/*`, `core/scheduler/*`
-- `core/rtos/*` РґР»СЏ РѕРїС†С–РѕРЅР°Р»СЊРЅРѕС— RTOS-Р°Р±СЃС‚СЂР°РєС†С–С—
-
-## RTOS РђР±СЃС‚СЂР°РєС†С–СЏ
-
-- Р—Р°Р»РµР¶РЅС–СЃС‚СЊ РІС–Рґ FreeRTOS РЅРµ РґРѕРґР°С”С‚СЊСЃСЏ.
-- РџРµСЂРµРјРёРєР°С‡ Р·Р±С–СЂРєРё: `DRV_USE_FREERTOS`
-- `rtos_sleep_ms()` РїСЂР°С†СЋС” Сѓ bare-metal СЂРµР¶РёРјС– С‡РµСЂРµР· `delay_ms()`.
-- `rtos_sleep_us()` РїСЂР°С†СЋС” С‡РµСЂРµР· `delay_us()`.
-- Р‘С–Р±Р»С–РѕС‚РµРєРё РјР°СЋС‚СЊ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё `core/rtos` API, Р° РЅРµ РїСЂСЏРјС– RTOS-РІРёРєР»РёРєРё.
-
-## РЁРІРёРґРєРёР№ СЃС‚Р°СЂС‚
-
-1. РўСЂРёРјР°Р№С‚Рµ `pic-platform` РѕРєСЂРµРјРѕ РІС–Рґ application project.
-2. Р”РѕРґР°РІР°Р№С‚Рµ РІ MPLAB Р»РёС€Рµ РїРѕС‚СЂС–Р±РЅС– `.c` С„Р°Р№Р»Рё Сѓ `Source Files`.
-3. РќРµ РґРѕРґР°РІР°Р№С‚Рµ `.h` С„Р°Р№Р»Рё РІСЂСѓС‡РЅСѓ Сѓ `Source Files`.
-4. РќР°Р»Р°С€С‚СѓР№С‚Рµ include paths:
+1. Тримайте `pic-platform` окремо від прикладного проєкту.
+2. Додавайте в MPLAB лише потрібні `.c` файли у `Source Files`.
+3. Налаштуйте include paths:
    - `../pic-platform`
    - `../pic-platform/core`
    - `../pic-platform/drivers`
    - `../pic-platform/libraries`
-5. РџС–РґРєР»СЋС‡Р°Р№С‚Рµ Р·Р°РіРѕР»РѕРІРєРё С‚Р° РІРёРєР»РёРєР°Р№С‚Рµ init API Сѓ РєРѕРґС– Р·Р°СЃС‚РѕСЃСѓРЅРєСѓ.
+4. Залишайте configuration bits у `config_bits.c`.
+5. Використовуйте wrapper-приклади з `examples-projects/` як інтеграційні еталони.
 
-## Р”РѕРєСѓРјРµРЅС‚Р°С†С–СЏ
+## Основна документація
 
-- РђСЂС…С–С‚РµРєС‚СѓСЂР°: [docs/architecture.ua.md](docs/architecture.ua.md) | [EN](docs/architecture.md)
-- MPLAB С–РЅС‚РµРіСЂР°С†С–СЏ: [docs/mplab-integration.ua.md](docs/mplab-integration.ua.md) | [EN](docs/mplab-integration.md)
-- РљРѕРЅС„С–РіСѓСЂР°С†С–СЏ PIC18F452: [docs/configuration/pic18f452-config-bits.ua.md](docs/configuration/pic18f452-config-bits.ua.md) | [EN](docs/configuration/pic18f452-config-bits.md)
-- РџСЂРёРєР»Р°РґРё РїСЂРѕС”РєС‚С–РІ: [examples-projects/README.ua.md](examples-projects/README.ua.md) | [EN](examples-projects/README.md)
-- РќР°Р±С–СЂ РїСЂРѕРјРїС‚С–РІ: [docs/prompts.ua.md](docs/prompts.ua.md) | [EN](docs/prompts.md)
-- РђСѓРґРёС‚ РїСЂРёРєР»Р°РґС–РІ Phase 1: [docs/audits/phase-1-examples-validation.ua.md](docs/audits/phase-1-examples-validation.ua.md) | [EN](docs/audits/phase-1-examples-validation.md)
+- Архітектура: [docs/architecture.ua.md](docs/architecture.ua.md)
+- MPLAB інтеграція: [docs/mplab-integration.ua.md](docs/mplab-integration.ua.md)
+- Приклади проєктів: [examples-projects/README.ua.md](examples-projects/README.ua.md)
+- Бібліотека seven_segment: [docs/libraries/display/seven_segment.ua.md](docs/libraries/display/seven_segment.ua.md)
+- Бібліотека segment_keys: [docs/libraries/input/segment_keys.ua.md](docs/libraries/input/segment_keys.ua.md)
+- Набір prompt-файлів: [docs/prompts.ua.md](docs/prompts.ua.md)
+
+## Короткий статус
+
+- OneWire і DS18B20 перевірені для PIC18F452 + XC8 + Proteus + 10 MHz.
+- Input-приклади `button.X`, `encoder.X` і `adc_buttons.X` перевірені в Proteus.
+- `software_pwm.X` перевірено в Proteus.
+- Grouped seven-segment приклади в `examples-projects/xc8/seven_segment/` реалізовані та готові до перевірки в Proteus, включно з buffered fixed-point formatting у `multiplex_manual.X` і library-owned Timer2 refresh у `multiplex_timer.X`: `basic_manual.X`, `multiplex_manual.X`, `multiplex_timer.X`, `keys_single_line.X` і `keys_diode_coded.X`.
+

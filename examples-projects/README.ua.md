@@ -1,165 +1,66 @@
-[рџ‡¬рџ‡§ English version](./README.md)
+[English version](./README.md)
 
 # examples-projects
 
-## Р©Рѕ С‚Р°РєРµ examples-projects
+## �� ���� examples-projects
 
-`examples-projects` РјС–СЃС‚РёС‚СЊ РѕРєСЂРµРјС– wrapper-РїСЂРѕС”РєС‚Рё MPLAB X РґР»СЏ Р·РѕРІРЅС–С€РЅСЊРѕРіРѕ СЂРµРїРѕР·РёС‚РѕСЂС–СЋ `pic-platform`.
+`examples-projects` ������ ����� wrapper-������ MPLAB X ��� ��������� ������ ���� `pic-platform`.
 
-- РљРѕР¶РЅР° РїР°РїРєР° `.X` С” СЃР°РјРѕСЃС‚С–Р№РЅРёРј РїСЂРѕС”РєС‚РѕРј.
-- РџСЂРѕС”РєС‚Рё РїРѕС‚СЂС–Р±РЅС– РґР»СЏ РїРµСЂРµРІС–СЂРєРё С–РЅС‚РµРіСЂР°С†С–С—, Р° РЅРµ СЏРє РґРµСЂРµРІРѕ РІРёС…С–РґРЅРѕРіРѕ РєРѕРґСѓ Р±С–Р±Р»С–РѕС‚РµРєРё.
-- Р’РѕРЅРё РїРµСЂРµРІС–СЂСЏСЋС‚СЊ С‚РѕР№ СЃР°РјРёР№ РєРѕРґ РїС–Рґ MPLAB XC8 С– MPLAB C18.
-- РџСЂРёРєР»Р°РґРё СЂРѕР·РґС–Р»РµРЅС– Р·Р° РєРѕРјРїС–Р»СЏС‚РѕСЂРѕРј.
-
-## РЎС‚СЂСѓРєС‚СѓСЂР° РїСЂРѕС”РєС‚С–РІ
+## ���������
 
 ```text
 examples-projects/
-в”њв”Ђв”Ђ xc8/
-в”‚   в”њв”Ђв”Ђ blink.X/
-в”‚   в”њв”Ђв”Ђ uart_debug.X/
-в”‚   в”њв”Ђв”Ђ adc_read.X/
-в”‚   в””в”Ђв”Ђ ...
-в”њв”Ђв”Ђ c18/
-в”‚   в”њв”Ђв”Ђ blink.X/
-в”‚   в”њв”Ђв”Ђ uart_debug.X/
-в”‚   в”њв”Ђв”Ђ adc_read.X/
-в”‚   в””в”Ђв”Ђ ...
-в”њв”Ђв”Ђ hex/
-в”‚   в”њв”Ђв”Ђ xc8/
-в”‚   в””в”Ђв”Ђ c18/
-в””в”Ђв”Ђ proteus/
+|-- xc8/
+|-- c18/
+|-- hex/
+`-- proteus/
 ```
 
-## РџРѕСЏСЃРЅРµРЅРЅСЏ СЃС‚СЂСѓРєС‚СѓСЂРё РїР°РїРѕРє
+## �������
 
-- `xc8/` РјС–СЃС‚РёС‚СЊ wrapper-РїСЂРѕС”РєС‚Рё РґР»СЏ MPLAB XC8.
-- `c18/` РјС–СЃС‚РёС‚СЊ wrapper-РїСЂРѕС”РєС‚Рё РґР»СЏ MPLAB C18.
-- РљРѕР¶РЅР° РїР°РїРєР° `.X` С” РѕРєСЂРµРјРёРј MPLAB X-РїСЂРѕС”РєС‚РѕРј.
-- Р—РіРµРЅРµСЂРѕРІР°РЅС– РїР°РїРєРё `build/`, `dist/`, `debug/` С– `nbproject/private/` РЅРµ Р·Р±РµСЂС–РіР°СЋС‚СЊСЃСЏ РІ СЂРµРїРѕР·РёС‚РѕСЂС–С—.
+- �������� �������� ������ �� ����������� ������.
+- ��������� � `Source Files` ���� ������� `.c` �����.
+- �� ��������� `.h` ����� ������ � `Source Files`.
+- ��������� configuration bits � `config_bits.c`.
+- �������������� ���� ������� include paths � source paths.
 
-## РџСЂР°РІРёР»Р° РїСЂРѕС”РєС‚С–РІ
-
-- РќРµ РєРѕРїС–СЋР№С‚Рµ РґСЂР°Р№РІРµСЂРё РІ РїР°РїРєРё РїСЂРёРєР»Р°РґС–РІ.
-- Р’РёРєРѕСЂРёСЃС‚РѕРІСѓР№С‚Рµ Р»РёС€Рµ РІС–РґРЅРѕСЃРЅС– С€Р»СЏС…Рё.
-- `pic-platform` РјР°С” Р·Р°Р»РёС€Р°С‚РёСЃСЏ Р·РѕРІРЅС–С€РЅС–Рј РґР»СЏ РїСЂРёРєР»Р°РґРЅРёС… РїСЂРѕС”РєС‚С–РІ.
-- РџРѕС‚СЂС–Р±РЅС– `.c` С„Р°Р№Р»Рё РґРѕРґР°РІР°Р№С‚Рµ РІСЂСѓС‡РЅСѓ С‡РµСЂРµР· metadata MPLAB X.
-- РўСЂРёРјР°Р№С‚Рµ РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ Р·Р°СЃС‚РѕСЃСѓРЅРєСѓ РІ `main.c`, `project_config.h` С– `config_bits.c`.
-- CONFIG bits Р·Р±РµСЂС–РіР°Р№С‚Рµ С‚С–Р»СЊРєРё РІ `config_bits.c`.
-
-## РќРѕС‚Р°С‚РєРё С–РЅС‚РµРіСЂР°С†С–С—
-
-- Wrapper-РїСЂРѕС”РєС‚Рё Р·Р°Р»РµР¶Р°С‚СЊ РІС–Рґ `../pic-platform`.
-- Include paths РјР°СЋС‚СЊ РґР°РІР°С‚Рё РґРѕСЃС‚СѓРї РґРѕ:
-  - РєРѕСЂРµРЅСЏ СЂРµРїРѕР·РёС‚РѕСЂС–СЋ
-  - `core/`
-  - `drivers/`
-  - `libraries/`
-- РџРѕСЃРёР»Р°РЅРЅСЏ РЅР° source files Р·Р±РµСЂС–РіР°СЋС‚СЊСЃСЏ РІ `nbproject/configurations.xml`.
-- РќР°РґС–Р№РЅРёРј РґР¶РµСЂРµР»РѕРј РїСЂР°РІРґРё С” MPLAB project metadata, Р° РЅРµ Р·РіРµРЅРµСЂРѕРІР°РЅРёР№ `Makefile-default.mk`.
-
-## РџС–РґС‚СЂРёРјСѓРІР°РЅС– РєРѕРјРїС–Р»СЏС‚РѕСЂРё
+## ϳ���������� ����������
 
 - MPLAB XC8
 - MPLAB C18
 
-## РЎС–РјРµР№СЃС‚РІР° РїСЂРёРєР»Р°РґС–РІ
+## ѳ������� ��������
 
-| РЎС–РјРµР№СЃС‚РІРѕ | Wrapper-РїСЂРѕС”РєС‚Рё | РџСЂРёР·РЅР°С‡РµРЅРЅСЏ |
+| ѳ������� | �������� | ����������� |
 |---|---|---|
-| Validation set | `blink.X`, `uart_debug.X`, `adc_read.X`, `i2c_scan.X`, `spi_loopback.X`, `rs485_echo.X`, `ds18b20_read.X` | Р‘Р°Р·РѕРІС– С–РЅС‚РµРіСЂР°С†С–Р№РЅС– С‚Р° legacy-РїСЂРѕС”РєС‚Рё РїРµСЂРµРІС–СЂРєРё |
-| Common wrappers | `delay.X`, `template.X` | РџСЂРѕСЃС‚С– СЃС‚Р°СЂС‚РѕРІС– РїСЂРёРєР»Р°РґРё |
-| GPIO / UART | `gpio.X`, `uart.X` | Р‘Р°Р·РѕРІР° СЂРѕР±РѕС‚Р° Р· РїРµСЂРёС„РµСЂС–С”СЋ |
-| Analog / input | `adc.X`, `adc_buttons.X`, `button.X`, `encoder.X` | РџСЂРёРєР»Р°РґРё РґР»СЏ РІС…РѕРґС–РІ С– СЃРµРЅСЃРѕСЂС–РІ |
-| Displays | `lcd_hd44780.X` | РўРµРєСЃС‚РѕРІРёР№ LCD-РїСЂРёРєР»Р°Рґ |
-| Core utilities | `ring_buffer.X`, `crc.X`, `clock.X` | Р›РµРіРєС– РґРѕРїРѕРјС–Р¶РЅС– РјРѕРґСѓР»С– СЏРґСЂР° |
-| System / timing | `comparator.X`, `eeprom.X`, `ext_interrupt.X`, `i2c.X`, `onewire.X`, `portb_change.X`, `pwm.X`, `reset.X`, `rs485_basic.X`, `software_pwm.X`, `ac_phase_control.X`, `spi.X`, `tick.X`, `timer.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X` | РЎРёСЃС‚РµРјРЅС–, С‚Р°Р№РјС–РЅРіРѕРІС– С‚Р° РєРѕРјСѓРЅС–РєР°С†С–Р№РЅС– РїСЂРёРєР»Р°РґРё |
-| 1-Wire / sensors | `ds18b20.X`, `ds18b20_multi_read.X`, `ds18b20_search_rom.X`, `onewire_bus_test.X` | РћРєСЂРµРјРёР№ wrapper РґР»СЏ DS18B20 С– 1-Wire РґС–Р°РіРЅРѕСЃС‚РёРєРё |
+| ������ �������� | `blink.X`, `uart_debug.X`, `adc_read.X`, `i2c_scan.X`, `spi_loopback.X`, `rs485_echo.X`, `ds18b20_read.X` | ����� ������������ �������� |
+| Input | `button.X`, `encoder.X`, `adc_buttons.X` | Input-�������� �� �������� debounce |
+| Display | `lcd_hd44780.X`, `xc8/seven_segment/basic_manual.X`, `xc8/seven_segment/multiplex_manual.X`, `xc8/seven_segment/multiplex_timer.X`, `xc8/seven_segment/keys_single_line.X`, `xc8/seven_segment/keys_diode_coded.X` | �������� ��������� ����������, timer-owned multiplexing, fixed-point formatting � shared-line input |
+| Timing �� system | `tick.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X`, `software_pwm.X`, `ac_phase_control.X` | �������, watchdog � platform extensions |
+| 1-Wire �� sensors | `ds18b20.X`, `ds18b20_search_rom.X`, `onewire_bus_test.X`, `ds18b20_multi_read.X` | DS18B20 � ���������� ���� |
 
-Wrapper `ds18b20_multi_read.X` РІРёРєРѕСЂРёСЃС‚РѕРІСѓС” СЃРїС–Р»СЊРЅСѓ 1-Wire С€РёРЅСѓ Р· РїС–РґС‚СЏРіСѓРІР°Р»СЊРЅРёРј СЂРµР·РёСЃС‚РѕСЂРѕРј 4.7 РєРћРј РґРѕ VDD. Р”Р»СЏ СЂРµР°Р»СЊРЅРѕС— СЂРѕР±РѕС‚Рё Р· РєС–Р»СЊРєРѕРјР° РґР°С‚С‡РёРєР°РјРё РїРѕС‚СЂС–Р±РЅС– ROM search С– Match ROM. РџРµСЂРµРІС–СЂРєР° РІ Proteus РґР»СЏ Р±Р°РіР°С‚РѕРґР°С‚С‡РёРєРѕРІРѕРіРѕ СЃС†РµРЅР°СЂС–СЋ С‰Рµ РЅРµ Р·Р°РІРµСЂС€РµРЅР°.
+## �������� ������
 
-## Р—РЅС–РјРѕРє РІР°Р»С–РґР°С†С–С—
+| ������� | ������ |
+|---|---|
+| `button.X` | ��������� � Proteus |
+| `encoder.X` | ��������� � Proteus |
+| `adc_buttons.X` | ��������� � Proteus |
+| `software_pwm.X` | ��������� � Proteus |
+| `wdt.X` | ��������� � Proteus |
+| `ac_phase_control.X` | ������ �� �������� � Proteus |
+| `xc8/seven_segment/basic_manual.X` | ������ �� �������� � Proteus |
+| `xc8/seven_segment/multiplex_manual.X` | ������ �� �������� � Proteus |
+| `xc8/seven_segment/multiplex_timer.X` | ������ �� �������� � Proteus |
+| `xc8/seven_segment/keys_single_line.X` | ������ �� �������� � Proteus |
+| `xc8/seven_segment/keys_diode_coded.X` | ������ �� �������� � Proteus |
+| `ds18b20_search_rom.X` | ��������� � Proteus; XC8 HEX export pending |
+| `onewire_bus_test.X` | ��������� � Proteus; XC8 HEX export pending |
+| `ds18b20_multi_read.X` | ������� ��������� �������� � Proteus � C18 |
 
-- РџРѕРєСЂРёС‚С‚СЏ README РґР»СЏ РїР°РїРѕРє `examples-projects/proteus/` РІР¶Рµ С” РґР»СЏ РІСЃС–С… РїРѕС‚РѕС‡РЅРёС… РїСЂРёРєР»Р°РґС–РІ.
-- РЎС‚Р°С‚РёС‡РЅР° РїРµСЂРµРІС–СЂРєР° source-file РїРѕСЃРёР»Р°РЅСЊ РґР»СЏ XC8 `.X` РїСЂРѕС”РєС‚С–РІ РЅРµ Р·РЅР°Р№С€Р»Р° РІС–РґСЃСѓС‚РЅС–С… Р·РѕРІРЅС–С€РЅС–С… С€Р»СЏС…С–РІ `pic-platform`.
-- Р’С–РґРєР»Р°РґРµРЅРѕ РЅР° Р·Р°СЂР°Р·: XC8 HEX-РµРєСЃРїРѕСЂС‚ РґР»СЏ `ds18b20_search_rom.X` С– `onewire_bus_test.X`.
-- `ds18b20_multi_read.X` С‰Рµ РїРѕС‚СЂРµР±СѓС” РїРѕРґР°Р»СЊС€РѕС— РїРµСЂРµРІС–СЂРєРё РІ Proteus С– C18.
+## �������
 
-## РЎС‚Р°С‚СѓСЃ РїСЂРёРєР»Р°РґС–РІ
-
-| РџСЂРёРєР»Р°Рґ | Р©Рѕ С‚РµСЃС‚СѓС” | РљРѕРјРїРѕРЅРµРЅС‚Рё Proteus / РїС–РЅРё | РЎС‚Р°С‚СѓСЃ |
-|---|---|---|---|
-| `blink.X` | РњРёРіРѕС‚С–РЅРЅСЏ GPIO LED | RB0 LED | Verified in Proteus (XC8 + 10 MHz) |
-| `uart_debug.X` | Debug-РѕР±РіРѕСЂС‚РєРё UART | RC6/TX РґРѕ Virtual Terminal RXD, RC7/RX РѕРїС†С–РѕРЅР°Р»СЊРЅРѕ | Verified in Proteus (XC8 + 10 MHz) |
-| `adc_read.X` | Р—С‡РёС‚СѓРІР°РЅРЅСЏ ADC | Р”Р¶РµСЂРµР»Рѕ Р°РЅР°Р»РѕРіРѕРІРѕРіРѕ СЃРёРіРЅР°Р»Сѓ РЅР° AN0/AN1 | Verified in Proteus (XC8 + 10 MHz) |
-| `ds18b20_read.X` | РўРµРјРїРµСЂР°С‚СѓСЂР° DS18B20 | RB1 1-Wire data line, РїС–РґС‚СЏРіСѓРІР°Р»СЊРЅРёР№ СЂРµР·РёСЃС‚РѕСЂ 4.7 РєРћРј | Verified in Proteus (XC8 + 10 MHz) |
-| `ring_buffer.X` | UART RX FIFO | UART RX/TX С€Р»СЏС… | Verified in Proteus С‡РµСЂРµР· UART output (XC8 + 10 MHz) |
-| `rs485_basic.X` | РџРµСЂРµРґР°С‡Р° RS485 frame | MAX487 / UART / DE-RE РєРµСЂСѓРІР°РЅРЅСЏ | Verified in Proteus (XC8 + 10 MHz) |
-| `rs485_echo.X` | РќР°РїС–РІРґСѓРїР»РµРєСЃРЅРёР№ RS485 echo | Р”РІР° MAX487 РІСѓР·Р»Рё, UART-Р·РІвЂ™СЏР·РѕРє | Verified in Proteus (XC8 + 10 MHz) |
-| `spi.X` | Р‘Р°Р·РѕРІРёР№ SPI-РІРёС…С–Рґ | 74HC595, SPI pins, LEDs | Verified in Proteus (XC8 + 10 MHz) |
-| `spi_loopback.X` | SPI loopback self-test | RC5/SDO РґРѕ RC4/SDI | Verified in Proteus (XC8 + 10 MHz) |
-| `tick.X` | РњС–Р»С–СЃРµРєСѓРЅРґРЅРёР№ tick | Timer1 ISR / Timer1 forwarding | Verified in Proteus (XC8 + 10 MHz) |
-| `timer0.X` | Timer0 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
-| `timer1.X` | Timer1 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
-| `timer2.X` | Timer2 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
-| `timer3.X` | Timer3 interrupt counter | RB0..RB3 LEDs | Verified in Proteus (XC8 + 10 MHz) |
-| `uart.X` | UART echo | RC6/TX РґРѕ Virtual Terminal RXD, RC7/RX РѕРїС†С–РѕРЅР°Р»СЊРЅРѕ | Verified in Proteus (XC8 + 10 MHz) |
-| `wdt.X` | РџРѕРІРµРґС–РЅРєР° watchdog reset | RB0 alive LED, RB1 button | Verified in Proteus; watchdog reset behavior verified |
-| `ac_phase_control.X` | РќРёР·СЊРєРѕРІРѕР»СЊС‚РЅРёР№ phase-control brightness timing | RB0 / INT0 fake zero-cross input, RD0 gate pulse, RD1 optional activity LED | Готово до перевірки в Proteus |
-| `ds18b20_search_rom.X` | DS18B20 ROM search | 1-Wire diagnostics | Verified in Proteus; XC8 HEX export pending |
-| `onewire_bus_test.X` | РќРёР·СЊРєРѕСЂС–РІРЅРµРІРёР№ OneWire test | 1-Wire diagnostics | Verified in Proteus; XC8 HEX export pending |
-| `ds18b20_multi_read.X` | Multi-drop DS18B20 discovery | РЎРїС–Р»СЊРЅР° 1-Wire С€РёРЅР°, РїС–РґС‚СЏРіСѓРІР°РЅРЅСЏ 4.7 РєРћРј | Needs review / Proteus and C18 validation |
-
-РЈ РІСЃС–С… РїРѕС‚РѕС‡РЅРёС… РїР°РїРєР°С… Proteus СѓР¶Рµ С” РІС–РґРїРѕРІС–РґРЅС– `README.md` С– `README.ua.md`. РџСЂРѕРіР°Р»РёРЅ Сѓ РґРѕРєСѓРјРµРЅС‚Р°С†С–С— РґР»СЏ РїРѕС‚РѕС‡РЅРёС… РїР°РїРѕРє РЅРµ Р·РЅР°Р№РґРµРЅРѕ.
-
-## РЎС‚Р°С‚СѓСЃ input-РїСЂРёРєР»Р°РґС–РІ
-
-Р¦Рµ РїСЂРёРєР»Р°РґРё С„Р°Р·Рё 1 РґР»СЏ input. Menu navigation Р·Р°РїР»Р°РЅРѕРІР°РЅРѕ РѕРєСЂРµРјРѕ РЅР° Phase 2 С– СЃРІС–РґРѕРјРѕ РЅРµ РІС…РѕРґРёС‚СЊ Сѓ С†С– РїСЂРѕС”РєС‚Рё.
-
-| РџСЂРёРєР»Р°Рґ | РџСЂРёР·РЅР°С‡РµРЅРЅСЏ | РљРѕРјРїРѕРЅРµРЅС‚Рё Proteus / РїС–РЅРё | РЎС‚Р°С‚СѓСЃ |
-|---|---|---|---|
-| `button.X` | РћРєСЂРµРјРёР№ РїСЂРёРєР»Р°Рґ debounce РєРЅРѕРїРєРё С‚Р° РїРµСЂРµРјРёРєР°РЅРЅСЏ LED | РљРЅРѕРїРєР° РЅР° RB0 Р· РїС–РґС‚СЏРіСѓРІР°РЅРЅСЏРј 10 k РґРѕ +5V, LED РЅР° RB1, РѕРїС†С–РѕРЅР°Р»СЊРЅРёР№ Virtual Terminal | Verified in Proteus |
-| `encoder.X` | РћР±РµСЂС‚Р°РЅРЅСЏ quadrature, delta, position С– РїРѕРґС–С— РєРЅРѕРїРєРё РµРЅРєРѕРґРµСЂР° | A РЅР° RB0, B РЅР° RB1, SW РЅР° RB2, РѕРїС†С–РѕРЅР°Р»СЊРЅС– pull-up, РѕРїС†С–РѕРЅР°Р»СЊРЅРёР№ Virtual Terminal | Verified in Proteus |
-| `adc_buttons.X` | РљР»Р°РІС–Р°С‚СѓСЂР° РЅР° РѕРґРЅРѕРјСѓ ADC РІС…РѕРґС– С‡РµСЂРµР· resistor ladder | Р›Р°РЅС†СЋР¶РѕРє РЅР° RA0/AN0, LED РЅР° RB0..RB3, tick Timer1, РѕРїС†С–РѕРЅР°Р»СЊРЅРёР№ Virtual Terminal | Verified in Proteus |
-
-Menu libraries РґР»СЏ Phase 2 РІРµРґСѓС‚СЊСЃСЏ РѕРєСЂРµРјРѕ С– РЅРµ Р·РјС–РЅСЋСЋС‚СЊ scope С„Р°Р·Рё 1 РґР»СЏ input-РїСЂРёРєР»Р°РґС–РІ.
-
-## HEX-РµРєСЃРїРѕСЂС‚
-
-РЈСЃРїС–С€РЅС– XC8 Р·Р±С–СЂРєРё РµРєСЃРїРѕСЂС‚СѓСЋС‚СЊСЃСЏ РґРѕ:
-
-- `examples-projects/hex/xc8/<project>/<project>.hex`
-
-РЈСЃРїС–С€РЅС– C18 Р·Р±С–СЂРєРё РµРєСЃРїРѕСЂС‚СѓСЋС‚СЊСЃСЏ РґРѕ:
-
-- `examples-projects/hex/c18/<project>/<project>.hex`
-
-Р’РёРєРѕСЂРёСЃС‚РѕРІСѓР№С‚Рµ С†С– HEX-С„Р°Р№Р»Рё РґР»СЏ Proteus Р°Р±Рѕ С–РЅС€РёС… СЃРёРјСѓР»СЏС‚РѕСЂС–РІ. РџС–СЃР»СЏ РїРѕРІС‚РѕСЂРЅРѕС— Р·Р±С–СЂРєРё РІС–РґРїРѕРІС–РґРЅРѕРіРѕ `.X` РїСЂРѕС”РєС‚Сѓ HEX РїРѕС‚СЂС–Р±РЅРѕ Р·РіРµРЅРµСЂСѓРІР°С‚Рё С‰Рµ СЂР°Р·.
-
-Proteus simulation Р·Р±РµСЂС–РіР°СЋС‚СЊСЃСЏ Сѓ `examples-projects/proteus/` С– РІРёРєРѕСЂРёСЃС‚РѕРІСѓСЋС‚СЊ СЃРїС–Р»СЊРЅС– HEX-С„Р°Р№Р»Рё Р· `examples-projects/hex/`. РљРѕР¶РЅР° РїР°РїРєР° Proteus РјС–СЃС‚РёС‚СЊ README-С„Р°Р№Р»Рё С‚Р° РЅРѕС‚Р°С‚РєСѓ `proteus-version.txt`; РїСЂРѕС€РёРІРєРё С‚Р°Рј РЅРµ РґСѓР±Р»СЋСЋС‚СЊСЃСЏ.
-РЈ РїР°РїРєР°С… HEX Р·Р±РµСЂС–РіР°СЋС‚СЊСЃСЏ Р»РёС€Рµ С„Р°Р№Р»Рё РїС–СЃР»СЏ СѓСЃРїС–С€РЅРѕС— Р·Р±С–СЂРєРё.
-
-РЈ С†СЊРѕРјСѓ РїСЂРѕС…РѕРґС– РѕРЅРѕРІР»РµРЅРѕ XC8 HEX-С„Р°Р№Р»Рё РґР»СЏ `adc`, `adc_buttons`, `adc_read`, `blink`, `button`, `ccp_capture` С– `ccp_compare`.
-
-Р”РёРІС–С‚СЊСЃСЏ С‚Р°РєРѕР¶: [HEX exports README](./hex/README.ua.md).
-
-## Р†РЅСЃС‚СЂСѓРєС†С–СЏ Р·С– Р·Р±С–СЂРєРё
-
-1. Р’С–РґРєСЂРёР№С‚Рµ РїРѕС‚СЂС–Р±РЅРёР№ `.X` РїСЂРѕС”РєС‚ Сѓ MPLAB X.
-2. Р’РёР±РµСЂС–С‚СЊ С†С–Р»СЊРѕРІРёР№ MCU С‚Р° РїСЂРѕРіСЂР°РјР°С‚РѕСЂ/РЅР°Р»Р°РіРѕРґР¶СѓРІР°С‡.
-3. Р’РёР±РµСЂС–С‚СЊ РїРѕС‚СЂС–Р±РЅСѓ РїР°РїРєСѓ toolchain:
-   - `xc8/` РґР»СЏ MPLAB XC8
-   - `c18/` РґР»СЏ MPLAB C18
-4. РџРµСЂРµРІС–СЂС‚Рµ include paths РґР»СЏ РєРѕСЂРµРЅСЏ СЂРµРїРѕР·РёС‚РѕСЂС–СЋ, `core/`, `drivers/` С– `libraries/`.
-5. РџРµСЂРµРєРѕРЅР°Р№С‚РµСЃСЏ, С‰Рѕ РїРѕС‚СЂС–Р±РЅС– `.c` С„Р°Р№Р»Рё РґРѕРґР°РЅС– РґРѕ **Source Files**.
-6. Р—Р±РµСЂС–С‚СЊ РїСЂРѕС”РєС‚ Сѓ MPLAB X.
-7. Р—Р° РїРѕС‚СЂРµР±Рё СЃРєРѕРїС–СЋР№С‚Рµ РµРєСЃРїРѕСЂС‚РѕРІР°РЅРёР№ HEX Сѓ `examples-projects/hex/` РґР»СЏ РїРѕРІС‚РѕСЂРЅРѕРіРѕ РІРёРєРѕСЂРёСЃС‚Р°РЅРЅСЏ РІ СЃРёРјСѓР»СЏС‚РѕСЂС–.
-8. РћРєСЂРµРјРѕ РґРѕРґР°Р№С‚Рµ СЃС…РµРјРё Proteus, СЏРєС‰Рѕ РїРѕС‚СЂС–Р±РЅР° РїРµСЂРµРІС–СЂРєР° РЅР° СЂС–РІРЅС– СЃС…РµРјРё.
-
-## Р РµРєРѕРјРµРЅРґРѕРІР°РЅРёР№ workflow
-
-- РўСЂРёРјР°Р№С‚Рµ РїСЂРёРєР»Р°РґРЅС– РїСЂРѕС”РєС‚Рё РѕРєСЂРµРјРѕ РІС–Рґ РїРѕРІС‚РѕСЂРЅРѕ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°РЅРѕС— РїР»Р°С‚С„РѕСЂРјРё.
-- РўСЂРёРјР°Р№С‚Рµ `pic-platform` СЃРїС–Р»СЊРЅРёРј С– Р·РѕРІРЅС–С€РЅС–Рј.
-- РќРµ РїР°С‚С‡С‚Рµ РґСЂР°Р№РІРµСЂРё РїС–Рґ РєРѕР¶РµРЅ РѕРєСЂРµРјРёР№ РїСЂРѕС”РєС‚; Р·РјС–РЅСЋР№С‚Рµ metadata РїСЂРѕС”РєС‚Сѓ.
-- Р—Р±РµСЂС–РіР°Р№С‚Рµ source references Сѓ `nbproject/configurations.xml`.
+- ������� ��� Proteus ����������� � `examples-projects/proteus/`.
+- �������� ��������������� HEX-�����, ���� ���� �����������, ������ � `examples-projects/hex/`.
+- ��� ������� �������� ����� ���������� � ��������� �������� ������� � README ��������� ����� ��������.
 

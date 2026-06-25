@@ -1,4 +1,4 @@
-# TODO
+﻿# TODO
 
 ## Structure
 
@@ -163,7 +163,7 @@
 
 - [x] Create and synchronize bilingual README files for `button.X`, `encoder.X`, and `adc_buttons.X`.
 - [x] Document phase 1 input behavior without introducing menu logic.
-- [ ] Add Proteus verification notes when manual validation is recorded.
+- [x] Add Proteus verification notes when manual validation is recorded.
 
 ## Phase 2 menu libraries
 
@@ -258,16 +258,18 @@
   * [ ] Slow heater / relay / SSR control example.
 
 ### Seven-segment display and shared-line buttons
-* [ ] Create the `seven_segment` library for single-digit and multi-digit displays.
-* [ ] Add common-anode/common-cathode support, multiplex refresh, decimal point, and brightness control.
-* [ ] Include only the `0–9` digit table by default; allow the user to provide an optional custom symbol table.
-* [ ] Create the `seven_segment_basic.X` and `seven_segment_multiplex.X` examples.
-* [ ] Create the `segment_keys` library for buttons connected to shared segment lines.
-* [ ] Support regular buttons and buttons encoded by multiple segment lines through diodes.
-* [ ] Pass decoded button states to the existing `button` library for click, double-click, hold, and other supported events.
-* [ ] Create the combined `seven_segment_keys.X` example.
-* [ ] Add Proteus examples and documentation in English and Ukrainian.
-* [ ] After manual validation, mark the examples as `Verified in Proteus`.
+* [x] Create the `seven_segment` library for single-digit and multi-digit displays.
+* [x] Add common-anode/common-cathode support, manual/timer refresh, decimal point, and brightness control.
+* [x] Include the `0..9` table and optional custom symbol tables.
+* [x] Add buffered number/time formatting, alignment, leading-zero control, and per-digit blinking.
+* [x] Add buffered fixed-point decimal formatting with configurable decimal places.
+* [x] Create grouped dynamic display examples for manual and timer-driven refresh.
+* [x] Add per-instance manual or timer-owned display refresh.
+* [x] Create `segment_keys` with single-line and diode-coded key support.
+* [x] Integrate decoded keys with the existing `button` event library.
+* [x] Add grouped dynamic button examples and EN/UA documentation.
+* [ ] Add safe queued button events for timer-driven shared-line scanning.
+* [ ] Build and verify all examples in MPLAB X and Proteus.
 
 ### Gyver-style / Arduino-like Library Expansion
 
@@ -532,3 +534,4 @@ Rule: if a similar module already exists in `pic-platform`, extend and clean it 
 * [ ] Add buzzer / tone output helper.
 * [ ] Add LED effects helper.
 * [ ] Add MOSFET output usage notes.
+
