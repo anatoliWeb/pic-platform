@@ -63,4 +63,5 @@ examples-projects/
 - Proteus notes live under `examples-projects/proteus/`.
 - Reusable HEX exports, when generated, live under `examples-projects/hex/`.
 - Per-project wiring and expected behavior are documented in each example folder README.
+- Console build instructions are documented in [docs/build/console-build.md](../docs/build/console-build.md).
 

@@ -2,11 +2,11 @@
 
 # examples-projects
 
-## Що таке examples-projects
+## Р©Рѕ С‚Р°РєРµ examples-projects
 
-`examples-projects` містить окремі wrapper-проєкти MPLAB X для зовнішньої кодової бази `pic-platform`.
+`examples-projects` РјС–СЃС‚РёС‚СЊ РѕРєСЂРµРјС– wrapper-РїСЂРѕС”РєС‚Рё MPLAB X РґР»СЏ Р·РѕРІРЅС–С€РЅСЊРѕС— РєРѕРґРѕРІРѕС— Р±Р°Р·Рё `pic-platform`.
 
-## Структура
+## РЎС‚СЂСѓРєС‚СѓСЂР°
 
 ```text
 examples-projects/
@@ -16,51 +16,51 @@ examples-projects/
 `-- proteus/
 ```
 
-## Правила
+## РџСЂР°РІРёР»Р°
 
-- Тримайте бібліотеку окремо від прикладного проєкту.
-- Додавайте в `Source Files` лише потрібні `.c` файли.
-- Не додавайте `.h` файли вручну в `Source Files`.
-- Залишайте configuration bits у `config_bits.c`.
-- Використовуйте лише відносні include paths і source paths.
+- РўСЂРёРјР°Р№С‚Рµ Р±С–Р±Р»С–РѕС‚РµРєСѓ РѕРєСЂРµРјРѕ РІС–Рґ РїСЂРёРєР»Р°РґРЅРѕРіРѕ РїСЂРѕС”РєС‚Сѓ.
+- Р”РѕРґР°РІР°Р№С‚Рµ РІ `Source Files` Р»РёС€Рµ РїРѕС‚СЂС–Р±РЅС– `.c` С„Р°Р№Р»Рё.
+- РќРµ РґРѕРґР°РІР°Р№С‚Рµ `.h` С„Р°Р№Р»Рё РІСЂСѓС‡РЅСѓ РІ `Source Files`.
+- Р—Р°Р»РёС€Р°Р№С‚Рµ configuration bits Сѓ `config_bits.c`.
+- Р’РёРєРѕСЂРёСЃС‚РѕРІСѓР№С‚Рµ Р»РёС€Рµ РІС–РґРЅРѕСЃРЅС– include paths С– source paths.
 
-## Підтримувані компілятори
+## РџС–РґС‚СЂРёРјСѓРІР°РЅС– РєРѕРјРїС–Р»СЏС‚РѕСЂРё
 
 - MPLAB XC8
 - MPLAB C18
 
-## Сімейства прикладів
+## РЎС–РјРµР№СЃС‚РІР° РїСЂРёРєР»Р°РґС–РІ
 
-| Сімейство | Приклади | Призначення |
+| РЎС–РјРµР№СЃС‚РІРѕ | РџСЂРёРєР»Р°РґРё | РџСЂРёР·РЅР°С‡РµРЅРЅСЏ |
 |---|---|---|
-| Базова валідація | `blink.X`, `uart_debug.X`, `adc_read.X`, `i2c_scan.X`, `spi_loopback.X`, `rs485_echo.X`, `ds18b20_read.X` | Базові інтеграційні перевірки |
-| Input | `button.X`, `encoder.X`, `adc_buttons.X` | Input-бібліотеки та приклади debounce |
-| Display | `lcd_hd44780.X`, `xc8/seven_segment/basic_manual.X`, `xc8/seven_segment/multiplex_manual.X`, `xc8/seven_segment/multiplex_timer.X`, `xc8/seven_segment/keys_single_line.X`, `xc8/seven_segment/keys_diode_coded.X` | Приклади оновлення індикаторів, timer-owned multiplexing, fixed-point formatting і shared-line input |
-| Timing та system | `tick.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X`, `software_pwm.X`, `ac_phase_control.X` | Таймери, watchdog і platform extensions |
-| 1-Wire та sensors | `ds18b20.X`, `ds18b20_search_rom.X`, `onewire_bus_test.X`, `ds18b20_multi_read.X` | DS18B20 і діагностика шини |
+| Р‘Р°Р·РѕРІР° РІР°Р»С–РґР°С†С–СЏ | `blink.X`, `uart_debug.X`, `adc_read.X`, `i2c_scan.X`, `spi_loopback.X`, `rs485_echo.X`, `ds18b20_read.X` | Р‘Р°Р·РѕРІС– С–РЅС‚РµРіСЂР°С†С–Р№РЅС– РїРµСЂРµРІС–СЂРєРё |
+| Input | `button.X`, `encoder.X`, `adc_buttons.X` | Input-Р±С–Р±Р»С–РѕС‚РµРєРё С‚Р° РїСЂРёРєР»Р°РґРё debounce |
+| Display | `lcd_hd44780.X`, `xc8/seven_segment/basic_manual.X`, `xc8/seven_segment/multiplex_manual.X`, `xc8/seven_segment/multiplex_timer.X`, `xc8/seven_segment/keys_single_line.X`, `xc8/seven_segment/keys_diode_coded.X` | РџСЂРёРєР»Р°РґРё РѕРЅРѕРІР»РµРЅРЅСЏ С–РЅРґРёРєР°С‚РѕСЂС–РІ, timer-owned multiplexing, fixed-point formatting С– shared-line input |
+| Timing С‚Р° system | `tick.X`, `timer0.X`, `timer1.X`, `timer2.X`, `timer3.X`, `wdt.X`, `software_pwm.X`, `ac_phase_control.X` | РўР°Р№РјРµСЂРё, watchdog С– platform extensions |
+| 1-Wire С‚Р° sensors | `ds18b20.X`, `ds18b20_search_rom.X`, `onewire_bus_test.X`, `ds18b20_multi_read.X` | DS18B20 С– РґС–Р°РіРЅРѕСЃС‚РёРєР° С€РёРЅРё |
 
-## Короткий статус
+## РљРѕСЂРѕС‚РєРёР№ СЃС‚Р°С‚СѓСЃ
 
-| Приклад | Статус |
+| РџСЂРёРєР»Р°Рґ | РЎС‚Р°С‚СѓСЃ |
 |---|---|
-| `button.X` | Перевірено в Proteus |
-| `encoder.X` | Перевірено в Proteus |
-| `adc_buttons.X` | Перевірено в Proteus |
-| `software_pwm.X` | Перевірено в Proteus |
-| `wdt.X` | Перевірено в Proteus |
-| `ac_phase_control.X` | Готово до перевірки в Proteus |
-| `xc8/seven_segment/basic_manual.X` | Готово до перевірки в Proteus |
-| `xc8/seven_segment/multiplex_manual.X` | Готово до перевірки в Proteus |
-| `xc8/seven_segment/multiplex_timer.X` | Готово до перевірки в Proteus |
-| `xc8/seven_segment/keys_single_line.X` | Готово до перевірки в Proteus |
-| `xc8/seven_segment/keys_diode_coded.X` | Готово до перевірки в Proteus |
-| `ds18b20_search_rom.X` | Перевірено в Proteus; XC8 HEX export pending |
-| `onewire_bus_test.X` | Перевірено в Proteus; XC8 HEX export pending |
-| `ds18b20_multi_read.X` | Потребує додаткової перевірки в Proteus і C18 |
+| `button.X` | РџРµСЂРµРІС–СЂРµРЅРѕ РІ Proteus |
+| `encoder.X` | РџРµСЂРµРІС–СЂРµРЅРѕ РІ Proteus |
+| `adc_buttons.X` | РџРµСЂРµРІС–СЂРµРЅРѕ РІ Proteus |
+| `software_pwm.X` | РџРµСЂРµРІС–СЂРµРЅРѕ РІ Proteus |
+| `wdt.X` | РџРµСЂРµРІС–СЂРµРЅРѕ РІ Proteus |
+| `ac_phase_control.X` | Р“РѕС‚РѕРІРѕ РґРѕ РїРµСЂРµРІС–СЂРєРё РІ Proteus |
+| `xc8/seven_segment/basic_manual.X` | Р“РѕС‚РѕРІРѕ РґРѕ РїРµСЂРµРІС–СЂРєРё РІ Proteus |
+| `xc8/seven_segment/multiplex_manual.X` | Р“РѕС‚РѕРІРѕ РґРѕ РїРµСЂРµРІС–СЂРєРё РІ Proteus |
+| `xc8/seven_segment/multiplex_timer.X` | Р“РѕС‚РѕРІРѕ РґРѕ РїРµСЂРµРІС–СЂРєРё РІ Proteus |
+| `xc8/seven_segment/keys_single_line.X` | Р“РѕС‚РѕРІРѕ РґРѕ РїРµСЂРµРІС–СЂРєРё РІ Proteus |
+| `xc8/seven_segment/keys_diode_coded.X` | Р“РѕС‚РѕРІРѕ РґРѕ РїРµСЂРµРІС–СЂРєРё РІ Proteus |
+| `ds18b20_search_rom.X` | РџРµСЂРµРІС–СЂРµРЅРѕ РІ Proteus; XC8 HEX export pending |
+| `onewire_bus_test.X` | РџРµСЂРµРІС–СЂРµРЅРѕ РІ Proteus; XC8 HEX export pending |
+| `ds18b20_multi_read.X` | РџРѕС‚СЂРµР±СѓС” РґРѕРґР°С‚РєРѕРІРѕС— РїРµСЂРµРІС–СЂРєРё РІ Proteus С– C18 |
 
-## Примітки
+## РџСЂРёРјС–С‚РєРё
 
-- Нотатки для Proteus зберігаються в `examples-projects/proteus/`.
-- Повторно використовувані HEX-файли, якщо вони згенеровані, лежать у `examples-projects/hex/`.
-- Для кожного прикладу схему підключення й очікувану поведінку описано у README всередині папки прикладу.
-
+- РќРѕС‚Р°С‚РєРё РґР»СЏ Proteus Р·Р±РµСЂС–РіР°СЋС‚СЊСЃСЏ РІ `examples-projects/proteus/`.
+- РџРѕРІС‚РѕСЂРЅРѕ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°РЅС– HEX-С„Р°Р№Р»Рё, СЏРєС‰Рѕ РІРѕРЅРё Р·РіРµРЅРµСЂРѕРІР°РЅС–, Р»РµР¶Р°С‚СЊ Сѓ `examples-projects/hex/`.
+- Р”Р»СЏ РєРѕР¶РЅРѕРіРѕ РїСЂРёРєР»Р°РґСѓ СЃС…РµРјСѓ РїС–РґРєР»СЋС‡РµРЅРЅСЏ Р№ РѕС‡С–РєСѓРІР°РЅСѓ РїРѕРІРµРґС–РЅРєСѓ РѕРїРёСЃР°РЅРѕ Сѓ README РІСЃРµСЂРµРґРёРЅС– РїР°РїРєРё РїСЂРёРєР»Р°РґСѓ.
+- Р†РЅСЃС‚СЂСѓРєС†С–СЏ РґР»СЏ РєРѕРЅСЃРѕР»С–: [docs/build/console-build.ua.md](../docs/build/console-build.ua.md).

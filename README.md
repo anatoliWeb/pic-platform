@@ -31,6 +31,7 @@ Reusable PIC18 platform with clear separation between `core`, `drivers`, and `li
 
 - Architecture: [docs/architecture.md](docs/architecture.md)
 - MPLAB integration: [docs/mplab-integration.md](docs/mplab-integration.md)
+- Console build: [docs/build/console-build.md](docs/build/console-build.md)
 - Examples projects: [examples-projects/README.md](examples-projects/README.md)
 - Seven segment library: [docs/libraries/display/seven_segment.md](docs/libraries/display/seven_segment.md)
 - Segment keys library: [docs/libraries/input/segment_keys.md](docs/libraries/input/segment_keys.md)

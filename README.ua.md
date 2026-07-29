@@ -2,44 +2,44 @@
 
 # PIC Drivers Platform (C18 + XC8)
 
-Повторно використовувана платформа для PIC18 із чітким розділенням на `core`, `drivers` і `libraries`.
+РџРѕРІС‚РѕСЂРЅРѕ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°РЅР° РїР»Р°С‚С„РѕСЂРјР° РґР»СЏ PIC18 Р· С‡С–С‚РєРёРј СЂРѕР·РґС–Р»РµРЅРЅСЏРј РЅР° `core`, `drivers` С– `libraries`.
 
-## Архітектура
+## РђСЂС…С–С‚РµРєС‚СѓСЂР°
 
-- `core/` - абстракція компілятора, затримки, типи, CRC, ring buffer, scheduler, RTOS wrapper
-- `drivers/` - низькорівневі драйвери периферії та протоколів
-- `libraries/` - повторно використовувані компоненти вищого рівня поверх drivers і core
-- `C18/` - compiler-specific файли для MPLAB C18
-- `XC8/` - compiler-specific файли для MPLAB XC8
-- `docs/` - документація
-- `examples-projects/` - wrapper-проєкти MPLAB
-- `prompts/` - готові prompt-файли для AI-чатів
+- `core/` - Р°Р±СЃС‚СЂР°РєС†С–СЏ РєРѕРјРїС–Р»СЏС‚РѕСЂР°, Р·Р°С‚СЂРёРјРєРё, С‚РёРїРё, CRC, ring buffer, scheduler, RTOS wrapper
+- `drivers/` - РЅРёР·СЊРєРѕСЂС–РІРЅРµРІС– РґСЂР°Р№РІРµСЂРё РїРµСЂРёС„РµСЂС–С— С‚Р° РїСЂРѕС‚РѕРєРѕР»С–РІ
+- `libraries/` - РїРѕРІС‚РѕСЂРЅРѕ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°РЅС– РєРѕРјРїРѕРЅРµРЅС‚Рё РІРёС‰РѕРіРѕ СЂС–РІРЅСЏ РїРѕРІРµСЂС… drivers С– core
+- `C18/` - compiler-specific С„Р°Р№Р»Рё РґР»СЏ MPLAB C18
+- `XC8/` - compiler-specific С„Р°Р№Р»Рё РґР»СЏ MPLAB XC8
+- `docs/` - РґРѕРєСѓРјРµРЅС‚Р°С†С–СЏ
+- `examples-projects/` - wrapper-РїСЂРѕС”РєС‚Рё MPLAB
+- `prompts/` - РіРѕС‚РѕРІС– prompt-С„Р°Р№Р»Рё РґР»СЏ AI-С‡Р°С‚С–РІ
 
-## Швидкий старт
+## РЁРІРёРґРєРёР№ СЃС‚Р°СЂС‚
 
-1. Тримайте `pic-platform` окремо від прикладного проєкту.
-2. Додавайте в MPLAB лише потрібні `.c` файли у `Source Files`.
-3. Налаштуйте include paths:
+1. РўСЂРёРјР°Р№С‚Рµ `pic-platform` РѕРєСЂРµРјРѕ РІС–Рґ РїСЂРёРєР»Р°РґРЅРѕРіРѕ РїСЂРѕС”РєС‚Сѓ.
+2. Р”РѕРґР°РІР°Р№С‚Рµ РІ MPLAB Р»РёС€Рµ РїРѕС‚СЂС–Р±РЅС– `.c` С„Р°Р№Р»Рё Сѓ `Source Files`.
+3. РќР°Р»Р°С€С‚СѓР№С‚Рµ include paths:
    - `../pic-platform`
    - `../pic-platform/core`
    - `../pic-platform/drivers`
    - `../pic-platform/libraries`
-4. Залишайте configuration bits у `config_bits.c`.
-5. Використовуйте wrapper-приклади з `examples-projects/` як інтеграційні еталони.
+4. Р—Р°Р»РёС€Р°Р№С‚Рµ configuration bits Сѓ `config_bits.c`.
+5. Р’РёРєРѕСЂРёСЃС‚РѕРІСѓР№С‚Рµ wrapper-РїСЂРёРєР»Р°РґРё Р· `examples-projects/` СЏРє С–РЅС‚РµРіСЂР°С†С–Р№РЅС– РµС‚Р°Р»РѕРЅРё.
 
-## Основна документація
+## РћСЃРЅРѕРІРЅР° РґРѕРєСѓРјРµРЅС‚Р°С†С–СЏ
 
-- Архітектура: [docs/architecture.ua.md](docs/architecture.ua.md)
-- MPLAB інтеграція: [docs/mplab-integration.ua.md](docs/mplab-integration.ua.md)
-- Приклади проєктів: [examples-projects/README.ua.md](examples-projects/README.ua.md)
-- Бібліотека seven_segment: [docs/libraries/display/seven_segment.ua.md](docs/libraries/display/seven_segment.ua.md)
-- Бібліотека segment_keys: [docs/libraries/input/segment_keys.ua.md](docs/libraries/input/segment_keys.ua.md)
-- Набір prompt-файлів: [docs/prompts.ua.md](docs/prompts.ua.md)
+- РђСЂС…С–С‚РµРєС‚СѓСЂР°: [docs/architecture.ua.md](docs/architecture.ua.md)
+- MPLAB С–РЅС‚РµРіСЂР°С†С–СЏ: [docs/mplab-integration.ua.md](docs/mplab-integration.ua.md)
+- РљРѕРЅСЃРѕР»СЊРЅР° Р·Р±С–СЂРєР°: [docs/build/console-build.ua.md](docs/build/console-build.ua.md)
+- РџСЂРёРєР»Р°РґРё РїСЂРѕС”РєС‚С–РІ: [examples-projects/README.ua.md](examples-projects/README.ua.md)
+- Р‘С–Р±Р»С–РѕС‚РµРєР° seven_segment: [docs/libraries/display/seven_segment.ua.md](docs/libraries/display/seven_segment.ua.md)
+- Р‘С–Р±Р»С–РѕС‚РµРєР° segment_keys: [docs/libraries/input/segment_keys.ua.md](docs/libraries/input/segment_keys.ua.md)
+- РќР°Р±С–СЂ prompt-С„Р°Р№Р»С–РІ: [docs/prompts.ua.md](docs/prompts.ua.md)
 
-## Короткий статус
+## РљРѕСЂРѕС‚РєРёР№ СЃС‚Р°С‚СѓСЃ
 
-- OneWire і DS18B20 перевірені для PIC18F452 + XC8 + Proteus + 10 MHz.
-- Input-приклади `button.X`, `encoder.X` і `adc_buttons.X` перевірені в Proteus.
-- `software_pwm.X` перевірено в Proteus.
-- Grouped seven-segment приклади в `examples-projects/xc8/seven_segment/` реалізовані та готові до перевірки в Proteus, включно з buffered fixed-point formatting у `multiplex_manual.X` і library-owned Timer2 refresh у `multiplex_timer.X`: `basic_manual.X`, `multiplex_manual.X`, `multiplex_timer.X`, `keys_single_line.X` і `keys_diode_coded.X`.
-
+- OneWire С– DS18B20 РїРµСЂРµРІС–СЂРµРЅС– РґР»СЏ PIC18F452 + XC8 + Proteus + 10 MHz.
+- Input-РїСЂРёРєР»Р°РґРё `button.X`, `encoder.X` С– `adc_buttons.X` РїРµСЂРµРІС–СЂРµРЅС– РІ Proteus.
+- `software_pwm.X` РїРµСЂРµРІС–СЂРµРЅРѕ РІ Proteus.
+- Grouped seven-segment РїСЂРёРєР»Р°РґРё РІ `examples-projects/xc8/seven_segment/` СЂРµР°Р»С–Р·РѕРІР°РЅС– С‚Р° РіРѕС‚РѕРІС– РґРѕ РїРµСЂРµРІС–СЂРєРё РІ Proteus, РІРєР»СЋС‡РЅРѕ Р· buffered fixed-point formatting Сѓ `multiplex_manual.X` С– library-owned Timer2 refresh Сѓ `multiplex_timer.X`: `basic_manual.X`, `multiplex_manual.X`, `multiplex_timer.X`, `keys_single_line.X` С– `keys_diode_coded.X`.
