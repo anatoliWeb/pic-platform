@@ -13,6 +13,19 @@
 
 #if (POSITION_DRIVE_ENABLE_UART_DEBUG == 1)
 
+static uint8_t position_drive_debug_append_text(
+    char* buffer,
+    uint8_t index,
+    const char* text)
+{
+    while ((text != (const char*)0) && (*text != '\0'))
+    {
+        buffer[index++] = *text++;
+    }
+
+    return index;
+}
+
 static void position_drive_debug_send(position_drive_t* drive, const char* message)
 {
     if ((drive != (position_drive_t*)0) &&
@@ -22,46 +35,186 @@ static void position_drive_debug_send(position_drive_t* drive, const char* messa
     }
 }
 
-static void position_drive_debug_error(position_drive_t* drive, position_drive_error_t error)
+static void position_drive_debug_state(position_drive_t* drive, const char* state)
 {
-    char buffer[20];
-    char digits[4];
-    uint8_t i;
-    uint8_t n;
-    uint16_t value;
+#if (POSITION_DRIVE_DEBUG_LEVEL >= POSITION_DRIVE_DEBUG_LEVEL_INFO)
+    char buffer[48];
+    uint8_t index;
 
-    i = 0u;
-    buffer[i++] = 'P';
-    buffer[i++] = 'D';
-    buffer[i++] = ':';
-    buffer[i++] = 'E';
-    buffer[i++] = 'R';
-    buffer[i++] = 'R';
-    buffer[i++] = ' ';
+    index = 0u;
+    index = position_drive_debug_append_text(buffer, index, "PD:STATE ");
+    index = position_drive_debug_append_text(buffer, index, state);
+    buffer[index] = '\0';
+    position_drive_debug_send(drive, buffer);
+#else
+    DRV_UNUSED(drive);
+    DRV_UNUSED(state);
+#endif
+}
 
-    value = (uint16_t)error;
+#if (POSITION_DRIVE_DEBUG_LEVEL >= POSITION_DRIVE_DEBUG_LEVEL_TRACE)
+
+static uint8_t position_drive_debug_append_u16(
+    char* buffer,
+    uint8_t index,
+    uint16_t value)
+{
+    char digits[5];
+    uint8_t count;
+
     if (value == 0u)
     {
-        buffer[i++] = '0';
-    }
-    else
-    {
-        n = 0u;
-        while ((value > 0u) && (n < 4u))
-        {
-            digits[n] = (char)('0' + (value % 10u));
-            n++;
-            value /= 10u;
-        }
-        while (n > 0u)
-        {
-            n--;
-            buffer[i++] = digits[n];
-        }
+        buffer[index++] = '0';
+        return index;
     }
 
-    buffer[i] = '\0';
+    count = 0u;
+    while ((value > 0u) && (count < 5u))
+    {
+        digits[count++] = (char)('0' + (value % 10u));
+        value /= 10u;
+    }
+
+    while (count > 0u)
+    {
+        count--;
+        buffer[index++] = digits[count];
+    }
+
+    return index;
+}
+
+static uint8_t position_drive_debug_append_i16(
+    char* buffer,
+    uint8_t index,
+    int16_t value)
+{
+    int32_t signed_value;
+
+    signed_value = (int32_t)value;
+    if (signed_value < 0)
+    {
+        buffer[index++] = '-';
+        signed_value = -signed_value;
+    }
+
+    return position_drive_debug_append_u16(
+        buffer,
+        index,
+        (uint16_t)signed_value);
+}
+
+static uint8_t position_drive_debug_append_direction(
+    char* buffer,
+    uint8_t index,
+    position_drive_direction_t direction)
+{
+    switch (direction)
+    {
+    case POSITION_DRIVE_DIRECTION_FORWARD:
+        return position_drive_debug_append_text(buffer, index, "FORWARD");
+
+    case POSITION_DRIVE_DIRECTION_REVERSE:
+        return position_drive_debug_append_text(buffer, index, "REVERSE");
+
+    default:
+        return position_drive_debug_append_text(buffer, index, "STOP");
+    }
+}
+
+static void position_drive_debug_trace(position_drive_t* drive, const char* state)
+{
+    char buffer[96];
+    uint8_t index;
+
+    index = 0u;
+    index = position_drive_debug_append_text(buffer, index, "PD:STATE ");
+    index = position_drive_debug_append_text(buffer, index, state);
+    index = position_drive_debug_append_text(buffer, index, " raw=");
+    index = position_drive_debug_append_u16(buffer, index, drive->current_raw);
+    index = position_drive_debug_append_text(buffer, index, " deg=");
+    index = position_drive_debug_append_i16(buffer, index, drive->current_deg);
+    index = position_drive_debug_append_text(buffer, index, " tgt=");
+    index = position_drive_debug_append_i16(buffer, index, drive->target_deg);
+    index = position_drive_debug_append_text(buffer, index, " dir=");
+    index = position_drive_debug_append_direction(buffer, index, drive->commanded_direction);
+    buffer[index] = '\0';
     position_drive_debug_send(drive, buffer);
+}
+
+#else
+
+static void position_drive_debug_trace(position_drive_t* drive, const char* state)
+{
+    DRV_UNUSED(drive);
+    DRV_UNUSED(state);
+}
+
+#endif
+
+static void position_drive_debug_error(position_drive_t* drive, position_drive_error_t error)
+{
+#if (POSITION_DRIVE_DEBUG_LEVEL >= POSITION_DRIVE_DEBUG_LEVEL_ERROR)
+    char buffer[48];
+    const char* text;
+    uint8_t index;
+
+    switch (error)
+    {
+    case POSITION_DRIVE_ERROR_NOT_INITIALIZED:
+        text = "NOT_INITIALIZED";
+        break;
+
+    case POSITION_DRIVE_ERROR_TARGET_OUT_OF_RANGE:
+        text = "TARGET_OUT_OF_RANGE";
+        break;
+
+    case POSITION_DRIVE_ERROR_SENSOR_LOW:
+        text = "SENSOR_LOW";
+        break;
+
+    case POSITION_DRIVE_ERROR_SENSOR_HIGH:
+        text = "SENSOR_HIGH";
+        break;
+
+    case POSITION_DRIVE_ERROR_SENSOR_READ:
+        text = "SENSOR_READ";
+        break;
+
+    case POSITION_DRIVE_ERROR_SENSOR_STUCK:
+        text = "SENSOR_STUCK";
+        break;
+
+    case POSITION_DRIVE_ERROR_TIMEOUT:
+        text = "TIMEOUT";
+        break;
+
+    case POSITION_DRIVE_ERROR_DIRECTION_MISMATCH:
+        text = "DIRECTION_MISMATCH";
+        break;
+
+    case POSITION_DRIVE_ERROR_UNSUPPORTED_SENSOR:
+        text = "UNSUPPORTED_SENSOR";
+        break;
+
+    case POSITION_DRIVE_ERROR_INVALID_CONFIG:
+        text = "INVALID_CONFIG";
+        break;
+
+    default:
+        text = "UNKNOWN";
+        break;
+    }
+
+    index = 0u;
+    index = position_drive_debug_append_text(buffer, index, "PD:ERR ");
+    index = position_drive_debug_append_text(buffer, index, text);
+    buffer[index] = '\0';
+    position_drive_debug_send(drive, buffer);
+#else
+    DRV_UNUSED(drive);
+    DRV_UNUSED(error);
+#endif
 }
 
 #else
@@ -70,6 +223,18 @@ static void position_drive_debug_send(position_drive_t* drive, const char* messa
 {
     DRV_UNUSED(drive);
     DRV_UNUSED(message);
+}
+
+static void position_drive_debug_state(position_drive_t* drive, const char* state)
+{
+    DRV_UNUSED(drive);
+    DRV_UNUSED(state);
+}
+
+static void position_drive_debug_trace(position_drive_t* drive, const char* state)
+{
+    DRV_UNUSED(drive);
+    DRV_UNUSED(state);
 }
 
 static void position_drive_debug_error(position_drive_t* drive, position_drive_error_t error)
@@ -130,7 +295,9 @@ static void position_drive_fail(position_drive_t* drive, position_drive_error_t 
     drive->error = error;
     drive->state = POSITION_DRIVE_STATE_ERROR;
     position_drive_motor_stop(drive);
+    position_drive_debug_state(drive, "ERROR");
     position_drive_debug_error(drive, error);
+    position_drive_debug_trace(drive, "ERROR");
 }
 
 #if (POSITION_DRIVE_SENSOR_TYPE == POSITION_DRIVE_SENSOR_ADC)
@@ -247,7 +414,8 @@ static drv_status_t position_drive_init_adc(
     drive->error = POSITION_DRIVE_ERROR_NONE;
     drive->initialized = 1u;
 
-    position_drive_debug_send(drive, "PD:INIT");
+    position_drive_debug_state(drive, "INIT OK");
+    position_drive_debug_trace(drive, "INIT OK");
 
     return DRV_STATUS_OK;
 }
@@ -296,7 +464,8 @@ static void position_drive_process_adc(position_drive_t* drive)
         position_drive_motor_stop(drive);
         drive->state = POSITION_DRIVE_STATE_TARGET_REACHED;
         drive->error = POSITION_DRIVE_ERROR_NONE;
-        position_drive_debug_send(drive, "PD:REACHED");
+        position_drive_debug_state(drive, "TARGET");
+        position_drive_debug_trace(drive, "TARGET");
         return;
     }
 
@@ -451,10 +620,24 @@ drv_status_t position_drive_init(
     drive->last_raw = 0u;
 
 #if (POSITION_DRIVE_SENSOR_TYPE == POSITION_DRIVE_SENSOR_ADC)
-    return position_drive_init_adc(drive, config);
+    {
+        drv_status_t status;
+
+        status = position_drive_init_adc(drive, config);
+        if (status == DRV_STATUS_OK)
+        {
+            return status;
+        }
+
+        position_drive_debug_state(drive, "INIT FAIL");
+        position_drive_debug_error(drive, drive->error);
+        return status;
+    }
 #else
     DRV_UNUSED(config);
     drive->error = POSITION_DRIVE_ERROR_UNSUPPORTED_SENSOR;
+    position_drive_debug_state(drive, "INIT FAIL");
+    position_drive_debug_error(drive, drive->error);
     return DRV_STATUS_UNSUPPORTED;
 #endif
 }
@@ -501,6 +684,8 @@ drv_status_t position_drive_move_to_deg(position_drive_t* drive, int16_t target_
         position_drive_motor_stop(drive);
         drive->error = POSITION_DRIVE_ERROR_TARGET_OUT_OF_RANGE;
         drive->state = POSITION_DRIVE_STATE_IDLE;
+        position_drive_debug_state(drive, "IDLE");
+        position_drive_debug_error(drive, drive->error);
         return DRV_STATUS_ERROR;
     }
 
@@ -531,7 +716,8 @@ drv_status_t position_drive_move_to_deg(position_drive_t* drive, int16_t target_
         position_drive_motor_stop(drive);
         drive->state = POSITION_DRIVE_STATE_TARGET_REACHED;
         drive->error = POSITION_DRIVE_ERROR_NONE;
-        position_drive_debug_send(drive, "PD:REACHED");
+        position_drive_debug_state(drive, "TARGET");
+        position_drive_debug_trace(drive, "TARGET");
         return DRV_STATUS_OK;
     }
 
@@ -579,7 +765,8 @@ drv_status_t position_drive_move_to_deg(position_drive_t* drive, int16_t target_
     drive->state = POSITION_DRIVE_STATE_MOVING;
     drive->error = POSITION_DRIVE_ERROR_NONE;
 
-    position_drive_debug_send(drive, "PD:MOVE");
+    position_drive_debug_state(drive, "MOVE");
+    position_drive_debug_trace(drive, "MOVE");
 
     return DRV_STATUS_OK;
 #endif
@@ -602,7 +789,7 @@ drv_status_t position_drive_stop(position_drive_t* drive)
     drive->state = POSITION_DRIVE_STATE_IDLE;
     drive->error = POSITION_DRIVE_ERROR_NONE;
 
-    position_drive_debug_send(drive, "PD:STOP");
+    position_drive_debug_state(drive, "IDLE");
 
     return DRV_STATUS_OK;
 }
@@ -631,7 +818,7 @@ drv_status_t position_drive_emergency_stop(position_drive_t* drive)
         drive->state = POSITION_DRIVE_STATE_IDLE;
     }
 
-    position_drive_debug_send(drive, "PD:ESTOP");
+    position_drive_debug_state(drive, "ESTOP");
 
     return DRV_STATUS_OK;
 }

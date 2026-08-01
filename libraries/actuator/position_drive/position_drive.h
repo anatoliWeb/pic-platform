@@ -30,6 +30,10 @@
  *   POSITION_DRIVE_ENABLE_STUCK_DETECTION   (1 default)
  *   POSITION_DRIVE_ENABLE_DIRECTION_CHECK   (1 default)
  *   POSITION_DRIVE_ENABLE_UART_DEBUG        (0 default)
+ *   POSITION_DRIVE_DEBUG_LEVEL              (info when debug is enabled)
+ *
+ * The debug level is module-local. Keep the enable flag at 0 for the smallest
+ * code size.
  */
 
 #include "core/compiler.h"
@@ -45,6 +49,18 @@
 #define POSITION_DRIVE_SENSOR_NONE     0U
 #define POSITION_DRIVE_SENSOR_ADC      1U
 #define POSITION_DRIVE_SENSOR_ENCODER  2U
+
+#define POSITION_DRIVE_DEBUG_LEVEL_ERROR 1U
+#define POSITION_DRIVE_DEBUG_LEVEL_INFO  2U
+#define POSITION_DRIVE_DEBUG_LEVEL_TRACE 3U
+
+#ifndef POSITION_DRIVE_DEBUG_LEVEL
+#if (POSITION_DRIVE_ENABLE_UART_DEBUG == 1)
+#define POSITION_DRIVE_DEBUG_LEVEL POSITION_DRIVE_DEBUG_LEVEL_INFO
+#else
+#define POSITION_DRIVE_DEBUG_LEVEL 0U
+#endif
+#endif
 
 #include "core/pic_platform_config.h"
 
@@ -283,7 +299,7 @@ position_drive_error_t position_drive_get_error(
 );
 
 /*
- * Clears the error and leaves ERROR state. Does not restart the motor.
+ * Clears the error and returns to IDLE. Does not restart the motor.
  */
 void position_drive_clear_error(
     position_drive_t* drive
