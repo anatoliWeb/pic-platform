@@ -30,6 +30,10 @@ Reusable PIC18 platform with clear separation between `core`, `drivers`, and `li
 ## Key Documentation
 
 - Architecture: [docs/architecture.md](docs/architecture.md)
+- Dependency graphs: [docs/architecture/dependency-graph.md](docs/architecture/dependency-graph.md)
+- Example matrix: [docs/architecture/example-matrix.md](docs/architecture/example-matrix.md)
+- Module inventory: [docs/architecture/module-inventory.md](docs/architecture/module-inventory.md)
+- Generation workflow: [docs/architecture/generation-workflow.md](docs/architecture/generation-workflow.md)
 - MPLAB integration: [docs/mplab-integration.md](docs/mplab-integration.md)
 - Console build: [docs/build/console-build.md](docs/build/console-build.md)
 - Examples projects: [examples-projects/README.md](examples-projects/README.md)
@@ -43,4 +47,3 @@ Reusable PIC18 platform with clear separation between `core`, `drivers`, and `li
 - Input examples `button.X`, `encoder.X`, and `adc_buttons.X` are verified in Proteus.
 - `software_pwm.X` is verified in Proteus.
 - Grouped seven-segment examples under `examples-projects/xc8/seven_segment/` are implemented and ready for Proteus validation, including buffered fixed-point formatting in `multiplex_manual.X` and library-owned Timer2 refresh in `multiplex_timer.X`: `basic_manual.X`, `multiplex_manual.X`, `multiplex_timer.X`, `keys_single_line.X`, and `keys_diode_coded.X`.
-

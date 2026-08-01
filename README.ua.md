@@ -30,6 +30,10 @@
 ## Основна документація
 
 - Архітектура: [docs/architecture.ua.md](docs/architecture.ua.md)
+- Графи залежностей: [docs/architecture/dependency-graph.ua.md](docs/architecture/dependency-graph.ua.md)
+- Матриця прикладів: [docs/architecture/example-matrix.ua.md](docs/architecture/example-matrix.ua.md)
+- Inventory модулів: [docs/architecture/module-inventory.ua.md](docs/architecture/module-inventory.ua.md)
+- Workflow генерації: [docs/architecture/generation-workflow.ua.md](docs/architecture/generation-workflow.ua.md)
 - MPLAB інтеграція: [docs/mplab-integration.ua.md](docs/mplab-integration.ua.md)
 - Консольна збірка: [docs/build/console-build.ua.md](docs/build/console-build.ua.md)
 - Приклади проєктів: [examples-projects/README.ua.md](examples-projects/README.ua.md)
