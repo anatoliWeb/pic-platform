@@ -7,6 +7,7 @@
 - `examples-projects/xc8/<example>.X/nbproject/Makefile-default.mk`
 - `examples-projects/xc8/<example>.X/dist/default/production/*.production.hex`
 - `examples-projects/hex/xc8/seven_segment/<example>.X.production.hex`
+- `examples-projects/hex/xc8/actuator/<example>.X.production.hex`
 
 ## What Not to Commit
 
@@ -41,6 +42,14 @@ make -f nbproject\Makefile-default.mk SUBPROJECTS= .clean-conf
 make -f nbproject\Makefile-default.mk SUBPROJECTS= .build-conf
 ```
 
+For the position drive example:
+
+```cmd
+cd /d examples-projects\xc8\actuator\position_drive_adc.X
+make -f nbproject\Makefile-default.mk SUBPROJECTS= .clean-conf
+make -f nbproject\Makefile-default.mk SUBPROJECTS= .build-conf
+```
+
 If `make` is not on `PATH`, call the MPLAB X toolchain copy directly:
 
 ```cmd
@@ -64,6 +73,14 @@ Example:
 examples-projects/xc8/seven_segment/keys_diode_coded.X/dist/default/production/keys_diode_coded.X.production.hex
 ->
 examples-projects/hex/xc8/seven_segment/keys_diode_coded.X.production.hex
+```
+
+The position drive example maps the same way under `actuator`:
+
+```text
+examples-projects/xc8/actuator/position_drive_adc.X/dist/default/production/position_drive_adc.X.production.hex
+->
+examples-projects/hex/xc8/actuator/position_drive_adc.X.production.hex
 ```
 
 ## How to Check That HEX Is Current
@@ -91,6 +108,6 @@ flowchart TD
     SRC[C source and headers] --> MPLAB[MPLAB X project metadata]
     MPLAB --> BUILD[XC8 build]
     BUILD --> DIST[dist/default/production/*.production.hex]
-    DIST --> ART[examples-projects/hex/xc8/seven_segment/*.production.hex]
+    DIST --> ART[examples-projects/hex/xc8/*/*.production.hex]
     ART --> PROTEUS[Proteus simulation]
 ```

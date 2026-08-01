@@ -9,7 +9,7 @@
 | device | `core/device.h` | `core/device.h` | header-only | `core/config/project_config_template.h` | delay, uart, timers | clock macro resolution | example-tested |
 | delay | `core/delay.h` | `core/delay.h` | `core/delay.c` | compiler, device | seven-segment examples, shared-line input examples | blocking delays | example-tested |
 | config | `core/config.h` | `core/config.h` | header-only | none | `uart_debug` | debug feature flags | example-tested |
-| pic platform config | `core/pic_platform_config.h` | `core/pic_platform_config.h` | header-only | none | `seven_segment` | default timer backend flags | example-tested |
+| pic platform config | `core/pic_platform_config.h` | `core/pic_platform_config.h` | header-only | none | `seven_segment`, `position_drive` | default timer backend and feature flags | example-tested |
 | bit utils | `core/bit_utils.h` | `core/bit_utils.h` | header-only | none | `button` | bit macros for GPIO reads | example-tested |
 | interrupts | `core/interrupts.h` | `core/interrupts.h` | header-only | compiler | `seven_segment` | central interrupt-control contract | example-tested |
 
@@ -32,6 +32,7 @@
 | seven_segment | `libraries/display/seven_segment/` | `libraries/display/seven_segment/seven_segment.h` | `libraries/display/seven_segment/seven_segment.c` | `gpio`, timer drivers, core headers | seven-segment examples, `segment_keys` | manual and timer-backed refresh | example-tested |
 | button | `libraries/input/button/` | `libraries/input/button/button.h` | `libraries/input/button/button.c` | `tick`, `bit_utils`, core headers | `segment_keys`, button examples | debounce/click/hold logic | example-tested |
 | segment_keys | `libraries/input/segment_keys/` | `libraries/input/segment_keys/segment_keys.h` | `libraries/input/segment_keys/segment_keys.c` | `seven_segment`, `button`, `gpio` | seven-segment shared-line examples | exact-mask decoder | example-tested |
+| position_drive | `libraries/actuator/position_drive/` | `libraries/actuator/position_drive/position_drive.h` | `libraries/actuator/position_drive/position_drive.c` | core headers, optional `tick`/`adc`/`pwm` via callbacks | position drive examples | non-blocking closed-loop position control | example-tested |
 | uart_debug | `libraries/system/uart_debug/` | `libraries/system/uart_debug/uart_debug.h` | `libraries/system/uart_debug/uart_debug.c` | `core/config.h`, `uart` | UART-based debug examples | macro-based debug layer | example-tested |
 
 ## Compiler wrappers / backends
@@ -48,6 +49,8 @@
 | button C18 backend | `C18/libraries/input/button/` | `libraries/input/button/button.h` | `C18/libraries/input/button/button.c` | `tick` | top-level `libraries/input/button/button.c` | C18 backend | wrapper-only |
 | segment_keys XC8 backend | `XC8/libraries/input/segment_keys/` | `libraries/input/segment_keys/segment_keys.h` | `XC8/libraries/input/segment_keys/segment_keys.c` | generic source | top-level `libraries/input/segment_keys/segment_keys.c` | XC8 include stub | wrapper-only |
 | segment_keys C18 backend | `C18/libraries/input/segment_keys/` | `libraries/input/segment_keys/segment_keys.h` | `C18/libraries/input/segment_keys/segment_keys.c` | generic source | top-level `libraries/input/segment_keys/segment_keys.c` | C18 include stub | wrapper-only |
+| position_drive XC8 backend | `XC8/libraries/actuator/position_drive/` | `libraries/actuator/position_drive/position_drive.h` | `XC8/libraries/actuator/position_drive/position_drive.c` | generic source | top-level `libraries/actuator/position_drive/position_drive.c` | XC8 include stub | wrapper-only |
+| position_drive C18 backend | `C18/libraries/actuator/position_drive/` | `libraries/actuator/position_drive/position_drive.h` | `C18/libraries/actuator/position_drive/position_drive.c` | generic source | top-level `libraries/actuator/position_drive/position_drive.c` | C18 include stub | wrapper-only |
 | uart_debug XC8 backend | `XC8/libraries/system/uart_debug/` | `libraries/system/uart_debug/uart_debug.h` | `XC8/libraries/system/uart_debug/uart_debug.c` | `uart` | top-level `libraries/system/uart_debug/uart_debug.c` | XC8 debug backend | wrapper-only |
 | uart_debug C18 backend | `C18/libraries/system/uart_debug/` | `libraries/system/uart_debug/uart_debug.h` | `C18/libraries/system/uart_debug/uart_debug.c` | `uart` | top-level `libraries/system/uart_debug/uart_debug.c` | C18 debug backend | wrapper-only |
 
@@ -60,6 +63,7 @@
 | multiplex_timer | `examples-projects/xc8/seven_segment/multiplex_timer.X` | `project_config.h` | `main.c` | `delay`, `gpio`, `timer2`, `seven_segment` | HEX artifact | Timer2 refresh ownership | example-tested |
 | keys_single_line | `examples-projects/xc8/seven_segment/keys_single_line.X` | `project_config.h` | `main.c` | `delay`, `uart`, `gpio`, `tick`, `timer1`, `seven_segment`, `button`, `segment_keys`, `uart_debug` | HEX artifact | single-line keys | example-tested |
 | keys_diode_coded | `examples-projects/xc8/seven_segment/keys_diode_coded.X` | `project_config.h` | `main.c` | `delay`, `uart`, `gpio`, `tick`, `timer1`, `seven_segment`, `button`, `segment_keys`, `uart_debug` | HEX artifact | diode-coded keys | example-tested |
+| position_drive_adc | `examples-projects/xc8/actuator/position_drive_adc.X` | `project_config.h` | `main.c` | `delay`, `adc`, `gpio`, `tick`, `timer1`, `position_drive`, `uart_debug` | HEX artifact | ADC position sensor demo | example-tested |
 
 ## Documentation
 

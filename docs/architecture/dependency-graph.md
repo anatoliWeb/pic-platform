@@ -24,6 +24,7 @@ flowchart LR
     DEV[core/device.h] --> DELAY
     DEV --> UART[drivers/communication/uart]
     PCONF[core/pic_platform_config.h] --> SEG[libraries/display/seven_segment]
+    PCONF --> PDRV[libraries/actuator/position_drive]
     TYPES --> BTN[libraries/input/button]
     TYPES --> SEG
 ```
@@ -32,7 +33,8 @@ flowchart LR
 
 - `core/compiler.h` selects XC8 or C18 and defines `DRV_INT_ENABLE()` / `DRV_INT_DISABLE()`.
 - `core/device.h` resolves `_XTAL_FREQ` / `DRV_XTAL_FREQ` from `PIC_PLATFORM_CLOCK_HZ`.
-- `core/pic_platform_config.h` provides default `SEVEN_SEGMENT_ENABLE_TIMERx` flags.
+- `core/pic_platform_config.h` provides default `SEVEN_SEGMENT_ENABLE_TIMERx` flags and
+  `position_drive` feature flags.
 - `core/delay.c` is used by the manual seven-segment examples.
 
 ## Driver Dependency Graph
@@ -41,12 +43,15 @@ flowchart LR
 flowchart TD
     GPIO[drivers/gpio/gpio] --> SEG[libraries/display/seven_segment]
     GPIO --> KEYS[libraries/input/segment_keys]
+    GPIO --> PDRV[libraries/actuator/position_drive]
+    ADC[drivers/analog/adc] --> PDRV
     UART[drivers/communication/uart] --> UARTDBG[libraries/system/uart_debug]
     T1[drivers/timers/timer1] --> TICK[drivers/timers/tick]
     T1 --> SEG
     T2[drivers/timers/timer2] --> SEG
     T3[drivers/timers/timer3] --> SEG
     T0[drivers/timers/timer0] --> SEG
+    TICK --> PDRV
 ```
 
 ### Resource ownership
@@ -55,6 +60,7 @@ flowchart TD
 - `Timer2 -> seven_segment` when `SEVEN_SEGMENT_REFRESH_TIMER` selects `SEVEN_SEGMENT_TIMER2`
 - `GPIO -> many libraries`
 - `UART -> uart_debug` and UART-based debug examples
+- `tick -> position_drive` (timeout / stuck detection)
 
 ## Library Dependency Graph
 
@@ -75,6 +81,10 @@ flowchart TD
 
     UDBG[libraries/system/uart_debug] --> UART[drivers/communication/uart]
     UDBG --> CONF[core/config.h]
+
+    PDRV[libraries/actuator/position_drive] --> TICK[drivers/timers/tick]
+    PDRV -. ADC backend .-> ADC[drivers/analog/adc]
+    PDRV -. H-bridge .-> GPIO[drivers/gpio]
 ```
 
 ### Seven-segment
@@ -123,6 +133,23 @@ flowchart LR
 - For Proteus one-way debug: `PIC RC6/TX -> Virtual Terminal RXD`, `GND -> GND`.
 - Use `9600 8N1` unless the example overrides it.
 
+### position_drive
+
+```mermaid
+flowchart LR
+    MAIN[example main.c] --> PDRV[position_drive]
+    PDRV --> TICK[tick]
+    PDRV --> ADC[adc driver]
+    PDRV --> GPIO[gpio driver]
+    TICK --> T1[timer1]
+```
+
+- `position_drive_init()` stores the config and the `read_raw` / `get_tick` / `motor` callbacks.
+- The ADC backend reads the sensor through `read_raw`; other backends return `DRV_STATUS_UNSUPPORTED`.
+- `position_drive_process()` must be called regularly from the application loop; it runs bang-bang
+  control with overshoot correction and optional timeout / stuck detection.
+- `Timer1` is owned by `tick`, which feeds `get_tick` for timeout and stuck detection.
+
 ## Example Usage
 
 ### Which files to add for common tasks
@@ -170,6 +197,17 @@ flowchart LR
 - `drivers/communication/uart/uart.c`
 - `libraries/system/uart_debug/uart_debug.c`
 
+#### Position drive (ADC backend)
+
+- `examples-projects/xc8/actuator/position_drive_adc.X/main.c`
+- `examples-projects/xc8/actuator/position_drive_adc.X/config_bits.c`
+- `examples-projects/xc8/actuator/position_drive_adc.X/project_config.h`
+- `drivers/analog/adc/adc.c`
+- `drivers/gpio/gpio.c`
+- `drivers/timers/tick/tick.c`
+- `drivers/timers/timer1/timer1.c`
+- `libraries/actuator/position_drive/position_drive.c`
+
 ## Resource Conflicts
 
 - `Timer1` cannot be owned by both `tick` and a `seven_segment` timer backend.
@@ -177,3 +215,4 @@ flowchart LR
 - UART pins `RC6/RC7` conflict with any other UART/RS485 use on the same pins.
 - `PORTD` PSP mode must be disabled before using `PORTD` as segment GPIO.
 - Analog-capable pins must be configured as digital via `ADCON1 = 0x07U` in the examples that use `PORTD` and `PORTC` as GPIO.
+- A project may only use one position sensor backend at a time; the ADC backend owns the `adc` driver and the chosen analog channel.
