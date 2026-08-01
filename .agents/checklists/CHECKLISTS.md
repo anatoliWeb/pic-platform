@@ -54,3 +54,8 @@
 - List what changed.
 - List checks that ran.
 - State whether push was performed.
+
+## Catalog Check
+
+- Run `python scripts/check_agents_catalog.py` after editing `.agents/`.
+- Fix broken links and orphan cards before commit.

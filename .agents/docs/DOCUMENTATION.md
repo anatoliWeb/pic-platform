@@ -18,3 +18,8 @@
 - Keep planned and implemented behavior clearly separated.
 - Use Mermaid when it helps explain dependencies, wiring, or flow.
 - Update docs when behavior changes.
+
+## Catalog Validation
+
+- Run `python scripts/check_agents_catalog.py` for `.agents/` changes.
+- Do not commit with broken links or orphan cards.

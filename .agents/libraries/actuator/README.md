@@ -1,7 +1,5 @@
 # Actuator libraries
 
-| Need | Use | Details |
-|---|---|---|
-| DC motor with angle feedback | `position_drive` | `.agents/libraries/actuator/position_drive.md` |
-
-Before writing project-local actuator code, read the detailed card.
+| Need | Module | Detailed card | Source | Status |
+|---|---|---|---|---|
+| DC motor position control | `position_drive` | `.agents/libraries/actuator/position_drive.md` | `libraries/actuator/position_drive/position_drive.h` | detailed |
