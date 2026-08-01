@@ -45,13 +45,13 @@
 
 ```mermaid
 flowchart LR
-    POT[Potentiometer] -->|wiper RA0/AN0| PIC[PIC18F452]
-    PIC -->|RD0 IN1| HBRIDGE[H-bridge driver]
+    POT[Потенціометр] -->|повзунок RA0/AN0| PIC[PIC18F452]
+    PIC -->|RD0 IN1| HBRIDGE[Драйвер H-моста]
     PIC -->|RD1 IN2| HBRIDGE
-    PIC -. RD2 EN/PWM optional .-> HBRIDGE
-    HBRIDGE --> MOTOR[DC gear motor]
-    PIC -->|RC6/TX pin 25| VT[Virtual Terminal RXD]
-    GND[Common GND] --- PIC
+    PIC -. RD2 EN/PWM опційно .-> HBRIDGE
+    HBRIDGE --> MOTOR[DC-мотор із редуктором]
+    PIC -->|RC6/TX ніжка 25| VT[Virtual Terminal RXD]
+    GND[Спільний GND] --- PIC
     GND --- HBRIDGE
     GND --- VT
 ```
@@ -89,13 +89,13 @@ make -f nbproject\Makefile-default.mk SUBPROJECTS= .build-conf
 
 ```mermaid
 flowchart TD
-    BOOT[Power on / reset] --> INIT[Initialize MCU, tick, UART, position_drive]
-    INIT --> MOVE1[Command: move to 30 degrees]
-    MOVE1 --> WAIT1[process until target reached]
-    WAIT1 --> PAUSE1[small application-level pause]
-    PAUSE1 --> MOVE2[Command: move to 120 degrees]
-    MOVE2 --> WAIT2[process until target reached]
-    WAIT2 --> PAUSE2[application-level pause]
+    BOOT[Увімкнення / скидання] --> INIT[Ініціалізація MCU, tick, UART, position_drive]
+    INIT --> MOVE1[Команда: рух до 30 градусів]
+    MOVE1 --> WAIT1[process до досягнення цілі]
+    WAIT1 --> PAUSE1[невелика пауза на рівні застосунку]
+    PAUSE1 --> MOVE2[Команда: рух до 120 градусів]
+    MOVE2 --> WAIT2[process до досягнення цілі]
+    WAIT2 --> PAUSE2[пауза на рівні застосунку]
     PAUSE2 --> MOVE1
 ```
 

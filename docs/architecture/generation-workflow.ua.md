@@ -108,9 +108,9 @@ git diff --stat
 
 ```mermaid
 flowchart TD
-    SRC[C source and headers] --> MPLAB[MPLAB X project metadata]
-    MPLAB --> BUILD[XC8 build]
+    SRC[С-код і заголовки] --> MPLAB[Метадані проєкту MPLAB X]
+    MPLAB --> BUILD[Збірка XC8]
     BUILD --> DIST[dist/default/production/*.production.hex]
     DIST --> ART[examples-projects/hex/xc8/*/*.production.hex]
-    ART --> PROTEUS[Proteus simulation]
+    ART --> PROTEUS[Симуляція у Proteus]
 ```

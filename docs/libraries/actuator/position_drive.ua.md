@@ -110,12 +110,11 @@ Debug sinks на рівні застосунку:
 ```mermaid
 stateDiagram-v2
     [*] --> IDLE: init ok
-
     IDLE --> MOVING: move_to_deg
-    MOVING --> TARGET_REACHED: within tolerance
+    MOVING --> TARGET_REACHED: у межах допуску
     MOVING --> ERROR: sensor / timeout / stuck / direction mismatch
     MOVING --> IDLE: stop / emergency_stop
-    TARGET_REACHED --> MOVING: new move_to_deg
+    TARGET_REACHED --> MOVING: новий move_to_deg
     TARGET_REACHED --> IDLE: stop
     ERROR --> IDLE: clear_error
 ```
@@ -148,24 +147,24 @@ stuck / direction mismatch).
 
 ```mermaid
 flowchart TD
-    INIT[Init drive] --> VALIDATE[Validate config]
-    VALIDATE --> READ0[Read initial sensor value]
-    READ0 --> OK{Sensor valid?}
-    OK -- no --> INITERR[Stop motor + set init error]
+    INIT[Ініціалізація приводу] --> VALIDATE[Перевірка конфігу]
+    VALIDATE --> READ0[Зчитування початкового значення датчика]
+    READ0 --> OK{Датчик валідний?}
+    OK -- no --> INITERR[Зупинити мотор + помилка ініціалізації]
     OK -- yes --> IDLE[IDLE]
 
-    IDLE --> CMD{Command received?}
-    CMD -- move_to_deg --> TARGET[Store target angle]
-    TARGET --> DIR[Choose direction]
-    DIR --> START[Start motor]
+    IDLE --> CMD{Команда отримана?}
+    CMD -- move_to_deg --> TARGET[Зберегти цільовий кут]
+    TARGET --> DIR[Вибрати напрямок]
+    DIR --> START[Запустити мотор]
     START --> LOOP[process loop]
 
-    LOOP --> READ[Read sensor]
-    READ --> CHECK[Run safety checks]
-    CHECK --> REACHED{Target reached?}
-    REACHED -- yes --> STOP[Stop motor]
+    LOOP --> READ[Зчитати датчик]
+    READ --> CHECK[Перевірки безпеки]
+    CHECK --> REACHED{Ціль досягнута?}
+    REACHED -- yes --> STOP[Зупинити мотор]
     STOP --> DONE[TARGET_REACHED]
-    REACHED -- no --> DRIVE[Continue movement]
+    REACHED -- no --> DRIVE[Продовжити рух]
     DRIVE --> LOOP
 ```
 
@@ -173,19 +172,19 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    START[process] --> READ[Read position sensor]
-    READ --> RANGE{Raw in range?}
-    RANGE -- no --> ESTOP[Stop motor + set sensor error]
-    RANGE -- yes --> ANGLE[Convert raw to degrees]
-    ANGLE --> TARGET{Within tolerance?}
-    TARGET -- yes --> STOP[Stop motor + target reached]
+    START[process] --> READ[Зчитати датчик положення]
+    READ --> RANGE{Raw у діапазоні?}
+    RANGE -- no --> ESTOP[Зупинити мотор + помилка датчика]
+    RANGE -- yes --> ANGLE[Перевести raw у градуси]
+    ANGLE --> TARGET{У межах допуску?}
+    TARGET -- yes --> STOP[Зупинити мотор + ціль досягнута]
     TARGET -- no --> TIMEOUT{Timeout?}
-    TIMEOUT -- yes --> ERR1[Stop + timeout error]
-    TIMEOUT -- no --> STUCK{Stuck detected?}
-    STUCK -- yes --> ERR2[Stop + stuck error]
-    STUCK -- no --> DIR{Direction valid?}
-    DIR -- no --> ERR3[Stop + direction mismatch]
-    DIR -- yes --> DRIVE[Drive forward/reverse]
+    TIMEOUT -- yes --> ERR1[Зупинити + помилка timeout]
+    TIMEOUT -- no --> STUCK{Застрягання?}
+    STUCK -- yes --> ERR2[Зупинити + помилка застрягання]
+    STUCK -- no --> DIR{Напрямок валідний?}
+    DIR -- no --> ERR3[Зупинити + розбіжність напрямку]
+    DIR -- yes --> DRIVE[Керувати вперед/назад]
 ```
 
 Поточна реалізація — bang-bang керування з корекцією перельоту, не PID.
@@ -198,13 +197,13 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    ERR[Error detected] --> STOP[Immediately stop motor outputs]
-    STOP --> STATE[Set state = ERROR]
-    STATE --> CODE[Store error code]
-    CODE --> REPORT[Application reads error]
-    REPORT --> CLEAR{clear_error called?}
-    CLEAR -- no --> HOLD[Stay in ERROR]
-    CLEAR -- yes --> IDLE[Return to IDLE without restarting motor]
+    ERR[Виявлено помилку] --> STOP[Негайно зупинити виходи мотора]
+    STOP --> STATE[Стан = ERROR]
+    STATE --> CODE[Зафіксувати код помилки]
+    CODE --> REPORT[Застосунок читає помилку]
+    REPORT --> CLEAR{clear_error викликано?}
+    CLEAR -- no --> HOLD[Залишитись у ERROR]
+    CLEAR -- yes --> IDLE[Повернутись у IDLE без запуску мотора]
 ```
 
 ## Перерахунок raw у градуси
@@ -250,21 +249,21 @@ deg = angle_min_deg + ((raw - sensor_raw_min) * (angle_max_deg - angle_min_deg))
 ```mermaid
 flowchart TD
     CFG[core/pic_platform_config.h + -D flags] --> SENSOR{POSITION_DRIVE_SENSOR_TYPE}
-    SENSOR -- ADC --> ADC[Use ADC potentiometer backend]
-    SENSOR -- ENCODER --> ENC[Unsupported placeholder, init returns DRV_STATUS_UNSUPPORTED]
-    SENSOR -- NONE --> NOBACKEND[No sensor backend, init returns DRV_STATUS_UNSUPPORTED]
+    SENSOR -- ADC --> ADC[ADC-бекенд потенціометра]
+    SENSOR -- ENCODER --> ENC[Заглушка, init повертає DRV_STATUS_UNSUPPORTED]
+    SENSOR -- NONE --> NOBACKEND[Немає бекенда, init повертає DRV_STATUS_UNSUPPORTED]
 
     CFG --> PWM{POSITION_DRIVE_ENABLE_PWM}
-    PWM -- 0 --> P0[No PWM code path]
-    PWM -- 1 --> P1[Speed/PWM path, set_speed_cb required]
+    PWM -- 0 --> P0[Немає PWM-коду]
+    PWM -- 1 --> P1[Шлях швидкості/PWM, потрібен set_speed_cb]
 
     CFG --> DBG{POSITION_DRIVE_ENABLE_UART_DEBUG}
-    DBG -- 0 --> D0[No debug code or output]
-    DBG -- 1 --> D1[Compile debug reporting]
+    DBG -- 0 --> D0[Немає debug-коду чи виводу]
+    DBG -- 1 --> D1[Компілювати debug-звіт]
     D1 --> LEVEL{POSITION_DRIVE_DEBUG_LEVEL}
-    LEVEL -- ERROR --> L1[Error messages only]
-    LEVEL -- INFO --> L2[State change messages]
-    LEVEL -- TRACE --> L3[raw/angle/target/direction details]
+    LEVEL -- ERROR --> L1[Лише повідомлення про помилки]
+    LEVEL -- INFO --> L2[Повідомлення про зміну стану]
+    LEVEL -- TRACE --> L3[Деталі raw/angle/target/direction]
 ```
 
 ## Приклад Проєкту
@@ -290,13 +289,13 @@ H-мостом. Повний проєкт MPLAB X знаходиться у `exa
 
 ```mermaid
 flowchart LR
-    POT[Potentiometer] -->|wiper RA0/AN0| PIC[PIC18F452]
-    PIC -->|RD0 IN1| HBRIDGE[H-bridge driver]
+    POT[Потенціометр] -->|повзунок RA0/AN0| PIC[PIC18F452]
+    PIC -->|RD0 IN1| HBRIDGE[Драйвер H-моста]
     PIC -->|RD1 IN2| HBRIDGE
-    PIC -. RD2 EN/PWM optional .-> HBRIDGE
-    HBRIDGE --> MOTOR[DC gear motor]
-    PIC -->|RC6/TX pin 25| VT[Virtual Terminal RXD]
-    GND[Common GND] --- PIC
+    PIC -. RD2 EN/PWM опційно .-> HBRIDGE
+    HBRIDGE --> MOTOR[DC-мотор із редуктором]
+    PIC -->|RC6/TX ніжка 25| VT[Virtual Terminal RXD]
+    GND[Спільний GND] --- PIC
     GND --- HBRIDGE
     GND --- VT
 ```
@@ -313,37 +312,37 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    APP[Application code] --> PD[position_drive]
-    PD --> MOTOR[Motor output callback]
-    PD --> SENSOR[Position sensor callback]
-    PD --> TICK[Time source / tick]
-    PD -. optional .-> PWM[PWM speed output]
-    PD -. optional .-> DBG[Debug adapter]
+    APP[Код застосунку] --> PD[position_drive]
+    PD --> MOTOR[Callback виводу мотора]
+    PD --> SENSOR[Callback датчика положення]
+    PD --> TICK[Джерело часу / tick]
+    PD -. опційно .-> PWM[Вивід PWM-швидкості]
+    PD -. опційно .-> DBG[Debug-адаптер]
 
-    SENSOR --> ADC[ADC potentiometer backend]
-    MOTOR --> HBRIDGE[H-bridge / motor driver]
+    SENSOR --> ADC[ADC-бекенд потенціометра]
+    MOTOR --> HBRIDGE[H-міст / драйвер мотора]
 
     DBG -. UART sink .-> UART[UART debug / Virtual Terminal]
-    DBG -. display sink .-> DISP[Display or LCD adapter]
-    DBG -. callback sink .-> CB[Application callback]
+    DBG -. display sink .-> DISP[Display або LCD-адаптер]
+    DBG -. callback sink .-> CB[Callback застосунку]
 ```
 
 ## Debug Routing
 
 ```mermaid
 flowchart LR
-    PD[position_drive] --> D{Debug enabled?}
-    D -- no --> NONE[No code/output]
-    D -- yes --> L{Debug level}
-    L --> ERR[Errors only]
-    L --> INFO[State changes]
-    L --> TRACE[Raw/angle details]
+    PD[position_drive] --> D{Debug увімкнено?}
+    D -- no --> NONE[Немає коду/виводу]
+    D -- yes --> L{Рівень debug}
+    L --> ERR[Лише помилки]
+    L --> INFO[Зміни стану]
+    L --> TRACE[Деталі raw/angle]
     ERR --> S{Sink}
     INFO --> S
     TRACE --> S
     S --> UART[UART / Virtual Terminal]
-    S --> DISPLAY[Display / LCD adapter - documented pattern]
-    S --> CB[Application callback - implemented]
+    S --> DISPLAY[Display / LCD-адаптер - documented pattern]
+    S --> CB[Callback застосунку - implemented]
 ```
 
 - реалізовано: callback routing і compile-time enable/level control
@@ -392,11 +391,11 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    SRC[C source and headers] --> MPLAB[MPLAB X project]
-    MPLAB --> BUILD[XC8 build]
+    SRC[С-код і заголовки] --> MPLAB[Проєкт MPLAB X]
+    MPLAB --> BUILD[Збірка XC8]
     BUILD --> DIST[dist/default/production/*.production.hex]
     DIST --> ART[examples-projects/hex/xc8/actuator/*.production.hex]
-    ART --> PROTEUS[Proteus simulation]
+    ART --> PROTEUS[Симуляція у Proteus]
 ```
 
 Точні команди та відображення копіювання HEX дивіться у
