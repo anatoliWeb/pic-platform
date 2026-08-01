@@ -26,6 +26,13 @@
 - Датчик: потенціометр на ADC-каналі (бекенд `POSITION_DRIVE_SENSOR_ADC`).
 - Час: мілісекундне джерело часу (платформний `drivers/timers/tick`).
 
+## Архітектура
+
+- Апаратну частину володіє застосунок, а бібліотеці передаються callback'и.
+- `position_drive_process()` викликається з головного циклу і ніколи не блокує.
+- Реалізований лише ADC-бекенд; encoder-бекенд є лише заглушкою.
+- Debug-вивід callback'ний, тому бібліотека не залежить від UART або display-коду, коли debug вимкнений.
+
 ## Бекенди датчиків
 
 Бекенд датчика обирається на етапі компіляції через `POSITION_DRIVE_SENSOR_TYPE`:
@@ -60,11 +67,11 @@ Encoder-бекенд зарезервований на майбутнє. Він 
 - `position_drive_read_raw_fn_t` — зчитування сирого значення датчика
 - `position_drive_motor_cb_t` — напрямок двигуна (STOP/FORWARD/REVERSE)
 - `position_drive_set_speed_cb_t` — опційна PWM-швидкість, потрібна лише коли PWM увімкнено
-- `position_drive_debug_cb_t` — опційний debug-вивід, використовується лише з UART debug
+- `position_drive_debug_cb_t` — опційний debug-вивід, який застосунок може спрямувати в UART, display або тестовий логер
 
 Кожен callback отримує однаковий вказівник `context`, який застосунок зберіг у конфігурації.
 
-## Конфігурація
+## Структура Конфігурації
 
 `position_drive_config_t`:
 
@@ -78,6 +85,25 @@ Encoder-бекенд зарезервований на майбутнє. Він 
 
 `init()` відхиляє невалідну конфігурацію (відсутні callback'и, порожній raw/angle діапазон,
 нульовий допуск, нульовий timeout, порушений порядок швидкостей) і перед поверненням зупиняє мотор.
+
+## Debug Configuration
+
+Поточна реалізація використовує module-local compile-time switch:
+
+| Опція | Дефолт | Примітки |
+| --- | --- | --- |
+| `POSITION_DRIVE_ENABLE_UART_DEBUG` | `0` | вмикає `debug_cb` і форматування debug |
+| `POSITION_DRIVE_DEBUG_LEVEL_ERROR` | `1` | повідомлення про помилки |
+| `POSITION_DRIVE_DEBUG_LEVEL_INFO` | `2` | повідомлення про зміни стану |
+| `POSITION_DRIVE_DEBUG_LEVEL_TRACE` | `3` | стан + raw/angle/target/direction |
+| `POSITION_DRIVE_DEBUG_LEVEL` | info when debug is enabled | можна зменшити для меншого коду |
+
+Debug sinks на рівні застосунку:
+
+- none: debug вимкнений
+- UART: `debug_cb` пересилається в `libraries/system/uart_debug`
+- display: `debug_cb` пересилається в LCD або seven-segment адаптер
+- callback: `debug_cb` спрямовується в тестовий логер чи інший транспорт
 
 ## Модель станів
 
@@ -106,6 +132,27 @@ stateDiagram-v2
 
 За будь-якої помилки мотор негайно зупиняється, а привод переходить у
 `POSITION_DRIVE_STATE_ERROR`.
+
+## Movement Algorithm
+
+```mermaid
+flowchart TD
+    START[process] --> READ[Read position sensor]
+    READ --> RANGE{Raw in range?}
+    RANGE -- no --> ESTOP[Stop motor + set sensor error]
+    RANGE -- yes --> ANGLE[Convert raw to degrees]
+    ANGLE --> TARGET{Within tolerance?}
+    TARGET -- yes --> STOP[Stop motor + target reached]
+    TARGET -- no --> TIMEOUT{Timeout?}
+    TIMEOUT -- yes --> ERR1[Stop + timeout error]
+    TIMEOUT -- no --> STUCK{Stuck detected?}
+    STUCK -- yes --> ERR2[Stop + stuck error]
+    STUCK -- no --> DIR{Direction valid?}
+    DIR -- no --> ERR3[Stop + direction mismatch]
+    DIR -- yes --> DRIVE[Drive forward/reverse]
+```
+
+Поточна реалізація — bang-bang керування з корекцією перельоту, не PID.
 
 ## Перерахунок raw у градуси
 
@@ -140,11 +187,12 @@ deg = angle_min_deg + ((raw - sensor_raw_min) * (angle_max_deg - angle_min_deg))
 | `POSITION_DRIVE_ENABLE_STUCK_DETECTION` | `1` |
 | `POSITION_DRIVE_ENABLE_DIRECTION_CHECK` | `1` |
 | `POSITION_DRIVE_ENABLE_UART_DEBUG` | `0` |
+| `POSITION_DRIVE_DEBUG_LEVEL` | info when debug is enabled |
 
 Перевизначайте їх через прапорці збірки, а не через `project_config.h`, щоб трансляційний
 модуль бібліотеки бачив те саме значення.
 
-## Приклад
+## Приклад Проєкту
 
 `example.c` демонструє послідовність рухів (30° -> 120°) з потенціометром як датчиком і
 H-мостом. Повний проєкт MPLAB X знаходиться у `examples-projects/xc8/actuator/position_drive_adc.X`.
@@ -191,9 +239,34 @@ flowchart TD
     PD --> GPIO[GPIO driver]
     PD --> TICK[Tick / time source]
     PD --> ADC[ADC read callback or ADC driver]
-    PD -. optional .-> UART[UART debug]
+    PD -. optional .-> DBG[Debug adapter]
     PD -. optional .-> PWM[PWM driver]
+    DBG -. UART sink .-> UART[UART debug]
+    DBG -. display sink .-> DISP[Display adapter]
 ```
+
+## Debug Routing
+
+```mermaid
+flowchart LR
+    PD[position_drive] --> D{Debug enabled?}
+    D -- no --> NONE[No code/output]
+    D -- yes --> L{Debug level}
+    L --> ERR[Errors only]
+    L --> INFO[State changes]
+    L --> TRACE[Raw/angle details]
+    ERR --> S{Sink}
+    INFO --> S
+    TRACE --> S
+    S --> UART[UART / Virtual Terminal]
+    S --> DISPLAY[Display / LCD adapter]
+    S --> CB[Application callback]
+```
+
+- реалізовано: callback routing і compile-time enable/level control
+- supported pattern: UART, display або test logger sink через application callback
+- planned: спільна platform-wide debug abstraction
+- not implemented yet: direct display sink усередині `position_drive`
 
 ## Безпека
 
@@ -232,7 +305,7 @@ flowchart TD
 - опційний ADC-датчик через `drivers/analog/adc`
 - опційна PWM-швидкість через `drivers/timers/pwm`
 
-## Flow збірки
+## HEX Generation
 
 ```mermaid
 flowchart TD

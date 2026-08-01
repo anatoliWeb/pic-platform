@@ -32,7 +32,7 @@
 | seven_segment | `libraries/display/seven_segment/` | `libraries/display/seven_segment/seven_segment.h` | `libraries/display/seven_segment/seven_segment.c` | `gpio`, timer drivers, core headers | seven-segment examples, `segment_keys` | manual and timer-backed refresh | example-tested |
 | button | `libraries/input/button/` | `libraries/input/button/button.h` | `libraries/input/button/button.c` | `tick`, `bit_utils`, core headers | `segment_keys`, button examples | debounce/click/hold logic | example-tested |
 | segment_keys | `libraries/input/segment_keys/` | `libraries/input/segment_keys/segment_keys.h` | `libraries/input/segment_keys/segment_keys.c` | `seven_segment`, `button`, `gpio` | seven-segment shared-line examples | exact-mask decoder | example-tested |
-| position_drive | `libraries/actuator/position_drive/` | `libraries/actuator/position_drive/position_drive.h` | `libraries/actuator/position_drive/position_drive.c` | core headers, optional `tick`/`adc`/`pwm` via callbacks | position drive examples | non-blocking closed-loop position control | example-tested |
+| position_drive | `libraries/actuator/position_drive/` | `libraries/actuator/position_drive/position_drive.h` | `libraries/actuator/position_drive/position_drive.c` | core headers, optional `tick`/`adc`/`pwm` via callbacks | position drive examples | ADC-бекенд реалізований, encoder-заглушка не підтримується, callback-based debug | example-tested |
 | uart_debug | `libraries/system/uart_debug/` | `libraries/system/uart_debug/uart_debug.h` | `libraries/system/uart_debug/uart_debug.c` | `core/config.h`, `uart` | UART-based debug examples | macro-based debug layer | example-tested |
 
 ## Compiler wrappers / backends

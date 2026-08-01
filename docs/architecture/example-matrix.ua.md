@@ -10,6 +10,8 @@
 | `examples-projects/xc8/actuator/position_drive_adc.X` | Замкнений позиційний привод з ADC-датчиком (потенціометр) | `libraries/actuator/position_drive/position_drive.c`, `libraries/system/uart_debug/uart_debug.c` | `drivers/analog/adc/adc.c`, `drivers/gpio/gpio.c`, `drivers/timers/tick/tick.c`, `drivers/timers/timer1/timer1.c`, `core/delay.c` | Timer1 належить `tick` | `RA0/AN0` потенціометр, `RD0/RD1` H-міст, `RC6` UART TX | `examples-projects/hex/xc8/actuator/position_drive_adc.X.production.hex` | `examples-projects/proteus/actuator/position_drive_adc/README.md` | example-tested |
 | `examples-projects/c18/actuator/position_drive_adc/` | C18-приклад позиційного приводу (заплановано) | `libraries/actuator/position_drive/position_drive.c` через C18 include-стаб | `drivers/analog/adc/adc.c`, `drivers/gpio/gpio.c`, `drivers/timers/tick/tick.c`, `drivers/timers/timer1/timer1.c` | Timer1 належить `tick` | `RA0/AN0` потенціометр, `RD0/RD1` H-міст, `RC6` UART TX | ще немає | не згенеровано | planned |
 
+`position_drive` уже example-tested у XC8, а C18 include-стаб існує для повторного використання, хоча згенерованого C18-проєкту ще немає.
+
 ## Рецепти збірки / використання
 
 ### Manual seven-segment display

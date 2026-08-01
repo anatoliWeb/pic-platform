@@ -48,4 +48,4 @@ Reusable PIC18 platform with clear separation between `core`, `drivers`, and `li
 - Input examples `button.X`, `encoder.X`, and `adc_buttons.X` are verified in Proteus.
 - `software_pwm.X` is verified in Proteus.
 - Grouped seven-segment examples under `examples-projects/xc8/seven_segment/` are implemented and ready for Proteus validation, including buffered fixed-point formatting in `multiplex_manual.X` and library-owned Timer2 refresh in `multiplex_timer.X`: `basic_manual.X`, `multiplex_manual.X`, `multiplex_timer.X`, `keys_single_line.X`, and `keys_diode_coded.X`.
-- Position drive example `position_drive_adc.X` under `examples-projects/xc8/actuator/` is implemented and ready for Proteus validation, exercising the ADC-backed closed-loop `position_drive` library.
+- Position drive example `position_drive_adc.X` under `examples-projects/xc8/actuator/` is implemented and ready for Proteus validation, exercising the ADC-backed closed-loop `position_drive` library; the encoder backend remains a placeholder.

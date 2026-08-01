@@ -141,6 +141,7 @@ flowchart LR
     PDRV --> TICK[tick]
     PDRV --> ADC[adc driver]
     PDRV --> GPIO[gpio driver]
+    PDRV -. debug callback .-> UDBG[uart_debug / app adapter]
     TICK --> T1[timer1]
 ```
 
@@ -149,6 +150,8 @@ flowchart LR
 - `position_drive_process()` must be called regularly from the application loop; it runs bang-bang
   control with overshoot correction and optional timeout / stuck detection.
 - `Timer1` is owned by `tick`, which feeds `get_tick` for timeout and stuck detection.
+- Debug output is callback-based and routed by the application; `position_drive` does not depend on
+  UART directly when debug is disabled.
 
 ## Example Usage
 

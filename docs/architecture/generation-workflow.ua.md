@@ -50,6 +50,9 @@ make -f nbproject\Makefile-default.mk SUBPROJECTS= .clean-conf
 make -f nbproject\Makefile-default.mk SUBPROJECTS= .build-conf
 ```
 
+Position drive приклад вмикає UART debug у своєму MPLAB-проєкті, тож згенерований HEX
+відповідає поточному шляху `PD:*` повідомлень.
+
 Якщо `make` не в `PATH`, викличте його напряму:
 
 ```cmd

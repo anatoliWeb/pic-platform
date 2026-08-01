@@ -48,4 +48,4 @@
 - Input-приклади `button.X`, `encoder.X` і `adc_buttons.X` перевірені в Proteus.
 - `software_pwm.X` перевірено в Proteus.
 - Grouped seven-segment приклади в `examples-projects/xc8/seven_segment/` реалізовані та готові до перевірки в Proteus, включно з buffered fixed-point formatting у `multiplex_manual.X` і library-owned Timer2 refresh у `multiplex_timer.X`: `basic_manual.X`, `multiplex_manual.X`, `multiplex_timer.X`, `keys_single_line.X` і `keys_diode_coded.X`.
-- Приклад position drive `position_drive_adc.X` у `examples-projects/xc8/actuator/` реалізований і готовий до перевірки в Proteus, використовуючи замкнену бібліотеку `position_drive` з ADC-бекендом.
+- Приклад position drive `position_drive_adc.X` у `examples-projects/xc8/actuator/` реалізований і готовий до перевірки в Proteus, використовуючи замкнену бібліотеку `position_drive` з ADC-бекендом; encoder-бекенд лишається заглушкою.

@@ -10,6 +10,8 @@
 | `examples-projects/xc8/actuator/position_drive_adc.X` | Closed-loop position drive with an ADC potentiometer sensor | `libraries/actuator/position_drive/position_drive.c`, `libraries/system/uart_debug/uart_debug.c` | `drivers/analog/adc/adc.c`, `drivers/gpio/gpio.c`, `drivers/timers/tick/tick.c`, `drivers/timers/timer1/timer1.c`, `core/delay.c` | Timer1 owned by `tick` | `RA0/AN0` potentiometer, `RD0/RD1` H-bridge, `RC6` UART TX | `examples-projects/hex/xc8/actuator/position_drive_adc.X.production.hex` | `examples-projects/proteus/actuator/position_drive_adc/README.md` | example-tested |
 | `examples-projects/c18/actuator/position_drive_adc/` | C18 position drive example (planned) | `libraries/actuator/position_drive/position_drive.c` via C18 include stub | `drivers/analog/adc/adc.c`, `drivers/gpio/gpio.c`, `drivers/timers/tick/tick.c`, `drivers/timers/timer1/timer1.c` | Timer1 owned by `tick` | `RA0/AN0` potentiometer, `RD0/RD1` H-bridge, `RC6` UART TX | none yet | not generated | planned |
 
+The `position_drive` example is example-tested in XC8, and the C18 include stub exists for reuse even though a generated C18 example project is not present yet.
+
 ## Build / Use Recipes
 
 ### Manual seven-segment display

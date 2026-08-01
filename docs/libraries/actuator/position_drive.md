@@ -24,6 +24,13 @@ driver stack.
 - Sensor: potentiometer on an ADC channel (`POSITION_DRIVE_SENSOR_ADC` backend).
 - Time: millisecond tick source (platform `drivers/timers/tick`).
 
+## Architecture
+
+- The application owns the hardware and passes callbacks to the library.
+- `position_drive_process()` is called from the main loop and never blocks.
+- The ADC backend is implemented; the encoder backend is only a placeholder.
+- Debug output is callback-based, so the library does not depend on UART or display code when debug is off.
+
 ## Sensor Backends
 
 The sensor backend is selected at compile time through `POSITION_DRIVE_SENSOR_TYPE`:
@@ -58,11 +65,11 @@ The encoder backend is reserved for future use. It is not implemented: `init()` 
 - `position_drive_read_raw_fn_t` - raw position sensor read
 - `position_drive_motor_cb_t` - DC motor direction (STOP/FORWARD/REVERSE)
 - `position_drive_set_speed_cb_t` - optional PWM speed, required only when PWM support is enabled
-- `position_drive_debug_cb_t` - optional debug output, used only when UART debug is enabled
+- `position_drive_debug_cb_t` - optional debug output, routed by the application to UART, display, or a test harness
 
 Every callback receives the same `context` pointer that the application stored in the config.
 
-## Configuration
+## Configuration Structure
 
 `position_drive_config_t`:
 
@@ -76,6 +83,25 @@ Every callback receives the same `context` pointer that the application stored i
 
 `init()` rejects an invalid config (missing callbacks, empty raw/angle range, zero tolerance,
 zero timeout, speed range out of order) and stops the motor before returning.
+
+## Debug Configuration
+
+Current implementation uses a module-local compile-time switch:
+
+| Option | Default | Notes |
+| --- | --- | --- |
+| `POSITION_DRIVE_ENABLE_UART_DEBUG` | `0` | enables `debug_cb` calls and debug formatting |
+| `POSITION_DRIVE_DEBUG_LEVEL_ERROR` | `1` | error messages |
+| `POSITION_DRIVE_DEBUG_LEVEL_INFO` | `2` | state change messages |
+| `POSITION_DRIVE_DEBUG_LEVEL_TRACE` | `3` | state + raw/angle/target/direction details |
+| `POSITION_DRIVE_DEBUG_LEVEL` | info when debug is enabled | override to reduce code size |
+
+Debug sinks are application-level patterns:
+
+- none: leave debug disabled
+- UART: forward `debug_cb` to `libraries/system/uart_debug`
+- display: forward `debug_cb` to an LCD or seven-segment adapter in the application
+- callback: route to a test logger or other transport
 
 ## State Machine
 
@@ -103,6 +129,27 @@ stateDiagram-v2
 4. verifies the sensor keeps moving in the commanded direction
 
 On any error the motor is stopped immediately and the drive enters `POSITION_DRIVE_STATE_ERROR`.
+
+## Movement Algorithm
+
+```mermaid
+flowchart TD
+    START[process] --> READ[Read position sensor]
+    READ --> RANGE{Raw in range?}
+    RANGE -- no --> ESTOP[Stop motor + set sensor error]
+    RANGE -- yes --> ANGLE[Convert raw to degrees]
+    ANGLE --> TARGET{Within tolerance?}
+    TARGET -- yes --> STOP[Stop motor + target reached]
+    TARGET -- no --> TIMEOUT{Timeout?}
+    TIMEOUT -- yes --> ERR1[Stop + timeout error]
+    TIMEOUT -- no --> STUCK{Stuck detected?}
+    STUCK -- yes --> ERR2[Stop + stuck error]
+    STUCK -- no --> DIR{Direction valid?}
+    DIR -- no --> ERR3[Stop + direction mismatch]
+    DIR -- yes --> DRIVE[Drive forward/reverse]
+```
+
+The current implementation is bang-bang control with overshoot correction, not PID.
 
 ## Raw-to-Angle Conversion
 
@@ -137,11 +184,12 @@ Defaults live in `core/pic_platform_config.h` and can be overridden with compile
 | `POSITION_DRIVE_ENABLE_STUCK_DETECTION` | `1` |
 | `POSITION_DRIVE_ENABLE_DIRECTION_CHECK` | `1` |
 | `POSITION_DRIVE_ENABLE_UART_DEBUG` | `0` |
+| `POSITION_DRIVE_DEBUG_LEVEL` | info when debug is enabled |
 
 Override them from the build flags, not from `project_config.h`, so the library translation unit
 sees the same value.
 
-## Example
+## Example Project
 
 `example.c` demonstrates a move sequence (30 deg -> 120 deg) with a potentiometer sensor and an
 H-bridge motor. A complete MPLAB X project lives in
@@ -188,9 +236,34 @@ flowchart TD
     PD --> GPIO[GPIO driver]
     PD --> TICK[Tick / time source]
     PD --> ADC[ADC read callback or ADC driver]
-    PD -. optional .-> UART[UART debug]
+    PD -. optional .-> DBG[Debug adapter]
     PD -. optional .-> PWM[PWM driver]
+    DBG -. UART sink .-> UART[UART debug]
+    DBG -. display sink .-> DISP[Display adapter]
 ```
+
+## Debug Routing
+
+```mermaid
+flowchart LR
+    PD[position_drive] --> D{Debug enabled?}
+    D -- no --> NONE[No code/output]
+    D -- yes --> L{Debug level}
+    L --> ERR[Errors only]
+    L --> INFO[State changes]
+    L --> TRACE[Raw/angle details]
+    ERR --> S{Sink}
+    INFO --> S
+    TRACE --> S
+    S --> UART[UART / Virtual Terminal]
+    S --> DISPLAY[Display / LCD adapter]
+    S --> CB[Application callback]
+```
+
+- implemented: callback routing and compile-time enable/level control
+- supported pattern: UART, display, or test logger sinks through the application callback
+- planned: a shared platform-wide debug abstraction
+- not implemented yet: direct display sink inside `position_drive`
 
 ## Safety Notes
 
@@ -230,7 +303,7 @@ behind the same callback and state machine without changing the public API.
 - optional ADC sensor via `drivers/analog/adc`
 - optional PWM speed via `drivers/timers/pwm`
 
-## Build Flow
+## HEX Generation
 
 ```mermaid
 flowchart TD
