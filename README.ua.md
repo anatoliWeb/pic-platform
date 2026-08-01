@@ -1,5 +1,7 @@
 [English version](./README.md)
 
+AI-агенти: починайте з `AGENTS.md`.
+
 # PIC Drivers Platform (C18 + XC8)
 
 Повторно використовувана платформа для PIC18 з чітким розділенням на `core`, `drivers` і `libraries`.

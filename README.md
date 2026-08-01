@@ -2,6 +2,8 @@
 
 [Ukrainian version](./README.ua.md)
 
+AI agents: start with `AGENTS.md`.
+
 Reusable PIC18 platform with clear separation between `core`, `drivers`, and `libraries`.
 
 ## Architecture
