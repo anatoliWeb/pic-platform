@@ -43,6 +43,19 @@ potentiometer as the position sensor (ADC backend of the `position_drive` librar
 
 ## Proteus Wiring
 
+```mermaid
+flowchart LR
+    POT[Potentiometer] -->|wiper RA0/AN0| PIC[PIC18F452]
+    PIC -->|RD0 IN1| HBRIDGE[H-bridge driver]
+    PIC -->|RD1 IN2| HBRIDGE
+    PIC -. RD2 EN/PWM optional .-> HBRIDGE
+    HBRIDGE --> MOTOR[DC gear motor]
+    PIC -->|RC6/TX pin 25| VT[Virtual Terminal RXD]
+    GND[Common GND] --- PIC
+    GND --- HBRIDGE
+    GND --- VT
+```
+
 See `../../../proteus/actuator/position_drive_adc/README.md` for the full simulation wiring.
 
 ## UART Debug Wiring
@@ -73,6 +86,18 @@ Run it from `examples-projects\xc8\actuator\position_drive_adc.X`.
 - Repository artifact: `examples-projects/hex/xc8/actuator/position_drive_adc.X.production.hex`
 
 ## Dynamic Behavior
+
+```mermaid
+flowchart TD
+    BOOT[Power on / reset] --> INIT[Initialize MCU, tick, UART, position_drive]
+    INIT --> MOVE1[Command: move to 30 degrees]
+    MOVE1 --> WAIT1[process until target reached]
+    WAIT1 --> PAUSE1[small application-level pause]
+    PAUSE1 --> MOVE2[Command: move to 120 degrees]
+    MOVE2 --> WAIT2[process until target reached]
+    WAIT2 --> PAUSE2[application-level pause]
+    PAUSE2 --> MOVE1
+```
 
 - on boot the drive is initialized and the current potentiometer position is read
 - the arm moves to 30 degrees, waits until the target is reached, then moves to 120 degrees

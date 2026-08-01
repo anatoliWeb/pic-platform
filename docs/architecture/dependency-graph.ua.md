@@ -146,9 +146,13 @@ flowchart LR
 
 - `position_drive_init()` зберігає конфіг і callback'и `read_raw` / `get_tick` / `motor`.
 - ADC-бекенд читає датчик через `read_raw`; інші бекенди повертають `DRV_STATUS_UNSUPPORTED`.
+- Опційна PWM-швидкість компілюється лише коли `POSITION_DRIVE_ENABLE_PWM=1`, і тоді вимагає
+  callback `set_speed`; за замовчуванням PWM-шлях виключено зі збірки.
+- Encoder-бекенд датчика — непідтримувана заглушка: `init()` повертає `DRV_STATUS_UNSUPPORTED`,
+  поки не з'явиться реальний encoder-драйвер.
 - `position_drive_process()` треба викликати регулярно з application loop; він виконує bang-bang
-  керування з overshoot correction і опційними timeout / stuck detection.
-- `Timer1` належить `tick`, який живить `get_tick` для timeout і stuck detection.
+  керування з корекцією перельоту і опційним виявленням timeout / застрягання.
+- `Timer1` належить `tick`, який живить `get_tick` для timeout і виявлення застрягання.
 - Debug-вивід callback'ний і маршрутизується застосунком; `position_drive` не залежить від UART
   напряму, коли debug вимкнений.
 

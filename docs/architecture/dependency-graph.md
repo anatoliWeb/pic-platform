@@ -147,6 +147,10 @@ flowchart LR
 
 - `position_drive_init()` stores the config and the `read_raw` / `get_tick` / `motor` callbacks.
 - The ADC backend reads the sensor through `read_raw`; other backends return `DRV_STATUS_UNSUPPORTED`.
+- Optional PWM speed output is compiled only when `POSITION_DRIVE_ENABLE_PWM=1` and then requires a
+  `set_speed` callback; by default the PWM path is compiled out.
+- The encoder sensor backend is an unsupported placeholder: `init()` returns `DRV_STATUS_UNSUPPORTED`
+  until a real encoder driver exists.
 - `position_drive_process()` must be called regularly from the application loop; it runs bang-bang
   control with overshoot correction and optional timeout / stuck detection.
 - `Timer1` is owned by `tick`, which feeds `get_tick` for timeout and stuck detection.

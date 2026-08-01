@@ -109,16 +109,23 @@ Debug sinks на рівні застосунку:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Idle
-    Idle --> Moving: move_to_deg
-    Moving --> TargetReached: within tolerance
-    Moving --> Error: sensor/timeout/stuck
-    TargetReached --> Idle: next command
-    Error --> Idle: clear_error
-    Moving --> Idle: stop
+    [*] --> IDLE: init ok
+
+    IDLE --> MOVING: move_to_deg
+    MOVING --> TARGET_REACHED: within tolerance
+    MOVING --> ERROR: sensor / timeout / stuck / direction mismatch
+    MOVING --> IDLE: stop / emergency_stop
+    TARGET_REACHED --> MOVING: new move_to_deg
+    TARGET_REACHED --> IDLE: stop
+    ERROR --> IDLE: clear_error
 ```
 
 Переходи виконує `position_drive_process()`; дій від застосунку під час руху не потрібно.
+Назви станів відповідають enum у `position_drive.h`: `POSITION_DRIVE_STATE_IDLE`, `MOVING`,
+`TARGET_REACHED`, `ERROR`. Невдалий `init()` або невірна команда фіксує код помилки через
+`position_drive_get_error()`, при цьому привод лишається неініціалізованим і публічний стан
+залишається `IDLE`; стан `ERROR` встановлює `process()` при runtime-помилці (sensor / timeout /
+stuck / direction mismatch).
 
 ## Модель Керування
 
@@ -132,6 +139,35 @@ stateDiagram-v2
 
 За будь-якої помилки мотор негайно зупиняється, а привод переходить у
 `POSITION_DRIVE_STATE_ERROR`.
+
+## Потік виконання
+
+`position_drive_init()` перевіряє конфіг, зупиняє мотор, один раз зчитує датчик і переходить у
+`IDLE`. Далі застосунок викликає `position_drive_move_to_deg()` і виконує `position_drive_process()`
+у головному циклі, поки ціль не буде досягнута.
+
+```mermaid
+flowchart TD
+    INIT[Init drive] --> VALIDATE[Validate config]
+    VALIDATE --> READ0[Read initial sensor value]
+    READ0 --> OK{Sensor valid?}
+    OK -- no --> INITERR[Stop motor + set init error]
+    OK -- yes --> IDLE[IDLE]
+
+    IDLE --> CMD{Command received?}
+    CMD -- move_to_deg --> TARGET[Store target angle]
+    TARGET --> DIR[Choose direction]
+    DIR --> START[Start motor]
+    START --> LOOP[process loop]
+
+    LOOP --> READ[Read sensor]
+    READ --> CHECK[Run safety checks]
+    CHECK --> REACHED{Target reached?}
+    REACHED -- yes --> STOP[Stop motor]
+    STOP --> DONE[TARGET_REACHED]
+    REACHED -- no --> DRIVE[Continue movement]
+    DRIVE --> LOOP
+```
 
 ## Movement Algorithm
 
@@ -153,6 +189,23 @@ flowchart TD
 ```
 
 Поточна реалізація — bang-bang керування з корекцією перельоту, не PID.
+
+## Безпека та обробка помилок
+
+Кожна виявлена несправність проходить один шлях: спочатку зупиняються виходи мотора, стан
+переходить у `ERROR`, фіксується код помилки, і застосунок може його прочитати та очистити.
+`position_drive_clear_error()` лише повертає стан у `IDLE`; вона ніколи не запускає мотор сама.
+
+```mermaid
+flowchart TD
+    ERR[Error detected] --> STOP[Immediately stop motor outputs]
+    STOP --> STATE[Set state = ERROR]
+    STATE --> CODE[Store error code]
+    CODE --> REPORT[Application reads error]
+    REPORT --> CLEAR{clear_error called?}
+    CLEAR -- no --> HOLD[Stay in ERROR]
+    CLEAR -- yes --> IDLE[Return to IDLE without restarting motor]
+```
 
 ## Перерахунок raw у градуси
 
@@ -192,6 +245,28 @@ deg = angle_min_deg + ((raw - sensor_raw_min) * (angle_max_deg - angle_min_deg))
 Перевизначайте їх через прапорці збірки, а не через `project_config.h`, щоб трансляційний
 модуль бібліотеки бачив те саме значення.
 
+Опції розв'язуються так:
+
+```mermaid
+flowchart TD
+    CFG[core/pic_platform_config.h + -D flags] --> SENSOR{POSITION_DRIVE_SENSOR_TYPE}
+    SENSOR -- ADC --> ADC[Use ADC potentiometer backend]
+    SENSOR -- ENCODER --> ENC[Unsupported placeholder, init returns DRV_STATUS_UNSUPPORTED]
+    SENSOR -- NONE --> NOBACKEND[No sensor backend, init returns DRV_STATUS_UNSUPPORTED]
+
+    CFG --> PWM{POSITION_DRIVE_ENABLE_PWM}
+    PWM -- 0 --> P0[No PWM code path]
+    PWM -- 1 --> P1[Speed/PWM path, set_speed_cb required]
+
+    CFG --> DBG{POSITION_DRIVE_ENABLE_UART_DEBUG}
+    DBG -- 0 --> D0[No debug code or output]
+    DBG -- 1 --> D1[Compile debug reporting]
+    D1 --> LEVEL{POSITION_DRIVE_DEBUG_LEVEL}
+    LEVEL -- ERROR --> L1[Error messages only]
+    LEVEL -- INFO --> L2[State change messages]
+    LEVEL -- TRACE --> L3[raw/angle/target/direction details]
+```
+
 ## Приклад Проєкту
 
 `example.c` демонструє послідовність рухів (30° -> 120°) з потенціометром як датчиком і
@@ -215,12 +290,15 @@ H-мостом. Повний проєкт MPLAB X знаходиться у `exa
 
 ```mermaid
 flowchart LR
-    POT[Potentiometer] -->|wiper AN0| PIC[PIC18F452]
-    PIC -->|RD0 IN1| DRV[H-Bridge Driver]
-    PIC -->|RD1 IN2| DRV
-    PIC -. RD2 EN/PWM optional .-> DRV
-    DRV --> MOTOR[DC Gear Motor]
-    PIC -->|RC6 TX| VT[Proteus Virtual Terminal RXD]
+    POT[Potentiometer] -->|wiper RA0/AN0| PIC[PIC18F452]
+    PIC -->|RD0 IN1| HBRIDGE[H-bridge driver]
+    PIC -->|RD1 IN2| HBRIDGE
+    PIC -. RD2 EN/PWM optional .-> HBRIDGE
+    HBRIDGE --> MOTOR[DC gear motor]
+    PIC -->|RC6/TX pin 25| VT[Virtual Terminal RXD]
+    GND[Common GND] --- PIC
+    GND --- HBRIDGE
+    GND --- VT
 ```
 
 Ключові моменти:
@@ -235,14 +313,19 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    APP[Application] --> PD[position_drive]
-    PD --> GPIO[GPIO driver]
-    PD --> TICK[Tick / time source]
-    PD --> ADC[ADC read callback or ADC driver]
+    APP[Application code] --> PD[position_drive]
+    PD --> MOTOR[Motor output callback]
+    PD --> SENSOR[Position sensor callback]
+    PD --> TICK[Time source / tick]
+    PD -. optional .-> PWM[PWM speed output]
     PD -. optional .-> DBG[Debug adapter]
-    PD -. optional .-> PWM[PWM driver]
-    DBG -. UART sink .-> UART[UART debug]
-    DBG -. display sink .-> DISP[Display adapter]
+
+    SENSOR --> ADC[ADC potentiometer backend]
+    MOTOR --> HBRIDGE[H-bridge / motor driver]
+
+    DBG -. UART sink .-> UART[UART debug / Virtual Terminal]
+    DBG -. display sink .-> DISP[Display or LCD adapter]
+    DBG -. callback sink .-> CB[Application callback]
 ```
 
 ## Debug Routing
@@ -259,8 +342,8 @@ flowchart LR
     INFO --> S
     TRACE --> S
     S --> UART[UART / Virtual Terminal]
-    S --> DISPLAY[Display / LCD adapter]
-    S --> CB[Application callback]
+    S --> DISPLAY[Display / LCD adapter - documented pattern]
+    S --> CB[Application callback - implemented]
 ```
 
 - реалізовано: callback routing і compile-time enable/level control

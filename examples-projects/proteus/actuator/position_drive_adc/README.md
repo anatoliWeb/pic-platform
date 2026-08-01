@@ -40,12 +40,15 @@ Oscillator: configured in `config_bits.c` of the example project (XT, 10 MHz).
 
 ```mermaid
 flowchart LR
-    POT[Potentiometer] -->|wiper AN0| PIC[PIC18F452]
-    PIC -->|RD0 IN1| DRV[H-Bridge Driver]
-    PIC -->|RD1 IN2| DRV
-    PIC -. RD2 EN/PWM optional .-> DRV
-    DRV --> MOTOR[DC Gear Motor]
-    PIC -->|RC6 TX| VT[Proteus Virtual Terminal RXD]
+    POT[Potentiometer] -->|wiper RA0/AN0| PIC[PIC18F452]
+    PIC -->|RD0 IN1| HBRIDGE[H-bridge driver]
+    PIC -->|RD1 IN2| HBRIDGE
+    PIC -. RD2 EN/PWM optional .-> HBRIDGE
+    HBRIDGE --> MOTOR[DC gear motor]
+    PIC -->|RC6/TX pin 25| VT[Virtual Terminal RXD]
+    GND[Common GND] --- PIC
+    GND --- HBRIDGE
+    GND --- VT
 ```
 
 ASCII:
@@ -64,6 +67,18 @@ PIC MCLR (pin 1)  ---> 10k pull-up to +5V
 ```
 
 ## Expected Result
+
+```mermaid
+flowchart TD
+    BOOT[Power on / reset] --> INIT[Initialize MCU, tick, UART, position_drive]
+    INIT --> MOVE1[Command: move to 30 degrees]
+    MOVE1 --> WAIT1[process until target reached]
+    WAIT1 --> PAUSE1[small application-level pause]
+    PAUSE1 --> MOVE2[Command: move to 120 degrees]
+    MOVE2 --> WAIT2[process until target reached]
+    WAIT2 --> PAUSE2[application-level pause]
+    PAUSE2 --> MOVE1
+```
 
 On boot the drive is initialized and the current potentiometer position is read. The arm moves
 to 30 degrees, then to 120 degrees, and repeats. The Virtual Terminal prints the state and

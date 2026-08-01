@@ -107,16 +107,23 @@ Debug sinks are application-level patterns:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Idle
-    Idle --> Moving: move_to_deg
-    Moving --> TargetReached: within tolerance
-    Moving --> Error: sensor/timeout/stuck
-    TargetReached --> Idle: next command
-    Error --> Idle: clear_error
-    Moving --> Idle: stop
+    [*] --> IDLE: init ok
+
+    IDLE --> MOVING: move_to_deg
+    MOVING --> TARGET_REACHED: within tolerance
+    MOVING --> ERROR: sensor / timeout / stuck / direction mismatch
+    MOVING --> IDLE: stop / emergency_stop
+    TARGET_REACHED --> MOVING: new move_to_deg
+    TARGET_REACHED --> IDLE: stop
+    ERROR --> IDLE: clear_error
 ```
 
 `position_drive_process()` drives the transitions; no application action is required while moving.
+State names match the enum in `position_drive.h`: `POSITION_DRIVE_STATE_IDLE`, `MOVING`,
+`TARGET_REACHED`, `ERROR`. A failed `init()` or an invalid command reports an error code through
+`position_drive_get_error()` while the drive stays uninitialized and the public state remains
+`IDLE`; the `ERROR` state is entered by `process()` on a runtime fault (sensor / timeout / stuck /
+direction mismatch).
 
 ## Control Model
 
@@ -129,6 +136,35 @@ stateDiagram-v2
 4. verifies the sensor keeps moving in the commanded direction
 
 On any error the motor is stopped immediately and the drive enters `POSITION_DRIVE_STATE_ERROR`.
+
+## Runtime Flow
+
+`position_drive_init()` validates the config, stops the motor, reads the sensor once and enters
+`IDLE`. The application then calls `position_drive_move_to_deg()` and runs `position_drive_process()`
+from the main loop until the target is reached.
+
+```mermaid
+flowchart TD
+    INIT[Init drive] --> VALIDATE[Validate config]
+    VALIDATE --> READ0[Read initial sensor value]
+    READ0 --> OK{Sensor valid?}
+    OK -- no --> INITERR[Stop motor + set init error]
+    OK -- yes --> IDLE[IDLE]
+
+    IDLE --> CMD{Command received?}
+    CMD -- move_to_deg --> TARGET[Store target angle]
+    TARGET --> DIR[Choose direction]
+    DIR --> START[Start motor]
+    START --> LOOP[process loop]
+
+    LOOP --> READ[Read sensor]
+    READ --> CHECK[Run safety checks]
+    CHECK --> REACHED{Target reached?}
+    REACHED -- yes --> STOP[Stop motor]
+    STOP --> DONE[TARGET_REACHED]
+    REACHED -- no --> DRIVE[Continue movement]
+    DRIVE --> LOOP
+```
 
 ## Movement Algorithm
 
@@ -150,6 +186,23 @@ flowchart TD
 ```
 
 The current implementation is bang-bang control with overshoot correction, not PID.
+
+## Safety and Error Handling
+
+Every detected fault follows the same path: motor outputs are stopped first, the state moves to
+`ERROR`, the error code is latched, and the application is left to inspect and clear it.
+`position_drive_clear_error()` only returns to `IDLE`; it never restarts the motor by itself.
+
+```mermaid
+flowchart TD
+    ERR[Error detected] --> STOP[Immediately stop motor outputs]
+    STOP --> STATE[Set state = ERROR]
+    STATE --> CODE[Store error code]
+    CODE --> REPORT[Application reads error]
+    REPORT --> CLEAR{clear_error called?}
+    CLEAR -- no --> HOLD[Stay in ERROR]
+    CLEAR -- yes --> IDLE[Return to IDLE without restarting motor]
+```
 
 ## Raw-to-Angle Conversion
 
@@ -189,6 +242,28 @@ Defaults live in `core/pic_platform_config.h` and can be overridden with compile
 Override them from the build flags, not from `project_config.h`, so the library translation unit
 sees the same value.
 
+The options resolve as follows:
+
+```mermaid
+flowchart TD
+    CFG[core/pic_platform_config.h + -D flags] --> SENSOR{POSITION_DRIVE_SENSOR_TYPE}
+    SENSOR -- ADC --> ADC[Use ADC potentiometer backend]
+    SENSOR -- ENCODER --> ENC[Unsupported placeholder, init returns DRV_STATUS_UNSUPPORTED]
+    SENSOR -- NONE --> NOBACKEND[No sensor backend, init returns DRV_STATUS_UNSUPPORTED]
+
+    CFG --> PWM{POSITION_DRIVE_ENABLE_PWM}
+    PWM -- 0 --> P0[No PWM code path]
+    PWM -- 1 --> P1[Speed/PWM path, set_speed_cb required]
+
+    CFG --> DBG{POSITION_DRIVE_ENABLE_UART_DEBUG}
+    DBG -- 0 --> D0[No debug code or output]
+    DBG -- 1 --> D1[Compile debug reporting]
+    D1 --> LEVEL{POSITION_DRIVE_DEBUG_LEVEL}
+    LEVEL -- ERROR --> L1[Error messages only]
+    LEVEL -- INFO --> L2[State change messages]
+    LEVEL -- TRACE --> L3[raw/angle/target/direction details]
+```
+
 ## Example Project
 
 `example.c` demonstrates a move sequence (30 deg -> 120 deg) with a potentiometer sensor and an
@@ -212,12 +287,15 @@ Wiring and simulation notes are documented in
 
 ```mermaid
 flowchart LR
-    POT[Potentiometer] -->|wiper AN0| PIC[PIC18F452]
-    PIC -->|RD0 IN1| DRV[H-Bridge Driver]
-    PIC -->|RD1 IN2| DRV
-    PIC -. RD2 EN/PWM optional .-> DRV
-    DRV --> MOTOR[DC Gear Motor]
-    PIC -->|RC6 TX| VT[Proteus Virtual Terminal RXD]
+    POT[Potentiometer] -->|wiper RA0/AN0| PIC[PIC18F452]
+    PIC -->|RD0 IN1| HBRIDGE[H-bridge driver]
+    PIC -->|RD1 IN2| HBRIDGE
+    PIC -. RD2 EN/PWM optional .-> HBRIDGE
+    HBRIDGE --> MOTOR[DC gear motor]
+    PIC -->|RC6/TX pin 25| VT[Virtual Terminal RXD]
+    GND[Common GND] --- PIC
+    GND --- HBRIDGE
+    GND --- VT
 ```
 
 Key points:
@@ -232,14 +310,19 @@ Key points:
 
 ```mermaid
 flowchart TD
-    APP[Application] --> PD[position_drive]
-    PD --> GPIO[GPIO driver]
-    PD --> TICK[Tick / time source]
-    PD --> ADC[ADC read callback or ADC driver]
+    APP[Application code] --> PD[position_drive]
+    PD --> MOTOR[Motor output callback]
+    PD --> SENSOR[Position sensor callback]
+    PD --> TICK[Time source / tick]
+    PD -. optional .-> PWM[PWM speed output]
     PD -. optional .-> DBG[Debug adapter]
-    PD -. optional .-> PWM[PWM driver]
-    DBG -. UART sink .-> UART[UART debug]
-    DBG -. display sink .-> DISP[Display adapter]
+
+    SENSOR --> ADC[ADC potentiometer backend]
+    MOTOR --> HBRIDGE[H-bridge / motor driver]
+
+    DBG -. UART sink .-> UART[UART debug / Virtual Terminal]
+    DBG -. display sink .-> DISP[Display or LCD adapter]
+    DBG -. callback sink .-> CB[Application callback]
 ```
 
 ## Debug Routing
@@ -256,8 +339,8 @@ flowchart LR
     INFO --> S
     TRACE --> S
     S --> UART[UART / Virtual Terminal]
-    S --> DISPLAY[Display / LCD adapter]
-    S --> CB[Application callback]
+    S --> DISPLAY[Display / LCD adapter - documented pattern]
+    S --> CB[Application callback - implemented]
 ```
 
 - implemented: callback routing and compile-time enable/level control
