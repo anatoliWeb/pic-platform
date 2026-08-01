@@ -2,7 +2,7 @@
 
 ## Steps
 
-1. Read the matching `LIBRARY-CATALOG` entry.
+1. Read the matching detailed card in `.agents/libraries/...`.
 2. Read the human docs for that library.
 3. Add the required `.c` and `.h` files to the MPLAB project.
 4. Add compiler wrapper files if the project style requires them.

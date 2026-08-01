@@ -19,3 +19,11 @@
 ## Reporting rule
 
 If project-local code is added, explain why it is not reusable platform code.
+
+## Library routes
+
+- Display -> `.agents/libraries/display/README.md`
+- Input/buttons -> `.agents/libraries/input/README.md`
+- Actuators -> `.agents/libraries/actuator/README.md`
+- System/debug -> `.agents/libraries/system/README.md`
+- Timeouts/tick -> `.agents/libraries/time/README.md`

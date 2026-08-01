@@ -5,7 +5,6 @@
 - Search the repo first.
 - Confirm it is device-specific.
 - Confirm it does not belong in `libraries/` or `drivers/`.
-- Read the relevant category mapper under `.agents/libraries/` or `.agents/drivers/`.
 
 ## Before creating a new library
 
@@ -13,7 +12,6 @@
 - Check examples and docs.
 - Define the public API and config model.
 - Keep hardware binding out of the library body.
-- Create or update a detailed card under `.agents/libraries/...`.
 
 ## Before extending a library
 

@@ -18,25 +18,31 @@ Reusable PIC18 platform code split into `core/`, `drivers/`, `libraries/`, compi
 - MUST NOT use `git add .`.
 - MUST NOT push unless explicitly asked.
 
-## Task routing map
+## AI map
 
-| Task | Read first |
+Start here, then open only the needed mapper.
+
+| If task is about | Open |
 |---|---|
-| Understand repository layout | `.agents/00-map/REPOSITORY-MAP.md` |
-| Understand platform architecture | `.agents/00-map/ARCHITECTURE.md` |
-| Follow global rules | `.agents/10-rules/GLOBAL-RULES.md` |
-| Follow coding style | `.agents/10-rules/CODING-RULES.md` |
-| Follow configuration rules | `.agents/10-rules/CONFIGURATION-RULES.md` |
-| Add or extend library | `.agents/20-libraries/LIBRARY-SELECTION.md`, `.agents/20-libraries/LIBRARY-DEVELOPMENT.md` |
-| Integrate library into a project | `.agents/20-libraries/LIBRARY-INTEGRATION.md`, `.agents/30-projects/PROJECT-INTEGRATION.md` |
-| Work with board wiring | `.agents/30-projects/BOARD-INTEGRATION.md` |
-| Add an example | `.agents/40-examples/EXAMPLES.md` |
-| Work with compiler wrappers | `.agents/50-compilers/COMPILER-COMPATIBILITY.md` |
-| Run targeted checks | `.agents/60-build/TESTING.md` |
-| Regenerate HEX | `.agents/60-build/HEX-ARTIFACTS.md` |
-| Write docs | `.agents/70-docs/DOCUMENTATION.md` |
-| Follow git workflow | `.agents/80-workflow/GIT-WORKFLOW.md` |
-| Use checklists | `.agents/90-checklists/CHECKLISTS.md` |
+| Repository layout | `.agents/00-map/REPOSITORY-MAP.md` |
+| Platform architecture | `.agents/00-map/ARCHITECTURE.md` |
+| Global rules | `.agents/10-rules/GLOBAL-RULES.md` |
+| Coding rules | `.agents/10-rules/CODING-RULES.md` |
+| Configuration rules | `.agents/10-rules/CONFIGURATION-RULES.md` |
+| Core helpers | `.agents/core/README.md` |
+| Drivers | `.agents/drivers/README.md` |
+| Library selection | `.agents/libraries/README.md` |
+| Display | `.agents/libraries/display/README.md` |
+| Input/buttons | `.agents/libraries/input/README.md` |
+| Actuators/motors | `.agents/libraries/actuator/README.md` |
+| Debug/logging | `.agents/libraries/system/README.md` |
+| Timers/timeouts | `.agents/libraries/time/README.md` |
+| Examples | `.agents/examples/README.md` |
+| Compiler wrappers | `.agents/compilers/README.md` |
+| Build/HEX | `.agents/build/TESTING.md` |
+| Documentation | `.agents/docs/DOCUMENTATION.md` |
+| Git workflow | `.agents/workflow/GIT-WORKFLOW.md` |
+| Checklists | `.agents/checklists/CHECKLISTS.md` |
 
 ## Start every task with
 

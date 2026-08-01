@@ -2,6 +2,8 @@
 
 Use this before writing new functionality.
 
+If the task is already covered by a detailed library card, open that card next.
+
 ## Flow
 
 1. Define the requested functionality.
@@ -33,3 +35,4 @@ Get-ChildItem -Recurse -File | Select-String -Pattern "keyword"
 - Need buttons on segment lines -> use `segment_keys` plus `button`.
 - Need DC motor angle control -> use or extend `position_drive`.
 - Need UART console debug -> use `uart_debug` or an application-level callback adapter.
+- Need tick/timeouts -> open `.agents/core/timebase.md` and `.agents/drivers/timers.md`.

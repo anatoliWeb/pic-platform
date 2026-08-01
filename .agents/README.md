@@ -15,6 +15,20 @@ Root entry point: [`AGENTS.md`](../AGENTS.md)
 5. Extend platform code if the logic belongs in `pic-platform`.
 6. Keep project-local code only for device-specific or board-specific logic.
 
+## Map structure
+
+- `00-map/` for repository and architecture context.
+- `10-rules/` for global, coding, and configuration rules.
+- `core/` for shared helper maps.
+- `drivers/` for low-level driver maps.
+- `libraries/` for reusable library maps and detailed cards.
+- `examples/` for example project routes.
+- `compilers/` for XC8/C18 compatibility.
+- `build/` for targeted build and HEX rules.
+- `docs/` for documentation rules.
+- `workflow/` for git workflow.
+- `checklists/` for short task checklists.
+
 ```mermaid
 flowchart TD
     TASK[Identify task] --> MAP[Read root AGENTS.md]
