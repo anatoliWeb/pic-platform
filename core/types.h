@@ -11,7 +11,8 @@ typedef enum
 {
     DRV_STATUS_OK = 0,
     DRV_STATUS_ERROR,
-    DRV_STATUS_TIMEOUT
+    DRV_STATUS_TIMEOUT,
+    DRV_STATUS_UNSUPPORTED
 } drv_status_t;
 
 typedef enum
