@@ -1,15 +1,28 @@
-[Ukrainian version](./position_drive.ua.md)
-
 # Position Drive Library
 
-## Description
+[Ukrainian version](./position_drive.ua.md)
+
+## Purpose
 
 `position_drive` is a non-blocking closed-loop position control library for a DC gear motor with
 a position sensor. It commands the motor direction until the measured position reaches the
-requested target angle.
+requested target angle. The library never touches hardware directly: all hardware access goes
+through callbacks supplied by the application, so the same control logic works with any wiring or
+driver stack.
 
-The library never touches hardware directly. All hardware access goes through callbacks
-supplied by the application, so the same control logic works with any wiring or driver stack.
+## When to Use
+
+- Positioning an arm, valve, camera gimbal, or antenna driven by a DC gear motor.
+- When the position sensor is a potentiometer read through an ADC (first version).
+- When the application loop is non-blocking and must keep running while the motor moves.
+- When you need hard limits, move timeouts, stuck detection, and fail-safe motor off on error.
+
+## Supported Hardware
+
+- MCU: any PIC18 supported by the platform (reference: PIC18F452).
+- Motor: DC gear motor driven by an H-bridge (two direction pins, optional enable/PWM pin).
+- Sensor: potentiometer on an ADC channel (`POSITION_DRIVE_SENSOR_ADC` backend).
+- Time: millisecond tick source (platform `drivers/timers/tick`).
 
 ## Sensor Backends
 
@@ -20,6 +33,9 @@ The sensor backend is selected at compile time through `POSITION_DRIVE_SENSOR_TY
 | `POSITION_DRIVE_SENSOR_ADC` | implemented |
 | `POSITION_DRIVE_SENSOR_ENCODER` | placeholder, `init()` returns `DRV_STATUS_UNSUPPORTED` |
 | `POSITION_DRIVE_SENSOR_NONE` | placeholder, `init()` returns `DRV_STATUS_UNSUPPORTED` |
+
+The encoder backend is reserved for future use. It is not implemented: `init()` returns
+`DRV_STATUS_UNSUPPORTED` instead of silently doing the wrong thing.
 
 ## Public API
 
@@ -58,6 +74,24 @@ Every callback receives the same `context` pointer that the application stored i
 - polarity flip (`direction_inverted`)
 - speed range (`speed_min_percent`, `speed_max_percent`, `speed_default_percent`)
 
+`init()` rejects an invalid config (missing callbacks, empty raw/angle range, zero tolerance,
+zero timeout, speed range out of order) and stops the motor before returning.
+
+## State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Moving: move_to_deg
+    Moving --> TargetReached: within tolerance
+    Moving --> Error: sensor/timeout/stuck
+    TargetReached --> Idle: next command
+    Error --> Idle: clear_error
+    Moving --> Idle: stop
+```
+
+`position_drive_process()` drives the transitions; no application action is required while moving.
+
 ## Control Model
 
 `position_drive_move_to_deg()` schedules an asynchronous move. The application must call
@@ -69,6 +103,27 @@ Every callback receives the same `context` pointer that the application stored i
 4. verifies the sensor keeps moving in the commanded direction
 
 On any error the motor is stopped immediately and the drive enters `POSITION_DRIVE_STATE_ERROR`.
+
+## Raw-to-Angle Conversion
+
+Integer-safe, no float:
+
+```text
+deg = angle_min_deg + ((raw - sensor_raw_min) * (angle_max_deg - angle_min_deg))
+                        / (sensor_raw_max - sensor_raw_min)
+```
+
+`init()` rejects configs where `raw_span * angle_span` overflows `int32_t`, so the conversion
+cannot wrap on PIC18.
+
+## Sensor Calibration
+
+1. Manually move the arm to the mechanical minimum and record the raw ADC value into
+   `sensor_raw_min`.
+2. Move to the mechanical maximum and record the value into `sensor_raw_max`.
+3. Choose `angle_min_deg` / `angle_max_deg` to match the mechanical travel.
+4. Set `target_tolerance_deg` to the smallest deadband that does not oscillate.
+5. If the direction reacts opposite to the wiring, set `direction_inverted = 1`.
 
 ## Compile-Time Options
 
@@ -92,13 +147,81 @@ sees the same value.
 H-bridge motor. A complete MPLAB X project lives in
 `examples-projects/xc8/actuator/position_drive_adc.X`.
 
+## C18 Integration
+
+The library source is compiler-independent and builds with MPLAB C18 through the include stub
+`C18/libraries/actuator/position_drive/position_drive.c`. To use it in a C18 project add that stub
+to `Source Files`, provide the same callbacks as the XC8 example (`read_raw`, `get_tick`,
+`motor`), and forward the timer interrupt to `timer1_irq_handler()`.
+
+A dedicated C18 example project (`examples-projects/c18/actuator/position_drive_adc/`) is planned
+but not generated yet. Do not add a hand-made C18 example that has not been build-verified.
+
+## Proteus Wiring
+
+Wiring and simulation notes are documented in
+`examples-projects/proteus/actuator/position_drive_adc/README.md`.
+
+```mermaid
+flowchart LR
+    POT[Potentiometer] -->|wiper AN0| PIC[PIC18F452]
+    PIC -->|RD0 IN1| DRV[H-Bridge Driver]
+    PIC -->|RD1 IN2| DRV
+    PIC -. RD2 EN/PWM optional .-> DRV
+    DRV --> MOTOR[DC Gear Motor]
+    PIC -->|RC6 TX| VT[Proteus Virtual Terminal RXD]
+```
+
+Key points:
+
+- Potentiometer ends to +5V and GND, wiper to RA0/AN0.
+- H-bridge IN1/IN2 from RD0/RD1; EN/PWM optional on RD2.
+- Motor driver supply per motor voltage, common GND with the PIC.
+- UART TX on RC6 -> Virtual Terminal RXD, 9600 8N1.
+- MCLR pulled up through 10k; VDD/VSS per DIP-40.
+
+## Dependency Graph
+
+```mermaid
+flowchart TD
+    APP[Application] --> PD[position_drive]
+    PD --> GPIO[GPIO driver]
+    PD --> TICK[Tick / time source]
+    PD --> ADC[ADC read callback or ADC driver]
+    PD -. optional .-> UART[UART debug]
+    PD -. optional .-> PWM[PWM driver]
+```
+
 ## Safety Notes
 
 - On `position_drive_init()` the motor is forced to STOP before any validation.
 - A failed init never leaves the motor running.
+- A sensor read failure or out-of-range raw value stops the motor.
 - `position_drive_emergency_stop()` stops motor and PWM immediately and preserves the error state
   for inspection.
 - `position_drive_clear_error()` leaves the error state but never restarts the motor.
+- Timeout and stuck detection stop the motor and latch an error.
+
+## Resource Conflicts
+
+- `Timer1` is owned by `tick`; a position drive project must not assign `Timer1` to another
+  backend.
+- `RA0/AN0` is analog while active; other analog-capable pins stay digital via `ADCON1`.
+- `PORTD` PSP mode must be disabled before `RD0/RD1` are used as H-bridge outputs.
+- Only one sensor backend per project; the ADC backend owns the ADC driver and channel.
+
+## Known Limitations
+
+- No PID; control is bang-bang with deadband and overshoot correction.
+- No dynamic memory, no float math.
+- One target at a time; no path planning.
+- The encoder backend is a placeholder in this version.
+
+## Future Encoder Support
+
+The sensor abstraction (`read_raw` callback) and `POSITION_DRIVE_SENSOR_ENCODER` identifier are
+in place. When an encoder driver exists in the platform, the encoder backend can be implemented
+behind the same callback and state machine without changing the public API.
 
 ## Dependencies
 
@@ -107,8 +230,16 @@ H-bridge motor. A complete MPLAB X project lives in
 - optional ADC sensor via `drivers/analog/adc`
 - optional PWM speed via `drivers/timers/pwm`
 
-## Embedded Constraints
+## Build Flow
 
-- No dynamic memory
-- Integer-only math
-- Small runtime state per instance
+```mermaid
+flowchart TD
+    SRC[C source and headers] --> MPLAB[MPLAB X project]
+    MPLAB --> BUILD[XC8 build]
+    BUILD --> DIST[dist/default/production/*.production.hex]
+    DIST --> ART[examples-projects/hex/xc8/actuator/*.production.hex]
+    ART --> PROTEUS[Proteus simulation]
+```
+
+See [generation workflow](../architecture/generation-workflow.md) for the exact commands and the
+HEX copy mapping.
