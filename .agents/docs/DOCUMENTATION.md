@@ -23,3 +23,5 @@
 
 - Run `python scripts/check_agents_catalog.py` for `.agents/` changes.
 - Do not commit with broken links or orphan cards.
+- Keep canonical cards, category mappers, and `scripts/agents_catalog_manifest.json` aligned.
+- Verify XC8 and C18 source contents before claiming a wrapper or independent route.

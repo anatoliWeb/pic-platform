@@ -13,7 +13,6 @@ docs/libraries/output/software_pwm.md
 docs/libraries/output/software_pwm.ua.md
 examples-projects/xc8/software_pwm.X
 examples-projects/proteus/software_pwm/README.md
-examples-projects/hex/xc8/software_pwm/software_pwm.hex
 ```
 
 ## Use when
@@ -173,12 +172,6 @@ examples-projects/xc8/software_pwm.X
 
 ```text
 examples-projects/proteus/software_pwm/README.md
-```
-
-## HEX artifacts
-
-```text
-examples-projects/hex/xc8/software_pwm/software_pwm.hex
 ```
 
 ## Human documentation

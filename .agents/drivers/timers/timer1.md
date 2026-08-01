@@ -74,10 +74,10 @@ For C18 add:
 C18/drivers/timers/timer1/timer1.c
 
 Do not add together:
-shared timer1.c and the selected wrapper .c
+drivers/timers/timer1/timer1.c and the selected compiler-specific .c
 
 Reason:
-the wrapper includes the shared implementation.
+the shared source dispatches to the compiler-specific implementation.
 ```
 
 ## Required files

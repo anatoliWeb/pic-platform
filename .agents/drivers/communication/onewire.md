@@ -98,8 +98,8 @@ C18/drivers/communication/onewire/onewire.c
 ### Select exactly one route
 
 ```text
-Choose either the shared source or the compiler wrapper route.
-In this repo the wrappers include the shared source, so do not compile both the shared .c and the wrapper .c together.
+Choose either the shared source or the compiler-specific source route.
+The shared source dispatches to the compiler-specific implementation, so do not compile both the shared .c and the selected compiler-specific .c together.
 ```
 
 ## Required files

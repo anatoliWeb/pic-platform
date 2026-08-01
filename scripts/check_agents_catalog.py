@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import json
 import re
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 AGENTS_ROOT = ROOT / ".agents"
+MANIFEST_PATH = Path(__file__).with_name("agents_catalog_manifest.json")
+
+MODULE_ROOTS = ("core", "drivers", "libraries")
 
 IGNORE_CARDS = {
     ".agents/README.md",
@@ -40,93 +45,234 @@ IGNORE_CARDS = {
     ".agents/workflow/GIT-WORKFLOW.md",
 }
 
+IGNORED_PUBLIC_HEADERS = {
+    "core/bit_utils.h",
+    "core/compiler.h",
+    "core/config.h",
+    "core/device.h",
+    "core/debug.h",
+    "core/delay.h",
+    "core/interrupts.h",
+    "core/pic_platform_config.h",
+    "core/types.h",
+    "core/config/platform_config_check.h",
+    "core/config/project_config_template.h",
+    "drivers/_template/template.h",
+    "drivers/timers/timer/timer.h",
+}
+
+NON_STANDALONE_HEADERS = set(IGNORED_PUBLIC_HEADERS)
+HEADER_ONLY_MODULES: set[str] = set()
+CARD_ALIASES = {
+    "tick": ".agents/core/timebase.md",
+}
+
+
+@dataclass(frozen=True)
+class MapperEntry:
+    module: str
+    card: str
+    source: str
+    mapper: str
+
 
 def read_text(path: Path) -> str:
-    return path.read_text(encoding="utf-8", errors="ignore")
+    return path.read_text(encoding="utf-8-sig", errors="ignore")
 
 
-def all_markdown_files() -> list[Path]:
-    return sorted(AGENTS_ROOT.rglob("*.md")) + [ROOT / "AGENTS.md"]
+def rel(path: Path) -> str:
+    return path.relative_to(ROOT).as_posix()
 
 
 def resolve_path(source: Path, target: str) -> Path | None:
     if target.startswith(("http://", "https://")):
         return None
 
-    if target.startswith(".agents/"):
-        candidate = (ROOT / target).resolve()
-        if candidate.exists():
-            return candidate
+    candidates = []
 
-    if target.startswith("AGENTS.md"):
-        candidate = (ROOT / target).resolve()
-        if candidate.exists():
-            return candidate
+    if target.startswith((".agents/", "AGENTS.md")):
+        candidates.append((ROOT / target).resolve())
 
-    candidate = (source.parent / target).resolve()
-    if candidate.exists():
-        return candidate
-
-    candidate = (AGENTS_ROOT / target).resolve()
-    if candidate.exists():
-        return candidate
-
-    candidate = (ROOT / target).resolve()
-    if candidate.exists():
-        return candidate
+    candidates.append((source.parent / target).resolve())
+    candidates.append((AGENTS_ROOT / target).resolve())
+    candidates.append((ROOT / target).resolve())
 
     if target.startswith("../"):
-        candidate = (source.parent / target).resolve()
+        candidates.append((source.parent / target).resolve())
+
+    for candidate in candidates:
         if candidate.exists():
             return candidate
 
     return None
 
 
-def extract_references(text: str) -> list[str]:
-    refs = []
-    refs.extend(re.findall(r"\(([^)]+?\.md)\)", text))
-    return refs
+MARKDOWN_LINK_RE = re.compile(r"\(([^)]+?\.md(?:[A-Za-z0-9_.-]*)?)\)")
+REPO_PATH_RE = re.compile(
+    r"(?<![A-Za-z0-9_])((?:\.\.?[\\/])?(?:[A-Za-z0-9_.-]+[\\/])+[A-Za-z0-9_.-]+\.(?:ua\.md|hex|md|txt|c|h))"
+)
+INCLUDE_RE = re.compile(r"^\s*#include\s+[\"<]([^\">]+)[\">]", re.MULTILINE)
+
+
+def extract_markdown_refs(text: str) -> list[str]:
+    return MARKDOWN_LINK_RE.findall(text)
+
+
+def extract_repo_paths(text: str) -> list[str]:
+    return REPO_PATH_RE.findall(text)
+
+
+def extract_includes(text: str) -> list[str]:
+    return INCLUDE_RE.findall(text)
+
+
+def is_ignored_header(path: Path) -> bool:
+    return rel(path) in NON_STANDALONE_HEADERS
+
+
+def discover_headers() -> list[Path]:
+    headers: list[Path] = []
+    for root_name in MODULE_ROOTS:
+        root = ROOT / root_name
+        if not root.exists():
+            continue
+        for header in root.rglob("*.h"):
+            if is_ignored_header(header):
+                continue
+            headers.append(header)
+    return sorted(headers)
+
+
+def module_name_from_header(header: Path) -> str:
+    if header.parent == ROOT / "core":
+        return header.stem
+    return header.parent.name
+
+
+def parse_mapper_table(path: Path) -> list[MapperEntry]:
+    text = read_text(path)
+    if "Detailed card" not in text:
+        return []
+
+    entries: list[MapperEntry] = []
+    for line in text.splitlines():
+        if not line.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) < 4:
+            continue
+        if cells[0] == "Need" or set(cells[0]) == {"-"}:
+            continue
+
+        module_cell = cells[1].replace("`", "")
+        card_cell = cells[2].replace("`", "")
+        source_cell = cells[3].replace("`", "")
+
+        modules = [item.strip() for item in module_cell.split(",") if item.strip()]
+        cards = [item.strip() for item in card_cell.split(",") if item.strip()]
+
+        if not modules or not cards:
+            continue
+
+        if len(cards) == 1 and len(modules) > 1:
+            cards = cards * len(modules)
+
+        if len(cards) != len(modules):
+            continue
+
+        for module, card in zip(modules, cards):
+            entries.append(
+                MapperEntry(
+                    module=module,
+                    card=card,
+                    source=source_cell,
+                    mapper=rel(path),
+                )
+            )
+
+    return entries
+
+
+def load_mapper_index() -> dict[str, MapperEntry]:
+    index: dict[str, MapperEntry] = {}
+    for path in sorted(AGENTS_ROOT.rglob("README.md")):
+        for entry in parse_mapper_table(path):
+            index.setdefault(entry.module, entry)
+    return index
+
+
+def resolve_card_path(module: str) -> Path | None:
+    alias = CARD_ALIASES.get(module)
+    if alias is not None:
+        candidate = ROOT / alias
+        if candidate.exists():
+            return candidate
+
+    matches = sorted(AGENTS_ROOT.rglob(f"{module}.md"))
+    if len(matches) == 1:
+        return matches[0]
+
+    return None
+
+
+def load_manifest() -> dict[str, dict[str, str]]:
+    if not MANIFEST_PATH.exists():
+        return {}
+    return json.loads(read_text(MANIFEST_PATH))
+
+
+def classify_shared_source(path: Path) -> str:
+    if not path.exists():
+        return "absent"
+
+    text = read_text(path)
+    includes = extract_includes(text)
+    if any("XC8/" in item or "C18/" in item for item in includes):
+        return "dispatcher"
+    if "#if defined(DRV_COMPILER_C18)" in text or "#if defined(DRV_COMPILER_XC8)" in text:
+        return "dispatcher"
+    return "implementation"
+
+
+def includes_shared_source(source_text: str, shared_source: Path) -> bool:
+    shared_rel = shared_source.relative_to(ROOT).as_posix()
+    for include in extract_includes(source_text):
+        normalized = include.replace("\\", "/")
+        while normalized.startswith("../"):
+            normalized = normalized[3:]
+        if normalized.startswith("./"):
+            normalized = normalized[2:]
+        if normalized == shared_rel:
+            return True
+    return False
+
+
+def classify_compiler_source(path: Path, shared_source: Path | None) -> str:
+    if not path.exists():
+        return "absent"
+
+    if shared_source is not None and includes_shared_source(read_text(path), shared_source):
+        return "include-wrapper"
+
+    return "independent"
 
 
 def validate_links() -> list[str]:
     errors: list[str] = []
-    for path in all_markdown_files():
+
+    for path in [ROOT / "AGENTS.md", *AGENTS_ROOT.rglob("*.md")]:
         text = read_text(path)
-        for ref in extract_references(text):
+
+        for ref in extract_markdown_refs(text):
             resolved = resolve_path(path, ref)
             if resolved is None:
-                errors.append(f"broken link: {path.relative_to(ROOT)} -> {ref}")
-    return errors
+                errors.append(f"broken link: {rel(path)} -> {ref}")
 
+        for ref in extract_repo_paths(text):
+            resolved = resolve_path(path, ref)
+            if resolved is None:
+                errors.append(f"broken path: {rel(path)} -> {ref}")
 
-def referenced_cards() -> set[str]:
-    search_space = []
-    for path in all_markdown_files():
-        search_space.append(read_text(path))
-    haystack = "\n".join(search_space)
-
-    cards = set()
-    for path in AGENTS_ROOT.rglob("*.md"):
-        rel = path.relative_to(ROOT).as_posix()
-        if rel in IGNORE_CARDS:
-            continue
-        if path.name == "README.md":
-            continue
-        if rel in haystack:
-            cards.add(rel)
-    return cards
-
-
-def orphan_cards() -> list[str]:
-    errors: list[str] = []
-    haystack = "\n".join(read_text(path) for path in all_markdown_files())
-    for path in AGENTS_ROOT.rglob("*.md"):
-        rel = path.relative_to(ROOT).as_posix()
-        if path.name == "README.md" or rel in IGNORE_CARDS:
-            continue
-        if rel not in haystack:
-            errors.append(f"orphan card: {rel}")
     return errors
 
 
@@ -134,10 +280,109 @@ def validate_root_agents() -> list[str]:
     errors: list[str] = []
     text = read_text(ROOT / "AGENTS.md")
     for ref in re.findall(r"`([^`]+?\.md)`", text):
-        if ref.startswith(".agents/") or ref.startswith("AGENTS.md"):
-            resolved = resolve_path(ROOT / "AGENTS.md", ref)
-            if resolved is None:
-                errors.append(f"broken root link: {ref}")
+        if ref.startswith((".agents/", "AGENTS.md")) and resolve_path(ROOT / "AGENTS.md", ref) is None:
+            errors.append(f"broken root link: {ref}")
+    return errors
+
+
+def validate_cards_and_modules() -> tuple[list[str], int]:
+    errors: list[str] = []
+    mapper_index = load_mapper_index()
+    discovered_headers = discover_headers()
+    checked = 0
+    haystack = "\n".join(read_text(path) for path in [ROOT / "AGENTS.md", *AGENTS_ROOT.rglob("*.md")])
+
+    for header in discovered_headers:
+        module = module_name_from_header(header)
+        entry = mapper_index.get(module)
+        card_path: Path | None = None
+
+        if entry is None:
+            if module in HEADER_ONLY_MODULES:
+                continue
+            card_path = resolve_card_path(module)
+            if card_path is None:
+                errors.append(f"missing mapper entry: {module}")
+                continue
+            if rel(card_path) not in haystack:
+                errors.append(f"missing mapper entry: {module}")
+                continue
+        else:
+            card_path = ROOT / entry.card
+
+        checked += 1
+        if not card_path.exists():
+            errors.append(f"missing card: {rel(header)}")
+            continue
+
+        card_text = read_text(card_path)
+        header_rel = rel(header)
+        if header_rel not in card_text:
+            card_label = entry.card if entry is not None else rel(card_path)
+            errors.append(f"card header mismatch: {card_label} -> {header_rel}")
+
+    return errors, checked
+
+
+def validate_manifest() -> tuple[list[str], int]:
+    errors: list[str] = []
+    manifest = load_manifest()
+    checked = 0
+
+    for module, entry in manifest.items():
+        checked += 1
+        header = ROOT / entry["header"]
+        card = ROOT / entry["card"]
+        mapper = ROOT / entry["mapper"]
+
+        for label, path in (("header", header), ("card", card), ("mapper", mapper)):
+            if not path.exists():
+                errors.append(f"missing {label} path: {entry[label]}")
+
+        if card.exists() and entry["header"] not in read_text(card):
+            errors.append(f"card header mismatch: {entry['card']} -> {entry['header']}")
+
+        shared_source = ROOT / entry["shared_source"] if entry.get("shared_source") else None
+        xc8_source = ROOT / entry["xc8_source"] if entry.get("xc8_source") else None
+        c18_source = ROOT / entry["c18_source"] if entry.get("c18_source") else None
+
+        if shared_source is not None and not shared_source.exists():
+            errors.append(f"missing source path: {entry['shared_source']}")
+        if xc8_source is not None and not xc8_source.exists():
+            errors.append(f"missing source path: {entry['xc8_source']}")
+        if c18_source is not None and not c18_source.exists():
+            errors.append(f"missing source path: {entry['c18_source']}")
+
+        if shared_source is not None and shared_source.exists():
+            shared_actual = classify_shared_source(shared_source)
+            shared_declared = entry.get("shared_pattern")
+            if shared_declared and shared_actual != shared_declared:
+                errors.append(f"route mismatch: {module} shared declared {shared_declared} but source is {shared_actual}")
+
+        if xc8_source is not None:
+            xc8_actual = classify_compiler_source(xc8_source, shared_source)
+            xc8_declared = entry.get("xc8_pattern", "absent")
+            if xc8_actual != xc8_declared:
+                errors.append(f"route mismatch: {module} XC8 declared {xc8_declared} but source is {xc8_actual}")
+
+        if c18_source is not None:
+            c18_actual = classify_compiler_source(c18_source, shared_source)
+            c18_declared = entry.get("c18_pattern", "absent")
+            if c18_actual != c18_declared:
+                errors.append(f"route mismatch: {module} C18 declared {c18_declared} but source is {c18_actual}")
+
+    return errors, checked
+
+
+def orphan_cards() -> list[str]:
+    errors: list[str] = []
+    haystack = "\n".join(read_text(path) for path in [ROOT / "AGENTS.md", *AGENTS_ROOT.rglob("*.md")])
+    for path in AGENTS_ROOT.rglob("*.md"):
+        rel_path = rel(path)
+        if path.name == "README.md" or rel_path in IGNORE_CARDS:
+            continue
+        if rel_path not in haystack:
+            errors.append(f"orphan card: {rel_path}")
     return errors
 
 
@@ -145,14 +390,19 @@ def main() -> int:
     errors: list[str] = []
     errors.extend(validate_root_agents())
     errors.extend(validate_links())
-    errors.extend(orphan_cards())
+    module_errors, module_count = validate_cards_and_modules()
+    errors.extend(module_errors)
+    route_errors, route_count = validate_manifest()
+    errors.extend(route_errors)
 
     if errors:
-        for err in errors:
-            print(err)
+        for error in errors:
+            print(error)
         return 1
 
     print("agents catalog ok")
+    print(f"modules checked: {module_count}")
+    print(f"routes checked: {route_count}")
     return 0
 
 

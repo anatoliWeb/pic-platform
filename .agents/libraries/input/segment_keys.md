@@ -52,13 +52,13 @@ libraries/input/segment_keys/segment_keys.h
 libraries/input/segment_keys/segment_keys.c
 ```
 
-### XC8 wrapper files
+### XC8 implementation/wrapper
 
 ```text
 XC8/libraries/input/segment_keys/segment_keys.c
 ```
 
-### C18 wrapper files
+### C18 implementation/wrapper
 
 ```text
 C18/libraries/input/segment_keys/segment_keys.c
@@ -138,3 +138,18 @@ docs/libraries/input/segment_keys.ua.md
 ## AI decision rule
 
 Do not create a project-local segment-key scanner if `segment_keys` already fits. Extend `segment_keys` or app-level mapping only if needed.
+### Select exactly one route
+
+```text
+For XC8 add:
+XC8/libraries/input/segment_keys/segment_keys.c
+
+For C18 add:
+C18/libraries/input/segment_keys/segment_keys.c
+
+Do not add together:
+libraries/input/segment_keys/segment_keys.c and the selected wrapper .c
+
+Reason:
+the wrapper already compiles the shared implementation.
+```

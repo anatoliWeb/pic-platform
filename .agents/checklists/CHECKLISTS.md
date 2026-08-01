@@ -59,3 +59,5 @@
 
 - Run `python scripts/check_agents_catalog.py` after editing `.agents/`.
 - Fix broken links and orphan cards before commit.
+- Update the route manifest and canonical card before changing compiler route claims.
+- Run the targeted checker tests when catalog behavior changes.

@@ -76,10 +76,10 @@ For C18 add:
 C18/libraries/display/seven_segment_mux/seven_segment_mux.c
 
 Do not add together:
-shared seven_segment_mux.c and the selected wrapper .c
+libraries/display/seven_segment_mux/seven_segment_mux.c and the selected compiler-specific .c
 
 Reason:
-the wrapper includes the shared implementation.
+the shared source dispatches to the compiler-specific implementation.
 ```
 
 ## Required files

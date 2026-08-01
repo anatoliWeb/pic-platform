@@ -63,6 +63,45 @@ XC8/libraries/system/uart_debug/uart_debug.c
 C18/libraries/system/uart_debug/uart_debug.c
 ```
 
+## Source inclusion strategy
+
+### Shared implementation
+
+```text
+libraries/system/uart_debug/uart_debug.c
+```
+
+### XC8 implementation
+
+```text
+XC8/libraries/system/uart_debug/uart_debug.c
+```
+
+### C18 implementation
+
+```text
+C18/libraries/system/uart_debug/uart_debug.c
+```
+
+### Select exactly one route
+
+```text
+For XC8 add:
+XC8/libraries/system/uart_debug/uart_debug.c
+
+For C18 add:
+C18/libraries/system/uart_debug/uart_debug.c
+
+Shared route:
+libraries/system/uart_debug/uart_debug.c
+
+Do not add together:
+shared uart_debug.c and the selected compiler-specific .c
+
+Reason:
+the shared source dispatches to the compiler-specific implementation.
+```
+
 ## Dependencies
 
 ```text

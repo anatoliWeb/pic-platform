@@ -66,6 +66,45 @@ XC8/libraries/input/button/button.c
 C18/libraries/input/button/button.c
 ```
 
+## Source inclusion strategy
+
+### Shared implementation
+
+```text
+libraries/input/button/button.c
+```
+
+### XC8 implementation
+
+```text
+XC8/libraries/input/button/button.c
+```
+
+### C18 implementation
+
+```text
+C18/libraries/input/button/button.c
+```
+
+### Select exactly one route
+
+```text
+For XC8 add:
+XC8/libraries/input/button/button.c
+
+For C18 add:
+C18/libraries/input/button/button.c
+
+Shared route:
+libraries/input/button/button.c
+
+Do not add together:
+shared button.c and the selected compiler-specific .c
+
+Reason:
+the compiler-specific sources are independent implementations of the same API.
+```
+
 ## Dependencies
 
 ```text

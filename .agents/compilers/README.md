@@ -7,4 +7,5 @@
 
 ## Status
 
-Only compilers supported by the repo should be documented.
+Document only supported compilers.
+Keep route tables exact, with one row per verified module or one grouped row for identical verified routes.

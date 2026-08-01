@@ -67,13 +67,13 @@ libraries/display/seven_segment/seven_segment.h
 libraries/display/seven_segment/seven_segment.c
 ```
 
-### XC8 wrapper files
+### XC8 implementation
 
 ```text
 XC8/libraries/display/seven_segment/seven_segment.c
 ```
 
-### C18 wrapper files
+### C18 implementation
 
 ```text
 C18/libraries/display/seven_segment/seven_segment.c
@@ -162,3 +162,18 @@ docs/libraries/display/seven_segment.ua.md
 ## AI decision rule
 
 When a task needs a seven-segment display, use or extend this library instead of creating a project-local display engine.
+### Select exactly one route
+
+```text
+For XC8 add:
+XC8/libraries/display/seven_segment/seven_segment.c
+
+For C18 add:
+C18/libraries/display/seven_segment/seven_segment.c
+
+Do not add together:
+libraries/display/seven_segment/seven_segment.c and the selected compiler-specific .c
+
+Reason:
+the compiler-specific sources are independent implementations of the same API.
+```

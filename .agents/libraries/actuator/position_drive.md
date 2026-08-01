@@ -68,13 +68,13 @@ libraries/actuator/position_drive/position_drive.c
 libraries/actuator/position_drive/example.c
 ```
 
-### XC8 wrapper files
+### XC8 implementation/wrapper
 
 ```text
 XC8/libraries/actuator/position_drive/position_drive.c
 ```
 
-### C18 wrapper files
+### C18 implementation/wrapper
 
 ```text
 C18/libraries/actuator/position_drive/position_drive.c
@@ -181,3 +181,18 @@ docs/libraries/actuator/position_drive.ua.md
 ## AI decision rule
 
 When requested functionality overlaps with this library, MUST use or extend this library instead of creating project-local duplicate code.
+### Select exactly one route
+
+```text
+For XC8 add:
+XC8/libraries/actuator/position_drive/position_drive.c
+
+For C18 add:
+C18/libraries/actuator/position_drive/position_drive.c
+
+Do not add together:
+libraries/actuator/position_drive/position_drive.c and the selected wrapper .c
+
+Reason:
+the wrapper already compiles the shared implementation.
+```

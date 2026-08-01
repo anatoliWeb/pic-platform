@@ -72,10 +72,10 @@ For C18 add:
 C18/drivers/analog/comparator/comparator.c
 
 Do not add together:
-shared comparator.c and the selected wrapper .c
+drivers/analog/comparator/comparator.c and the selected compiler-specific .c
 
 Reason:
-the wrapper already compiles the shared implementation and adding both can produce duplicate symbols.
+the shared source dispatches to the compiler-specific implementation.
 ```
 
 ## Required files
