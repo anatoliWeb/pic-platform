@@ -327,5 +327,143 @@ class CheckAgentsCatalogTests(unittest.TestCase):
         self.assertEqual(calls, [1])
 
 
+class CompilerSourceDiscoveryTests(unittest.TestCase):
+    """regression: only compiler `.c` translation units count as sources."""
+
+    def setUp(self) -> None:
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.root = Path(self.tempdir.name)
+        self.agents = self.root / ".agents"
+
+        self.original_root = checker.ROOT
+        self.original_agents_root = checker.AGENTS_ROOT
+        self.original_manifest_path = checker.MANIFEST_PATH
+        checker.ROOT = self.root
+        checker.AGENTS_ROOT = self.agents
+        checker.MANIFEST_PATH = self.root / "scripts" / "agents_catalog_manifest.json"
+
+    def tearDown(self) -> None:
+        checker.ROOT = self.original_root
+        checker.AGENTS_ROOT = self.original_agents_root
+        checker.MANIFEST_PATH = self.original_manifest_path
+        self.tempdir.cleanup()
+
+    def checker_manifest_path(self) -> Path:
+        return self.root / "scripts" / "agents_catalog_manifest.json"
+
+    def write_manifest(self, manifest: dict[str, dict[str, str]]) -> None:
+        write(self.checker_manifest_path(), json.dumps(manifest, indent=2))
+
+    def demo_manifest(self, pattern: str, kind: str) -> dict[str, dict[str, str]]:
+        entry: dict[str, str] = {
+            "header": "core/demo.h",
+            "card": ".agents/core/demo.md",
+            "mapper": ".agents/core/README.md",
+        }
+        entry[f"{kind.lower()}_pattern"] = pattern
+        return {"demo": entry}
+
+    def write_core_mapper_with_demo(self) -> None:
+        write(
+            self.agents / "core" / "README.md",
+            "# Core\n\n| Need | Module | Detailed card | Source | Status |\n|---|---|---|---|---|\n| demo | `demo` | `.agents/core/demo.md` | `core/demo.h` | detailed |\n",
+        )
+        write(self.agents / "core" / "demo.md", "# demo\n\n```text\ncore/demo.h\n```\n")
+
+    def test_compiler_header_does_not_count_as_source(self) -> None:
+        write(self.root / "AGENTS.md", "- `.agents/core/README.md`\n")
+        write(self.root / "core" / "demo.h", "#pragma once\n")
+        write(self.root / "XC8" / "core" / "demo.h", "#pragma once\n")
+        write(self.root / "C18" / "core" / "demo.h", "#pragma once\n")
+        self.write_core_mapper_with_demo()
+
+        manifest = self.demo_manifest("absent", "xc8")
+        manifest["demo"]["c18_pattern"] = "absent"
+        write(self.checker_manifest_path(), json.dumps(manifest, indent=2))
+
+        errors, routes = checker.validate_manifest()
+        self.assertEqual(errors, [])
+        self.assertEqual(routes, 1)
+
+    def test_absent_route_fails_when_compiler_c_exists(self) -> None:
+        write(self.root / "core" / "demo.h", "#pragma once\n")
+        write(self.root / "XC8" / "core" / "demo.c", "void demo_xc8(void) {}\n")
+        self.write_core_mapper_with_demo()
+
+        manifest = self.demo_manifest("absent", "xc8")
+        self.write_manifest(manifest)
+
+        errors, _ = checker.validate_manifest()
+        self.assertTrue(any("route mismatch: demo XC8" in error for error in errors))
+
+    def test_ambiguous_compiler_c_detected(self) -> None:
+        write(self.root / "core" / "demo.h", "#pragma once\n")
+        write(self.root / "core" / "shared.c", "void shared(void) {}\n")
+        write(self.root / "XC8" / "core" / "demo.c", "void demo_xc8(void) {}\n")
+        write(self.root / "XC8" / "core" / "shared.c", "void shared_xc8(void) {}\n")
+        self.write_core_mapper_with_demo()
+
+        manifest = self.demo_manifest("absent", "xc8")
+        manifest["demo"]["shared_source"] = "core/shared.c"
+        self.write_manifest(manifest)
+
+        errors, _ = checker.validate_manifest()
+        self.assertTrue(any("ambiguous XC8 source: demo" in error for error in errors))
+
+
+class MapperRowTests(unittest.TestCase):
+    """regression: module vs core/Open mapper layouts are validated strictly."""
+
+    def setUp(self) -> None:
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.root = Path(self.tempdir.name)
+        self.agents = self.root / ".agents"
+
+        self.original_root = checker.ROOT
+        self.original_agents_root = checker.AGENTS_ROOT
+        self.original_manifest_path = checker.MANIFEST_PATH
+        checker.ROOT = self.root
+        checker.AGENTS_ROOT = self.agents
+        checker.MANIFEST_PATH = self.root / "scripts" / "agents_catalog_manifest.json"
+
+    def tearDown(self) -> None:
+        checker.ROOT = self.original_root
+        checker.AGENTS_ROOT = self.original_agents_root
+        checker.MANIFEST_PATH = self.original_manifest_path
+        self.tempdir.cleanup()
+
+    def test_wrong_module_in_standard_mapper_row_passes_not_on_card(self) -> None:
+        mapper = self.agents / "core" / "README.md"
+        write(
+            mapper,
+            "# Core\n\n| Need | Module | Detailed card | Source | Status |\n|---|---|---|---|---|\n| demo need | `other_module` | `.agents/core/demo.md` | `core/demo.h` | detailed |\n",
+        )
+
+        reason = checker.mapper_row_membership(mapper, "demo", ".agents/core/demo.md", "core/demo.h")
+        self.assertIsNotNone(reason)
+        self.assertIn("manifest mapper mismatch", reason)
+
+    def test_core_open_mapper_passes_without_module_column(self) -> None:
+        mapper = self.agents / "core" / "README.md"
+        write(
+            mapper,
+            "# Core\n\n| Need | Open | Decision note |\n|---|---|---|\n| Compiler abstraction | `.agents/core/compiler.md` | keep single |\n",
+        )
+
+        reason = checker.mapper_row_membership(mapper, "compiler", ".agents/core/compiler.md", "core/compiler.h")
+        self.assertIsNone(reason)
+
+    def test_prose_only_card_mention_is_rejected(self) -> None:
+        mapper = self.agents / "core" / "README.md"
+        write(
+            mapper,
+            "# Core\n\nSee `.agents/core/demo.md` discussed in prose, no table.\n",
+        )
+
+        reason = checker.mapper_row_membership(mapper, "demo", ".agents/core/demo.md", "core/demo.h")
+        self.assertIsNotNone(reason)
+        self.assertIn("manifest mapper mismatch", reason)
+
+
 if __name__ == "__main__":
     unittest.main()

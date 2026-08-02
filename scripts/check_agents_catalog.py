@@ -201,13 +201,11 @@ def _candidate_compiler_paths(entry: dict[str, str]) -> list[Path]:
         if candidate.suffix:
             candidate = candidate.with_suffix(".c")
         result.append(candidate)
-        result.append(Path(shared))
 
     header_rel = entry.get("header")
     if header_rel:
         hp = Path(header_rel)
         result.append(hp.parent / f"{hp.stem}.c")
-        result.append(hp)
 
     return sorted({p for p in result if str(p)})
 
@@ -233,9 +231,6 @@ def discover_compiler_sources(entry: dict[str, str], kind: str) -> tuple[list[st
         sibling = root / rel_dir / f"{module}.c"
         if sibling.exists():
             existing.add(sibling.resolve())
-        sibling_hdr = root / rel_dir / f"{module}.h"
-        if sibling_hdr.exists():
-            existing.add(sibling_hdr.resolve())
 
     found = sorted(str(p) for p in existing)
     ambiguous = len(found) > 1
@@ -330,6 +325,87 @@ def _row_cards(row: list[str]) -> list[str]:
             if ref not in cards:
                 cards.append(ref)
     return cards
+
+
+def _row_source_mismatch(row: list[str], module: str, header: str) -> str | None:
+    """Report a source/header conflict if a row names a different C/H file."""
+    for cell in row:
+        compact = cell.replace("`", "").strip()
+        if compact.startswith(("core/", "drivers/", "libraries/")) and compact.endswith((".h", ".c")):
+            if compact != header:
+                return f"manifest source mismatch: {module} mapper lists {compact} vs manifest header {header}"
+    return None
+
+
+def _table_rows(path: Path) -> list[list[str]]:
+    return [
+        [cell.strip() for cell in line.strip().strip("|").split("|")]
+        for line in read_text(path).splitlines()
+        if line.lstrip().startswith("|")
+    ]
+
+
+def _find_module_column(table_rows: list[list[str]]) -> int | None:
+    """Locate the `Module` column index in a four-column module mapper."""
+    for row in table_rows:
+        for index, cell in enumerate(row):
+            if cell.strip().lower() == "module":
+                return index
+    return None
+
+
+def _module_values(cell: str) -> list[str]:
+    compact = cell.replace("`", "").strip()
+    return [item.strip().removesuffix(" driver") for item in compact.split(",") if item.strip()]
+
+
+def mapper_row_membership(path: Path, module: str, card: str, header: str) -> str | None:
+    """Strict mapper membership check.
+
+    Two layouts are supported:
+
+    A. Standard module mapper (a `Module` column exists): a row is valid only
+       when it names the exact module and points at the exact manifest card, with
+       any source column agreeing with the manifest header.
+
+    B. Core/Open navigation mapper (no module column): valid when a table row
+       points at the exact card and any source path in the row agrees with the
+       manifest header.
+
+    Prose-only card mentions never satisfy either layout. Returns None on
+    success, otherwise a card mismatch (row present under a different card or in
+    the wrong module column) or a plain mapper mismatch (module never listed).
+    """
+    table_rows = _table_rows(path)
+    module_col = _find_module_column(table_rows)
+
+    if module_col is not None:
+        for row in table_rows:
+            if module_col >= len(row):
+                continue
+            modules = _module_values(row[module_col])
+            if not modules:
+                continue
+            wildcard = any(" " in value for value in modules)
+            if not wildcard and module not in modules:
+                continue
+            if card not in _row_cards(row):
+                if wildcard:
+                    continue
+                return f"manifest card mismatch: {module} mapper points to a different card in {rel(path)}"
+            if (reason := _row_source_mismatch(row, module, header)) is not None:
+                return reason
+            return None
+        return f"manifest mapper mismatch: {module} not listed in {rel(path)}"
+
+    for row in table_rows:
+        if card not in _row_cards(row):
+            continue
+        if (reason := _row_source_mismatch(row, module, header)) is not None:
+            return reason
+        return None
+
+    return f"manifest mapper mismatch: {module} not listed in {rel(path)}"
 
 
 def load_mapper_index() -> dict[str, MapperEntry]:
@@ -542,9 +618,7 @@ def validate_manifest() -> tuple[list[str], int]:
     return errors, checked
 
 
-def validate_manifest_completeness(
-    public_headers: int,
-) -> tuple[list[str], int, int, int]:
+def validate_manifest_completeness() -> tuple[list[str], int, int, int]:
     errors: list[str] = []
     modules, collisions = discover_modules()
     errors.extend(collisions)
@@ -588,9 +662,7 @@ def main() -> int:
     route_errors, route_count = validate_manifest()
     errors.extend(route_errors)
 
-    completeness_errors, module_count, manifest_count, exempt_count = validate_manifest_completeness(
-        headers_checked
-    )
+    completeness_errors, module_count, manifest_count, exempt_count = validate_manifest_completeness()
     errors.extend(completeness_errors)
 
     orphan_errors = orphan_cards()
