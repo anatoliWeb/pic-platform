@@ -1,13 +1,29 @@
-# debug_disabled XC8 приклад
+# debug_disabled приклад для XC8
+
+[English version](./README.md)
 
 ## Призначення
 
-Показує, що debug API компілюється при `DRV_DEBUG_ENABLE=0`.
+Показує, що debug API компілюється, а всі виклики `debug_*` стають no-op,
+коли `DRV_DEBUG_ENABLE=0`.
 
-## Апаратна частина
+## Обрані налаштування
 
-- PIC18F452
-- Debug hardware не потрібне
+У `project_config.h`:
+
+| Define | Значення |
+| --- | ---: |
+| `DRV_DEBUG_ENABLE` | `0` |
+
+При `DRV_DEBUG_ENABLE=0` фасад, усі backend-и та всі debug-залежності
+компілюються повністю. `debug.c` відсутній у списку джерел, тому в образ не
+потрапляє жоден UART/I2C/LCD/GPIO backend-код.
+
+## Source isolation
+
+Цей приклад складається лише з `main.c`, `config_bits.c` і `core/delay.c`.
+Жоден файл `libraries/system/debug/*` не компілюється. Точний список джерел у
+`nbproject/configurations.xml`.
 
 ## Збірка
 
@@ -18,4 +34,6 @@
 
 ## Очікуваний результат
 
-Проєкт збирається, а всі debug-виклики стають no-op.
+Проєкт збирається чисто. Виклики debug залишаються у вихідному коді, але
+компілюються в no-op, тому не потрібні ні debug-пристрій, ні backend-залежності.
+backend-залежностей.

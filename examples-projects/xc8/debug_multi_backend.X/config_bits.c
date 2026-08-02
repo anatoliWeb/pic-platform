@@ -1,5 +1,5 @@
 /*
- * File: examples-projects/xc8/uart_debug.X/config_bits.c
+ * File: examples-projects/xc8/debug_multi_backend.X/config_bits.c
  */
 
 #include <xc.h>

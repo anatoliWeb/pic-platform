@@ -9,18 +9,18 @@
 
 void main(void)
 {
-    uint16_t tick = 0u;
+    uint16_t counter = 0u;
 
     debug_init();
     debug_write_line("BOOT");
 
     while (1)
     {
-        debug_write("tick=");
-        debug_write_u16(tick);
+        debug_write("counter=");
+        debug_write_u16(counter);
         debug_write_line("");
 
-        tick++;
+        counter++;
         DRV_DELAY_MS(1000u);
     }
 }

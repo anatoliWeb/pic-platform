@@ -45,6 +45,15 @@ docs/libraries/system/debug.ua.md
 - `debug_multi_backend.X`: `main.c`, `config_bits.c`, `core/delay.c`, `drivers/communication/uart/uart.c`, `drivers/communication/i2c/i2c.c`, `drivers/gpio/gpio.c`, `libraries/system/debug/debug.c`
 - `debug_disabled.X`: `main.c`, `config_bits.c`, `core/delay.c`
 
+## Quick start examples
+
+- **UART**: `examples-projects/xc8/debug_default_uart.X` — default UART backend,
+  RC6/TX pin 25, RC7/RX pin 26, 9600 8N1.
+- **LCD 2x16 I2C**: `examples-projects/xc8/debug_display_i2c.X` — DISPLAY
+  backend over PCF8574, SCL RC3/pin 18, SDA RC4/pin 23, addr `0x27`.
+- **GPIO blink/signals**: `examples-projects/xc8/debug_pins_gpio.X` — PINS
+  backend on PORTC0..3 (LED via 330..1000 ohm resistor per channel).
+
 ## Public API
 
 `debug_init`, `debug_clear`, `debug_write`, `debug_write_line`,

@@ -23,9 +23,10 @@ Windows build route:
 "C:\Program Files\Microchip\MPLABX\v6.30\gnuBins\GnuWin32\bin\make.exe" -f nbproject\Makefile-default.mk SUBPROJECTS= .build-conf
 ```
 
-Generated hex:
-
-`dist/default/production/uart_debug.X.production.hex`
+Each example builds to its own hex artifact, for example
+`dist/default/production/debug_default_uart.X.production.hex`. The exact output
+name is derived by MPLAB X from the project folder (`*.X`) and the active
+configuration (`default`, `production`).
 
 ## Defaults
 
@@ -67,6 +68,42 @@ Validation is compile-time only. Boolean defines must be `0` or `1`.
 | `debug_pins_gpio.X` | `main.c`, `config_bits.c`, `core/delay.c`, `drivers/gpio/gpio.c`, `libraries/system/debug/debug.c` |
 | `debug_multi_backend.X` | `main.c`, `config_bits.c`, `core/delay.c`, `drivers/communication/uart/uart.c`, `drivers/communication/i2c/i2c.c`, `drivers/gpio/gpio.c`, `libraries/system/debug/debug.c` |
 | `debug_disabled.X` | `main.c`, `config_bits.c`, `core/delay.c` |
+
+## Quick start examples
+
+Three small projects demonstrate the main debug backends. Each project compiles
+only the sources of its selected backend.
+
+### 1. UART
+
+| Item | Value |
+| --- | --- |
+| Project | `examples-projects/xc8/debug_default_uart.X` |
+| Selected defines | `DRV_DEBUG_BACKEND_UART=1` (default backend) |
+| Hardware | PIC18F452, RC6/TX pin 25, RC7/RX pin 26, 9600 8N1 |
+| Expected | `BOOT` then `counter=` printed every second |
+
+### 2. LCD 2x16 I2C
+
+| Item | Value |
+| --- | --- |
+| Project | `examples-projects/xc8/debug_display_i2c.X` |
+| Selected defines | `DRV_DEBUG_BACKEND_DISPLAY=1`, `DRV_DEBUG_DISPLAY_INTERFACE_I2C=1`, `DRV_DEBUG_DISPLAY_I2C_ADDR=0x27` |
+| Hardware | LCD 2x16 + PCF8574, SCL RC3/pin 18, SDA RC4/pin 23, pull-ups |
+| Expected | `SYSTEM OK` on row 1, `COUNT=<value>` on row 2 |
+
+### 3. GPIO blink / signals
+
+| Item | Value |
+| --- | --- |
+| Project | `examples-projects/xc8/debug_pins_gpio.X` |
+| Selected defines | `DRV_DEBUG_BACKEND_PINS=1`, `DRV_DEBUG_PINS_INTERFACE_GPIO=1`, `DRV_DEBUG_PINS_PORT=PORTC`, `DRV_DEBUG_PINS_START_BIT=0`, `DRV_DEBUG_PINS_CHANNEL_COUNT=4` |
+| Hardware | LED + 330-1000 ohm resistor per channel on PORTC0..3 |
+| Expected | pulse, set/clear, code and error patterns on PORTC0..3 |
+
+Additional technical examples: `debug_display_parallel.X`, `debug_multi_backend.X`
+(fans text into several textual backends), `debug_disabled.X`
+(`DRV_DEBUG_ENABLE=0`, everything compiled out).
 
 ## API
 
