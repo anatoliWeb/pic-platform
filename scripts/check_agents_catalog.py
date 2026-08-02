@@ -45,31 +45,29 @@ IGNORE_CARDS = {
     ".agents/workflow/GIT-WORKFLOW.md",
 }
 
-IGNORED_PUBLIC_HEADERS = {
-    "core/bit_utils.h",
-    "core/compiler.h",
-    "core/config.h",
-    "core/device.h",
-    "core/debug.h",
-    "core/delay.h",
-    "core/interrupts.h",
-    "core/pic_platform_config.h",
-    "core/types.h",
-    "core/config/platform_config_check.h",
-    "core/config/project_config_template.h",
-    "drivers/_template/template.h",
-    "drivers/timers/timer/timer.h",
+# Path-based exemptions for headers that are intentionally not reusable runtime
+# modules. Every entry has a human-readable reason. Reusable core helpers are
+# NOT listed here; they get manifest entries and are validated.
+EXEMPT_PUBLIC_HEADERS: dict[str, str] = {
+    "core/debug.h": "backward-compatible alias facade over uart_debug",
+    "core/interrupts.h": "interrupt control macro facade, no runtime code",
+    "core/pic_platform_config.h": "platform feature-tag configuration header",
+    "core/config/platform_config_check.h": "internal config consistency checker",
+    "core/config/project_config_template.h": "project configuration template",
+    "drivers/_template/template.h": "driver authoring template",
+    "drivers/timers/timer/timer.h": "generic timer placeholder superseded by timer0..3",
 }
 
-NON_STANDALONE_HEADERS = set(IGNORED_PUBLIC_HEADERS)
-HEADER_ONLY_MODULES: set[str] = set()
+# Path-based facade/config headers that exist as cards but compile to nothing
+# on their own. Kept out of the manifest because they carry no source.
+EXEMPT_REUSABLE_HEADERS: dict[str, str] = {}
+
 CARD_ALIASES = {
     "tick": ".agents/core/timebase.md",
 }
 
-# Every discovered reusable module must have a manifest entry unless it is
-# explicitly exempted here. Only genuine non-route modules belong here; real
-# shared/target implementations must be added to the manifest instead.
+# Modules exempted from a manifest entry for a documented reason. Should stay
+# empty unless a module is genuinely non-route but still reusable-only.
 MANIFEST_EXEMPT_MODULES: dict[str, str] = {}
 
 
@@ -93,6 +91,10 @@ def read_text(path: Path) -> str:
 
 def rel(path: Path) -> str:
     return path.relative_to(ROOT).as_posix()
+
+
+def is_exempt_header(path: Path) -> bool:
+    return rel(path) in EXEMPT_PUBLIC_HEADERS
 
 
 def resolve_path(source: Path, target: str) -> Path | None:
@@ -139,10 +141,6 @@ def extract_includes(text: str) -> list[str]:
     return INCLUDE_RE.findall(text)
 
 
-def is_ignored_header(path: Path) -> bool:
-    return rel(path) in NON_STANDALONE_HEADERS
-
-
 def discover_headers() -> list[Path]:
     headers: list[Path] = []
     for root_name in MODULE_ROOTS:
@@ -150,7 +148,7 @@ def discover_headers() -> list[Path]:
         if not root.exists():
             continue
         for header in root.rglob("*.h"):
-            if is_ignored_header(header):
+            if is_exempt_header(header):
                 continue
             headers.append(header)
     return sorted(headers)
@@ -169,86 +167,169 @@ def module_name_from_header(header: Path) -> str:
 
 
 def discover_modules() -> tuple[list[str], list[str]]:
-    """Return (modules, collision_errors).
+    """Return (sorted module ids, errors).
 
-    A stable path-based identifier is used to detect two headers that would
-    collapse into the same short module name.
+    A distinct module id per discovered header; all core top-level headers must
+    be preserved even when they share the `core` directory.
     """
-    by_dir: dict[str, str] = {}
+    module_dirs: dict[str, set[str]] = {}
     for header in discover_headers():
         mid = module_id_from_header(header)
-        by_dir.setdefault(mid.dirpath, mid.module)
+        module_dirs.setdefault(mid.module, set()).add(mid.dirpath)
 
-    by_module: dict[str, list[str]] = {}
-    for dirpath, module in sorted(by_dir.items()):
-        by_module.setdefault(module, []).append(dirpath)
-
-    modules = sorted(by_module)
+    modules = sorted(module_dirs)
     errors: list[str] = []
-    for module, dirs in sorted(by_module.items()):
-        if len(set(dirs)) > 1:
-            errors.append(f"duplicate discovered module id: {module} ({' vs '.join(dirs)})")
+    for module, dirs in sorted(module_dirs.items()):
+        if len(dirs) > 1:
+            errors.append(f"duplicate discovered module id: {module} ({' vs '.join(sorted(dirs))})")
     return modules, errors
+
+
+def _candidate_compiler_paths(entry: dict[str, str]) -> list[Path]:
+    """Derive plausible XC8/C18 counterpart paths for a manifest entry.
+
+    Returns paths relative to BOTH the ROOT and a compiler root so the caller
+    can decide which layout to probe. The module's shared source / header maps
+    to the same relative location under the compiler directory, so a real
+    compiler implementation is caught even when the manifest omits it.
+    """
+    result: list[Path] = []
+
+    shared = entry.get("shared_source")
+    if shared:
+        candidate = Path(shared)
+        if candidate.suffix:
+            candidate = candidate.with_suffix(".c")
+        result.append(candidate)
+        result.append(Path(shared))
+
+    header_rel = entry.get("header")
+    if header_rel:
+        hp = Path(header_rel)
+        result.append(hp.parent / f"{hp.stem}.c")
+        result.append(hp)
+
+    return sorted({p for p in result if str(p)})
+
+
+def discover_compiler_sources(entry: dict[str, str], kind: str) -> tuple[list[str], bool]:
+    """Return (existing_paths, ambiguous) for a compiler-specific source.
+
+    Kind is "XC8" or "C18". Candidate paths are derived from shared/header
+    mirrors under the compiler root, then broadened with a sibling search so a
+    renamed compiler file is still caught.
+    """
+    root = ROOT / kind
+    existing: set[Path] = set()
+
+    for candidate in _candidate_compiler_paths(entry):
+        if (root / candidate).exists():
+            existing.add((root / candidate).resolve())
+
+    header = ROOT / entry["header"] if entry.get("header") else None
+    if header is not None and header.parent:
+        rel_dir = header.parent.relative_to(ROOT)
+        module = entry.get("module") or header.stem
+        sibling = root / rel_dir / f"{module}.c"
+        if sibling.exists():
+            existing.add(sibling.resolve())
+        sibling_hdr = root / rel_dir / f"{module}.h"
+        if sibling_hdr.exists():
+            existing.add(sibling_hdr.resolve())
+
+    found = sorted(str(p) for p in existing)
+    ambiguous = len(found) > 1
+    return found, ambiguous
 
 
 def parse_mapper_table(path: Path) -> list[MapperEntry]:
     text = read_text(path)
-    if "Detailed card" not in text:
-        return []
 
-    entries: list[MapperEntry] = []
-    for line in text.splitlines():
-        if not line.startswith("|"):
-            continue
-        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
-        if len(cells) < 4:
-            continue
-        if cells[0] == "Need" or set(cells[0]) == {"-"}:
-            continue
+    # Recognized four-column module mapper:
+    # | Need | Module | Detailed card | Source | Status |
+    if "Detailed card" in text:
+        entries: list[MapperEntry] = []
+        for line in text.splitlines():
+            if not line.startswith("|"):
+                continue
+            cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+            if len(cells) < 4:
+                continue
+            if cells[0] == "Need" or set(cells[0]) == {"-"}:
+                continue
 
-        module_cell = cells[1].replace("`", "")
-        card_cell = cells[2].replace("`", "")
-        source_cell = cells[3].replace("`", "")
+            module_cell = cells[1].replace("`", "").strip().removesuffix(" driver")
+            card_cell = cells[2].replace("`", "").strip()
+            source_cell = cells[3].replace("`", "").strip()
 
-        modules = [item.strip() for item in module_cell.split(",") if item.strip()]
-        cards = [item.strip() for item in card_cell.split(",") if item.strip()]
+            modules = [item.strip() for item in module_cell.split(",") if item.strip()]
+            cards = [item.strip() for item in card_cell.split(",") if item.strip()]
 
-        if not modules or not cards:
-            continue
+            if not modules or not cards:
+                continue
+            if len(cards) == 1 and len(modules) > 1:
+                cards = cards * len(modules)
+            if len(cards) != len(modules):
+                continue
 
-        if len(cards) == 1 and len(modules) > 1:
-            cards = cards * len(modules)
-
-        if len(cards) != len(modules):
-            continue
-
-        for module, card in zip(modules, cards):
-            entries.append(
-                MapperEntry(
-                    module=module,
-                    card=card,
-                    source=source_cell,
-                    mapper=rel(path),
+            for module, card in zip(modules, cards):
+                entries.append(
+                    MapperEntry(
+                        module=module,
+                        card=card,
+                        source=source_cell,
+                        mapper=rel(path),
+                    )
                 )
-            )
+        return entries
 
-    return entries
+    return []
 
 
-def mapper_lists_module(path: Path, module: str, card: str) -> bool:
-    """True when the mapper file lists the module by name or references its card.
+def mapper_row_membership(path: Path, module: str, card: str, header: str) -> str | None:
+    """Strict mapper membership check.
 
-    The mapper tables use several layouts, so membership is decided by whether
-    the mapper text actually names the module (in a parseable row) or mentions
-    the module's canonical card path.
+    A mapper file must contain a table row that names the module and points at
+    the exact manifest card. Returns None on success; otherwise reports a card
+    conflict (module listed but under a different card) or a plain mapper
+    mismatch (module never listed). Works for the heterogeneous table layouts
+    used across the catalog (core `Open` 3-column and the four-column module
+    layout) while rejecting prose-only mentions.
     """
-    text = read_text(path)
-    if card and card in text:
-        return True
-    for entry in parse_mapper_table(path):
-        if entry.module == module:
-            return True
-    return False
+    table_rows = [
+        [cell.strip() for cell in line.strip().strip("|").split("|")]
+        for line in read_text(path).splitlines()
+        if line.lstrip().startswith("|")
+    ]
+
+    for row in table_rows:
+        cards = _row_cards(row)
+        if card not in cards:
+            continue
+        for cell in row:
+            compact = cell.replace("`", "").strip()
+            if compact.startswith(("core/", "drivers/", "libraries/")) and compact.endswith((".h", ".c")):
+                if compact != header:
+                    return f"manifest source mismatch: {module} mapper lists {compact} vs manifest header {header}"
+        return None
+
+    mentions_module = [row for row in table_rows if module in row or Path(card).stem in " ".join(row)]
+    if mentions_module:
+        return f"manifest card mismatch: {module} mapper points to a different card in {rel(path)}"
+    return f"manifest mapper mismatch: {module} not listed in {rel(path)}"
+
+
+CARD_PATH_RE = re.compile(r"\.agents/[A-Za-z0-9_./-]+\.md")
+
+
+def _row_cards(row: list[str]) -> list[str]:
+    """Return the absolute companion map card refs present in a table row."""
+    cards: list[str] = []
+    for cell in row:
+        for ref in CARD_PATH_RE.findall(cell):
+            if ref not in cards:
+                cards.append(ref)
+    return cards
 
 
 def load_mapper_index() -> dict[str, MapperEntry]:
@@ -344,6 +425,7 @@ def validate_root_agents() -> list[str]:
 
 
 def validate_cards_and_modules() -> tuple[list[str], int]:
+    """Header-level card validation. Returns (errors, public_headers_checked)."""
     errors: list[str] = []
     mapper_index = load_mapper_index()
     discovered_headers = discover_headers()
@@ -356,8 +438,6 @@ def validate_cards_and_modules() -> tuple[list[str], int]:
         card_path: Path | None = None
 
         if entry is None:
-            if module in HEADER_ONLY_MODULES:
-                continue
             card_path = resolve_card_path(module)
             if card_path is None:
                 errors.append(f"missing mapper entry: {module}")
@@ -383,7 +463,6 @@ def validate_cards_and_modules() -> tuple[list[str], int]:
 
 
 def validate_card_mapper_paths(module: str, entry: dict[str, str]) -> list[str]:
-    """Mapper membership and manifest-vs-mapper card agreement."""
     errors: list[str] = []
     mapper = ROOT / entry["mapper"]
     card = entry["card"]
@@ -391,15 +470,9 @@ def validate_card_mapper_paths(module: str, entry: dict[str, str]) -> list[str]:
     if not mapper.exists():
         return errors
 
-    if not mapper_lists_module(mapper, module, card):
-        errors.append(f"manifest mapper mismatch: {module} not listed in {entry['mapper']}")
-        return errors
-
-    listed = [e for e in parse_mapper_table(mapper) if e.module == module]
-    if listed and card not in {e.card for e in listed}:
-        mapped_card = listed[0].card
-        errors.append(f"manifest card mismatch: {module} mapper points to {mapped_card}, manifest points to {card}")
-
+    reason = mapper_row_membership(mapper, module, card, entry["header"])
+    if reason:
+        errors.append(reason)
     return errors
 
 
@@ -410,6 +483,9 @@ def validate_manifest() -> tuple[list[str], int]:
 
     for module, entry in manifest.items():
         checked += 1
+        entry = dict(entry)
+        entry["module"] = module
+
         header = ROOT / entry["header"]
         card = ROOT / entry["card"]
         mapper = ROOT / entry["mapper"]
@@ -424,46 +500,51 @@ def validate_manifest() -> tuple[list[str], int]:
         errors.extend(validate_card_mapper_paths(module, entry))
 
         shared_source = ROOT / entry["shared_source"] if entry.get("shared_source") else None
-        xc8_source = ROOT / entry["xc8_source"] if entry.get("xc8_source") else None
-        c18_source = ROOT / entry["c18_source"] if entry.get("c18_source") else None
+        shared_pattern = entry.get("shared_pattern", "header-only")
 
         if shared_source is not None and not shared_source.exists():
             errors.append(f"missing source path: {entry['shared_source']}")
-        if xc8_source is not None and not xc8_source.exists():
-            errors.append(f"missing source path: {entry['xc8_source']}")
-        if c18_source is not None and not c18_source.exists():
-            errors.append(f"missing source path: {entry['c18_source']}")
 
         if shared_source is not None and shared_source.exists():
             shared_actual = classify_shared_source(shared_source)
-            shared_declared = entry.get("shared_pattern")
-            if shared_declared and shared_actual != shared_declared:
-                errors.append(f"route mismatch: {module} shared declared {shared_declared} but source is {shared_actual}")
+            if shared_pattern == "header-only":
+                errors.append(f"route mismatch: {module} shared declared header-only but source exists")
+            elif shared_actual != shared_pattern:
+                errors.append(
+                    f"route mismatch: {module} shared declared {shared_pattern} but source is {shared_actual}"
+                )
 
-        for key, source, kind in (
-            ("xc8_source", xc8_source, "XC8"),
-            ("c18_source", c18_source, "C18"),
-        ):
-            declared = entry.get(f"{kind.lower()}_pattern", "absent")
-            if source is None:
-                if declared != "absent":
-                    errors.append(f"route mismatch: {module} {kind} declared {declared} but source is absent")
+        for kind in ("XC8", "C18"):
+            key_source = f"{kind.lower()}_source"
+            key_pattern = f"{kind.lower()}_pattern"
+            declared = entry.get(key_pattern, "absent")
+            declared_source = entry.get(key_source)
+
+            if declared_source:
+                source = ROOT / declared_source
+                if not source.exists():
+                    errors.append(f"missing source path: {declared_source}")
+                    continue
+                actual = classify_compiler_source(source, shared_source)
+                if actual != declared:
+                    errors.append(f"route mismatch: {module} {kind} declared {declared} but source is {actual}")
                 continue
-            actual = classify_compiler_source(source, shared_source)
-            if actual != declared:
-                errors.append(f"route mismatch: {module} {kind} declared {declared} but source is {actual}")
+
+            if declared == "absent":
+                found, ambiguous = discover_compiler_sources(entry, kind)
+                if ambiguous:
+                    errors.append(f"ambiguous {kind} source: {module} -> {', '.join(found)}")
+                elif found:
+                    errors.append(f"route mismatch: {module} {kind} declared absent but source exists at {found[0]}")
+            else:
+                errors.append(f"route mismatch: {module} {kind} declared {declared} but source is absent")
 
     return errors, checked
 
 
-def validate_manifest_completeness() -> tuple[list[str], int, int, int]:
-    """Coverage checks between discovered modules and the manifest.
-
-    Returns (errors, discovered_module_count, manifest_entry_count,
-    manifest_exempt_count). Every discovered module must have a manifest
-    entry or an explicit exemption; manifest entries that name a module no
-    longer discovered are reported stale.
-    """
+def validate_manifest_completeness(
+    public_headers: int,
+) -> tuple[list[str], int, int, int]:
     errors: list[str] = []
     modules, collisions = discover_modules()
     errors.extend(collisions)
@@ -480,7 +561,8 @@ def validate_manifest_completeness() -> tuple[list[str], int, int, int]:
     for module in sorted(stale):
         errors.append(f"stale manifest entry: {module}")
 
-    return errors, len(modules), len(manifest), len(MANIFEST_EXEMPT_MODULES)
+    exempt_count = len(EXEMPT_PUBLIC_HEADERS)
+    return errors, len(modules), len(manifest), exempt_count
 
 
 def orphan_cards() -> list[str]:
@@ -500,17 +582,20 @@ def main() -> int:
     errors.extend(validate_root_agents())
     errors.extend(validate_links())
 
-    module_errors, module_count = validate_cards_and_modules()
-    errors.extend(module_errors)
+    header_errors, headers_checked = validate_cards_and_modules()
+    errors.extend(header_errors)
 
     route_errors, route_count = validate_manifest()
     errors.extend(route_errors)
 
-    completeness_errors, discovered_count, manifest_count, exempt_count = validate_manifest_completeness()
+    completeness_errors, module_count, manifest_count, exempt_count = validate_manifest_completeness(
+        headers_checked
+    )
     errors.extend(completeness_errors)
 
-    orphan_count = len(orphan_cards())
-    errors.extend(orphan_cards())
+    orphan_errors = orphan_cards()
+    orphan_count = len(orphan_errors)
+    errors.extend(orphan_errors)
 
     if errors:
         for error in errors:
@@ -518,9 +603,11 @@ def main() -> int:
         return 1
 
     print("agents catalog ok")
-    print(f"modules checked: {module_count}")
-    print(f"routes checked: {route_count}")
+    print(f"public headers checked: {headers_checked}")
+    print(f"modules discovered: {module_count}")
     print(f"manifest entries: {manifest_count}")
+    print(f"routes checked: {route_count}")
+    print(f"exempt headers: {exempt_count}")
     print(f"orphan cards checked: {orphan_count}")
     return 0
 

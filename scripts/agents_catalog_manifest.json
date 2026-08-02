@@ -30,6 +30,14 @@
     "c18_source": "C18/libraries/input/adc_buttons/adc_buttons.c",
     "c18_pattern": "independent"
   },
+  "bit_utils": {
+    "header": "core/bit_utils.h",
+    "card": ".agents/core/bit_utils.md",
+    "mapper": ".agents/core/README.md",
+    "shared_pattern": "header-only",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
   "apa102": {
     "header": "libraries/led/apa102/apa102.h",
     "card": ".agents/libraries/led/apa102.md",
@@ -121,6 +129,22 @@
     "xc8_pattern": "independent",
     "c18_pattern": "independent"
   },
+  "compiler": {
+    "header": "core/compiler.h",
+    "card": ".agents/core/compiler.md",
+    "mapper": ".agents/core/README.md",
+    "shared_pattern": "header-only",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "config": {
+    "header": "core/config.h",
+    "card": ".agents/core/config.md",
+    "mapper": ".agents/core/README.md",
+    "shared_pattern": "header-only",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
   "crc": {
     "header": "core/crc/crc.h",
     "card": ".agents/core/crc.md",
@@ -138,6 +162,23 @@
     "mapper": ".agents/libraries/time/README.md",
     "shared_source": "libraries/time/cron_scheduler/cron_scheduler.c",
     "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "delay": {
+    "header": "core/delay.h",
+    "card": ".agents/core/delay.md",
+    "mapper": ".agents/core/README.md",
+    "shared_source": "core/delay.c",
+    "shared_pattern": "dispatcher",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "device": {
+    "header": "core/device.h",
+    "card": ".agents/core/device.md",
+    "mapper": ".agents/core/README.md",
+    "shared_pattern": "header-only",
     "xc8_pattern": "absent",
     "c18_pattern": "absent"
   },
@@ -759,6 +800,14 @@
     "mapper": ".agents/libraries/time/README.md",
     "shared_source": "libraries/time/timezone/timezone.c",
     "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "types": {
+    "header": "core/types.h",
+    "card": ".agents/core/types.md",
+    "mapper": ".agents/core/README.md",
+    "shared_pattern": "header-only",
     "xc8_pattern": "absent",
     "c18_pattern": "absent"
   },

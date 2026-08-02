@@ -234,6 +234,98 @@ class CheckAgentsCatalogTests(unittest.TestCase):
         self.assertNotEqual(code, 0)
         self.assertIn("manifest card mismatch", out)
 
+    def test_mapper_mentions_module_only_in_prose(self) -> None:
+        # The module card is never referenced by any table row in the mapper,
+        # even though the module name appears in prose.
+        self.build_minimal_catalog(self.demo_manifest())
+        write(
+            self.agents / "core" / "README.md",
+            "# Core\n\nThis doc mentions demo in prose but never lists it in a table.\n",
+        )
+        self.write_manifest(self.demo_manifest())
+
+        code, out = run_main()
+        self.assertNotEqual(code, 0)
+        self.assertIn("manifest mapper mismatch: demo", out)
+
+    def test_mapper_source_mismatch_fails(self) -> None:
+        # Mapper row points to the right card but lists a delta source file.
+        self.build_minimal_catalog(self.demo_manifest())
+        write(
+            self.agents / "core" / "README.md",
+            "# Core\n\n| Need | Module | Detailed card | Source | Status |\n|---|---|---|---|---|\n| demo | `demo` | `.agents/core/demo.md` | `core/other.h` | detailed |\n",
+        )
+
+        code, out = run_main()
+        self.assertNotEqual(code, 0)
+        self.assertIn("manifest source mismatch: demo", out)
+
+    def test_absent_route_fails_when_xc8_source_exists(self) -> None:
+        # Manifest says XC8 is absent for demo, but a real XC8 source exists.
+        manifest = self.demo_manifest()
+        del manifest["demo"]["xc8_source"]
+        del manifest["demo"]["c18_source"]
+        manifest["demo"]["xc8_pattern"] = "absent"
+        self.build_minimal_catalog(manifest)
+        write(self.root / "XC8" / "core" / "demo.c", "void demo_xc8(void) {}\n")
+
+        errors, _ = checker.validate_manifest()
+        self.assertTrue(any("route mismatch: demo XC8" in error for error in errors))
+
+    def test_absent_route_source_fails_when_c18_source_exists(self) -> None:
+        manifest = self.demo_manifest()
+        del manifest["demo"]["xc8_source"]
+        del manifest["demo"]["c18_source"]
+        manifest["demo"]["c18_pattern"] = "absent"
+        self.build_minimal_catalog(manifest)
+        write(self.root / "C18" / "core" / "demo.c", "void demo_c18(void) {}\n")
+
+        errors, _ = checker.validate_manifest()
+        self.assertTrue(any("route mismatch: demo C18" in error for error in errors))
+
+    def test_exempt_header_is_skipped(self) -> None:
+        # An exempt public header produces no module and no manifest demand.
+        self.build_minimal_catalog(self.demo_manifest())
+        write(self.root / "core" / "debug.h", "#pragma once\n")
+
+        code, out = run_main()
+        self.assertEqual(code, 0)
+        self.assertIn("agents catalog ok", out)
+
+    def test_header_only_reusable_requires_manifest(self) -> None:
+        # A reusable core header without any source must still get a manifest entry.
+        self.build_minimal_catalog(self.demo_manifest())
+        write(self.root / "core" / "types.h", "#pragma once\n")
+
+        code, out = run_main()
+        self.assertNotEqual(code, 0)
+        self.assertIn("missing manifest entry: types", out)
+
+    def test_report_distinguishes_headers_from_modules(self) -> None:
+        # Two headers in the same module dir count once at the module level.
+        self.build_minimal_catalog(self.demo_manifest())
+        write(self.root / "drivers" / "wheel" / "wheel.h", "#pragma once\n")
+        write(self.root / "drivers" / "wheel" / "inner.h", "#pragma once\n")
+
+        modules, module_errors = checker.discover_modules()
+        self.assertEqual(module_errors, [])
+        self.assertEqual(len(checker.discover_headers()), 3)
+        self.assertEqual(len([m for m in modules if m == "wheel"]), 1)
+
+    def test_main_calls_orphan_validation_once(self) -> None:
+        self.build_minimal_catalog(self.demo_manifest())
+        calls = []
+
+        original = checker.orphan_cards
+        checker.orphan_cards = lambda: (calls.append(1) or [])
+        try:
+            code, out = run_main()
+        finally:
+            checker.orphan_cards = original
+
+        self.assertEqual(code, 0)
+        self.assertEqual(calls, [1])
+
 
 if __name__ == "__main__":
     unittest.main()
