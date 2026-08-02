@@ -25,3 +25,7 @@
 - Do not commit with broken links or orphan cards.
 - Keep canonical cards, category mappers, and `scripts/agents_catalog_manifest.json` aligned.
 - Verify XC8 and C18 source contents before claiming a wrapper or independent route.
+- The checker covers module discovery, card coverage, mapper membership,
+  manifest completeness, route consistency, orphan cards, and broken links and
+  paths. Every reusable module needs a manifest entry or an explicit exemption;
+  stale manifest entries and module-name collisions also fail the check.

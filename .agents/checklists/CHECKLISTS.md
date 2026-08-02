@@ -61,3 +61,8 @@
 - Fix broken links and orphan cards before commit.
 - Update the route manifest and canonical card before changing compiler route claims.
 - Run the targeted checker tests when catalog behavior changes.
+- The checker validates module discovery, card coverage, mapper membership,
+  manifest coverage, source-route consistency, and orphan cards. Keep
+  `scripts/agents_catalog_manifest.json` in sync for every reusable module:
+  a discovered module without a manifest entry or an explicit exemption and a
+  stale manifest entry both fail the check.

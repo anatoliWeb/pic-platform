@@ -1,4 +1,115 @@
 {
+  "ac_phase_control": {
+    "header": "libraries/output/ac_phase_control/ac_phase_control.h",
+    "card": ".agents/libraries/output/ac_phase_control.md",
+    "mapper": ".agents/libraries/output/README.md",
+    "shared_source": "libraries/output/ac_phase_control/ac_phase_control.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "adc": {
+    "header": "drivers/analog/adc/adc.h",
+    "card": ".agents/drivers/adc.md",
+    "mapper": ".agents/drivers/analog/README.md",
+    "shared_source": "drivers/analog/adc/adc.c",
+    "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/drivers/analog/adc/adc.c",
+    "xc8_pattern": "independent",
+    "c18_source": "C18/drivers/analog/adc/adc.c",
+    "c18_pattern": "independent"
+  },
+  "adc_buttons": {
+    "header": "libraries/input/adc_buttons/adc_buttons.h",
+    "card": ".agents/libraries/input/adc_buttons.md",
+    "mapper": ".agents/libraries/input/README.md",
+    "shared_source": "libraries/input/adc_buttons/adc_buttons.c",
+    "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/libraries/input/adc_buttons/adc_buttons.c",
+    "xc8_pattern": "independent",
+    "c18_source": "C18/libraries/input/adc_buttons/adc_buttons.c",
+    "c18_pattern": "independent"
+  },
+  "apa102": {
+    "header": "libraries/led/apa102/apa102.h",
+    "card": ".agents/libraries/led/apa102.md",
+    "mapper": ".agents/libraries/led/README.md",
+    "shared_source": "libraries/led/apa102/apa102.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "bitmap": {
+    "header": "libraries/display/bitmap/bitmap.h",
+    "card": ".agents/libraries/display/bitmap.md",
+    "mapper": ".agents/libraries/display/README.md",
+    "shared_source": "libraries/display/bitmap/bitmap.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "bmp": {
+    "header": "libraries/sensors/bmp/bmp.h",
+    "card": ".agents/libraries/sensors/bmp.md",
+    "mapper": ".agents/libraries/sensors/README.md",
+    "shared_source": "libraries/sensors/bmp/bmp.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "button": {
+    "header": "libraries/input/button/button.h",
+    "card": ".agents/libraries/input/button.md",
+    "mapper": ".agents/libraries/input/README.md",
+    "shared_source": "libraries/input/button/button.c",
+    "xc8_source": "XC8/libraries/input/button/button.c",
+    "c18_source": "C18/libraries/input/button/button.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "buzzer": {
+    "header": "libraries/system/buzzer/buzzer.h",
+    "card": ".agents/libraries/system/buzzer.md",
+    "mapper": ".agents/libraries/system/README.md",
+    "shared_source": "libraries/system/buzzer/buzzer.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "ccp_capture": {
+    "header": "drivers/timers/ccp_capture/ccp_capture.h",
+    "card": ".agents/drivers/timers/ccp_capture.md",
+    "mapper": ".agents/drivers/timers/README.md",
+    "shared_source": "drivers/timers/ccp_capture/ccp_capture.c",
+    "xc8_source": "XC8/drivers/timers/ccp_capture/ccp_capture.c",
+    "c18_source": "C18/drivers/timers/ccp_capture/ccp_capture.c",
+    "shared_pattern": "dispatcher",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "ccp_compare": {
+    "header": "drivers/timers/ccp_compare/ccp_compare.h",
+    "card": ".agents/drivers/timers/ccp_compare.md",
+    "mapper": ".agents/drivers/timers/README.md",
+    "shared_source": "drivers/timers/ccp_compare/ccp_compare.c",
+    "xc8_source": "XC8/drivers/timers/ccp_compare/ccp_compare.c",
+    "c18_source": "C18/drivers/timers/ccp_compare/ccp_compare.c",
+    "shared_pattern": "dispatcher",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "clock": {
+    "header": "drivers/system/clock/clock.h",
+    "card": ".agents/drivers/system/clock.md",
+    "mapper": ".agents/drivers/system/README.md",
+    "shared_source": "drivers/system/clock/clock.c",
+    "shared_pattern": "implementation",
+    "xc8_source": "XC8/drivers/system/clock/clock.c",
+    "xc8_pattern": "independent",
+    "c18_source": "C18/drivers/system/clock/clock.c",
+    "c18_pattern": "independent"
+  },
   "comparator": {
     "header": "drivers/analog/comparator/comparator.h",
     "card": ".agents/drivers/analog/comparator.md",
@@ -10,48 +121,111 @@
     "xc8_pattern": "independent",
     "c18_pattern": "independent"
   },
-  "i2c": {
-    "header": "drivers/communication/i2c/i2c.h",
-    "card": ".agents/drivers/communication/i2c.md",
-    "mapper": ".agents/drivers/communication/README.md",
-    "shared_source": "drivers/communication/i2c/i2c.c",
-    "xc8_source": "XC8/drivers/communication/i2c/i2c.c",
-    "c18_source": "C18/drivers/communication/i2c/i2c.c",
+  "crc": {
+    "header": "core/crc/crc.h",
+    "card": ".agents/core/crc.md",
+    "mapper": ".agents/core/README.md",
+    "shared_source": "core/crc/crc.c",
+    "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/core/crc/crc.c",
+    "xc8_pattern": "independent",
+    "c18_source": "C18/core/crc/crc.c",
+    "c18_pattern": "independent"
+  },
+  "cron_scheduler": {
+    "header": "libraries/time/cron_scheduler/cron_scheduler.h",
+    "card": ".agents/libraries/time/cron_scheduler.md",
+    "mapper": ".agents/libraries/time/README.md",
+    "shared_source": "libraries/time/cron_scheduler/cron_scheduler.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "dht": {
+    "header": "libraries/sensors/dht/dht.h",
+    "card": ".agents/libraries/sensors/dht.md",
+    "mapper": ".agents/libraries/sensors/README.md",
+    "shared_source": "libraries/sensors/dht/dht.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "display_framework": {
+    "header": "libraries/display/display_framework/display_framework.h",
+    "card": ".agents/libraries/display/display_framework.md",
+    "mapper": ".agents/libraries/display/README.md",
+    "shared_source": "libraries/display/display_framework/display_framework.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "ds12c887": {
+    "header": "libraries/time/ds12c887/ds12c887.h",
+    "card": ".agents/libraries/time/ds12c887.md",
+    "mapper": ".agents/libraries/time/README.md",
+    "shared_source": "libraries/time/ds12c887/ds12c887.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "ds1302": {
+    "header": "libraries/time/ds1302/ds1302.h",
+    "card": ".agents/libraries/time/ds1302.md",
+    "mapper": ".agents/libraries/time/README.md",
+    "shared_source": "libraries/time/ds1302/ds1302.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "ds1307": {
+    "header": "libraries/time/ds1307/ds1307.h",
+    "card": ".agents/libraries/time/ds1307.md",
+    "mapper": ".agents/libraries/time/README.md",
+    "shared_source": "libraries/time/ds1307/ds1307.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "ds18b20": {
+    "header": "libraries/sensors/ds18b20/ds18b20.h",
+    "card": ".agents/libraries/sensors/ds18b20.md",
+    "mapper": ".agents/libraries/sensors/README.md",
+    "shared_source": "libraries/sensors/ds18b20/ds18b20.c",
+    "xc8_source": "XC8/libraries/sensors/ds18b20/ds18b20.c",
+    "c18_source": "C18/libraries/sensors/ds18b20/ds18b20.c",
     "shared_pattern": "dispatcher",
     "xc8_pattern": "independent",
     "c18_pattern": "independent"
   },
-  "rs485": {
-    "header": "drivers/communication/rs485/rs485.h",
-    "card": ".agents/drivers/communication/rs485.md",
-    "mapper": ".agents/drivers/communication/README.md",
-    "shared_source": "drivers/communication/rs485/rs485.c",
-    "xc8_source": "XC8/drivers/communication/rs485/rs485.c",
-    "c18_source": "C18/drivers/communication/rs485/rs485.c",
+  "ds3231": {
+    "header": "libraries/time/ds3231/ds3231.h",
+    "card": ".agents/libraries/time/ds3231.md",
+    "mapper": ".agents/libraries/time/README.md",
+    "shared_source": "libraries/time/ds3231/ds3231.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "eeprom": {
+    "header": "drivers/memory/eeprom/eeprom.h",
+    "card": ".agents/drivers/memory/eeprom.md",
+    "mapper": ".agents/drivers/memory/README.md",
+    "shared_source": "drivers/memory/eeprom/eeprom.c",
+    "xc8_source": "XC8/drivers/memory/eeprom/eeprom.c",
+    "c18_source": "C18/drivers/memory/eeprom/eeprom.c",
     "shared_pattern": "dispatcher",
     "xc8_pattern": "independent",
     "c18_pattern": "independent"
   },
-  "spi": {
-    "header": "drivers/communication/spi/spi.h",
-    "card": ".agents/drivers/communication/spi.md",
-    "mapper": ".agents/drivers/communication/README.md",
-    "shared_source": "drivers/communication/spi/spi.c",
-    "xc8_source": "XC8/drivers/communication/spi/spi.c",
-    "c18_source": "C18/drivers/communication/spi/spi.c",
+  "encoder": {
+    "header": "libraries/input/encoder/encoder.h",
+    "card": ".agents/libraries/input/encoder.md",
+    "mapper": ".agents/libraries/input/README.md",
+    "shared_source": "libraries/input/encoder/encoder.c",
     "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/libraries/input/encoder/encoder.c",
     "xc8_pattern": "independent",
-    "c18_pattern": "independent"
-  },
-  "uart": {
-    "header": "drivers/communication/uart/uart.h",
-    "card": ".agents/drivers/uart.md",
-    "mapper": ".agents/drivers/communication/README.md",
-    "shared_source": "drivers/communication/uart/uart.c",
-    "xc8_source": "XC8/drivers/communication/uart/uart.c",
-    "c18_source": "C18/drivers/communication/uart/uart.c",
-    "shared_pattern": "dispatcher",
-    "xc8_pattern": "independent",
+    "c18_source": "C18/libraries/input/encoder/encoder.c",
     "c18_pattern": "independent"
   },
   "ext_interrupt": {
@@ -65,24 +239,33 @@
     "xc8_pattern": "independent",
     "c18_pattern": "independent"
   },
-  "portb_change": {
-    "header": "drivers/interrupts/portb_change/portb_change.h",
-    "card": ".agents/drivers/interrupts/portb_change.md",
-    "mapper": ".agents/drivers/interrupts/README.md",
-    "shared_source": "drivers/interrupts/portb_change/portb_change.c",
-    "xc8_source": "XC8/drivers/interrupts/portb_change/portb_change.c",
-    "c18_source": "C18/drivers/interrupts/portb_change/portb_change.c",
+  "gpio": {
+    "header": "drivers/gpio/gpio.h",
+    "card": ".agents/drivers/gpio.md",
+    "mapper": ".agents/drivers/README.md",
+    "shared_source": "drivers/gpio/gpio.c",
     "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/drivers/gpio/gpio.c",
     "xc8_pattern": "independent",
+    "c18_source": "C18/drivers/gpio/gpio.c",
     "c18_pattern": "independent"
   },
-  "eeprom": {
-    "header": "drivers/memory/eeprom/eeprom.h",
-    "card": ".agents/drivers/memory/eeprom.md",
-    "mapper": ".agents/drivers/memory/README.md",
-    "shared_source": "drivers/memory/eeprom/eeprom.c",
-    "xc8_source": "XC8/drivers/memory/eeprom/eeprom.c",
-    "c18_source": "C18/drivers/memory/eeprom/eeprom.c",
+  "graphics": {
+    "header": "libraries/display/graphics/graphics.h",
+    "card": ".agents/libraries/display/graphics.md",
+    "mapper": ".agents/libraries/display/README.md",
+    "shared_source": "libraries/display/graphics/graphics.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "i2c": {
+    "header": "drivers/communication/i2c/i2c.h",
+    "card": ".agents/drivers/communication/i2c.md",
+    "mapper": ".agents/drivers/communication/README.md",
+    "shared_source": "drivers/communication/i2c/i2c.c",
+    "xc8_source": "XC8/drivers/communication/i2c/i2c.c",
+    "c18_source": "C18/drivers/communication/i2c/i2c.c",
     "shared_pattern": "dispatcher",
     "xc8_pattern": "independent",
     "c18_pattern": "independent"
@@ -97,6 +280,434 @@
     "shared_pattern": "dispatcher",
     "xc8_pattern": "independent",
     "c18_pattern": "independent"
+  },
+  "icon_pack": {
+    "header": "libraries/ui/icon_pack/icon_pack.h",
+    "card": ".agents/libraries/ui/icon_pack.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/icon_pack/icon_pack.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "ili9341": {
+    "header": "libraries/display/ili9341/ili9341.h",
+    "card": ".agents/libraries/display/ili9341.md",
+    "mapper": ".agents/libraries/display/README.md",
+    "shared_source": "libraries/display/ili9341/ili9341.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "input_adapter": {
+    "header": "libraries/ui/input_adapter/input_adapter.h",
+    "card": ".agents/libraries/ui/input_adapter.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/input_adapter/input_adapter.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "ir_receiver": {
+    "header": "libraries/input/ir_receiver/ir_receiver.h",
+    "card": ".agents/libraries/input/ir_receiver.md",
+    "mapper": ".agents/libraries/input/README.md",
+    "shared_source": "libraries/input/ir_receiver/ir_receiver.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "keypad_matrix": {
+    "header": "libraries/input/keypad_matrix/keypad_matrix.h",
+    "card": ".agents/libraries/input/keypad_matrix.md",
+    "mapper": ".agents/libraries/input/README.md",
+    "shared_source": "libraries/input/keypad_matrix/keypad_matrix.c",
+    "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/libraries/input/keypad_matrix/keypad_matrix.c",
+    "xc8_pattern": "independent",
+    "c18_source": "C18/libraries/input/keypad_matrix/keypad_matrix.c",
+    "c18_pattern": "independent"
+  },
+  "lcd_hd44780": {
+    "header": "libraries/display/lcd_hd44780/lcd.h",
+    "card": ".agents/libraries/display/lcd_hd44780.md",
+    "mapper": ".agents/libraries/display/README.md",
+    "shared_source": "libraries/display/lcd_hd44780/lcd.c",
+    "xc8_source": "XC8/libraries/display/lcd_hd44780/lcd.c",
+    "c18_source": "C18/libraries/display/lcd_hd44780/lcd.c",
+    "shared_pattern": "dispatcher",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "led_animation_engine": {
+    "header": "libraries/led/led_animation_engine/led_animation_engine.h",
+    "card": ".agents/libraries/led/led_animation_engine.md",
+    "mapper": ".agents/libraries/led/README.md",
+    "shared_source": "libraries/led/led_animation_engine/led_animation_engine.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "led_effects": {
+    "header": "libraries/led/led_effects/led_effects.h",
+    "card": ".agents/libraries/led/led_effects.md",
+    "mapper": ".agents/libraries/led/README.md",
+    "shared_source": "libraries/led/led_effects/led_effects.c",
+    "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/libraries/led/led_effects/led_effects.c",
+    "xc8_pattern": "independent",
+    "c18_source": "C18/libraries/led/led_effects/led_effects.c",
+    "c18_pattern": "independent"
+  },
+  "led_segments": {
+    "header": "libraries/led/led_segments/led_segments.h",
+    "card": ".agents/libraries/led/led_segments.md",
+    "mapper": ".agents/libraries/led/README.md",
+    "shared_source": "libraries/led/led_segments/led_segments.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "menu_core": {
+    "header": "libraries/ui/menu_core/menu_core.h",
+    "card": ".agents/libraries/ui/menu_core.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/menu_core/menu_core.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "menu_navigation": {
+    "header": "libraries/ui/menu_navigation/menu_navigation.h",
+    "card": ".agents/libraries/ui/menu_navigation.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/menu_navigation/menu_navigation.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "menu_renderer": {
+    "header": "libraries/ui/menu_renderer/menu_renderer.h",
+    "card": ".agents/libraries/ui/menu_renderer.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/menu_renderer/menu_renderer.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "menu_widgets": {
+    "header": "libraries/ui/menu_widgets/menu_widgets.h",
+    "card": ".agents/libraries/ui/menu_widgets.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/menu_widgets/menu_widgets.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "ntp_sync": {
+    "header": "libraries/time/ntp_sync/ntp_sync.h",
+    "card": ".agents/libraries/time/ntp_sync.md",
+    "mapper": ".agents/libraries/time/README.md",
+    "shared_source": "libraries/time/ntp_sync/ntp_sync.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "onewire": {
+    "header": "drivers/communication/onewire/onewire.h",
+    "card": ".agents/drivers/communication/onewire.md",
+    "mapper": ".agents/drivers/communication/README.md",
+    "shared_source": "drivers/communication/onewire/onewire.c",
+    "xc8_source": "XC8/drivers/communication/onewire/onewire.c",
+    "c18_source": "C18/drivers/communication/onewire/onewire.c",
+    "shared_pattern": "dispatcher",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "overlay_system": {
+    "header": "libraries/ui/overlay_system/overlay_system.h",
+    "card": ".agents/libraries/ui/overlay_system.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/overlay_system/overlay_system.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "pcf8563": {
+    "header": "libraries/time/pcf8563/pcf8563.h",
+    "card": ".agents/libraries/time/pcf8563.md",
+    "mapper": ".agents/libraries/time/README.md",
+    "shared_source": "libraries/time/pcf8563/pcf8563.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "popup_manager": {
+    "header": "libraries/ui/popup_manager/popup_manager.h",
+    "card": ".agents/libraries/ui/popup_manager.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/popup_manager/popup_manager.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "portb_change": {
+    "header": "drivers/interrupts/portb_change/portb_change.h",
+    "card": ".agents/drivers/interrupts/portb_change.md",
+    "mapper": ".agents/drivers/interrupts/README.md",
+    "shared_source": "drivers/interrupts/portb_change/portb_change.c",
+    "xc8_source": "XC8/drivers/interrupts/portb_change/portb_change.c",
+    "c18_source": "C18/drivers/interrupts/portb_change/portb_change.c",
+    "shared_pattern": "dispatcher",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "position_drive": {
+    "header": "libraries/actuator/position_drive/position_drive.h",
+    "card": ".agents/libraries/actuator/position_drive.md",
+    "mapper": ".agents/libraries/actuator/README.md",
+    "shared_source": "libraries/actuator/position_drive/position_drive.c",
+    "xc8_source": "XC8/libraries/actuator/position_drive/position_drive.c",
+    "c18_source": "C18/libraries/actuator/position_drive/position_drive.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "include-wrapper",
+    "c18_pattern": "include-wrapper"
+  },
+  "pwm": {
+    "header": "drivers/timers/pwm/pwm.h",
+    "card": ".agents/drivers/timers/pwm.md",
+    "mapper": ".agents/drivers/timers/README.md",
+    "shared_source": "drivers/timers/pwm/pwm.c",
+    "xc8_source": "XC8/drivers/timers/pwm/pwm.c",
+    "c18_source": "C18/drivers/timers/pwm/pwm.c",
+    "shared_pattern": "dispatcher",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "relay": {
+    "header": "libraries/system/relay/relay.h",
+    "card": ".agents/libraries/system/relay.md",
+    "mapper": ".agents/libraries/system/README.md",
+    "shared_source": "libraries/system/relay/relay.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "reset": {
+    "header": "drivers/system/reset/reset.h",
+    "card": ".agents/drivers/system/reset.md",
+    "mapper": ".agents/drivers/system/README.md",
+    "shared_source": "drivers/system/reset/reset.c",
+    "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/drivers/system/reset/reset.c",
+    "xc8_pattern": "independent",
+    "c18_source": "C18/drivers/system/reset/reset.c",
+    "c18_pattern": "independent"
+  },
+  "rgb_utils": {
+    "header": "libraries/led/rgb_utils/rgb_utils.h",
+    "card": ".agents/libraries/led/rgb_utils.md",
+    "mapper": ".agents/libraries/led/README.md",
+    "shared_source": "libraries/led/rgb_utils/rgb_utils.c",
+    "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/libraries/led/rgb_utils/rgb_utils.c",
+    "xc8_pattern": "independent",
+    "c18_source": "C18/libraries/led/rgb_utils/rgb_utils.c",
+    "c18_pattern": "independent"
+  },
+  "ring_buffer": {
+    "header": "core/ring_buffer/ring_buffer.h",
+    "card": ".agents/core/ring_buffer.md",
+    "mapper": ".agents/core/README.md",
+    "shared_source": "core/ring_buffer/ring_buffer.c",
+    "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/core/ring_buffer/ring_buffer.c",
+    "xc8_pattern": "independent",
+    "c18_source": "C18/core/ring_buffer/ring_buffer.c",
+    "c18_pattern": "independent"
+  },
+  "rs485": {
+    "header": "drivers/communication/rs485/rs485.h",
+    "card": ".agents/drivers/communication/rs485.md",
+    "mapper": ".agents/drivers/communication/README.md",
+    "shared_source": "drivers/communication/rs485/rs485.c",
+    "xc8_source": "XC8/drivers/communication/rs485/rs485.c",
+    "c18_source": "C18/drivers/communication/rs485/rs485.c",
+    "shared_pattern": "dispatcher",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "rtc_framework": {
+    "header": "libraries/time/rtc_framework/rtc_framework.h",
+    "card": ".agents/libraries/time/rtc_framework.md",
+    "mapper": ".agents/libraries/time/README.md",
+    "shared_source": "libraries/time/rtc_framework/rtc_framework.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "rtos": {
+    "header": "core/rtos/rtos.h",
+    "card": ".agents/core/rtos.md",
+    "mapper": ".agents/core/README.md",
+    "shared_source": "core/rtos/rtos.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "scheduler": {
+    "header": "core/scheduler/scheduler.h",
+    "card": ".agents/core/scheduler.md",
+    "mapper": ".agents/core/README.md",
+    "shared_source": "core/scheduler/scheduler.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "screen_manager": {
+    "header": "libraries/ui/screen_manager/screen_manager.h",
+    "card": ".agents/libraries/ui/screen_manager.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/screen_manager/screen_manager.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "screen_transitions": {
+    "header": "libraries/ui/screen_transitions/screen_transitions.h",
+    "card": ".agents/libraries/ui/screen_transitions.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/screen_transitions/screen_transitions.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "segment_keys": {
+    "header": "libraries/input/segment_keys/segment_keys.h",
+    "card": ".agents/libraries/input/segment_keys.md",
+    "mapper": ".agents/libraries/input/README.md",
+    "shared_source": "libraries/input/segment_keys/segment_keys.c",
+    "xc8_source": "XC8/libraries/input/segment_keys/segment_keys.c",
+    "c18_source": "C18/libraries/input/segment_keys/segment_keys.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "include-wrapper",
+    "c18_pattern": "include-wrapper"
+  },
+  "servo": {
+    "header": "libraries/system/servo/servo.h",
+    "card": ".agents/libraries/system/servo.md",
+    "mapper": ".agents/libraries/system/README.md",
+    "shared_source": "libraries/system/servo/servo.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "seven_segment": {
+    "header": "libraries/display/seven_segment/seven_segment.h",
+    "card": ".agents/libraries/display/seven_segment.md",
+    "mapper": ".agents/libraries/display/README.md",
+    "shared_source": "libraries/display/seven_segment/seven_segment.c",
+    "xc8_source": "XC8/libraries/display/seven_segment/seven_segment.c",
+    "c18_source": "C18/libraries/display/seven_segment/seven_segment.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "seven_segment_mux": {
+    "header": "libraries/display/seven_segment_mux/seven_segment_mux.h",
+    "card": ".agents/libraries/display/seven_segment_mux.md",
+    "mapper": ".agents/libraries/display/README.md",
+    "shared_source": "libraries/display/seven_segment_mux/seven_segment_mux.c",
+    "xc8_source": "XC8/libraries/display/seven_segment_mux/seven_segment_mux.c",
+    "c18_source": "C18/libraries/display/seven_segment_mux/seven_segment_mux.c",
+    "shared_pattern": "dispatcher",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "sh1106": {
+    "header": "libraries/display/sh1106/sh1106.h",
+    "card": ".agents/libraries/display/sh1106.md",
+    "mapper": ".agents/libraries/display/README.md",
+    "shared_source": "libraries/display/sh1106/sh1106.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "shared_segment_buttons": {
+    "header": "libraries/input/shared_segment_buttons/shared_segment_buttons.h",
+    "card": ".agents/libraries/input/shared_segment_buttons.md",
+    "mapper": ".agents/libraries/input/README.md",
+    "shared_source": "libraries/input/shared_segment_buttons/shared_segment_buttons.c",
+    "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/libraries/input/shared_segment_buttons/shared_segment_buttons.c",
+    "xc8_pattern": "independent",
+    "c18_source": "C18/libraries/input/shared_segment_buttons/shared_segment_buttons.c",
+    "c18_pattern": "independent"
+  },
+  "software_pwm": {
+    "header": "libraries/output/software_pwm/software_pwm.h",
+    "card": ".agents/libraries/output/software_pwm.md",
+    "mapper": ".agents/libraries/output/README.md",
+    "shared_source": "libraries/output/software_pwm/software_pwm.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "software_rtc": {
+    "header": "libraries/time/software_rtc/software_rtc.h",
+    "card": ".agents/libraries/time/software_rtc.md",
+    "mapper": ".agents/libraries/time/README.md",
+    "shared_source": "libraries/time/software_rtc/software_rtc.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "spi": {
+    "header": "drivers/communication/spi/spi.h",
+    "card": ".agents/drivers/communication/spi.md",
+    "mapper": ".agents/drivers/communication/README.md",
+    "shared_source": "drivers/communication/spi/spi.c",
+    "xc8_source": "XC8/drivers/communication/spi/spi.c",
+    "c18_source": "C18/drivers/communication/spi/spi.c",
+    "shared_pattern": "dispatcher",
+    "xc8_pattern": "independent",
+    "c18_pattern": "independent"
+  },
+  "sprite_buffer": {
+    "header": "libraries/ui/sprite_buffer/sprite_buffer.h",
+    "card": ".agents/libraries/ui/sprite_buffer.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/sprite_buffer/sprite_buffer.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "ssd1306": {
+    "header": "libraries/display/ssd1306/ssd1306.h",
+    "card": ".agents/libraries/display/ssd1306.md",
+    "mapper": ".agents/libraries/display/README.md",
+    "shared_source": "libraries/display/ssd1306/ssd1306.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "st7735": {
+    "header": "libraries/display/st7735/st7735.h",
+    "card": ".agents/libraries/display/st7735.md",
+    "mapper": ".agents/libraries/display/README.md",
+    "shared_source": "libraries/display/st7735/st7735.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "tick": {
+    "header": "drivers/timers/tick/tick.h",
+    "card": ".agents/core/timebase.md",
+    "mapper": ".agents/core/README.md",
+    "shared_source": "drivers/timers/tick/tick.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
   },
   "timer0": {
     "header": "drivers/timers/timer0/timer0.h",
@@ -142,90 +753,22 @@
     "xc8_pattern": "independent",
     "c18_pattern": "independent"
   },
-  "ccp_compare": {
-    "header": "drivers/timers/ccp_compare/ccp_compare.h",
-    "card": ".agents/drivers/timers/ccp_compare.md",
-    "mapper": ".agents/drivers/timers/README.md",
-    "shared_source": "drivers/timers/ccp_compare/ccp_compare.c",
-    "xc8_source": "XC8/drivers/timers/ccp_compare/ccp_compare.c",
-    "c18_source": "C18/drivers/timers/ccp_compare/ccp_compare.c",
-    "shared_pattern": "dispatcher",
-    "xc8_pattern": "independent",
-    "c18_pattern": "independent"
-  },
-  "ccp_capture": {
-    "header": "drivers/timers/ccp_capture/ccp_capture.h",
-    "card": ".agents/drivers/timers/ccp_capture.md",
-    "mapper": ".agents/drivers/timers/README.md",
-    "shared_source": "drivers/timers/ccp_capture/ccp_capture.c",
-    "xc8_source": "XC8/drivers/timers/ccp_capture/ccp_capture.c",
-    "c18_source": "C18/drivers/timers/ccp_capture/ccp_capture.c",
-    "shared_pattern": "dispatcher",
-    "xc8_pattern": "independent",
-    "c18_pattern": "independent"
-  },
-  "pwm": {
-    "header": "drivers/timers/pwm/pwm.h",
-    "card": ".agents/drivers/timers/pwm.md",
-    "mapper": ".agents/drivers/timers/README.md",
-    "shared_source": "drivers/timers/pwm/pwm.c",
-    "xc8_source": "XC8/drivers/timers/pwm/pwm.c",
-    "c18_source": "C18/drivers/timers/pwm/pwm.c",
-    "shared_pattern": "dispatcher",
-    "xc8_pattern": "independent",
-    "c18_pattern": "independent"
-  },
-  "position_drive": {
-    "header": "libraries/actuator/position_drive/position_drive.h",
-    "card": ".agents/libraries/actuator/position_drive.md",
-    "mapper": ".agents/libraries/actuator/README.md",
-    "shared_source": "libraries/actuator/position_drive/position_drive.c",
-    "xc8_source": "XC8/libraries/actuator/position_drive/position_drive.c",
-    "c18_source": "C18/libraries/actuator/position_drive/position_drive.c",
+  "timezone": {
+    "header": "libraries/time/timezone/timezone.h",
+    "card": ".agents/libraries/time/timezone.md",
+    "mapper": ".agents/libraries/time/README.md",
+    "shared_source": "libraries/time/timezone/timezone.c",
     "shared_pattern": "implementation",
-    "xc8_pattern": "include-wrapper",
-    "c18_pattern": "include-wrapper"
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
   },
-  "button": {
-    "header": "libraries/input/button/button.h",
-    "card": ".agents/libraries/input/button.md",
-    "mapper": ".agents/libraries/input/README.md",
-    "shared_source": "libraries/input/button/button.c",
-    "xc8_source": "XC8/libraries/input/button/button.c",
-    "c18_source": "C18/libraries/input/button/button.c",
-    "shared_pattern": "implementation",
-    "xc8_pattern": "independent",
-    "c18_pattern": "independent"
-  },
-  "segment_keys": {
-    "header": "libraries/input/segment_keys/segment_keys.h",
-    "card": ".agents/libraries/input/segment_keys.md",
-    "mapper": ".agents/libraries/input/README.md",
-    "shared_source": "libraries/input/segment_keys/segment_keys.c",
-    "xc8_source": "XC8/libraries/input/segment_keys/segment_keys.c",
-    "c18_source": "C18/libraries/input/segment_keys/segment_keys.c",
-    "shared_pattern": "implementation",
-    "xc8_pattern": "include-wrapper",
-    "c18_pattern": "include-wrapper"
-  },
-  "seven_segment": {
-    "header": "libraries/display/seven_segment/seven_segment.h",
-    "card": ".agents/libraries/display/seven_segment.md",
-    "mapper": ".agents/libraries/display/README.md",
-    "shared_source": "libraries/display/seven_segment/seven_segment.c",
-    "xc8_source": "XC8/libraries/display/seven_segment/seven_segment.c",
-    "c18_source": "C18/libraries/display/seven_segment/seven_segment.c",
-    "shared_pattern": "implementation",
-    "xc8_pattern": "independent",
-    "c18_pattern": "independent"
-  },
-  "seven_segment_mux": {
-    "header": "libraries/display/seven_segment_mux/seven_segment_mux.h",
-    "card": ".agents/libraries/display/seven_segment_mux.md",
-    "mapper": ".agents/libraries/display/README.md",
-    "shared_source": "libraries/display/seven_segment_mux/seven_segment_mux.c",
-    "xc8_source": "XC8/libraries/display/seven_segment_mux/seven_segment_mux.c",
-    "c18_source": "C18/libraries/display/seven_segment_mux/seven_segment_mux.c",
+  "uart": {
+    "header": "drivers/communication/uart/uart.h",
+    "card": ".agents/drivers/uart.md",
+    "mapper": ".agents/drivers/communication/README.md",
+    "shared_source": "drivers/communication/uart/uart.c",
+    "xc8_source": "XC8/drivers/communication/uart/uart.c",
+    "c18_source": "C18/drivers/communication/uart/uart.c",
     "shared_pattern": "dispatcher",
     "xc8_pattern": "independent",
     "c18_pattern": "independent"
@@ -241,37 +784,62 @@
     "xc8_pattern": "independent",
     "c18_pattern": "independent"
   },
-  "onewire": {
-    "header": "drivers/communication/onewire/onewire.h",
-    "card": ".agents/drivers/communication/onewire.md",
-    "mapper": ".agents/drivers/communication/README.md",
-    "shared_source": "drivers/communication/onewire/onewire.c",
-    "xc8_source": "XC8/drivers/communication/onewire/onewire.c",
-    "c18_source": "C18/drivers/communication/onewire/onewire.c",
-    "shared_pattern": "dispatcher",
-    "xc8_pattern": "independent",
-    "c18_pattern": "independent"
+  "ui_events": {
+    "header": "libraries/ui/ui_events/ui_events.h",
+    "card": ".agents/libraries/ui/ui_events.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/ui_events/ui_events.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
   },
-  "ds18b20": {
-    "header": "libraries/sensors/ds18b20/ds18b20.h",
-    "card": ".agents/libraries/sensors/ds18b20.md",
+  "ui_themes": {
+    "header": "libraries/ui/ui_themes/ui_themes.h",
+    "card": ".agents/libraries/ui/ui_themes.md",
+    "mapper": ".agents/libraries/ui/README.md",
+    "shared_source": "libraries/ui/ui_themes/ui_themes.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "ultrasonic": {
+    "header": "libraries/sensors/ultrasonic/ultrasonic.h",
+    "card": ".agents/libraries/sensors/ultrasonic.md",
     "mapper": ".agents/libraries/sensors/README.md",
-    "shared_source": "libraries/sensors/ds18b20/ds18b20.c",
-    "xc8_source": "XC8/libraries/sensors/ds18b20/ds18b20.c",
-    "c18_source": "C18/libraries/sensors/ds18b20/ds18b20.c",
+    "shared_source": "libraries/sensors/ultrasonic/ultrasonic.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "wdt": {
+    "header": "drivers/system/wdt/wdt.h",
+    "card": ".agents/drivers/system/wdt.md",
+    "mapper": ".agents/drivers/system/README.md",
+    "shared_source": "drivers/system/wdt/wdt.c",
     "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/drivers/system/wdt/wdt.c",
     "xc8_pattern": "independent",
+    "c18_source": "C18/drivers/system/wdt/wdt.c",
     "c18_pattern": "independent"
   },
-  "lcd_hd44780": {
-    "header": "libraries/display/lcd_hd44780/lcd.h",
-    "card": ".agents/libraries/display/lcd_hd44780.md",
-    "mapper": ".agents/libraries/display/README.md",
-    "shared_source": "libraries/display/lcd_hd44780/lcd.c",
-    "xc8_source": "XC8/libraries/display/lcd_hd44780/lcd.c",
-    "c18_source": "C18/libraries/display/lcd_hd44780/lcd.c",
+  "ws2812": {
+    "header": "libraries/led/ws2812/ws2812.h",
+    "card": ".agents/libraries/led/ws2812.md",
+    "mapper": ".agents/libraries/led/README.md",
+    "shared_source": "libraries/led/ws2812/ws2812.c",
     "shared_pattern": "dispatcher",
+    "xc8_source": "XC8/libraries/led/ws2812/ws2812.c",
     "xc8_pattern": "independent",
+    "c18_source": "C18/libraries/led/ws2812/ws2812.c",
     "c18_pattern": "independent"
+  },
+  "ws2812_matrix": {
+    "header": "libraries/led/ws2812_matrix/ws2812_matrix.h",
+    "card": ".agents/libraries/led/ws2812_matrix.md",
+    "mapper": ".agents/libraries/led/README.md",
+    "shared_source": "libraries/led/ws2812_matrix/ws2812_matrix.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
   }
 }

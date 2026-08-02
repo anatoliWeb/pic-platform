@@ -67,6 +67,11 @@ CARD_ALIASES = {
     "tick": ".agents/core/timebase.md",
 }
 
+# Every discovered reusable module must have a manifest entry unless it is
+# explicitly exempted here. Only genuine non-route modules belong here; real
+# shared/target implementations must be added to the manifest instead.
+MANIFEST_EXEMPT_MODULES: dict[str, str] = {}
+
 
 @dataclass(frozen=True)
 class MapperEntry:
@@ -74,6 +79,12 @@ class MapperEntry:
     card: str
     source: str
     mapper: str
+
+
+@dataclass(frozen=True)
+class ModuleId:
+    module: str
+    dirpath: str
 
 
 def read_text(path: Path) -> str:
@@ -86,6 +97,8 @@ def rel(path: Path) -> str:
 
 def resolve_path(source: Path, target: str) -> Path | None:
     if target.startswith(("http://", "https://")):
+        return None
+    if target.startswith(("#", "mailto:")):
         return None
 
     candidates = []
@@ -143,10 +156,39 @@ def discover_headers() -> list[Path]:
     return sorted(headers)
 
 
+def module_id_from_header(header: Path) -> ModuleId:
+    parent = header.parent
+    if parent == ROOT / "core":
+        return ModuleId(module=header.stem, dirpath="core")
+    dirpath = parent.relative_to(ROOT).as_posix()
+    return ModuleId(module=parent.name, dirpath=dirpath)
+
+
 def module_name_from_header(header: Path) -> str:
-    if header.parent == ROOT / "core":
-        return header.stem
-    return header.parent.name
+    return module_id_from_header(header).module
+
+
+def discover_modules() -> tuple[list[str], list[str]]:
+    """Return (modules, collision_errors).
+
+    A stable path-based identifier is used to detect two headers that would
+    collapse into the same short module name.
+    """
+    by_dir: dict[str, str] = {}
+    for header in discover_headers():
+        mid = module_id_from_header(header)
+        by_dir.setdefault(mid.dirpath, mid.module)
+
+    by_module: dict[str, list[str]] = {}
+    for dirpath, module in sorted(by_dir.items()):
+        by_module.setdefault(module, []).append(dirpath)
+
+    modules = sorted(by_module)
+    errors: list[str] = []
+    for module, dirs in sorted(by_module.items()):
+        if len(set(dirs)) > 1:
+            errors.append(f"duplicate discovered module id: {module} ({' vs '.join(dirs)})")
+    return modules, errors
 
 
 def parse_mapper_table(path: Path) -> list[MapperEntry]:
@@ -191,6 +233,22 @@ def parse_mapper_table(path: Path) -> list[MapperEntry]:
             )
 
     return entries
+
+
+def mapper_lists_module(path: Path, module: str, card: str) -> bool:
+    """True when the mapper file lists the module by name or references its card.
+
+    The mapper tables use several layouts, so membership is decided by whether
+    the mapper text actually names the module (in a parseable row) or mentions
+    the module's canonical card path.
+    """
+    text = read_text(path)
+    if card and card in text:
+        return True
+    for entry in parse_mapper_table(path):
+        if entry.module == module:
+            return True
+    return False
 
 
 def load_mapper_index() -> dict[str, MapperEntry]:
@@ -324,6 +382,27 @@ def validate_cards_and_modules() -> tuple[list[str], int]:
     return errors, checked
 
 
+def validate_card_mapper_paths(module: str, entry: dict[str, str]) -> list[str]:
+    """Mapper membership and manifest-vs-mapper card agreement."""
+    errors: list[str] = []
+    mapper = ROOT / entry["mapper"]
+    card = entry["card"]
+
+    if not mapper.exists():
+        return errors
+
+    if not mapper_lists_module(mapper, module, card):
+        errors.append(f"manifest mapper mismatch: {module} not listed in {entry['mapper']}")
+        return errors
+
+    listed = [e for e in parse_mapper_table(mapper) if e.module == module]
+    if listed and card not in {e.card for e in listed}:
+        mapped_card = listed[0].card
+        errors.append(f"manifest card mismatch: {module} mapper points to {mapped_card}, manifest points to {card}")
+
+    return errors
+
+
 def validate_manifest() -> tuple[list[str], int]:
     errors: list[str] = []
     manifest = load_manifest()
@@ -342,6 +421,8 @@ def validate_manifest() -> tuple[list[str], int]:
         if card.exists() and entry["header"] not in read_text(card):
             errors.append(f"card header mismatch: {entry['card']} -> {entry['header']}")
 
+        errors.extend(validate_card_mapper_paths(module, entry))
+
         shared_source = ROOT / entry["shared_source"] if entry.get("shared_source") else None
         xc8_source = ROOT / entry["xc8_source"] if entry.get("xc8_source") else None
         c18_source = ROOT / entry["c18_source"] if entry.get("c18_source") else None
@@ -359,19 +440,47 @@ def validate_manifest() -> tuple[list[str], int]:
             if shared_declared and shared_actual != shared_declared:
                 errors.append(f"route mismatch: {module} shared declared {shared_declared} but source is {shared_actual}")
 
-        if xc8_source is not None:
-            xc8_actual = classify_compiler_source(xc8_source, shared_source)
-            xc8_declared = entry.get("xc8_pattern", "absent")
-            if xc8_actual != xc8_declared:
-                errors.append(f"route mismatch: {module} XC8 declared {xc8_declared} but source is {xc8_actual}")
-
-        if c18_source is not None:
-            c18_actual = classify_compiler_source(c18_source, shared_source)
-            c18_declared = entry.get("c18_pattern", "absent")
-            if c18_actual != c18_declared:
-                errors.append(f"route mismatch: {module} C18 declared {c18_declared} but source is {c18_actual}")
+        for key, source, kind in (
+            ("xc8_source", xc8_source, "XC8"),
+            ("c18_source", c18_source, "C18"),
+        ):
+            declared = entry.get(f"{kind.lower()}_pattern", "absent")
+            if source is None:
+                if declared != "absent":
+                    errors.append(f"route mismatch: {module} {kind} declared {declared} but source is absent")
+                continue
+            actual = classify_compiler_source(source, shared_source)
+            if actual != declared:
+                errors.append(f"route mismatch: {module} {kind} declared {declared} but source is {actual}")
 
     return errors, checked
+
+
+def validate_manifest_completeness() -> tuple[list[str], int, int, int]:
+    """Coverage checks between discovered modules and the manifest.
+
+    Returns (errors, discovered_module_count, manifest_entry_count,
+    manifest_exempt_count). Every discovered module must have a manifest
+    entry or an explicit exemption; manifest entries that name a module no
+    longer discovered are reported stale.
+    """
+    errors: list[str] = []
+    modules, collisions = discover_modules()
+    errors.extend(collisions)
+
+    manifest = load_manifest()
+    manifest_modules = set(manifest)
+
+    missing = [m for m in modules if m not in manifest_modules and m not in MANIFEST_EXEMPT_MODULES]
+    for module in sorted(missing):
+        errors.append(f"missing manifest entry: {module}")
+
+    discovered_ids = set(modules)
+    stale = [m for m in manifest_modules if m not in discovered_ids]
+    for module in sorted(stale):
+        errors.append(f"stale manifest entry: {module}")
+
+    return errors, len(modules), len(manifest), len(MANIFEST_EXEMPT_MODULES)
 
 
 def orphan_cards() -> list[str]:
@@ -390,10 +499,18 @@ def main() -> int:
     errors: list[str] = []
     errors.extend(validate_root_agents())
     errors.extend(validate_links())
+
     module_errors, module_count = validate_cards_and_modules()
     errors.extend(module_errors)
+
     route_errors, route_count = validate_manifest()
     errors.extend(route_errors)
+
+    completeness_errors, discovered_count, manifest_count, exempt_count = validate_manifest_completeness()
+    errors.extend(completeness_errors)
+
+    orphan_count = len(orphan_cards())
+    errors.extend(orphan_cards())
 
     if errors:
         for error in errors:
@@ -403,6 +520,8 @@ def main() -> int:
     print("agents catalog ok")
     print(f"modules checked: {module_count}")
     print(f"routes checked: {route_count}")
+    print(f"manifest entries: {manifest_count}")
+    print(f"orphan cards checked: {orphan_count}")
     return 0
 
 
