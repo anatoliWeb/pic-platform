@@ -75,3 +75,7 @@ Thumbs.db
 
 # Proteus project backup folders
 **/Project Backups/
+
+# Python cache
+__pycache__/
+*.py[cod]
