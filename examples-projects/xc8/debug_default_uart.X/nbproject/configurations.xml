@@ -15,39 +15,33 @@
                    displayName="Linker Files"
                    projectFiles="true">
     </logicalFolder>
-    <logicalFolder name="SourceFiles"
-                   displayName="Source Files"
-                   projectFiles="true">
-      <logicalFolder name="app" displayName="Application" projectFiles="true">
-        <itemPath>main.c</itemPath>
-        <itemPath>config_bits.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="core" displayName="core" projectFiles="true">
-        <itemPath>../../../core/delay.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
-        <logicalFolder name="communication"
-                       displayName="communication"
-                       projectFiles="true">
-          <logicalFolder name="uart" displayName="uart" projectFiles="true">
-            <itemPath>../../../drivers/communication/uart/uart.c</itemPath>
+      <logicalFolder name="SourceFiles"
+                    displayName="Source Files"
+                    projectFiles="true">
+        <logicalFolder name="app" displayName="Application" projectFiles="true">
+          <itemPath>main.c</itemPath>
+          <itemPath>config_bits.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="core" displayName="core" projectFiles="true">
+          <itemPath>../../../core/delay.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+          <logicalFolder name="communication"
+                         displayName="communication"
+                         projectFiles="true">
+            <logicalFolder name="uart" displayName="uart" projectFiles="true">
+              <itemPath>../../../drivers/communication/uart/uart.c</itemPath>
+            </logicalFolder>
           </logicalFolder>
         </logicalFolder>
-        <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
-          <itemPath>../../../drivers/gpio/gpio.c</itemPath>
-        </logicalFolder>
-      </logicalFolder>
-       <logicalFolder name="libraries" displayName="libraries" projectFiles="true">
-        <logicalFolder name="system" displayName="system" projectFiles="true">
-          <logicalFolder name="uart_debug" displayName="uart_debug" projectFiles="true">
-            <itemPath>../../../libraries/system/uart_debug/uart_debug.c</itemPath>
-          </logicalFolder>
-          <logicalFolder name="debug" displayName="debug" projectFiles="true">
-            <itemPath>../../../libraries/system/debug/debug.c</itemPath>
+        <logicalFolder name="libraries" displayName="libraries" projectFiles="true">
+          <logicalFolder name="system" displayName="system" projectFiles="true">
+            <logicalFolder name="debug" displayName="debug" projectFiles="true">
+              <itemPath>../../../libraries/system/debug/debug.c</itemPath>
+            </logicalFolder>
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
-    </logicalFolder>
   </logicalFolder>
   <sourceRootList>
     <Elem>../../../core</Elem>

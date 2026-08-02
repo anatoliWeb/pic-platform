@@ -95,9 +95,11 @@ static void lcd_hd44780_init(void)
 void debug_lcd_init(void)
 {
 #if DRV_DEBUG_DISPLAY_AUTO_INIT
+#if DRV_DEBUG_DISPLAY_INTERFACE_I2C
     i2c_init((uint32_t)DRV_DEBUG_DISPLAY_I2C_FREQ);
 #endif
     lcd_hd44780_init();
+#endif
 }
 
 void debug_lcd_clear(void)

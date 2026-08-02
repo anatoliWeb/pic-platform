@@ -29,9 +29,9 @@ void debug_display_init(void)
 {
 #if DRV_DEBUG_DISPLAY_AUTO_INIT
     debug_lcd_init();
-#endif
     debug_lcd_clear();
     display_reset_cursor();
+#endif
 }
 
 void debug_display_clear(void)

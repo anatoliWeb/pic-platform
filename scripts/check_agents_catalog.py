@@ -49,7 +49,7 @@ IGNORE_CARDS = {
 # modules. Every entry has a human-readable reason. Reusable core helpers are
 # NOT listed here; they get manifest entries and are validated.
 EXEMPT_PUBLIC_HEADERS: dict[str, str] = {
-    "core/debug.h": "backward-compatible alias facade over uart_debug",
+    "core/debug.h": "backward-compatible alias facade over the debug module",
     "core/interrupts.h": "interrupt control macro facade, no runtime code",
     "core/pic_platform_config.h": "platform feature-tag configuration header",
     "core/config/platform_config_check.h": "internal config consistency checker",

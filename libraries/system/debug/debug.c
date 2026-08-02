@@ -125,7 +125,7 @@ void debug_write_i16(int16_t v)
     if (v < 0)
     {
         debug_emit_char('-');
-        debug_write_unsigned((uint16_t)(-(int16_t)v));
+        debug_write_unsigned((uint16_t)(0u - (uint16_t)v));
     }
     else
     {

@@ -101,6 +101,46 @@
     #define DRV_DEBUG_PINS_PULSE_US 10000UL
 #endif
 
+#if (DRV_DEBUG_ENABLE != 0) && (DRV_DEBUG_ENABLE != 1)
+    #error "DRV_DEBUG_ENABLE must be 0 or 1"
+#endif
+
+#if (DRV_DEBUG_BACKEND_UART != 0) && (DRV_DEBUG_BACKEND_UART != 1)
+    #error "DRV_DEBUG_BACKEND_UART must be 0 or 1"
+#endif
+
+#if (DRV_DEBUG_BACKEND_DISPLAY != 0) && (DRV_DEBUG_BACKEND_DISPLAY != 1)
+    #error "DRV_DEBUG_BACKEND_DISPLAY must be 0 or 1"
+#endif
+
+#if (DRV_DEBUG_BACKEND_PINS != 0) && (DRV_DEBUG_BACKEND_PINS != 1)
+    #error "DRV_DEBUG_BACKEND_PINS must be 0 or 1"
+#endif
+
+#if (DRV_DEBUG_DISPLAY_TYPE_LCD_2X16 != 0) && (DRV_DEBUG_DISPLAY_TYPE_LCD_2X16 != 1)
+    #error "DRV_DEBUG_DISPLAY_TYPE_LCD_2X16 must be 0 or 1"
+#endif
+
+#if (DRV_DEBUG_DISPLAY_INTERFACE_I2C != 0) && (DRV_DEBUG_DISPLAY_INTERFACE_I2C != 1)
+    #error "DRV_DEBUG_DISPLAY_INTERFACE_I2C must be 0 or 1"
+#endif
+
+#if (DRV_DEBUG_DISPLAY_INTERFACE_PARALLEL != 0) && (DRV_DEBUG_DISPLAY_INTERFACE_PARALLEL != 1)
+    #error "DRV_DEBUG_DISPLAY_INTERFACE_PARALLEL must be 0 or 1"
+#endif
+
+#if (DRV_DEBUG_DISPLAY_AUTO_INIT != 0) && (DRV_DEBUG_DISPLAY_AUTO_INIT != 1)
+    #error "DRV_DEBUG_DISPLAY_AUTO_INIT must be 0 or 1"
+#endif
+
+#if (DRV_DEBUG_PINS_INTERFACE_GPIO != 0) && (DRV_DEBUG_PINS_INTERFACE_GPIO != 1)
+    #error "DRV_DEBUG_PINS_INTERFACE_GPIO must be 0 or 1"
+#endif
+
+#if (DRV_DEBUG_PINS_INTERFACE_I2C != 0) && (DRV_DEBUG_PINS_INTERFACE_I2C != 1)
+    #error "DRV_DEBUG_PINS_INTERFACE_I2C must be 0 or 1"
+#endif
+
 /* =========================================================
  * Severity filtering
  * =========================================================
@@ -132,7 +172,7 @@
 
     #if DRV_DEBUG_BACKEND_DISPLAY
 
-        /* Up to one Georg display type must be selected. */
+        /* Up to one LCD display type must be selected. */
         #if (DRV_DEBUG_DISPLAY_TYPE_LCD_2X16 != 1)
             #error "DRV_DEBUG_BACKEND_DISPLAY requires a display type (set DRV_DEBUG_DISPLAY_TYPE_LCD_2X16 to 1)"
         #endif
@@ -160,6 +200,15 @@
         #if DRV_DEBUG_PINS_INTERFACE_GPIO
             #if (DRV_DEBUG_PINS_CHANNEL_COUNT < 1) || (DRV_DEBUG_PINS_CHANNEL_COUNT > 8)
                 #error "DRV_DEBUG_PINS_CHANNEL_COUNT must be between 1 and 8"
+            #endif
+            #if (DRV_DEBUG_PINS_START_BIT > 7u)
+                #error "DRV_DEBUG_PINS_START_BIT must be between 0 and 7"
+            #endif
+            #if (DRV_DEBUG_PINS_START_BIT + DRV_DEBUG_PINS_CHANNEL_COUNT) > 8u
+                #error "DRV_DEBUG_PINS_START_BIT + DRV_DEBUG_PINS_CHANNEL_COUNT must not exceed 8"
+            #endif
+            #if (DRV_DEBUG_PINS_PULSE_US < 0) || (DRV_DEBUG_PINS_PULSE_US > 65535UL)
+                #error "DRV_DEBUG_PINS_PULSE_US must fit in uint16_t"
             #endif
             #if !defined(DRV_DEBUG_PINS_PORT) || !defined(DRV_DEBUG_PINS_TRIS)
                 #error "Direct GPIO debug pins require DRV_DEBUG_PINS_PORT and DRV_DEBUG_PINS_TRIS registers"
@@ -195,25 +244,25 @@ void debug_flush(void);
 #if (DRV_DEBUG_LEVEL >= DRV_DEBUG_LEVEL_ERROR)
     #define debug_error(s)  debug_write_line(s)
 #else
-    #define debug_error(s)  do { (void)(s); } while (0)
+    #define debug_error(s)  do { } while (0)
 #endif
 
 #if (DRV_DEBUG_LEVEL >= DRV_DEBUG_LEVEL_WARN)
     #define debug_warn(s)   debug_write_line(s)
 #else
-    #define debug_warn(s)   do { (void)(s); } while (0)
+    #define debug_warn(s)   do { } while (0)
 #endif
 
 #if (DRV_DEBUG_LEVEL >= DRV_DEBUG_LEVEL_INFO)
     #define debug_info(s)   debug_write_line(s)
 #else
-    #define debug_info(s)   do { (void)(s); } while (0)
+    #define debug_info(s)   do { } while (0)
 #endif
 
 #if (DRV_DEBUG_LEVEL >= DRV_DEBUG_LEVEL_TRACE)
     #define debug_trace(s)  debug_write_line(s)
 #else
-    #define debug_trace(s)  do { (void)(s); } while (0)
+    #define debug_trace(s)  do { } while (0)
 #endif
 
 /* PINS backend signals. */
