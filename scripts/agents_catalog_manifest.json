@@ -165,6 +165,15 @@
     "xc8_pattern": "absent",
     "c18_pattern": "absent"
   },
+  "debug": {
+    "header": "libraries/system/debug/debug.h",
+    "card": ".agents/libraries/system/debug.md",
+    "mapper": ".agents/libraries/system/README.md",
+    "shared_source": "libraries/system/debug/debug.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
   "delay": {
     "header": "core/delay.h",
     "card": ".agents/core/delay.md",
