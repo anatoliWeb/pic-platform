@@ -281,40 +281,14 @@ def parse_mapper_table(path: Path) -> list[MapperEntry]:
     return []
 
 
-def mapper_row_membership(path: Path, module: str, card: str, header: str) -> str | None:
-    """Strict mapper membership check.
-
-    A mapper file must contain a table row that names the module and points at
-    the exact manifest card. Returns None on success; otherwise reports a card
-    conflict (module listed but under a different card) or a plain mapper
-    mismatch (module never listed). Works for the heterogeneous table layouts
-    used across the catalog (core `Open` 3-column and the four-column module
-    layout) while rejecting prose-only mentions.
-    """
-    table_rows = [
-        [cell.strip() for cell in line.strip().strip("|").split("|")]
-        for line in read_text(path).splitlines()
-        if line.lstrip().startswith("|")
-    ]
-
-    for row in table_rows:
-        cards = _row_cards(row)
-        if card not in cards:
-            continue
-        for cell in row:
-            compact = cell.replace("`", "").strip()
-            if compact.startswith(("core/", "drivers/", "libraries/")) and compact.endswith((".h", ".c")):
-                if compact != header:
-                    return f"manifest source mismatch: {module} mapper lists {compact} vs manifest header {header}"
-        return None
-
-    mentions_module = [row for row in table_rows if module in row or Path(card).stem in " ".join(row)]
-    if mentions_module:
-        return f"manifest card mismatch: {module} mapper points to a different card in {rel(path)}"
-    return f"manifest mapper mismatch: {module} not listed in {rel(path)}"
-
-
 CARD_PATH_RE = re.compile(r"\.agents/[A-Za-z0-9_./-]+\.md")
+
+# Module cells that stand in for a set of tightly linked cards (one concrete
+# module per card in the row) rather than a single exact module name. Only
+# these values get wildcard behaviour; any other multiword value is an error.
+MAPPER_MODULE_WILDCARDS = {
+    "matching module",
+}
 
 
 def _row_cards(row: list[str]) -> list[str]:
@@ -386,7 +360,7 @@ def mapper_row_membership(path: Path, module: str, card: str, header: str) -> st
             modules = _module_values(row[module_col])
             if not modules:
                 continue
-            wildcard = any(" " in value for value in modules)
+            wildcard = any(value.strip().lower() in MAPPER_MODULE_WILDCARDS for value in modules)
             if not wildcard and module not in modules:
                 continue
             if card not in _row_cards(row):

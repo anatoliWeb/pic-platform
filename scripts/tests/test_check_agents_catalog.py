@@ -464,6 +464,27 @@ class MapperRowTests(unittest.TestCase):
         self.assertIsNotNone(reason)
         self.assertIn("manifest mapper mismatch", reason)
 
+    def test_known_mapper_wildcard_passes(self) -> None:
+        mapper = self.agents / "core" / "README.md"
+        write(
+            mapper,
+            "# Core\n\n| Need | Module | Detailed card | Source | Status |\n|---|---|---|---|---|\n| need | `matching module` | `.agents/core/demo.md` | `core/demo.h` | detailed |\n",
+        )
+
+        reason = checker.mapper_row_membership(mapper, "demo", ".agents/core/demo.md", "core/demo.h")
+        self.assertIsNone(reason)
+
+    def test_unknown_multiword_module_is_not_wildcard(self) -> None:
+        mapper = self.agents / "core" / "README.md"
+        write(
+            mapper,
+            "# Core\n\n| Need | Module | Detailed card | Source | Status |\n|---|---|---|---|---|\n| need | `wrong module` | `.agents/core/demo.md` | `core/demo.h` | detailed |\n",
+        )
+
+        reason = checker.mapper_row_membership(mapper, "demo", ".agents/core/demo.md", "core/demo.h")
+        self.assertIsNotNone(reason)
+        self.assertIn("manifest mapper mismatch", reason)
+
 
 if __name__ == "__main__":
     unittest.main()
