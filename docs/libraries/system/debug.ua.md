@@ -1,97 +1,84 @@
-# Debug-фасад (українська)
+# Debug-фасад
 
 [English version](./debug.md)
 
 ## Призначення
 
-Бібліотека `libraries/system/debug` — це розширюваний, compile-time
-debug-фасад для PIC18F452. Прикладна програма викликає один невеликий API, а
-вивід спрямовується кожному backend-у, вибраному define-ами під час компіляції:
+`libraries/system/debug` - це compile-time debug-фасад для PIC18F452.
+`core/debug.h` перекидає на нього виклики і зберігає старі макроси `DBG_*` та
+`DRV_DEBUG_*` без залежності від `uart_debug.h`.
+
+Backend-и:
 
 ```text
-UART     - послідовний вивід через спільний UART-драйвер
-DISPLAY  - текстовий вивід на символьний LCD
-PINS     - діагностичні сигнальні на фізичні виводи (GPIO)
+UART     - текст через спільний UART-драйвер
+DISPLAY  - текст на LCD 2x16
+PINS     - діагностичні сигнали через GPIO
 ```
 
-У firmware потрапляє лише код вибраних backend-ів та їх залежностей. Точка
-входу — `core/debug.h`.
+## Збірка
 
-## Глобальне ввімкнення
+Windows route:
 
-Головний перемикач — `DRV_DEBUG_ENABLE` (за замовчуванням `1`, визначений у
-`core/config.h`). Якщо `0` — код усіх backend-ів і залежностей не компілюється,
-а всі виклики `debug_*` стають no-op макросами; прикладний код не потребує
-додаткових `#if`.
-
-## Вибір backend-ів
-
-```c
-#define DRV_DEBUG_BACKEND_UART     1   /* стандарт */
-#define DRV_DEBUG_BACKEND_DISPLAY  0   /* стандарт */
-#define DRV_DEBUG_BACKEND_PINS     0   /* стандарт */
+```cmd
+"C:\Program Files\Microchip\MPLABX\v6.30\gnuBins\GnuWin32\bin\make.exe" -f nbproject\Makefile-default.mk SUBPROJECTS= .clean-conf
+"C:\Program Files\Microchip\MPLABX\v6.30\gnuBins\GnuWin32\bin\make.exe" -f nbproject\Makefile-default.mk SUBPROJECTS= .build-conf
 ```
 
-Без додаткових налаштувань використовується UART на стандартній швидкості.
-Можна вмикати кілька backend-ів одночасно — текстове повідомлення піде в усі
-увімкнені текстові backend-и.
+HEX: `dist/default/production/uart_debug.X.production.hex`
 
-## Налаштування
+## Стандарти
 
-| Define | Стандарт | Значення |
+| Define | Стандарт | Примітка |
 | --- | ---: | --- |
 | `DRV_DEBUG_ENABLE` | `1` | головний перемикач |
-| `DRV_DEBUG_BACKEND_UART` | `1` | UART-backend |
-| `DRV_DEBUG_BACKEND_DISPLAY` | `0` | DISPLAY-backend |
-| `DRV_DEBUG_BACKEND_PINS` | `0` | PINS-backend |
+| `DRV_DEBUG_BACKEND_UART` | `1` | стандартний backend |
+| `DRV_DEBUG_BACKEND_DISPLAY` | `0` | LCD backend |
+| `DRV_DEBUG_BACKEND_PINS` | `0` | GPIO backend |
 | `DRV_DEBUG_UART_BAUD` | `9600` | швидкість UART |
-| `DRV_DEBUG_DISPLAY_TYPE_LCD_2X16` | `0` | адаптер LCD 2x16 |
-| `DRV_DEBUG_DISPLAY_INTERFACE_I2C` | `0` | I2C PCF8574 |
-| `DRV_DEBUG_DISPLAY_INTERFACE_PARALLEL` | `0` | прямий 4-bit LCD |
-| `DRV_DEBUG_DISPLAY_I2C_ADDR` | - | I2C-адреса (I2C-режим) |
-| `DRV_DEBUG_DISPLAY_I2C_FREQ` | `100000` | частота I2C |
-| `DRV_DEBUG_DISPLAY_AUTO_INIT` | `1` | debug сам ініціалізує дисплей |
-| `DRV_DEBUG_PINS_INTERFACE_GPIO` | `0` | GPIO-виходи |
-| `DRV_DEBUG_PINS_INTERFACE_I2C` | `0` | не підтримується |
-| `DRV_DEBUG_PINS_PORT` / `DRV_DEBUG_PINS_TRIS` | - | регістри GPIO |
-| `DRV_DEBUG_PINS_START_BIT` | - | перший біт каналів |
-| `DRV_DEBUG_PINS_CHANNEL_COUNT` | `4` | кількість каналів |
-| `DRV_DEBUG_PINS_PULSE_US` | `1000` | тривалість імпульсу |
-| `DRV_DEBUG_LEVEL` | `INFO` | фільтр severity |
+| `DRV_DEBUG_DISPLAY_AUTO_INIT` | `1` | init transport/LCD + clear/reset |
+| `DRV_DEBUG_PINS_CHANNEL_COUNT` | `4` | 1..8 |
+| `DRV_DEBUG_PINS_PULSE_US` | `10000` | має вміститись у `uint16_t` |
+| `DRV_DEBUG_LEVEL` | `INFO` | `ERROR`..`TRACE` |
 
-## Мінімальна інтеграція (UART)
+Boolean define-и мають бути тільки `0` або `1`.
 
-```c
-#include "core/debug.h"
+## Поведінка
 
-int main(void)
-{
-    debug_init();
-    debug_write_line("BOOT");
-    for (;;) { }
-}
-```
+- `DRV_DEBUG_ENABLE=0` робить усі `debug_*` макроси no-op без обчислення аргументів.
+- Фільтр severity теж не обчислює аргументи, коли виклик відфільтровано.
+- `debug_write_i16()` коректно друкує `-32768..32767`.
+- `DRV_DEBUG_DISPLAY_AUTO_INIT=1` ініціалізує транспорт і LCD, потім очищає екран.
+- `DRV_DEBUG_DISPLAY_AUTO_INIT=0` не ініціалізує транспорт, не ініціалізує LCD і не очищає зовнішній дисплей.
+- `DRV_DEBUG_PINS_START_BIT + DRV_DEBUG_PINS_CHANNEL_COUNT` не може перевищувати `8`.
 
-## UART
+## Source matrix
 
-Дефолтна швидкість — `9600`, перевизначається через `DRV_DEBUG_UART_BAUD`.
-PIC18F452 має один EUSART, тому вибір порту не потрібен.
+| Приклад | Збирається |
+| --- | --- |
+| `debug_default_uart.X` | `main.c`, `config_bits.c`, `core/delay.c`, `drivers/communication/uart/uart.c`, `libraries/system/debug/debug.c` |
+| `debug_display_i2c.X` | `main.c`, `config_bits.c`, `core/delay.c`, `drivers/communication/i2c/i2c.c`, `libraries/system/debug/debug.c` |
+| `debug_display_parallel.X` | `main.c`, `config_bits.c`, `core/delay.c`, `drivers/gpio/gpio.c`, `libraries/display/lcd_hd44780/lcd.c`, `libraries/system/debug/debug.c` |
+| `debug_pins_gpio.X` | `main.c`, `config_bits.c`, `core/delay.c`, `drivers/gpio/gpio.c`, `libraries/system/debug/debug.c` |
+| `debug_multi_backend.X` | `main.c`, `config_bits.c`, `core/delay.c`, `drivers/communication/uart/uart.c`, `drivers/communication/i2c/i2c.c`, `drivers/gpio/gpio.c`, `libraries/system/debug/debug.c` |
+| `debug_disabled.X` | `main.c`, `config_bits.c`, `core/delay.c` |
 
-## DISPLAY
+## Сумісність
 
-Cursor влаштований на матрицю 2 рядки x 16 colонок. `\n` переміз на наступний
-рядок, при досяганні colумента 16 — автоматичний перенос. За допомогою
-`debug_clear()` екран очищається. `DRV_DEBUG_DISPLAY_AUTO_INIT=1` — дисплей
-ініціалізується в `debug_init()`. У режимі `_PARALLEL` проєкт має викликати
-`lcd_init_pins()` перед `debug_init()`.
+`core/debug.h` підтримує старі імена `DBG_PRINT`, `DBG_PRINTLN`,
+`DBG_WRITE_BYTE`, `DBG_PRINT_INT`, `DBG_PRINT_HEX`, `DRV_DEBUG_INIT`,
+`DRV_DEBUG_LOG`, `DRV_DEBUG_LOG_HEX`.
 
-## PINS
+`libraries/system/uart_debug/uart_debug.h` лишається окремим шляхом для старих
+проєктів.
 
-Не текстовень backend. Підтримує `debug_pin_pulse/set/code/error`.
-Прямий GPIO-режим використовує драйвер GPIO на блоці бекст `START_BIT..+N`
-портare `DRV_DEBUG_PINS_PORT`. I2C expander-режим не підтримується.
+## ROM/RAM
 
-## Backward compatibility
-
-Старі `DBG_*` макроси та `uart_debug`, а також `core/debug.h`-алласи
-залишаються та працюють. Див. таблицю сумісності в англійській версії.
+| Конфіг | ROM | RAM |
+| --- | ---: | ---: |
+| `debug_default_uart.X` | `1246` | `93` |
+| `debug_display_i2c.X` | `2132` | `32` |
+| `debug_display_parallel.X` | `2234` | `50` |
+| `debug_pins_gpio.X` | `976` | `23` |
+| `debug_multi_backend.X` | `3028` | `98` |
+| `debug_disabled.X` | `102` | `3` |

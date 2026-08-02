@@ -12,8 +12,9 @@
 
 ## Збірка
 
-```bash
-mplab-make -f examples-projects/xc8/debug_display_i2c.X/Makefile build
+```cmd
+"C:\Program Files\Microchip\MPLABX\v6.30\gnuBins\GnuWin32\bin\make.exe" -f nbproject\Makefile-default.mk SUBPROJECTS= .clean-conf
+"C:\Program Files\Microchip\MPLABX\v6.30\gnuBins\GnuWin32\bin\make.exe" -f nbproject\Makefile-default.mk SUBPROJECTS= .build-conf
 ```
 
 ## Очікуваний результат

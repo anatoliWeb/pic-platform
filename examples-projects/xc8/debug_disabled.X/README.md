@@ -11,8 +11,9 @@ Show that the debug API compiles and runs when `DRV_DEBUG_ENABLE=0`.
 
 ## Build
 
-```bash
-mplab-make -f examples-projects/xc8/debug_disabled.X/Makefile build
+```cmd
+"C:\Program Files\Microchip\MPLABX\v6.30\gnuBins\GnuWin32\bin\make.exe" -f nbproject\Makefile-default.mk SUBPROJECTS= .clean-conf
+"C:\Program Files\Microchip\MPLABX\v6.30\gnuBins\GnuWin32\bin\make.exe" -f nbproject\Makefile-default.mk SUBPROJECTS= .build-conf
 ```
 
 ## Expected result

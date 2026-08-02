@@ -14,8 +14,9 @@ backend explicitly.
 
 ## Build
 
-```bash
-mplab-make -f examples-projects/xc8/debug_default_uart.X/Makefile build
+```cmd
+"C:\Program Files\Microchip\MPLABX\v6.30\gnuBins\GnuWin32\bin\make.exe" -f nbproject\Makefile-default.mk SUBPROJECTS= .clean-conf
+"C:\Program Files\Microchip\MPLABX\v6.30\gnuBins\GnuWin32\bin\make.exe" -f nbproject\Makefile-default.mk SUBPROJECTS= .build-conf
 ```
 
 ## Expected result
