@@ -16,6 +16,7 @@ FAMILIES: dict[str, list[str]] = {
     "communication/rs485": ["basic", "echo"],
     "communication/onewire": ["basic", "bus_test"],
     "sensors/ds18b20": ["basic", "read", "multi_read", "search_rom"],
+    "display/lcd_hd44780": ["i2c_pcf8574"],
     "input": ["button", "encoder", "adc_buttons"],
     "output": ["software_pwm", "ac_phase_control"],
     "timers": ["tick", "timer0", "timer1", "timer2", "timer3"],
