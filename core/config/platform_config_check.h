@@ -15,6 +15,8 @@
  *
  * The project keeps final control over the selected CONFIG bits.
  * Real CONFIG values must stay in config_bits.c as literal pragmas.
+ * Project-wide build defines may come from project_config.h defaults or from
+ * compiler -D / MPLAB define-macros.
  */
 
 /*
@@ -23,23 +25,23 @@
  * project itself, which keeps the historical 8 MHz fallback available.
  */
 #if !defined(PIC_PLATFORM_CLOCK_HZ) && !defined(PIC_PLATFORM_ALLOW_DEFAULT_CLOCK)
-#error "PIC_PLATFORM_CLOCK_HZ is required by project_config.h"
+#error "PIC_PLATFORM_CLOCK_HZ is required by the project build"
 #endif
 
 #ifndef PIC_PLATFORM_WDT_ENABLED
-#error "PIC_PLATFORM_WDT_ENABLED is required by project_config.h"
+#error "PIC_PLATFORM_WDT_ENABLED is required by the project build"
 #endif
 
 #ifndef PIC_PLATFORM_LVP_ENABLED
-#error "PIC_PLATFORM_LVP_ENABLED is required by project_config.h"
+#error "PIC_PLATFORM_LVP_ENABLED is required by the project build"
 #endif
 
 #ifndef PIC_PLATFORM_BOR_ENABLED
-#error "PIC_PLATFORM_BOR_ENABLED is required by project_config.h"
+#error "PIC_PLATFORM_BOR_ENABLED is required by the project build"
 #endif
 
 #ifndef PIC_PLATFORM_CCP2MUX_ENABLED
-#error "PIC_PLATFORM_CCP2MUX_ENABLED is required by project_config.h"
+#error "PIC_PLATFORM_CCP2MUX_ENABLED is required by the project build"
 #endif
 
 #ifdef PIC_PLATFORM_REQUIRES_CLOCK_HZ

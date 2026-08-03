@@ -11,7 +11,8 @@
  * Copy this file into the application project as project_config.h and adjust
  * the values to match the real hardware setup.
  *
- * Keep clock/timing values and helper flags here.
+ * Keep project-local helper flags here.
+ * Project-wide clock/timing values belong in compiler macros / define-macros.
  * Emit the real CONFIG bits only in config_bits.c with literal values.
  */
 
@@ -19,8 +20,8 @@
  * Legacy projects may opt into the default 8 MHz clock explicitly by defining
  * PIC_PLATFORM_ALLOW_DEFAULT_CLOCK in their own project configuration.
  *
- * New projects should define PIC_PLATFORM_CLOCK_HZ in their project_config.h
- * and/or project metadata. Do not rely on an implicit default clock.
+ * New projects should define PIC_PLATFORM_CLOCK_HZ in project metadata
+ * (compiler -D / MPLAB define-macros). Do not rely on an implicit default clock.
  */
 
 /*

@@ -25,22 +25,6 @@
  * The runtime configuration passed to seven_segment_init() then selects
  * whether manual refresh or that compiled timer backend is used.
  */
-#ifndef SEVEN_SEGMENT_ENABLE_TIMER0
-#define SEVEN_SEGMENT_ENABLE_TIMER0 0
-#endif
-
-#ifndef SEVEN_SEGMENT_ENABLE_TIMER1
-#define SEVEN_SEGMENT_ENABLE_TIMER1 0
-#endif
-
-#ifndef SEVEN_SEGMENT_ENABLE_TIMER2
-#define SEVEN_SEGMENT_ENABLE_TIMER2 0
-#endif
-
-#ifndef SEVEN_SEGMENT_ENABLE_TIMER3
-#define SEVEN_SEGMENT_ENABLE_TIMER3 0
-#endif
-
 typedef void (*seven_segment_timer_callback_t)(void);
 
 typedef struct
