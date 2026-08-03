@@ -1,5 +1,5 @@
 /*
- * File: examples-projects/xc8/ds18b20_search_rom.X/main.c
+ * File: examples-projects/xc8/sensors/ds18b20/ds18b20_search_rom.X/main.c
  */
 
 #include "project_config.h"

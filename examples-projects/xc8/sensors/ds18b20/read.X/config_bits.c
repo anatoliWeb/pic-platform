@@ -1,11 +1,11 @@
 /*
- * File: examples-projects/xc8/ds18b20_search_rom.X/config_bits.c
+ * File: examples-projects/xc8/sensors/ds18b20/ds18b20_read.X/config_bits.c
  */
 
 #include <xc.h>
 
 #include "project_config.h"
-#include "../../../core/config/platform_config_check.h"
+#include "../../../../../core/config/platform_config_check.h"
 
 #pragma config OSC = HS
 #pragma config OSCS = OFF

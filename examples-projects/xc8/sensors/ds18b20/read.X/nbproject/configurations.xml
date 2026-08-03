@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="65">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="HeaderFiles"
@@ -24,43 +24,43 @@
       </logicalFolder>
       <logicalFolder name="core" displayName="core" projectFiles="true">
         <logicalFolder name="crc" displayName="crc" projectFiles="true">
-          <itemPath>../../../core/crc/crc.c</itemPath>
+          <itemPath>../../../../../core/crc/crc.c</itemPath>
         </logicalFolder>
-        <itemPath>../../../core/delay.c</itemPath>
+        <itemPath>../../../../../core/delay.c</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="communication"
                        displayName="communication"
                        projectFiles="true">
           <logicalFolder name="onewire" displayName="onewire" projectFiles="true">
-            <itemPath>../../../drivers/communication/onewire/onewire.c</itemPath>
+            <itemPath>../../../../../drivers/communication/onewire/onewire.c</itemPath>
           </logicalFolder>
           <logicalFolder name="uart" displayName="uart" projectFiles="true">
-            <itemPath>../../../drivers/communication/uart/uart.c</itemPath>
+            <itemPath>../../../../../drivers/communication/uart/uart.c</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
-          <itemPath>../../../drivers/gpio/gpio.c</itemPath>
+          <itemPath>../../../../../drivers/gpio/gpio.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="libraries" displayName="libraries" projectFiles="true">
         <logicalFolder name="sensors" displayName="sensors" projectFiles="true">
           <logicalFolder name="ds18b20" displayName="ds18b20" projectFiles="true">
-            <itemPath>../../../libraries/sensors/ds18b20/ds18b20.c</itemPath>
+            <itemPath>../../../../../libraries/sensors/ds18b20/ds18b20.c</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="system" displayName="system" projectFiles="true">
           <logicalFolder name="uart_debug" displayName="uart_debug" projectFiles="true">
-            <itemPath>../../../libraries/system/uart_debug/uart_debug.c</itemPath>
+            <itemPath>../../../../../libraries/system/uart_debug/uart_debug.c</itemPath>
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../core</Elem>
-    <Elem>../../../drivers</Elem>
-    <Elem>../../../libraries</Elem>
+    <Elem>../../../../../core</Elem>
+    <Elem>../../../../../drivers</Elem>
+    <Elem>../../../../../libraries</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -117,7 +117,7 @@
         <property key="define-macros" value="PIC_PLATFORM_CLOCK_HZ=10000000UL"/>
         <property key="disable-optimizations" value="true"/>
         <property key="extra-include-directories"
-                  value="..\..\..\;..\..\..\core;..\..\..\drivers"/>
+                  value="..\..\..\..\..\..;..\..\..\..\..\..core;..\..\..\..\..\..drivers"/>
         <property key="favor-optimization-for" value="-speed,+space"/>
         <property key="garbage-collect-data" value="true"/>
         <property key="garbage-collect-functions" value="true"/>
