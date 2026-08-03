@@ -1,5 +1,10 @@
 /*
  * File: libraries/display/lcd_hd44780/lcd_i2c.c
+ *
+ * PCF8574 I2C transport for the HD44780 controller. The pin mapping is
+ * configured at compile time in lcd_i2c.h. Every I2C transaction reports a
+ * NACK through lcd_i2c_last_status() and clears the ready flag, so a missing
+ * backpack is never silently ignored.
  */
 
 #include "libraries/display/lcd_hd44780/lcd_i2c.h"
@@ -7,26 +12,89 @@
 #include "core/delay.h"
 #include "drivers/communication/i2c/i2c.h"
 
-/*
- * PCF8574 to HD44780 backpack mapping.
- * P0=RS, P1=RW, P2=EN, P3=Backlight, P4=D4, P5=D5, P6=D6, P7=D7.
- */
-#define LCD_I2C_PIN_RS   0x01u
-#define LCD_I2C_PIN_RW   0x02u
-#define LCD_I2C_PIN_EN   0x04u
-#define LCD_I2C_PIN_BL   0x08u
+/* =========================================================
+ * Compile-time validation of the pin mapping
+ * ========================================================= */
 
-#define LCD_I2C_ADDR_SHIFT 1u
+#if (LCD_I2C_PIN_RS | LCD_I2C_PIN_RW | LCD_I2C_PIN_EN | LCD_I2C_PIN_BL) > 0xFFu
+    #error "LCD_I2C control pins must fit in 8 bits"
+#endif
 
+#if LCD_I2C_PIN_RS == 0u
+    #error "LCD_I2C_PIN_RS must be non-zero"
+#endif
+#if LCD_I2C_PIN_RW == 0u
+    #error "LCD_I2C_PIN_RW must be non-zero"
+#endif
+#if LCD_I2C_PIN_EN == 0u
+    #error "LCD_I2C_PIN_EN must be non-zero"
+#endif
+#if LCD_I2C_PIN_BL == 0u
+    #error "LCD_I2C_PIN_BL must be non-zero"
+#endif
+
+#if (LCD_I2C_PIN_RS & (LCD_I2C_PIN_RW | LCD_I2C_PIN_EN | LCD_I2C_PIN_BL)) != 0u
+    #error "LCD_I2C_PIN_RS overlaps another control pin"
+#endif
+#if (LCD_I2C_PIN_RW & (LCD_I2C_PIN_RS | LCD_I2C_PIN_EN | LCD_I2C_PIN_BL)) != 0u
+    #error "LCD_I2C_PIN_RW overlaps another control pin"
+#endif
+#if (LCD_I2C_PIN_EN & (LCD_I2C_PIN_RS | LCD_I2C_PIN_RW | LCD_I2C_PIN_BL)) != 0u
+    #error "LCD_I2C_PIN_EN overlaps another control pin"
+#endif
+#if (LCD_I2C_PIN_BL & (LCD_I2C_PIN_RS | LCD_I2C_PIN_RW | LCD_I2C_PIN_EN)) != 0u
+    #error "LCD_I2C_PIN_BL overlaps another control pin"
+#endif
+
+#if (LCD_I2C_DATA_SHIFT + 4u) > 8u
+    #error "LCD_I2C_DATA_SHIFT + 4 must not exceed 8"
+#endif
+
+#if ((0x0Fu << LCD_I2C_DATA_SHIFT) & (LCD_I2C_PIN_RS | LCD_I2C_PIN_RW | LCD_I2C_PIN_EN | LCD_I2C_PIN_BL)) != 0u
+    #error "LCD_I2C data pins overlap the control pins"
+#endif
+
+/* =========================================================
+ * Module state
+ * ========================================================= */
+
+/* Address 0 is reserved as the "not configured" sentinel. */
 static uint8_t g_i2c_addr = 0u;
 static uint8_t g_backlight = LCD_I2C_PIN_BL;
+static uint8_t g_ready = 0u;
+static lcd_i2c_status_t g_last_status = LCD_I2C_OK;
 
-static void lcd_i2c_send(uint8_t data)
+/* =========================================================
+ * Low-level transport
+ * ========================================================= */
+
+static lcd_i2c_status_t lcd_i2c_send(uint8_t data)
 {
+    uint8_t nack;
+
+    if (g_i2c_addr == 0u)
+    {
+        g_last_status = LCD_I2C_NOT_INITIALIZED;
+        return LCD_I2C_NOT_INITIALIZED;
+    }
+
     i2c_start();
-    (void)i2c_write_byte((uint8_t)(g_i2c_addr << LCD_I2C_ADDR_SHIFT));
-    (void)i2c_write_byte(data);
+    nack = i2c_write_byte((uint8_t)(g_i2c_addr << 1u));
+    if (nack == 0u)
+    {
+        nack = i2c_write_byte(data);
+    }
     i2c_stop();
+
+    if (nack != 0u)
+    {
+        g_ready = 0u;
+        g_last_status = LCD_I2C_NO_ACK;
+        return LCD_I2C_NO_ACK;
+    }
+
+    g_last_status = LCD_I2C_OK;
+    return LCD_I2C_OK;
 }
 
 static void lcd_i2c_pulse(uint8_t data)
@@ -46,7 +114,7 @@ static void lcd_i2c_nibble(uint8_t nibble, uint8_t rs)
         out |= LCD_I2C_PIN_RS;
     }
 
-    out |= (uint8_t)((nibble & 0x0Fu) << 4u);
+    out |= (uint8_t)((nibble & 0x0Fu) << LCD_I2C_DATA_SHIFT);
     lcd_i2c_pulse(out);
 }
 
@@ -84,13 +152,98 @@ static void lcd_hd44780_init(void)
     lcd_i2c_byte(0x06u, 0u);
 }
 
-void lcd_i2c_init(uint8_t i2c_addr, uint32_t i2c_clock_hz)
+/* =========================================================
+ * Init / ownership API
+ * ========================================================= */
+
+lcd_i2c_status_t lcd_i2c_init(uint8_t i2c_addr, uint32_t i2c_clock_hz)
 {
+    if (i2c_addr > 0x7Fu)
+    {
+        g_last_status = LCD_I2C_INVALID_ARGUMENT;
+        return LCD_I2C_INVALID_ARGUMENT;
+    }
+
     g_i2c_addr = i2c_addr;
     g_backlight = LCD_I2C_PIN_BL;
+    g_ready = 0u;
+    g_last_status = LCD_I2C_OK;
+
     i2c_init(i2c_clock_hz);
     lcd_hd44780_init();
+
+    g_ready = (g_last_status == LCD_I2C_OK) ? 1u : 0u;
+    return g_last_status;
 }
+
+lcd_i2c_status_t lcd_i2c_attach(uint8_t i2c_addr)
+{
+    lcd_i2c_status_t status;
+
+    status = lcd_i2c_probe(i2c_addr);
+    if (status != LCD_I2C_OK)
+    {
+        return status;
+    }
+
+    return lcd_i2c_controller_init(i2c_addr);
+}
+
+lcd_i2c_status_t lcd_i2c_controller_init(uint8_t i2c_addr)
+{
+    if (i2c_addr > 0x7Fu)
+    {
+        g_last_status = LCD_I2C_INVALID_ARGUMENT;
+        return LCD_I2C_INVALID_ARGUMENT;
+    }
+
+    g_i2c_addr = i2c_addr;
+    g_ready = 0u;
+    g_last_status = LCD_I2C_OK;
+
+    lcd_hd44780_init();
+
+    g_ready = (g_last_status == LCD_I2C_OK) ? 1u : 0u;
+    return g_last_status;
+}
+
+lcd_i2c_status_t lcd_i2c_probe(uint8_t i2c_addr)
+{
+    uint8_t nack;
+
+    if ((i2c_addr == 0u) || (i2c_addr > 0x7Fu))
+    {
+        g_last_status = LCD_I2C_INVALID_ARGUMENT;
+        return LCD_I2C_INVALID_ARGUMENT;
+    }
+
+    i2c_start();
+    nack = i2c_write_byte((uint8_t)(i2c_addr << 1u));
+    i2c_stop();
+
+    if (nack != 0u)
+    {
+        g_last_status = LCD_I2C_NO_ACK;
+        return LCD_I2C_NO_ACK;
+    }
+
+    g_last_status = LCD_I2C_OK;
+    return LCD_I2C_OK;
+}
+
+lcd_i2c_status_t lcd_i2c_last_status(void)
+{
+    return g_last_status;
+}
+
+uint8_t lcd_i2c_is_ready(void)
+{
+    return g_ready;
+}
+
+/* =========================================================
+ * Display operations
+ * ========================================================= */
 
 void lcd_i2c_clear(void)
 {
@@ -104,7 +257,21 @@ void lcd_i2c_home(void)
 
 void lcd_i2c_set_cursor(uint8_t row, uint8_t col)
 {
-    uint8_t base = (row == 0u) ? 0x00u : 0x40u;
+    uint8_t base;
+
+    if (row > 1u)
+    {
+        g_last_status = LCD_I2C_INVALID_ARGUMENT;
+        return;
+    }
+
+    if (col > 0x27u)
+    {
+        g_last_status = LCD_I2C_INVALID_ARGUMENT;
+        return;
+    }
+
+    base = (row == 0u) ? 0x00u : 0x40u;
     lcd_i2c_byte((uint8_t)(0x80u | (uint8_t)(base + col)), 0u);
 }
 
@@ -117,6 +284,7 @@ void lcd_i2c_write_string(const char* str)
 {
     if (str == (const char*)0)
     {
+        g_last_status = LCD_I2C_INVALID_ARGUMENT;
         return;
     }
 
@@ -129,6 +297,12 @@ void lcd_i2c_write_string(const char* str)
 
 void lcd_i2c_backlight(uint8_t on)
 {
+    if ((on != 0u) && (on != 1u))
+    {
+        g_last_status = LCD_I2C_INVALID_ARGUMENT;
+        return;
+    }
+
     if (on != 0u)
     {
         g_backlight |= LCD_I2C_PIN_BL;
