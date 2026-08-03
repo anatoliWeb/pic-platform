@@ -13,7 +13,7 @@ XC8 HEX path:
 
 ## MPLAB Projects
 
-- `../../xc8/encoder.X`
+- `../../xc8/input/encoder.X`
 - `../../c18/encoder.X`
 
 ## Proteus Notes

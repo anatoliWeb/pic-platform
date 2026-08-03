@@ -14,7 +14,7 @@ XC8/libraries/input/encoder/encoder.c
 C18/libraries/input/encoder/encoder.c
 docs/libraries/input/encoder.md
 docs/libraries/input/encoder.ua.md
-examples-projects/xc8/encoder.X
+examples-projects/xc8/input/encoder.X
 examples-projects/proteus/encoder/README.md
 ```
 
@@ -166,7 +166,7 @@ encoder_tick(&enc);
 
 ```text
 libraries/input/encoder/example.c
-examples-projects/xc8/encoder.X
+examples-projects/xc8/input/encoder.X
 ```
 
 ## Proteus integration

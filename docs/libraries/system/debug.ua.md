@@ -75,7 +75,7 @@ Boolean define-и мають бути тільки `0` або `1`.
 
 | Позиція | Значення |
 | --- | --- |
-| Проєкт | `examples-projects/xc8/debug_default_uart.X` |
+| Проєкт | `examples-projects/xc8/debug/default_uart.X` |
 | Defines | `DRV_DEBUG_BACKEND_UART=1` (backend за замовчуванням) |
 | Апаратна частина | PIC18F452, RC6/TX вивід 25, RC7/RX вивід 26, 9600 8N1 |
 | Очікується | `BOOT`, далі `counter=` що секунди |
@@ -84,7 +84,7 @@ Boolean define-и мають бути тільки `0` або `1`.
 
 | Позиція | Значення |
 | --- | --- |
-| Проєкт | `examples-projects/xc8/debug_display_i2c.X` |
+| Проєкт | `examples-projects/xc8/debug/display_i2c.X` |
 | Defines | `DRV_DEBUG_BACKEND_DISPLAY=1`, `DRV_DEBUG_DISPLAY_INTERFACE_I2C=1`, `DRV_DEBUG_DISPLAY_I2C_ADDR=0x27` |
 | Апаратна частина | LCD 2x16 + PCF8574, SCL RC3/вивід 18, SDA RC4/вивід 23, pull-ups |
 | Очікується | `SYSTEM OK` на рядку 1, `COUNT=<значення>` на рядку 2 |
@@ -93,7 +93,7 @@ Boolean define-и мають бути тільки `0` або `1`.
 
 | Позиція | Значення |
 | --- | --- |
-| Проєкт | `examples-projects/xc8/debug_pins_gpio.X` |
+| Проєкт | `examples-projects/xc8/debug/pins_gpio.X` |
 | Defines | `DRV_DEBUG_BACKEND_PINS=1`, `DRV_DEBUG_PINS_INTERFACE_GPIO=1`, `DRV_DEBUG_PINS_PORT=PORTC`, `DRV_DEBUG_PINS_START_BIT=0`, `DRV_DEBUG_PINS_CHANNEL_COUNT=4` |
 | Апаратна частина | LED + резистор 330–1000 Ом на кожен канал PORTC0..3 |
 | Очікується | pulse, set/clear, code та error патерни на PORTC0..3 |

@@ -13,7 +13,7 @@
 
 ## MPLAB проєкти
 
-- `../../xc8/button.X`
+- `../../xc8/input/button.X`
 - `../../c18/button.X`
 
 ## Нотатки для Proteus

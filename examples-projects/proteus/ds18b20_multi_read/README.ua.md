@@ -13,7 +13,7 @@ C18 HEX С‰Рµ РЅРµ РґРѕСЃС‚СѓРїРЅРёР№ РґР»СЏ �
 
 ## MPLAB РїСЂРѕС”РєС‚Рё
 
-- `../../xc8/ds18b20_multi_read.X`
+- `../../xc8/sensors/ds18b20/multi_read.X`
 - `../../c18/ds18b20_multi_read.X`
 
 ## РќРѕС‚Р°С‚РєРё РґР»СЏ Proteus

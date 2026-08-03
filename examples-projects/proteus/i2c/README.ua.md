@@ -13,7 +13,7 @@ C18 HEX ще не доступний для цього проєкту.
 
 ## MPLAB проєкти
 
-- `../../xc8/i2c.X`
+- `../../xc8/communication/i2c/basic.X`
 - `../../c18/i2c.X`
 
 ## Нотатки для Proteus

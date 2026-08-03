@@ -30,7 +30,7 @@ C18/drivers/gpio/gpio.c
 ## Examples
 
 ```text
-examples-projects/xc8/button.X
+examples-projects/xc8/input/button.X
 examples-projects/xc8/seven_segment/*
 examples-projects/xc8/actuator/position_drive_adc.X
 ```

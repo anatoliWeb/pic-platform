@@ -12,7 +12,7 @@ libraries/output/ac_phase_control/ac_phase_control.c
 libraries/output/ac_phase_control/example.c
 docs/libraries/output/ac_phase_control.md
 docs/libraries/output/ac_phase_control.ua.md
-examples-projects/xc8/ac_phase_control.X
+examples-projects/xc8/output/ac_phase_control.X
 examples-projects/proteus/ac_phase_control/README.md
 ```
 
@@ -154,7 +154,7 @@ static const ac_phase_control_config_t g_config = { 10000u, 500u, 9500u, 120u };
 
 ```text
 libraries/output/ac_phase_control/example.c
-examples-projects/xc8/ac_phase_control.X
+examples-projects/xc8/output/ac_phase_control.X
 examples-projects/proteus/ac_phase_control/README.md
 ```
 

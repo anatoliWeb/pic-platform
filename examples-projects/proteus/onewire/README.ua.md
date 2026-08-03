@@ -13,7 +13,7 @@ C18 HEX ще не доступний для цього проєкту.
 
 ## MPLAB проєкти
 
-- `../../xc8/onewire.X`
+- `../../xc8/communication/onewire/basic.X`
 - `../../c18/onewire.X`
 
 ## Нотатки для Proteus

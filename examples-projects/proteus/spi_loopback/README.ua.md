@@ -13,7 +13,7 @@ C18 HEX РїРѕРєРё РЅРµРґРѕСЃС‚СѓРїРЅРёР№ РґР»
 
 ## MPLAB-РїСЂРѕС”РєС‚Рё
 
-- `../../xc8/spi_loopback.X`
+- `../../xc8/communication/spi/loopback.X`
 - `../../c18/spi_loopback.X`
 
 ## РџС–РґРєР»СЋС‡РµРЅРЅСЏ РґРѕ PIC18F452

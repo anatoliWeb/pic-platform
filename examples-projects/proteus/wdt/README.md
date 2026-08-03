@@ -13,7 +13,7 @@ C18 HEX is not available yet for this project.
 
 ## MPLAB Projects
 
-- `../../xc8/wdt.X`
+- `../../xc8/system/wdt.X`
 - `../../c18/wdt.X`
 
 ## Expected Behavior

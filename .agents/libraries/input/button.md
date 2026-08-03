@@ -13,7 +13,7 @@ XC8/libraries/input/button/button.c
 C18/libraries/input/button/button.c
 docs/libraries/input/button.md
 docs/libraries/input/button.ua.md
-examples-projects/xc8/button.X
+examples-projects/xc8/input/button.X
 examples-projects/xc8/seven_segment/keys_single_line.X
 examples-projects/xc8/seven_segment/keys_diode_coded.X
 ```
@@ -159,7 +159,7 @@ while (1)
 ## Examples
 
 ```text
-examples-projects/xc8/button.X
+examples-projects/xc8/input/button.X
 examples-projects/xc8/seven_segment/keys_single_line.X
 examples-projects/xc8/seven_segment/keys_diode_coded.X
 ```

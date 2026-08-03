@@ -13,7 +13,7 @@ XC8 HEX path:
 
 ## MPLAB Projects
 
-- `../../xc8/timer1.X`
+- `../../xc8/timers/timer1.X`
 - `../../c18/timer1.X`
 
 ## Proteus Notes

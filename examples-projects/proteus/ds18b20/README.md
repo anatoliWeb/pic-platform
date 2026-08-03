@@ -13,7 +13,7 @@ C18 HEX is not available yet for this project.
 
 ## MPLAB Projects
 
-- `../../xc8/ds18b20.X`
+- `../../xc8/sensors/ds18b20/basic.X`
 - `../../c18/ds18b20.X`
 
 ## Proteus Notes

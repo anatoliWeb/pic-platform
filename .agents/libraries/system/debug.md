@@ -47,11 +47,11 @@ docs/libraries/system/debug.ua.md
 
 ## Quick start examples
 
-- **UART**: `examples-projects/xc8/debug_default_uart.X` — default UART backend,
+- **UART**: `examples-projects/xc8/debug/default_uart.X` — default UART backend,
   RC6/TX pin 25, RC7/RX pin 26, 9600 8N1.
-- **LCD 2x16 I2C**: `examples-projects/xc8/debug_display_i2c.X` — DISPLAY
+- **LCD 2x16 I2C**: `examples-projects/xc8/debug/display_i2c.X` — DISPLAY
   backend over PCF8574, SCL RC3/pin 18, SDA RC4/pin 23, addr `0x27`.
-- **GPIO blink/signals**: `examples-projects/xc8/debug_pins_gpio.X` — PINS
+- **GPIO blink/signals**: `examples-projects/xc8/debug/pins_gpio.X` — PINS
   backend on PORTC0..3 (LED via 330..1000 ohm resistor per channel).
 
 ## Public API

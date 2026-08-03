@@ -13,7 +13,7 @@ C18 HEX is not available yet for this project.
 
 ## MPLAB Projects
 
-- `../../xc8/rs485_echo.X`
+- `../../xc8/communication/rs485/echo.X`
 - `../../c18/rs485_echo.X`
 
 ## PIC18F452 Connections

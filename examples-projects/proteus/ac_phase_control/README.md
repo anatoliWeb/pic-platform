@@ -15,7 +15,7 @@ Manual Proteus validation target for the multi-channel low-voltage phase-control
 ## Selected Timer Source
 
 - Default example source: `Timer2`
-- Timer selection is controlled in `examples-projects/xc8/ac_phase_control.X/project_config.h`
+- Timer selection is controlled in `examples-projects/xc8/output/ac_phase_control.X/project_config.h`
 
 ## What to Check
 

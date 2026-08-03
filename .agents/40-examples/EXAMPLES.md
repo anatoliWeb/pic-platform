@@ -38,6 +38,13 @@ Typical MPLAB wrapper project contents:
 
 ## Example families in this repo
 
-- `seven_segment` examples: `basic_manual.X`, `multiplex_manual.X`, `multiplex_timer.X`, `keys_single_line.X`, `keys_diode_coded.X`.
+- Root validation examples: `blink.X`, `gpio.X`, `adc_read.X`, `timer.X`, and other standalone smoke tests directly under `xc8/`.
+- `debug/` family: `default_uart.X`, `display_i2c.X`, `display_parallel.X`, `pins_gpio.X`, `multi_backend.X`, `disabled.X`.
+- `communication/` family: `uart/{basic,debug}`, `i2c/{basic,scan}`, `spi/{basic,loopback}`, `rs485/{basic,echo}`, `onewire/{basic,bus_test}`.
+- `sensors/ds18b20/` family: `basic.X`, `read.X`, `multi_read.X`, `search_rom.X`.
+- `input/` family: `button.X`, `encoder.X`, `adc_buttons.X`.
+- `seven_segment` family: `basic_manual.X`, `multiplex_manual.X`, `multiplex_timer.X`, `keys_single_line.X`, `keys_diode_coded.X`.
+- `output/` family: `software_pwm.X`, `ac_phase_control.X`.
+- `timers/` family: `tick.X`, `timer0.X`..`timer3.X`.
+- `system/wdt.X`.
 - `actuator/position_drive_adc.X`.
-- Common validation examples: `button.X`, `encoder.X`, `adc_buttons.X`, `uart_debug.X`, `gpio.X`, `tick.X`, `timer0.X`..`timer3.X`.

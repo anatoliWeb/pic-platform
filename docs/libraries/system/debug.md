@@ -78,7 +78,7 @@ only the sources of its selected backend.
 
 | Item | Value |
 | --- | --- |
-| Project | `examples-projects/xc8/debug_default_uart.X` |
+| Project | `examples-projects/xc8/debug/default_uart.X` |
 | Selected defines | `DRV_DEBUG_BACKEND_UART=1` (default backend) |
 | Hardware | PIC18F452, RC6/TX pin 25, RC7/RX pin 26, 9600 8N1 |
 | Expected | `BOOT` then `counter=` printed every second |
@@ -87,7 +87,7 @@ only the sources of its selected backend.
 
 | Item | Value |
 | --- | --- |
-| Project | `examples-projects/xc8/debug_display_i2c.X` |
+| Project | `examples-projects/xc8/debug/display_i2c.X` |
 | Selected defines | `DRV_DEBUG_BACKEND_DISPLAY=1`, `DRV_DEBUG_DISPLAY_INTERFACE_I2C=1`, `DRV_DEBUG_DISPLAY_I2C_ADDR=0x27` |
 | Hardware | LCD 2x16 + PCF8574, SCL RC3/pin 18, SDA RC4/pin 23, pull-ups |
 | Expected | `SYSTEM OK` on row 1, `COUNT=<value>` on row 2 |
@@ -96,7 +96,7 @@ only the sources of its selected backend.
 
 | Item | Value |
 | --- | --- |
-| Project | `examples-projects/xc8/debug_pins_gpio.X` |
+| Project | `examples-projects/xc8/debug/pins_gpio.X` |
 | Selected defines | `DRV_DEBUG_BACKEND_PINS=1`, `DRV_DEBUG_PINS_INTERFACE_GPIO=1`, `DRV_DEBUG_PINS_PORT=PORTC`, `DRV_DEBUG_PINS_START_BIT=0`, `DRV_DEBUG_PINS_CHANNEL_COUNT=4` |
 | Hardware | LED + 330-1000 ohm resistor per channel on PORTC0..3 |
 | Expected | pulse, set/clear, code and error patterns on PORTC0..3 |

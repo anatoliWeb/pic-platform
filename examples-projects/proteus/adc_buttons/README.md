@@ -13,7 +13,7 @@ XC8 HEX path:
 
 ## MPLAB Projects
 
-- `../../xc8/adc_buttons.X`
+- `../../xc8/input/adc_buttons.X`
 - `../../c18/adc_buttons.X`
 
 ## Proteus Notes

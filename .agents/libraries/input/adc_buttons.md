@@ -14,7 +14,7 @@ XC8/libraries/input/adc_buttons/adc_buttons.c
 C18/libraries/input/adc_buttons/adc_buttons.c
 docs/libraries/input/adc_buttons.md
 docs/libraries/input/adc_buttons.ua.md
-examples-projects/xc8/adc_buttons.X
+examples-projects/xc8/input/adc_buttons.X
 examples-projects/proteus/adc_buttons/README.md
 examples-projects/hex/xc8/adc_buttons/adc_buttons.hex
 examples-projects/hex/c18/adc_buttons/adc_buttons.hex
@@ -166,7 +166,7 @@ adc_buttons_update(&btns);
 
 ```text
 libraries/input/adc_buttons/example.c
-examples-projects/xc8/adc_buttons.X
+examples-projects/xc8/input/adc_buttons.X
 ```
 
 ## Proteus integration

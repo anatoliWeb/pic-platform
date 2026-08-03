@@ -13,7 +13,7 @@ C18 HEX is not available yet for this project.
 
 ## MPLAB Projects
 
-- `../../xc8/uart_debug.X`
+- `../../xc8/communication/uart/debug.X`
 - `../../c18/uart_debug.X`
 
 ## PIC18F452 Connections

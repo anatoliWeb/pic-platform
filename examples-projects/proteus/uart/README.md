@@ -13,7 +13,7 @@ C18 HEX is not available yet for this project.
 
 ## MPLAB Projects
 
-- `../../xc8/uart.X`
+- `../../xc8/communication/uart/basic.X`
 - `../../c18/uart.X`
 
 ## Proteus Notes

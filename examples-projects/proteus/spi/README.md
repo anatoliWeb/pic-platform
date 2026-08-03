@@ -13,7 +13,7 @@ C18 HEX is not available yet for this project.
 
 ## MPLAB Projects
 
-- `../../xc8/spi.X`
+- `../../xc8/communication/spi/basic.X`
 - `../../c18/spi.X`
 
 ## Proteus Notes

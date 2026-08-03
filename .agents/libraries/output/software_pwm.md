@@ -11,7 +11,7 @@ libraries/output/software_pwm/software_pwm.h
 libraries/output/software_pwm/software_pwm.c
 docs/libraries/output/software_pwm.md
 docs/libraries/output/software_pwm.ua.md
-examples-projects/xc8/software_pwm.X
+examples-projects/xc8/output/software_pwm.X
 examples-projects/proteus/software_pwm/README.md
 ```
 
@@ -165,7 +165,7 @@ software_pwm_init_group(&group, SOFTWARE_PWM_TIMER2, 10u, channels, 2u);
 ## Working examples
 
 ```text
-examples-projects/xc8/software_pwm.X
+examples-projects/xc8/output/software_pwm.X
 ```
 
 ## Proteus integration

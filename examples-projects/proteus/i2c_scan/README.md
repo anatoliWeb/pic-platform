@@ -13,7 +13,7 @@ C18 HEX is not available yet for this project.
 
 ## MPLAB Projects
 
-- `../../xc8/i2c_scan.X`
+- `../../xc8/communication/i2c/scan.X`
 - `../../c18/i2c_scan.X`
 
 ## PIC18F452 Connections

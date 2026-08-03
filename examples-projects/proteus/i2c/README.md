@@ -13,7 +13,7 @@ C18 HEX is not available yet for this project.
 
 ## MPLAB Projects
 
-- `../../xc8/i2c.X`
+- `../../xc8/communication/i2c/basic.X`
 - `../../c18/i2c.X`
 
 ## Proteus Notes

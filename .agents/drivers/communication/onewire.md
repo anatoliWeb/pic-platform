@@ -14,9 +14,9 @@ XC8/drivers/communication/onewire/onewire.c
 C18/drivers/communication/onewire/onewire.c
 docs/drivers/communication/onewire.md
 docs/drivers/communication/onewire.ua.md
-examples-projects/xc8/onewire_bus_test.X
-examples-projects/xc8/ds18b20.X
-examples-projects/xc8/ds18b20_search_rom.X
+examples-projects/xc8/communication/onewire/bus_test.X
+examples-projects/xc8/sensors/ds18b20/basic.X
+examples-projects/xc8/sensors/ds18b20/search_rom.X
 examples-projects/hex/xc8/onewire/onewire.hex
 examples-projects/proteus/onewire/README.md
 ```
@@ -208,9 +208,9 @@ if (onewire_reset() != 0u)
 
 ```text
 drivers/communication/onewire/example.c
-examples-projects/xc8/onewire_bus_test.X
-examples-projects/xc8/ds18b20.X
-examples-projects/xc8/ds18b20_search_rom.X
+examples-projects/xc8/communication/onewire/bus_test.X
+examples-projects/xc8/sensors/ds18b20/basic.X
+examples-projects/xc8/sensors/ds18b20/search_rom.X
 ```
 
 ## Proteus integration

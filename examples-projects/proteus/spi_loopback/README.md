@@ -13,7 +13,7 @@ C18 HEX is not available yet for this project.
 
 ## MPLAB Projects
 
-- `../../xc8/spi_loopback.X`
+- `../../xc8/communication/spi/loopback.X`
 - `../../c18/spi_loopback.X`
 
 ## PIC18F452 Connections
