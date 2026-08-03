@@ -57,3 +57,4 @@ History is captured in audit and validation docs:
 - [x] MPLAB `.X` projects use external `pic-platform` paths only; `build/`, `dist/`, and `nbproject/private/` outputs are not tracked.
 - [x] Project configuration layer: `project_config.h` + `config_bits.c` templates for XC8 and C18, config checker, library CONFIG requirement conventions.
 - [x] Reusable libraries documented in `docs/` (EN/UA) and catalogued in `.agents/`.
+- [x] Configuration contract split into Category A/B/C, with MPLAB `define-macros` and target tests covering debug/LCD/build config drift.

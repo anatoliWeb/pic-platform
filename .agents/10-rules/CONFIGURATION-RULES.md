@@ -2,7 +2,8 @@
 
 ## Project configuration
 
-- `project_config.h` is project-local and should hold board-specific settings, clock values, feature switches, and pin binding.
+- `project_config.h` is project-local and should hold board-specific notes and helper flags.
+- Project-wide values that must be visible to library `.c` files belong in compiler `-D` flags or MPLAB `define-macros`.
 - `core/config/project_config_template.h` is the template source of truth for new projects.
 - `config_bits.c` holds literal configuration bits only.
 - `pic_platform_config.h` provides platform defaults and shared feature flags.
@@ -16,9 +17,9 @@
 
 ## Placement rules
 
-- Defaults belong in `core/pic_platform_config.h` or `core/config.h`.
-- Project overrides belong in `project_config.h` or compiler `-D` flags.
-- If a library translation unit does not include `project_config.h`, the value must be visible through build flags or platform defaults.
+- Defaults belong in `core/pic_platform_config.h`, `core/config.h`, or a module header.
+- Project overrides belong in compiler `-D` flags or MPLAB `define-macros`.
+- `project_config.h` is not the only source for values required by library `.c` files.
 
 ## Pin binding
 

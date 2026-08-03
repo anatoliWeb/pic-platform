@@ -6,6 +6,8 @@
 `core/debug.h` forwards to it and keeps the legacy `DBG_*` and `DRV_DEBUG_*`
 macros without pulling in `uart_debug.h`.
 
+Project-wide selection lives in `docs/configuration.md`.
+
 Backends:
 
 - `UART` - text through the shared UART driver

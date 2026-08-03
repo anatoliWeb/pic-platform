@@ -8,6 +8,8 @@
 `core/debug.h` перекидає на нього виклики і зберігає старі макроси `DBG_*` та
 `DRV_DEBUG_*` без залежності від `uart_debug.h`.
 
+Project-wide selection описано в `docs/configuration.ua.md`.
+
 Backend-и:
 
 ```text
