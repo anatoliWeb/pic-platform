@@ -8,7 +8,7 @@ facade.
 
 ## Selected defines
 
-In `project_config.h` and the MPLAB `define-macros`:
+In MPLAB `define-macros`:
 
 | Define | Value |
 | --- | ---: |

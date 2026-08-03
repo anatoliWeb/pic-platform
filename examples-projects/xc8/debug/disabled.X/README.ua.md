@@ -9,7 +9,7 @@
 
 ## Обрані налаштування
 
-У `project_config.h`:
+У MPLAB `define-macros`:
 
 | Define | Значення |
 | --- | ---: |

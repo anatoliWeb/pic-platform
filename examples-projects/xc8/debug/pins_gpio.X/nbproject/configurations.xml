@@ -93,7 +93,7 @@
         <property key="call-prologues" value="false"/>
         <property key="default-bitfield-type" value="true"/>
         <property key="default-char-type" value="true"/>
-        <property key="define-macros" value="PIC_PLATFORM_CLOCK_HZ=8000000UL"/>
+        <property key="define-macros" value="PIC_PLATFORM_CLOCK_HZ=8000000UL;DRV_DEBUG_ENABLE=1;DRV_DEBUG_BACKEND_UART=0;DRV_DEBUG_BACKEND_DISPLAY=0;DRV_DEBUG_BACKEND_PINS=1;DRV_DEBUG_PINS_INTERFACE_GPIO=1;DRV_DEBUG_PINS_INTERFACE_I2C=0;DRV_DEBUG_PINS_PORT=PORTC;DRV_DEBUG_PINS_TRIS=TRISC;DRV_DEBUG_PINS_START_BIT=0u;DRV_DEBUG_PINS_CHANNEL_COUNT=4u;DRV_DEBUG_PINS_PULSE_US=10000UL"/>
         <property key="disable-optimizations" value="true"/>
         <property key="extra-include-directories"
                   value="..\..\..\..\..;..\..\..\..\..core;..\..\..\..\..drivers"/>

@@ -3,7 +3,7 @@
 ## Purpose
 
 Demonstrate the `UART` backend of the debug facade (`core/debug.h`) as the
-default backend. `project_config.h` does not enable any other backend.
+default backend. Backend selection stays at the library default.
 
 ## Selected defines
 

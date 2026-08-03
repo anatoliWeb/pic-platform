@@ -9,7 +9,7 @@ PCF8574 I2C backpack-платою.
 
 ## Обрані налаштування
 
-У `project_config.h`:
+У MPLAB `define-macros`:
 
 | Define | Значення |
 | --- | ---: |

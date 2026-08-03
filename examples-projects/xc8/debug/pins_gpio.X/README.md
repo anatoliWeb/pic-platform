@@ -8,7 +8,7 @@ PORTC bits 0..3.
 
 ## Selected defines
 
-In `project_config.h`:
+In MPLAB `define-macros`:
 
 | Define | Value |
 | --- | ---: |

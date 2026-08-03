@@ -81,7 +81,7 @@
         <property key="call-prologues" value="false"/>
         <property key="default-bitfield-type" value="true"/>
         <property key="default-char-type" value="true"/>
-        <property key="define-macros" value="PIC_PLATFORM_CLOCK_HZ=8000000UL"/>
+        <property key="define-macros" value="PIC_PLATFORM_CLOCK_HZ=8000000UL;DRV_DEBUG_ENABLE=0"/>
         <property key="disable-optimizations" value="true"/>
         <property key="extra-include-directories"
                   value="..\..\..\..\..;..\..\..\..\..core;..\..\..\..\..drivers"/>

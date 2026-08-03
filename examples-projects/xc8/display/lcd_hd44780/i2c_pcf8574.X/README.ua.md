@@ -9,7 +9,7 @@ HD44780 (`libraries/display/lcd_hd44780/lcd_i2c.h`) напряму, без debug
 
 ## Обрані налаштування
 
-У `project_config.h` та MPLAB `define-macros`:
+У MPLAB `define-macros`:
 
 | Define | Значення |
 | --- | ---: |

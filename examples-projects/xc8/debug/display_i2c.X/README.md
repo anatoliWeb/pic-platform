@@ -7,7 +7,7 @@ LCD 2x16 with a PCF8574 I2C backpack.
 
 ## Selected defines
 
-In `project_config.h`:
+In MPLAB `define-macros`:
 
 | Define | Value |
 | --- | ---: |

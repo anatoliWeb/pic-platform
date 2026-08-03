@@ -7,7 +7,7 @@ additional variant of the main I2C display example.
 
 ## Selected defines
 
-In `project_config.h`:
+In MPLAB `define-macros`:
 
 | Define | Value |
 | --- | ---: |

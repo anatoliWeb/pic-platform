@@ -7,7 +7,7 @@ debug facade.
 
 ## Selected defines
 
-In `project_config.h`:
+In MPLAB `define-macros`:
 
 | Define | Value |
 | --- | ---: |

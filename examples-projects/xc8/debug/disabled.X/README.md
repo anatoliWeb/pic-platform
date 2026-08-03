@@ -7,7 +7,7 @@ when `DRV_DEBUG_ENABLE=0`.
 
 ## Selected defines
 
-In `project_config.h`:
+In MPLAB `define-macros`:
 
 | Define | Value |
 | --- | ---: |
