@@ -5,6 +5,7 @@ import sys
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
+import shutil
 from pathlib import Path
 
 
@@ -19,7 +20,7 @@ FIXTURES = ROOT / "scripts" / "tests" / "fixtures"
 HARNESS = FIXTURES / "lcd_i2c_harness.c"
 HARNESS_OLD_SIG = FIXTURES / "lcd_i2c_harness_old_sig.c"
 
-XC8 = Path(r"C:\Tools\bin\xc8.bat")
+XC8 = shutil.which("xc8")
 DFP = Path(r"C:\Program Files\Microchip\MPLABX\v6.30\packs\Microchip\PIC18Fxxxx_DFP\1.7.171\xc8")
 MCU = "18F452"
 
@@ -55,7 +56,7 @@ def define_macros(relative_path: str) -> list[str]:
 
 def run_xc8(args: list[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
-        [str(XC8), *args],
+        [XC8, *args],
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -116,6 +117,30 @@ def extract_function(text: str, signature: str) -> str:
         idx = text.find(signature, idx + 1)
     else:
         raise AssertionError(f"function definition {signature!r} not found in preprocessed output")
+
+    open_idx = idx + len(signature) + text[idx + len(signature):].find("{")
+    depth = 0
+    i = open_idx
+    while i < len(text):
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return text[open_idx + 1:i]
+        i += 1
+    raise AssertionError(f"unbalanced braces for {signature!r}")
+
+
+def extract_source_function(text: str, signature: str) -> str:
+    idx = text.find(signature)
+    while idx != -1:
+        rest = text[idx + len(signature):].lstrip()
+        if rest.startswith("{"):
+            break
+        idx = text.find(signature, idx + 1)
+    else:
+        raise AssertionError(f"function definition {signature!r} not found in source text")
 
     open_idx = idx + len(signature) + text[idx + len(signature):].find("{")
     depth = 0
@@ -205,7 +230,7 @@ class LcdI2cHeaderTests(unittest.TestCase):
             self.assertIn(declaration, text)
 
 
-@unittest.skipUnless(XC8.is_file(), "XC8 toolchain not available")
+@unittest.skipUnless(XC8 is not None, "XC8 toolchain not available")
 @unittest.skipUnless(DFP.is_dir(), "PIC18 DFP not available")
 class LcdI2cCompileFixtureTests(unittest.TestCase):
     def test_valid_configuration_compiles(self) -> None:
@@ -242,13 +267,16 @@ class LcdI2cCompileFixtureTests(unittest.TestCase):
         self.assertIn("LCD_I2C control pins must fit in 8 bits", read_text(LCD_I2C_C))
 
 
-@unittest.skipUnless(XC8.is_file(), "XC8 toolchain not available")
+@unittest.skipUnless(XC8 is not None, "XC8 toolchain not available")
 @unittest.skipUnless(DFP.is_dir(), "PIC18 DFP not available")
 class LcdI2cPreprocessedBehaviorTests(unittest.TestCase):
     """Structural behavior checks on the preprocessed translation unit."""
 
     def test_attach_binds_without_controller_init(self) -> None:
         body = extract_attach()
+        self.assertLess(body.index("g_ready = 0u"), body.index("lcd_i2c_probe("))
+        self.assertLess(body.index("g_i2c_addr = 0u"), body.index("lcd_i2c_probe("))
+        self.assertLess(body.index("lcd_i2c_probe("), body.index("g_i2c_addr = i2c_addr"))
         self.assertIn("lcd_i2c_probe(", body)
         self.assertNotIn("lcd_hd44780_init_sequence", body)
         self.assertNotIn("lcd_i2c_controller_init", body)
@@ -257,6 +285,17 @@ class LcdI2cPreprocessedBehaviorTests(unittest.TestCase):
     def test_attach_never_calls_i2c_init(self) -> None:
         body = extract_attach()
         self.assertNotIn("i2c_init(", body)
+
+    def test_probe_is_side_effect_free_for_module_state(self) -> None:
+        body = extract_probe()
+        self.assertNotIn("g_ready =", body)
+        self.assertNotIn("g_i2c_addr =", body)
+        self.assertNotIn("g_backlight =", body)
+
+    def test_ready_gate_preserves_previous_error(self) -> None:
+        body = extract_function(preprocess_harness(), "lcd_i2c_check_ready(void)")
+        self.assertLess(body.index("LCD_I2C_NO_ACK"), body.index("LCD_I2C_NOT_INITIALIZED"))
+        self.assertLess(body.index("LCD_I2C_INVALID_ARGUMENT"), body.index("LCD_I2C_NOT_INITIALIZED"))
 
     def test_controller_init_requires_bound_address(self) -> None:
         body = extract_controller_init()
@@ -289,23 +328,37 @@ class LcdI2cPreprocessedBehaviorTests(unittest.TestCase):
         self.assertIn("g_ready = 0u", body)
         self.assertIn("return LCD_I2C_NO_ACK", body)
 
-    def test_public_operations_gate_on_ready(self) -> None:
-        for signature in (
-            "void lcd_i2c_clear(void)",
-            "void lcd_i2c_home(void)",
-            "void lcd_i2c_set_cursor(uint8_t row, uint8_t col)",
-            "void lcd_i2c_write_char(char c)",
-            "void lcd_i2c_write_string(const char* str)",
-            "void lcd_i2c_backlight(uint8_t on)",
-        ):
+    def test_public_operations_delegate_to_internal_helpers(self) -> None:
+        expected_helpers = {
+            "void lcd_i2c_clear(void)": "lcd_i2c_clear_internal(",
+            "void lcd_i2c_home(void)": "lcd_i2c_home_internal(",
+            "void lcd_i2c_set_cursor(uint8_t row, uint8_t col)": "lcd_i2c_set_cursor_internal(",
+            "void lcd_i2c_write_char(char c)": "lcd_i2c_write_char_internal(",
+            "void lcd_i2c_backlight(uint8_t on)": "lcd_i2c_backlight_internal(",
+        }
+
+        for signature, helper in expected_helpers.items():
             with self.subTest(signature=signature):
-                self.assertIn("lcd_i2c_check_ready(", extract_public_op(signature))
+                self.assertIn(helper, extract_public_op(signature))
 
     def test_write_string_is_null_safe(self) -> None:
         self.assertIn("str == (const char*)0", extract_public_op("void lcd_i2c_write_string(const char* str)"))
 
+    def test_write_string_stops_after_first_failure(self) -> None:
+        body = extract_public_op("void lcd_i2c_write_string(const char* str)")
+        self.assertIn("status = lcd_i2c_write_char_internal(*str);", body)
+        self.assertIn("if (status != LCD_I2C_OK)", body)
+        self.assertIn("return;", body)
+        self.assertLess(body.index("if (status != LCD_I2C_OK)"), body.index("str++;"))
+        self.assertEqual(body.count("lcd_i2c_write_char_internal("), 1)
+
+    def test_backlight_commits_shadow_state_only_after_success(self) -> None:
+        body = extract_function(preprocess_harness(), "lcd_i2c_backlight_internal(uint8_t on)")
+        self.assertLess(body.index("status = lcd_i2c_send(backlight);"), body.index("g_backlight = backlight;"))
+        self.assertIn("if (status != LCD_I2C_OK)", body)
+
     def test_set_cursor_rejects_invalid_rows(self) -> None:
-        self.assertIn("row > 1u", extract_public_op("void lcd_i2c_set_cursor(uint8_t row, uint8_t col)"))
+        self.assertIn("row > 1u", extract_function(preprocess_harness(), "lcd_i2c_set_cursor_internal(uint8_t row, uint8_t col)"))
 
     def test_address_is_7bit_without_masking(self) -> None:
         body = extract_send()
@@ -321,16 +374,36 @@ class DebugAdapterReadyTests(unittest.TestCase):
         self.assertNotIn("i2c_stop(", text)
         self.assertNotIn("lcd_hd44780_init", text)
 
-    def test_adapter_tracks_ready_from_init(self) -> None:
+    def test_adapter_tracks_ready_from_init_and_runtime_state(self) -> None:
         text = read_text(ADAPTER_C)
         self.assertIn("g_debug_lcd_ready", text)
         self.assertIn("uint8_t debug_lcd_is_ready(void)", read_text(ADAPTER_C.parent / "debug_display_lcd_2x16.h"))
         self.assertIn("lcd_i2c_init((uint8_t)DRV_DEBUG_DISPLAY_I2C_ADDR, (uint32_t)DRV_DEBUG_DISPLAY_I2C_FREQ)", text)
         self.assertIn("LCD_I2C_OK", text)
+        self.assertIn("lcd_i2c_is_ready()", text)
 
     def test_display_backend_skips_writes_when_not_ready(self) -> None:
         text = read_text(BACKEND_C)
         self.assertIn("debug_lcd_is_ready()", text)
+
+    def test_display_clear_resets_state_without_hardware_cursor_when_not_ready(self) -> None:
+        body = extract_source_function(read_text(BACKEND_C), "void debug_display_clear(void)")
+        self.assertIn("display_reset_cursor_state();", body)
+        self.assertIn("display_sync_cursor();", body)
+        self.assertNotIn("debug_lcd_set_cursor(", body)
+
+    def test_display_write_char_preserves_cursor_on_failed_write(self) -> None:
+        body = extract_source_function(read_text(BACKEND_C), "void debug_display_write_char(char c)")
+        self.assertNotIn("g_col++;", body)
+        self.assertIn("next_col", body)
+        self.assertIn("if (debug_lcd_is_ready() == 0u)", body)
+        self.assertLess(body.index("debug_lcd_write_char(c);"), body.index("g_col = next_col;"))
+
+    def test_display_newline_commits_state_only_after_success(self) -> None:
+        body = extract_source_function(read_text(BACKEND_C), "void debug_display_newline(void)")
+        self.assertIn("next_row = (uint8_t)((g_row + 1u) % DEBUG_DISPLAY_ROWS);", body)
+        self.assertLess(body.index("debug_lcd_set_cursor(next_row, 0u);"), body.index("g_row = next_row;"))
+        self.assertLess(body.index("if (debug_lcd_is_ready() == 0u)"), body.index("g_row = next_row;"))
 
 
 class ProjectDefineMacrosTests(unittest.TestCase):
