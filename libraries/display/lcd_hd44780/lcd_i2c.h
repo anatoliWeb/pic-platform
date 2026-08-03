@@ -9,7 +9,8 @@
  * PCF8574 backpack: P0=RS, P1=RW, P2=EN, P3=Backlight, P4..P7=D4..D7.
  *
  * The address is a 7-bit I2C address (0x27 for the common backpack). It is
- * used as-is; no masking is applied. Addresses above 0x7F are rejected.
+ * used as-is; no masking is applied. Address 0x00 and addresses above 0x7F
+ * are rejected as invalid.
  */
 
 #ifndef LIBRARIES_DISPLAY_LCD_HD44780_LCD_I2C_H
@@ -52,18 +53,20 @@ typedef enum lcd_i2c_status
 
 /*
  * Full init: configures the shared I2C master, runs the HD44780 init sequence
- * and enables the backlight. Requires a free I2C bus.
+ * and enables the backlight. The LCD is ready on success.
  *
- * Attach: binds the LCD to an I2C bus that is already initialized elsewhere
- * and runs the HD44780 init sequence. It never calls i2c_init() and never
- * clears the display.
+ * Attach: binds the LCD to an I2C bus that is already initialized elsewhere.
+ * It only probes the address; it never calls i2c_init(), never runs the
+ * HD44780 init sequence and never clears the display. Run
+ * lcd_i2c_controller_init() afterwards to make the display ready.
  *
  * Controller init: runs only the HD44780 init sequence on an already
- * initialized I2C bus without touching the backlight state.
+ * initialized I2C bus, using the address bound by init() or attach().
+ * It returns LCD_I2C_NOT_INITIALIZED if no address is bound.
  */
 lcd_i2c_status_t lcd_i2c_init(uint8_t i2c_addr, uint32_t i2c_clock_hz);
 lcd_i2c_status_t lcd_i2c_attach(uint8_t i2c_addr);
-lcd_i2c_status_t lcd_i2c_controller_init(uint8_t i2c_addr);
+lcd_i2c_status_t lcd_i2c_controller_init(void);
 
 lcd_i2c_status_t lcd_i2c_probe(uint8_t i2c_addr);
 lcd_i2c_status_t lcd_i2c_last_status(void);

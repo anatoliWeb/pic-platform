@@ -29,19 +29,30 @@ void debug_display_init(void)
 {
 #if DRV_DEBUG_DISPLAY_AUTO_INIT
     debug_lcd_init();
-    debug_lcd_clear();
-    display_reset_cursor();
+    if (debug_lcd_is_ready() != 0u)
+    {
+        debug_lcd_clear();
+        display_reset_cursor();
+    }
 #endif
 }
 
 void debug_display_clear(void)
 {
-    debug_lcd_clear();
+    if (debug_lcd_is_ready() != 0u)
+    {
+        debug_lcd_clear();
+    }
     display_reset_cursor();
 }
 
 void debug_display_newline(void)
 {
+    if (debug_lcd_is_ready() == 0u)
+    {
+        return;
+    }
+
     g_row = (uint8_t)((g_row + 1u) % DEBUG_DISPLAY_ROWS);
     g_col = 0u;
     debug_lcd_set_cursor(g_row, g_col);
@@ -49,6 +60,11 @@ void debug_display_newline(void)
 
 void debug_display_write_char(char c)
 {
+    if (debug_lcd_is_ready() == 0u)
+    {
+        return;
+    }
+
     if (c == '\n')
     {
         debug_display_newline();
