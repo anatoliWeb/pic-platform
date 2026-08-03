@@ -62,5 +62,11 @@ LCD I2C OK
 PCF8574
 ```
 
-If the backpack is missing or the address is wrong, `lcd_i2c_last_status()`
-reports `LCD_I2C_NO_ACK` and `lcd_i2c_is_ready()` returns 0.
+## Error behavior
+
+`main.c` checks the return value of `lcd_i2c_init()`. If it is not
+`LCD_I2C_OK` (backpack missing, wrong address, or bus failure) the example
+never writes to the LCD and enters a fail-state loop. An optional status LED
+on RB0 blinks while the fail state is active. The failure reason is reported
+by `lcd_i2c_last_status()` (`LCD_I2C_NO_ACK`) and `lcd_i2c_is_ready()`
+returns 0.

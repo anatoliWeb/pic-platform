@@ -2,7 +2,7 @@
 
 ## Current priorities
 
-- [x] LCD HD44780 I2C transport finalized: hardened `lcd_i2c.c`/`lcd_i2c.h` (status API, 7-bit address validation, configurable PCF8574 pin mapping, NACK reporting), direct example `xc8/display/lcd_hd44780/i2c_pcf8574.X`, full MPLAB `define-macros` for the debug display projects; verified with XC8 builds.
+- [x] LCD HD44780 I2C transport finalized: hardened `lcd_i2c.c`/`lcd_i2c.h` (status API, 7-bit address validation including `0x00`, configurable PCF8574 pin mapping with single-bit mask validation, NACK short-circuit + ready gate, `attach` = probe-only bind, `controller_init(void)` without address), direct example `xc8/display/lcd_hd44780/i2c_pcf8574.X` (init status check + fail state), debug display adapter ready route, full MPLAB `define-macros` for the debug display projects; verified with XC8 builds and XC8 compile/preprocess behavior tests.
 - [ ] Re-run MPLAB XC8 clean/build for every moved XC8 project after the family regrouping (paths changed by one level).
 - [ ] Re-run `python -m unittest scripts.tests.test_examples_hierarchy` and `scripts/tests/test_debug_examples.py` after each build batch.
 - [ ] Review legacy duplicate headers in `libraries/display/lcd_hd44780/` (`lcd.h` vs `lcd_hd44780.h`).
