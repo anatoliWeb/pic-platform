@@ -49,6 +49,15 @@ def config_sources(project: str) -> list[str]:
     return config_sources_from_file(EXAMPLE_DIR / project / "nbproject" / "configurations.xml")
 
 
+def define_macros(project: str) -> list[str]:
+    root = ET.fromstring((EXAMPLE_DIR / project / "nbproject" / "configurations.xml").read_text(encoding="utf-8-sig"))
+    for prop in root.iter("property"):
+        if prop.get("key") == "define-macros":
+            value = prop.get("value", "")
+            return [m for m in value.split(";") if m]
+    raise AssertionError(f"define-macros not found in {project}")
+
+
 def config_sources_from_file(xml_path: Path) -> list[str]:
     root = ET.fromstring(xml_path.read_text(encoding="utf-8-sig"))
     source_folder = root.find(".//logicalFolder[@name='SourceFiles']")
@@ -70,20 +79,20 @@ class DebugExamplesTests(unittest.TestCase):
                 self.assertTrue((EXAMPLE_DIR / project / "README.ua.md").is_file())
 
     def test_backend_defines_are_selected(self) -> None:
-        text = read_text("debug/default_uart.X", "project_config.h")
-        self.assertNotIn("DRV_DEBUG_BACKEND_UART 0", text)
+        default_uart = define_macros("debug/default_uart.X")
+        self.assertEqual(default_uart, ["PIC_PLATFORM_CLOCK_HZ=8000000UL"])
 
-        display = read_text("debug/display_i2c.X", "project_config.h")
-        self.assertIn("DRV_DEBUG_BACKEND_UART 0", display)
-        self.assertIn("DRV_DEBUG_BACKEND_DISPLAY 1", display)
-        self.assertIn("DRV_DEBUG_BACKEND_PINS 0", display)
-        self.assertIn("DRV_DEBUG_DISPLAY_INTERFACE_I2C 1", display)
+        display = define_macros("debug/display_i2c.X")
+        self.assertIn("DRV_DEBUG_BACKEND_UART=0", display)
+        self.assertIn("DRV_DEBUG_BACKEND_DISPLAY=1", display)
+        self.assertIn("DRV_DEBUG_BACKEND_PINS=0", display)
+        self.assertIn("DRV_DEBUG_DISPLAY_INTERFACE_I2C=1", display)
 
-        pins = read_text("debug/pins_gpio.X", "project_config.h")
-        self.assertIn("DRV_DEBUG_BACKEND_UART 0", pins)
-        self.assertIn("DRV_DEBUG_BACKEND_DISPLAY 0", pins)
-        self.assertIn("DRV_DEBUG_BACKEND_PINS 1", pins)
-        self.assertIn("DRV_DEBUG_PINS_INTERFACE_GPIO 1", pins)
+        pins = define_macros("debug/pins_gpio.X")
+        self.assertIn("DRV_DEBUG_BACKEND_UART=0", pins)
+        self.assertIn("DRV_DEBUG_BACKEND_DISPLAY=0", pins)
+        self.assertIn("DRV_DEBUG_BACKEND_PINS=1", pins)
+        self.assertIn("DRV_DEBUG_PINS_INTERFACE_GPIO=1", pins)
 
     def test_uart_example_has_no_display_or_pins_sources(self) -> None:
         sources = config_sources("debug/default_uart.X")
