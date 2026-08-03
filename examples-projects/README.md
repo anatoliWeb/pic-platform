@@ -41,7 +41,7 @@ XC8 projects are grouped into families under `xc8/`; standalone smoke-test proje
 | Communication | `xc8/communication/uart/{basic,debug}.X`, `xc8/communication/i2c/{basic,scan}.X`, `xc8/communication/spi/{basic,loopback}.X`, `xc8/communication/rs485/{basic,echo}.X`, `xc8/communication/onewire/{basic,bus_test}.X` | UART, I2C, SPI, RS485, and OneWire protocol examples |
 | Sensors | `xc8/sensors/ds18b20/{basic,read,multi_read,search_rom}.X` | DS18B20 read, multi-drop, and ROM search examples |
 | Input | `xc8/input/button.X`, `xc8/input/encoder.X`, `xc8/input/adc_buttons.X` | Input helpers and debounce-related examples |
-| Display | `lcd_hd44780.X`, `xc8/seven_segment/basic_manual.X`, `xc8/seven_segment/multiplex_manual.X`, `xc8/seven_segment/multiplex_timer.X`, `xc8/seven_segment/keys_single_line.X`, `xc8/seven_segment/keys_diode_coded.X` | Display refresh, timer-owned multiplexing, and shared-line input examples |
+| Display | `xc8/display/lcd_hd44780/i2c_pcf8574.X`, `lcd_hd44780.X`, `xc8/seven_segment/basic_manual.X`, `xc8/seven_segment/multiplex_manual.X`, `xc8/seven_segment/multiplex_timer.X`, `xc8/seven_segment/keys_single_line.X`, `xc8/seven_segment/keys_diode_coded.X` | Display refresh, timer-owned multiplexing, and shared-line input examples |
 | Actuator | `xc8/actuator/position_drive_adc.X` | Closed-loop position drive with an ADC position sensor; encoder backend is still a placeholder |
 | Output / control | `xc8/output/software_pwm.X`, `xc8/output/ac_phase_control.X` | Software PWM and AC phase control output examples |
 | Timers | `xc8/timers/tick.X`, `xc8/timers/timer0.X`, `xc8/timers/timer1.X`, `xc8/timers/timer2.X`, `xc8/timers/timer3.X` | Timebase and timer peripheral examples |
@@ -63,6 +63,7 @@ XC8 projects are grouped into families under `xc8/`; standalone smoke-test proje
 | `xc8/seven_segment/keys_single_line.X` | Ready for Proteus validation |
 | `xc8/seven_segment/keys_diode_coded.X` | Ready for Proteus validation |
 | `xc8/actuator/position_drive_adc.X` | Ready for Proteus validation |
+| `xc8/display/lcd_hd44780/i2c_pcf8574.X` | Ready for Proteus validation |
 | `xc8/sensors/ds18b20/search_rom.X` | Verified in Proteus; XC8 HEX export pending |
 | `xc8/communication/onewire/bus_test.X` | Verified in Proteus; XC8 HEX export pending |
 | `xc8/sensors/ds18b20/multi_read.X` | Needs review / Proteus and C18 validation |
