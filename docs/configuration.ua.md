@@ -1,19 +1,20 @@
 [English version](configuration.md)
 
-# Kontseptsiia konfiguratsii
+# Концепція конфігурації
 
-## Dzherelo istyny
+## Джерело істини
 
-Okremi library `.c` kompiliuiutsia yak nezalezhni translation units, tomu vony ne
-bachat `project_config.h`, yakshcho tsii header ne pidkliucheno v tomu samomu TU.
-Project-wide znachennia maialy prykhodyty z compiler macros (`-D` abo MPLAB
-`define-macros`) abo z platform/module defaults, yaki vydni vsim TU.
+Окремі library `.c` компілюються як незалежні translation units, тому вони не
+бачать `project_config.h`, якщо цей header не підключено в тому самому TU.
 
-## Kategorie
+Project-wide значення повинні надходити з compiler macros (`-D` або MPLAB
+`define-macros`) або з platform/module defaults, які доступні всім translation units.
+
+## Категорії
 
 ### Category A: project-wide build defines
 
-TsI znachennia maibut vydni vsim translation units:
+Ці значення повинні бути доступні всім translation units:
 
 - `PIC_PLATFORM_CLOCK_HZ`
 - `DRV_DEBUG_ENABLE`
@@ -52,59 +53,75 @@ TsI znachennia maibut vydni vsim translation units:
 
 ### Category B: runtime arguments
 
-TsI znachennia peredaiutsia u funktsii i ne potribuiut global defines:
+Ці значення передаються у функції й не потребують global defines:
 
 - `lcd_i2c_init(0x27u, 100000u)`
 - `uart_init(9600u)`
 
 ### Category C: CONFIG-bit helper flags
 
-TsI praporci dokumentuiut literal `#pragma config` znachennia u `config_bits.c`:
+Ці прапорці документують literal значення `#pragma config` у `config_bits.c`:
 
 - `PIC_PLATFORM_WDT_ENABLED`
 - `PIC_PLATFORM_LVP_ENABLED`
 - `PIC_PLATFORM_BOR_ENABLED`
 - `PIC_PLATFORM_CCP2MUX_ENABLED`
 
-## Pravyla
+## Правила
 
-1. Safe defaults zberihai u `core/pic_platform_config.h` abo module header.
-2. Project-wide znachennia perevyznachai cherez compiler `-D` abo MPLAB `define-macros`.
-3. Ne poklaiis na `project_config.h` yak na odyne dzherelo znachen dlia library `.c`.
-4. CONFIG bits trymay literal u `config_bits.c`.
-5. Dlia kozhnoho category A znachennia maie buty odne dzherelo istyny: one source of truth.
+1. Безпечні defaults зберігай у `core/pic_platform_config.h` або у module header.
+2. Project-wide значення перевизначай через compiler `-D` або MPLAB `define-macros`.
+3. Не покладайся на `project_config.h` як на єдине джерело значень для library `.c`.
+4. CONFIG bits зберігай як literal значення у `config_bits.c`.
+5. Для кожного значення Category A має бути одне джерело істини.
 
-## Clock
+## Частота кварца
 
-`PIC_PLATFORM_CLOCK_HZ` is the project clock contract. `core/device.h` derives
-`DRV_XTAL_FREQ` and `_XTAL_FREQ` from it.
+`PIC_PLATFORM_CLOCK_HZ` є project-wide контрактом частоти кварца.
 
-## Debug backendy
+`core/device.h` на його основі визначає:
 
-`DRV_DEBUG_ENABLE` disables the whole debug facade. Backend selection is controlled
-by `DRV_DEBUG_BACKEND_UART`, `DRV_DEBUG_BACKEND_DISPLAY`, and `DRV_DEBUG_BACKEND_PINS`.
+- `DRV_XTAL_FREQ`
+- `_XTAL_FREQ`
+
+Значення `PIC_PLATFORM_CLOCK_HZ` повинно бути доступне всім translation units через
+compiler `-D` або MPLAB `define-macros`.
+
+## Debug backends
+
+`DRV_DEBUG_ENABLE` вмикає або вимикає весь debug facade.
+
+Вибір backend-ів виконується через:
+
+- `DRV_DEBUG_BACKEND_UART`
+- `DRV_DEBUG_BACKEND_DISPLAY`
+- `DRV_DEBUG_BACKEND_PINS`
+
+Оскільки debug library `.c` компілюються окремо, ці значення мають передаватися
+через compiler `-D` або MPLAB `define-macros`.
 
 ## LCD mapping
 
-`lcd_i2c.h` allows backpack pin remapping through `LCD_I2C_PIN_*` and
-`LCD_I2C_DATA_SHIFT`. The defaults match the common PCF8574 board.
+`lcd_i2c.h` дозволяє перевизначити pin mapping PCF8574 через:
+
+- `LCD_I2C_PIN_RS`
+- `LCD_I2C_PIN_RW`
+- `LCD_I2C_PIN_EN`
+- `LCD_I2C_PIN_BL`
+- `LCD_I2C_DATA_SHIFT`
+
+Defaults відповідають типовій PCF8574 backpack-платі.
+
+Якщо конкретна плата має інше розведення, значення потрібно перевизначити через
+compiler `-D` або MPLAB `define-macros`, щоб вони були однаковими для всіх
+translation units.
 
 ## MPLAB X
 
-Set project-wide values here:
-
-`XC8 Global Options -> xc8-cc -> Preprocessing and messages -> Preprocessor macros`
-
-Example:
+Project-wide значення задавай у:
 
 ```text
-PIC_PLATFORM_CLOCK_HZ=8000000UL
-```
-
-## `xc8`
-
-Use the wrapper from `PATH`:
-
-```text
-xc8
-```
+XC8 Global Options
+-> xc8-cc
+-> Preprocessing and messages
+-> Preprocessor macros
