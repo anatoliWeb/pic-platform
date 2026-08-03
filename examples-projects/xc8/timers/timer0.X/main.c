@@ -26,7 +26,7 @@
  * Source Files:
  *   config_bits.c
  *   main.c
- *   ../../../drivers/timers/timer0/timer0.c
+ *   ../../../../drivers/timers/timer0/timer0.c
  *
  * Proteus wiring:
  *   RB0 / DIP-40 pin 33 -> LED0 -> 330R -> GND

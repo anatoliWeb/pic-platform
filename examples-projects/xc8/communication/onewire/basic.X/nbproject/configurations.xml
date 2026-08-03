@@ -23,27 +23,27 @@
         <itemPath>config_bits.c</itemPath>
       </logicalFolder>
       <logicalFolder name="core" displayName="core" projectFiles="true">
-        <itemPath>../../../core/delay.c</itemPath>
+        <itemPath>../../../../../core/delay.c</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="communication"
                        displayName="communication"
                        projectFiles="true">
-          <itemPath>../../../drivers/communication/onewire/onewire.c</itemPath>
-          <itemPath>../../../drivers/communication/uart/uart.c</itemPath>
+          <itemPath>../../../../../drivers/communication/onewire/onewire.c</itemPath>
+          <itemPath>../../../../../drivers/communication/uart/uart.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f1" displayName="libraries" projectFiles="true">
         <logicalFolder name="f1" displayName="system" projectFiles="true">
-          <itemPath>../../../libraries/system/uart_debug/uart_debug.c</itemPath>
+          <itemPath>../../../../../libraries/system/uart_debug/uart_debug.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../core</Elem>
-    <Elem>../../../drivers</Elem>
-    <Elem>../../../libraries</Elem>
+    <Elem>../../../../../core</Elem>
+    <Elem>../../../../../drivers</Elem>
+    <Elem>../../../../../libraries</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

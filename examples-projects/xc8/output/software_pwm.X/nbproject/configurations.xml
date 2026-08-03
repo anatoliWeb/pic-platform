@@ -25,7 +25,7 @@
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="timers" displayName="timers" projectFiles="true">
           <logicalFolder name="timer2" displayName="timer2" projectFiles="true">
-            <itemPath>../../../drivers/timers/timer2/timer2.c</itemPath>
+            <itemPath>../../../../drivers/timers/timer2/timer2.c</itemPath>
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
@@ -34,16 +34,16 @@
           <logicalFolder name="software_pwm"
                          displayName="software_pwm"
                          projectFiles="true">
-            <itemPath>../../../libraries/output/software_pwm/software_pwm.c</itemPath>
+            <itemPath>../../../../libraries/output/software_pwm/software_pwm.c</itemPath>
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../core</Elem>
-    <Elem>../../../drivers</Elem>
-    <Elem>../../../libraries</Elem>
+    <Elem>../../../../core</Elem>
+    <Elem>../../../../drivers</Elem>
+    <Elem>../../../../libraries</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

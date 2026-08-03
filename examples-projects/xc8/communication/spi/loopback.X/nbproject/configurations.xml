@@ -23,36 +23,36 @@
         <itemPath>config_bits.c</itemPath>
       </logicalFolder>
       <logicalFolder name="core" displayName="core" projectFiles="true">
-        <itemPath>../../../core/delay.c</itemPath>
+        <itemPath>../../../../../core/delay.c</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="communication"
                        displayName="communication"
                        projectFiles="true">
           <logicalFolder name="spi" displayName="spi" projectFiles="true">
-            <itemPath>../../../drivers/communication/spi/spi.c</itemPath>
+            <itemPath>../../../../../drivers/communication/spi/spi.c</itemPath>
           </logicalFolder>
           <logicalFolder name="uart" displayName="uart" projectFiles="true">
-            <itemPath>../../../drivers/communication/uart/uart.c</itemPath>
+            <itemPath>../../../../../drivers/communication/uart/uart.c</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
-          <itemPath>../../../drivers/gpio/gpio.c</itemPath>
+          <itemPath>../../../../../drivers/gpio/gpio.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="libraries" displayName="libraries" projectFiles="true">
         <logicalFolder name="system" displayName="system" projectFiles="true">
           <logicalFolder name="uart_debug" displayName="uart_debug" projectFiles="true">
-            <itemPath>../../../libraries/system/uart_debug/uart_debug.c</itemPath>
+            <itemPath>../../../../../libraries/system/uart_debug/uart_debug.c</itemPath>
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../core</Elem>
-    <Elem>../../../drivers</Elem>
-    <Elem>../../../libraries</Elem>
+    <Elem>../../../../../core</Elem>
+    <Elem>../../../../../drivers</Elem>
+    <Elem>../../../../../libraries</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

@@ -23,19 +23,19 @@
         <itemPath>config_bits.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="core" projectFiles="true">
-        <itemPath>../../../core/delay.c</itemPath>
+        <itemPath>../../../../core/delay.c</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="system" displayName="system" projectFiles="true">
-          <itemPath>../../../drivers/system/wdt/wdt.c</itemPath>
+          <itemPath>../../../../drivers/system/wdt/wdt.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../core</Elem>
-    <Elem>../../../drivers</Elem>
-    <Elem>../../../libraries</Elem>
+    <Elem>../../../../core</Elem>
+    <Elem>../../../../drivers</Elem>
+    <Elem>../../../../libraries</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

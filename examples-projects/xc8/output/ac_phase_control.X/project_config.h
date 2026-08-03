@@ -15,6 +15,6 @@
 #define AC_PHASE_CONTROL_SELECTED_TIMER AC_PHASE_CONTROL_TIMER2
 #endif
 
-#include "../../../core/config/project_config_template.h"
+#include "../../../../core/config/project_config_template.h"
 
 #endif /* EXAMPLES_PROJECTS_XC8_AC_PHASE_CONTROL_PROJECT_CONFIG_H */

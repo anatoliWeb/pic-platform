@@ -23,21 +23,21 @@
         <itemPath>config_bits.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="core" projectFiles="true">
-        <itemPath>../../../core/delay.c</itemPath>
+        <itemPath>../../../../core/delay.c</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="timers" displayName="timers" projectFiles="true">
           <logicalFolder name="timer0" displayName="timer0" projectFiles="true">
-            <itemPath>../../../drivers/timers/timer0/timer0.c</itemPath>
+            <itemPath>../../../../drivers/timers/timer0/timer0.c</itemPath>
           </logicalFolder>
           <logicalFolder name="timer1" displayName="timer1" projectFiles="true">
-            <itemPath>../../../drivers/timers/timer1/timer1.c</itemPath>
+            <itemPath>../../../../drivers/timers/timer1/timer1.c</itemPath>
           </logicalFolder>
           <logicalFolder name="timer2" displayName="timer2" projectFiles="true">
-            <itemPath>../../../drivers/timers/timer2/timer2.c</itemPath>
+            <itemPath>../../../../drivers/timers/timer2/timer2.c</itemPath>
           </logicalFolder>
           <logicalFolder name="timer3" displayName="timer3" projectFiles="true">
-            <itemPath>../../../drivers/timers/timer3/timer3.c</itemPath>
+            <itemPath>../../../../drivers/timers/timer3/timer3.c</itemPath>
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
@@ -46,16 +46,16 @@
           <logicalFolder name="ac_phase_control"
                          displayName="ac_phase_control"
                          projectFiles="true">
-            <itemPath>../../../libraries/output/ac_phase_control/ac_phase_control.c</itemPath>
+            <itemPath>../../../../libraries/output/ac_phase_control/ac_phase_control.c</itemPath>
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../core</Elem>
-    <Elem>../../../drivers</Elem>
-    <Elem>../../../libraries</Elem>
+    <Elem>../../../../core</Elem>
+    <Elem>../../../../drivers</Elem>
+    <Elem>../../../../libraries</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

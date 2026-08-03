@@ -24,15 +24,15 @@
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="timers" displayName="timers" projectFiles="true">
-          <itemPath>../../../drivers/timers/timer3/timer3.c</itemPath>
+          <itemPath>../../../../drivers/timers/timer3/timer3.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../core</Elem>
-    <Elem>../../../drivers</Elem>
-    <Elem>../../../libraries</Elem>
+    <Elem>../../../../core</Elem>
+    <Elem>../../../../drivers</Elem>
+    <Elem>../../../../libraries</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
