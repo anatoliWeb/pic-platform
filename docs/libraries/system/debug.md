@@ -56,6 +56,8 @@ Validation is compile-time only. Boolean defines must be `0` or `1`.
 - `debug_write_i16()` handles the full `-32768..32767` range.
 - `DRV_DEBUG_DISPLAY_AUTO_INIT=1` initializes transport and LCD, then clears and resets the cursor.
 - `DRV_DEBUG_DISPLAY_AUTO_INIT=0` does not initialize transport or LCD and does not clear the external display.
+- On the LCD I2C backend, a runtime NACK clears backend readiness; the facade stops advancing its cursor model until an explicit recovery succeeds.
+- `debug_display_clear()` resets the software cursor locally and only syncs the hardware cursor when the LCD is ready.
 - `DRV_DEBUG_PINS_START_BIT + DRV_DEBUG_PINS_CHANNEL_COUNT` must not exceed `8`.
 
 ## Source matrix

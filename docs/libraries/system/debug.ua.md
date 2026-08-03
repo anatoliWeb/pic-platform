@@ -53,6 +53,8 @@ Boolean define-и мають бути тільки `0` або `1`.
 - `debug_write_i16()` коректно друкує `-32768..32767`.
 - `DRV_DEBUG_DISPLAY_AUTO_INIT=1` ініціалізує транспорт і LCD, потім очищає екран.
 - `DRV_DEBUG_DISPLAY_AUTO_INIT=0` не ініціалізує транспорт, не ініціалізує LCD і не очищає зовнішній дисплей.
+- На LCD I2C backend runtime NACK скидає ready-прапорець; фасад зупиняє рух локального cursor model до явного recovery.
+- `debug_display_clear()` скидає software cursor локально і синхронізує hardware cursor лише коли LCD ready.
 - `DRV_DEBUG_PINS_START_BIT + DRV_DEBUG_PINS_CHANNEL_COUNT` не може перевищувати `8`.
 
 ## Source matrix
