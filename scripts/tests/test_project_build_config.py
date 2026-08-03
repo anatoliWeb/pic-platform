@@ -1,49 +1,16 @@
 from __future__ import annotations
 
 import re
+import sys
 import unittest
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-CATEGORY_A = {
-    "PIC_PLATFORM_CLOCK_HZ",
-    "DRV_DEBUG_ENABLE",
-    "DRV_DEBUG_BACKEND_UART",
-    "DRV_DEBUG_BACKEND_DISPLAY",
-    "DRV_DEBUG_BACKEND_PINS",
-    "DRV_DEBUG_LEVEL",
-    "DRV_DEBUG_DISPLAY_TYPE_LCD_2X16",
-    "DRV_DEBUG_DISPLAY_INTERFACE_I2C",
-    "DRV_DEBUG_DISPLAY_INTERFACE_PARALLEL",
-    "DRV_DEBUG_DISPLAY_AUTO_INIT",
-    "DRV_DEBUG_DISPLAY_I2C_ADDR",
-    "DRV_DEBUG_DISPLAY_I2C_FREQ",
-    "DRV_DEBUG_PINS_INTERFACE_GPIO",
-    "DRV_DEBUG_PINS_INTERFACE_I2C",
-    "DRV_DEBUG_PINS_PORT",
-    "DRV_DEBUG_PINS_TRIS",
-    "DRV_DEBUG_PINS_START_BIT",
-    "DRV_DEBUG_PINS_CHANNEL_COUNT",
-    "DRV_DEBUG_PINS_PULSE_US",
-    "LCD_I2C_PIN_RS",
-    "LCD_I2C_PIN_RW",
-    "LCD_I2C_PIN_EN",
-    "LCD_I2C_PIN_BL",
-    "LCD_I2C_DATA_SHIFT",
-    "SEVEN_SEGMENT_ENABLE_TIMER0",
-    "SEVEN_SEGMENT_ENABLE_TIMER1",
-    "SEVEN_SEGMENT_ENABLE_TIMER2",
-    "SEVEN_SEGMENT_ENABLE_TIMER3",
-    "POSITION_DRIVE_SENSOR_TYPE",
-    "POSITION_DRIVE_ENABLE_PWM",
-    "POSITION_DRIVE_ENABLE_TIMEOUT",
-    "POSITION_DRIVE_ENABLE_STUCK_DETECTION",
-    "POSITION_DRIVE_ENABLE_DIRECTION_CHECK",
-    "POSITION_DRIVE_ENABLE_UART_DEBUG",
-}
+from config_contract import CATEGORY_A
 
 PROJECTS = {
     "default_uart": ROOT / "examples-projects" / "xc8" / "debug" / "default_uart.X",
