@@ -71,12 +71,12 @@ class DebugFacadeConfigTests(unittest.TestCase):
         self.assertIn('debug_lcd_clear();', display_backend)
         self.assertIn('display_reset_cursor();', display_backend)
         self.assertIn('#if DRV_DEBUG_DISPLAY_AUTO_INIT', lcd_adapter)
-        self.assertIn('lcd_i2c_init((uint8_t)DRV_DEBUG_DISPLAY_I2C_ADDR, (uint32_t)DRV_DEBUG_DISPLAY_I2C_FREQ);', lcd_adapter)
+        self.assertIn('lcd_i2c_init((uint8_t)DRV_DEBUG_DISPLAY_I2C_ADDR, (uint32_t)DRV_DEBUG_DISPLAY_I2C_FREQ)', lcd_adapter)
         self.assertIn('lcd_init();', lcd_adapter)
         self.assertNotIn('i2c_start(', lcd_adapter)
         self.assertNotIn('i2c_write_byte(', lcd_adapter)
         self.assertNotIn('lcd_hd44780_init', lcd_adapter)
-        self.assertIn('void lcd_hd44780_init(void)', lcd_i2c)
+        self.assertIn('lcd_i2c_status_t lcd_hd44780_init_sequence(void)', lcd_i2c)
 
     def test_debug_write_i16_handles_int16_min(self) -> None:
         text = read_text("libraries/system/debug/debug.c")
