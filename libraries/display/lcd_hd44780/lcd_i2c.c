@@ -7,9 +7,10 @@
  * Every I2C transaction reports a NACK through lcd_i2c_last_status() and
  * clears the ready flag. A NACK short-circuits the current operation: no
  * further I2C transactions or command delays run after the first failure.
- * Display operations refuse to touch the bus (LCD_I2C_NOT_INITIALIZED) until
- * the controller is initialized again through lcd_i2c_init() or
- * lcd_i2c_controller_init().
+ * Display operations refuse to touch the bus until the controller is
+ * initialized again through lcd_i2c_init() or lcd_i2c_controller_init().
+ * lcd_i2c_attach() commits the address only after a successful probe, while
+ * lcd_i2c_probe() stays side-effect free for the module state.
  */
 
 #include "libraries/display/lcd_hd44780/lcd_i2c.h"
@@ -245,10 +246,118 @@ static lcd_i2c_status_t lcd_i2c_check_ready(void)
 {
     if (g_ready == 0u)
     {
+        if ((g_last_status == LCD_I2C_NO_ACK) || (g_last_status == LCD_I2C_INVALID_ARGUMENT))
+        {
+            return g_last_status;
+        }
+
         g_last_status = LCD_I2C_NOT_INITIALIZED;
         return LCD_I2C_NOT_INITIALIZED;
     }
 
+    return LCD_I2C_OK;
+}
+
+static lcd_i2c_status_t lcd_i2c_clear_internal(void)
+{
+    lcd_i2c_status_t status;
+
+    status = lcd_i2c_check_ready();
+    if (status != LCD_I2C_OK)
+    {
+        return status;
+    }
+
+    return lcd_i2c_byte(0x01u, 0u);
+}
+
+static lcd_i2c_status_t lcd_i2c_home_internal(void)
+{
+    lcd_i2c_status_t status;
+
+    status = lcd_i2c_check_ready();
+    if (status != LCD_I2C_OK)
+    {
+        return status;
+    }
+
+    return lcd_i2c_byte(0x02u, 0u);
+}
+
+static lcd_i2c_status_t lcd_i2c_set_cursor_internal(uint8_t row, uint8_t col)
+{
+    uint8_t base;
+    lcd_i2c_status_t status;
+
+    status = lcd_i2c_check_ready();
+    if (status != LCD_I2C_OK)
+    {
+        return status;
+    }
+
+    if (row > 1u)
+    {
+        g_last_status = LCD_I2C_INVALID_ARGUMENT;
+        return LCD_I2C_INVALID_ARGUMENT;
+    }
+
+    if (col > 0x27u)
+    {
+        g_last_status = LCD_I2C_INVALID_ARGUMENT;
+        return LCD_I2C_INVALID_ARGUMENT;
+    }
+
+    base = (row == 0u) ? 0x00u : 0x40u;
+    return lcd_i2c_byte((uint8_t)(0x80u | (uint8_t)(base + col)), 0u);
+}
+
+static lcd_i2c_status_t lcd_i2c_write_char_internal(char c)
+{
+    lcd_i2c_status_t status;
+
+    status = lcd_i2c_check_ready();
+    if (status != LCD_I2C_OK)
+    {
+        return status;
+    }
+
+    return lcd_i2c_byte((uint8_t)c, 1u);
+}
+
+static lcd_i2c_status_t lcd_i2c_backlight_internal(uint8_t on)
+{
+    uint8_t backlight;
+    lcd_i2c_status_t status;
+
+    status = lcd_i2c_check_ready();
+    if (status != LCD_I2C_OK)
+    {
+        return status;
+    }
+
+    if ((on != 0u) && (on != 1u))
+    {
+        g_last_status = LCD_I2C_INVALID_ARGUMENT;
+        return LCD_I2C_INVALID_ARGUMENT;
+    }
+
+    backlight = g_backlight;
+    if (on != 0u)
+    {
+        backlight |= LCD_I2C_PIN_BL;
+    }
+    else
+    {
+        backlight &= (uint8_t)(~LCD_I2C_PIN_BL);
+    }
+
+    status = lcd_i2c_send(backlight);
+    if (status != LCD_I2C_OK)
+    {
+        return status;
+    }
+
+    g_backlight = backlight;
     return LCD_I2C_OK;
 }
 
@@ -279,6 +388,10 @@ lcd_i2c_status_t lcd_i2c_init(uint8_t i2c_addr, uint32_t i2c_clock_hz)
 lcd_i2c_status_t lcd_i2c_attach(uint8_t i2c_addr)
 {
     lcd_i2c_status_t status;
+
+    g_ready = 0u;
+    g_i2c_addr = 0u;
+    g_backlight = LCD_I2C_PIN_BL;
 
     status = lcd_i2c_probe(i2c_addr);
     if (status != LCD_I2C_OK)
@@ -351,61 +464,28 @@ uint8_t lcd_i2c_is_ready(void)
 
 void lcd_i2c_clear(void)
 {
-    if (lcd_i2c_check_ready() != LCD_I2C_OK)
-    {
-        return;
-    }
-
-    lcd_i2c_byte(0x01u, 0u);
+    (void)lcd_i2c_clear_internal();
 }
 
 void lcd_i2c_home(void)
 {
-    if (lcd_i2c_check_ready() != LCD_I2C_OK)
-    {
-        return;
-    }
-
-    lcd_i2c_byte(0x02u, 0u);
+    (void)lcd_i2c_home_internal();
 }
 
 void lcd_i2c_set_cursor(uint8_t row, uint8_t col)
 {
-    uint8_t base;
-
-    if (lcd_i2c_check_ready() != LCD_I2C_OK)
-    {
-        return;
-    }
-
-    if (row > 1u)
-    {
-        g_last_status = LCD_I2C_INVALID_ARGUMENT;
-        return;
-    }
-
-    if (col > 0x27u)
-    {
-        g_last_status = LCD_I2C_INVALID_ARGUMENT;
-        return;
-    }
-
-    base = (row == 0u) ? 0x00u : 0x40u;
-    lcd_i2c_byte((uint8_t)(0x80u | (uint8_t)(base + col)), 0u);
+    (void)lcd_i2c_set_cursor_internal(row, col);
 }
 
 void lcd_i2c_write_char(char c)
 {
-    if (lcd_i2c_check_ready() != LCD_I2C_OK)
-    {
-        return;
-    }
-
-    lcd_i2c_byte((uint8_t)c, 1u);
+    (void)lcd_i2c_write_char_internal(c);
 }
 
 void lcd_i2c_write_string(const char* str)
 {
+    lcd_i2c_status_t status;
+
     if (lcd_i2c_check_ready() != LCD_I2C_OK)
     {
         return;
@@ -419,32 +499,16 @@ void lcd_i2c_write_string(const char* str)
 
     while (*str != '\0')
     {
-        lcd_i2c_write_char(*str);
+        status = lcd_i2c_write_char_internal(*str);
+        if (status != LCD_I2C_OK)
+        {
+            return;
+        }
         str++;
     }
 }
 
 void lcd_i2c_backlight(uint8_t on)
 {
-    if (lcd_i2c_check_ready() != LCD_I2C_OK)
-    {
-        return;
-    }
-
-    if ((on != 0u) && (on != 1u))
-    {
-        g_last_status = LCD_I2C_INVALID_ARGUMENT;
-        return;
-    }
-
-    if (on != 0u)
-    {
-        g_backlight |= LCD_I2C_PIN_BL;
-    }
-    else
-    {
-        g_backlight &= (uint8_t)(~LCD_I2C_PIN_BL);
-    }
-
-    lcd_i2c_send(g_backlight);
+    (void)lcd_i2c_backlight_internal(on);
 }

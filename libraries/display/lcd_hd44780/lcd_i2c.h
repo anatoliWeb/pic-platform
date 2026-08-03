@@ -57,12 +57,16 @@ typedef enum lcd_i2c_status
  *
  * Attach: binds the LCD to an I2C bus that is already initialized elsewhere.
  * It only probes the address; it never calls i2c_init(), never runs the
- * HD44780 init sequence and never clears the display. Run
- * lcd_i2c_controller_init() afterwards to make the display ready.
+ * HD44780 init sequence and never clears the display. The bind is committed
+ * only after a successful probe. Run lcd_i2c_controller_init() afterwards to
+ * make the display ready.
  *
  * Controller init: runs only the HD44780 init sequence on an already
  * initialized I2C bus, using the address bound by init() or attach().
  * It returns LCD_I2C_NOT_INITIALIZED if no address is bound.
+ *
+ * Probe: diagnostic only. It checks address presence without changing the
+ * currently bound address or ready flag.
  */
 lcd_i2c_status_t lcd_i2c_init(uint8_t i2c_addr, uint32_t i2c_clock_hz);
 lcd_i2c_status_t lcd_i2c_attach(uint8_t i2c_addr);

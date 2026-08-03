@@ -13,8 +13,9 @@
  * Exactly one interface compiles. No display driver for the unselected
  * interface is referenced.
  *
- * The adapter tracks a ready flag set from the init result, so the DISPLAY
- * backend can skip writes when the LCD failed to initialize.
+ * The adapter tracks a ready flag set from the init result and combines it
+ * with the runtime LCD driver state, so the DISPLAY backend can skip writes
+ * when the LCD failed to initialize or later lost bus readiness.
  */
 
 #include "libraries/system/debug/debug_display_lcd_2x16.h"
@@ -23,14 +24,20 @@
 
 static uint8_t g_debug_lcd_ready = 0u;
 
+#if DRV_DEBUG_DISPLAY_INTERFACE_I2C
+#include "libraries/display/lcd_hd44780/lcd_i2c.h"
+#endif
+
 uint8_t debug_lcd_is_ready(void)
 {
+#if DRV_DEBUG_DISPLAY_INTERFACE_I2C
+    return (uint8_t)((g_debug_lcd_ready != 0u) && (lcd_i2c_is_ready() != 0u));
+#else
     return g_debug_lcd_ready;
+#endif
 }
 
 #if DRV_DEBUG_DISPLAY_INTERFACE_I2C
-#include "libraries/display/lcd_hd44780/lcd_i2c.h"
-
 void debug_lcd_init(void)
 {
 #if DRV_DEBUG_DISPLAY_AUTO_INIT
