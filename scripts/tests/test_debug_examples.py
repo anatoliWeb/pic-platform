@@ -61,8 +61,7 @@ class DebugExamplesTests(unittest.TestCase):
     def test_main_examples_exist(self) -> None:
         for project in MAIN_EXAMPLES:
             with self.subTest(project=project):
-                dirs = [p.name for p in EXAMPLE_DIR.iterdir() if p.is_dir()]
-                self.assertIn(project, dirs)
+                self.assertTrue((EXAMPLE_DIR / project).is_dir())
 
     def test_main_examples_have_en_and_ua_readmes(self) -> None:
         for project in MAIN_EXAMPLES:
