@@ -8,6 +8,17 @@
 #include "core/compiler.h"
 #include "core/types.h"
 
+/*
+ * Diagnostic state of the tachometer.
+ *
+ *   STOPPED      - running is not expected in the first place.
+ *   STARTING     - running is expected, but a fresh RPM is not yet formed
+ *                  (still in the startup grace window or only one pulse seen).
+ *   RUNNING      - a valid RPM is present and equal to or above minimum_rpm.
+ *   TOO_SLOW     - pulses are arriving, but RPM is below minimum_rpm.
+ *   NO_SIGNAL    - running is expected, but no new pulse within the timeout.
+ *   CONFIG_ERROR - configuration is invalid (rejected at init).
+ */
 typedef enum
 {
     TACHOMETER_STATUS_NOT_INITIALIZED = 0,
@@ -21,25 +32,35 @@ typedef enum
 
 typedef struct
 {
-    uint8_t pulses_per_revolution;
-    uint16_t minimum_rpm;
-    uint16_t startup_grace_ms;
-    uint16_t signal_timeout_ms;
-    uint16_t minimum_pulse_interval_us;
+    uint8_t pulses_per_revolution;       /* pulses per shaft revolution; 0 invalidates config */
+    uint16_t minimum_rpm;                /* below this the status is TOO_SLOW; 0 disables the check */
+    uint16_t startup_grace_ms;           /* window after arming where TOO_SLOW is suppressed */
+    uint16_t signal_timeout_ms;          /* no new pulse for this long is treated as signal loss; 0 disables */
+    uint16_t minimum_pulse_interval_us;  /* shorter intervals are treated as noise; 0 disables */
 } tachometer_config_t;
+
+/*
+ * Internal measurement-session phase. This is NOT a counter: it saturates at
+ * ACTIVE after the second accepted pulse and stays there until a re-arm.
+ */
+typedef enum
+{
+    TACHOMETER_SESSION_UNARMED = 0,   /* no pulse accepted for the current session */
+    TACHOMETER_SESSION_FIRST_PULSE,   /* one pulse accepted; interval unknown yet */
+    TACHOMETER_SESSION_ACTIVE         /* two-plus pulses; interval and RPM computable */
+} tachometer_session_state_t;
 
 typedef struct
 {
     tachometer_config_t config;
     uint8_t initialized;
-    uint8_t expected_running;
+    uint8_t expected_running;                 /* 1 = caller expects the rotor to be turning */
     tachometer_status_t status;
-    uint32_t expected_running_since_us;
-    uint32_t last_pulse_us;
-    uint32_t pulse_count;
-    uint16_t rpm;
-    /* 0 = unarmed, 1 = first pulse, 2 = active measurement */
-    uint8_t session_pulse_count;
+    uint32_t expected_running_since_us;       /* monotonic time the running expectation last changed */
+    uint32_t last_pulse_us;                   /* monotonic time of the last accepted pulse; ignored while UNARMED */
+    uint32_t pulse_count;                     /* cumulative accepted pulses for the current expected-running session */
+    uint16_t rpm;                             /* last computed RPM in 1/min; 0 until the second pulse */
+    tachometer_session_state_t session_state; /* measurement-session phase, not a cumulative counter */
 } tachometer_t;
 
 drv_status_t tachometer_init(tachometer_t* tachometer,

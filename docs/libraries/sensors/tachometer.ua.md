@@ -19,8 +19,8 @@ Reusable helper для переводу імпульсів у RPM зі startup g
 - Для розрахунку RPM потрібні два імпульси; перший імпульс сесії лише re-arm measurement state.
 - Після `signal_timeout_ms` без імпульсу сесія re-arm: RPM стає 0, старий timestamp імпульсу більше не використовується, наступний імпульс починає свіжу сесію. Cumulative `pulse_count` при timeout не скидається.
 - `pulse_count` рахує прийняті імпульси з моменту init, reset або зміни expected-running; він переживає timeouts.
-- `session_pulse_count` є насиченим measurement state: `0` = unarmed, `1` = first pulse, `2` = active measurement.
-- Довгі потоки імпульсів не переповнюють `session_pulse_count`; після другого accepted pulse він лишається на `2`.
+- `session_state` є іменованою фазою measurement session (`TACHOMETER_SESSION_UNARMED` / `FIRST_PULSE` / `ACTIVE`), а не cumulative counter.
+- Довгі потоки імпульсів насичують `session_state` на `ACTIVE`; після другого accepted pulse він лишається в цій фазі. Cumulative `pulse_count` продовжує рости.
 
 ## Приклад
 

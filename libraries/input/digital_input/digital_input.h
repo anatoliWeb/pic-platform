@@ -8,6 +8,18 @@
 #include "core/compiler.h"
 #include "core/types.h"
 
+/*
+ * Configuration for a debounced digital input.
+ *
+ *   debounce_ms       - how long a candidate raw level must persist before it
+ *                       becomes the committed stable level.
+ *   active_level      - the raw electrical level (0 or 1) that maps to the
+ *                       logical "active" state (active-low or active-high).
+ *   initial_raw_level - the electrical level assumed at init; committing it
+ *                       does NOT emit an edge event.
+ *   latch_active      - when set, an active transition also sets the sticky
+ *                       latch until the application clears it.
+ */
 typedef struct
 {
     uint16_t debounce_ms;
@@ -16,6 +28,16 @@ typedef struct
     uint8_t latch_active;
 } digital_input_config_t;
 
+/*
+ * Caller-owned runtime state.
+ *
+ *   raw_level         - current candidate level being debounced, not yet final.
+ *   stable_raw_level  - the committed, debounced electrical level.
+ *   stable_active     - logical state after active-level polarity mapping.
+ *   rose_flag/fell_flag - consuming single-consumer edge flags: the first call
+ *                       to rose()/fell() returns the flag and clears it.
+ *   latched           - sticky active event, held until clear_latch().
+ */
 typedef struct
 {
     digital_input_config_t config;

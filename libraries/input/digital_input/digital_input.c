@@ -9,11 +9,18 @@ static uint8_t digital_input_normalize_level(uint8_t level)
     return (uint8_t)(level != 0u ? 1u : 0u);
 }
 
+/* Map a raw electrical level to the logical active state after active-level
+ * polarity is applied. This is the only place polarity is interpreted. */
 static uint8_t digital_input_to_active(const digital_input_t* input, uint8_t raw_level)
 {
     return (uint8_t)(raw_level == input->config.active_level ? 1u : 0u);
 }
 
+/*
+ * Commit a debounced raw level as the new stable state. Only a committed
+ * transition produces a rose/fell edge flag; a brief glitch that returns to the
+ * previous stable level never reaches here and therefore never creates an edge.
+ */
 static void digital_input_commit_level(digital_input_t* input,
                                        uint8_t raw_level)
 {
@@ -79,6 +86,8 @@ void digital_input_update(digital_input_t* input,
     normalized_raw = digital_input_normalize_level(raw_level);
     if (normalized_raw == input->stable_raw_level)
     {
+        /* Back to the committed stable level: any pending transition is
+         * cancelled, and the debounce timer restarts from now. */
         input->raw_level = normalized_raw;
         input->pending_since_ms = now_ms;
         return;
@@ -86,12 +95,15 @@ void digital_input_update(digital_input_t* input,
 
     if (normalized_raw != input->raw_level)
     {
+        /* A new candidate level: restart the debounce window. */
         input->raw_level = normalized_raw;
         input->pending_since_ms = now_ms;
     }
 
     if ((uint32_t)(now_ms - input->pending_since_ms) >= (uint32_t)input->config.debounce_ms)
     {
+        /* The candidate held for the full debounce window: commit it as the
+         * new stable state, then begin a fresh debounce period. */
         digital_input_commit_level(input, normalized_raw);
         input->pending_since_ms = now_ms;
     }
@@ -116,6 +128,8 @@ uint8_t digital_input_rose(digital_input_t* input)
         return 0u;
     }
 
+    /* Consuming accessor: the caller gets the flag and clears it in one read,
+     * so a missed edge is not reported twice to another consumer. */
     flag = input->rose_flag;
     input->rose_flag = 0u;
     return flag;
@@ -152,5 +166,7 @@ void digital_input_clear_latch(digital_input_t* input)
         return;
     }
 
+    /* Clearing the sticky latch does not change the current stable state or
+     * consume any pending edge flag; it only acknowledges the active event. */
     input->latched = 0u;
 }
