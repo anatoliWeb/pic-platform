@@ -48,7 +48,8 @@ examples-projects/proteus/ac_phase_control/README.md
 | `ac_phase_control_get_power_percent` | `uint8_t ac_phase_control_get_power_percent(const ac_phase_control_group_t* group, uint8_t channel);` | read power | group, index | percent | none | getter |
 | `ac_phase_control_is_channel_enabled` | `uint8_t ac_phase_control_is_channel_enabled(const ac_phase_control_group_t* group, uint8_t channel);` | read enabled state | group, index | flag | none | getter |
 | `ac_phase_control_is_channel_in_relay_mode` | `uint8_t ac_phase_control_is_channel_in_relay_mode(const ac_phase_control_group_t* group, uint8_t channel);` | read relay hold state | group, index | flag | none | getter; true when relay is held ON |
-| `ac_phase_control_on_zero_cross` | `void ac_phase_control_on_zero_cross(ac_phase_control_group_t* group);` | start half-cycle | group | none | starts new pulse window | zero-cross ISR/event; clears recovery counter |
+| `ac_phase_control_on_zero_cross` | `void ac_phase_control_on_zero_cross(ac_phase_control_group_t* group);` | legacy single-edge entry | group | none | feeds the owned `zero_cross` detector and dispatches its event | legacy wrapper; prefer the event API |
+| `ac_phase_control_on_zero_cross_event` | `void ac_phase_control_on_zero_cross_event(ac_phase_control_group_t* group, const zero_cross_event_t* event);` | start half-cycle from a shared zero-cross event | group, event | none | starts new pulse window; requires `zero_cross_is_alive()` | preferred entry; one shared sync domain |
 | `ac_phase_control_update_us` | `void ac_phase_control_update_us(ac_phase_control_group_t* group, uint16_t elapsed_us);` | advance elapsed time | group, elapsed | none | updates pulse timing | non-blocking |
 | `ac_phase_control_process` | `void ac_phase_control_process(ac_phase_control_group_t* group);` | advance relay/timeout state | group | none | updates relay state; enters ZERO_CROSS_LOST on timeout | call from main loop |
 | `ac_phase_control_all_off` | `void ac_phase_control_all_off(ac_phase_control_group_t* group);` | emergency all-off | group | none | disables channels + releases relays |  |
@@ -57,7 +58,7 @@ examples-projects/proteus/ac_phase_control/README.md
 | `ac_phase_control_get_tick_ms` | `uint32_t ac_phase_control_get_tick_ms(const ac_phase_control_group_t* group);` | millisecond tick | group | ms tick | none | helper |
 | `ac_phase_control_is_any_channel_active` | `uint8_t ac_phase_control_is_any_channel_active(const ac_phase_control_group_t* group);` | activity flag | group | flag | none | helper |
 | `ac_phase_control_get_status` | `ac_phase_status_t ac_phase_control_get_status(const ac_phase_control_group_t* group);` | group status | group | status | none | returns NOT_INITIALIZED when uninitialized |
-| `ac_phase_control_is_zero_cross_alive` | `uint8_t ac_phase_control_is_zero_cross_alive(const ac_phase_control_group_t* group);` | zero-cross health | group | flag | none | true when status is OK |
+| `ac_phase_control_is_zero_cross_alive` | `uint8_t ac_phase_control_is_zero_cross_alive(const ac_phase_control_group_t* group);` | zero-cross health | group | flag | none | delegates to the owned `zero_cross` detector |
 
 ## Source inclusion strategy
 
@@ -92,6 +93,7 @@ Add the shared source once. Do not search for wrapper duplicates.
 ```text
 core/compiler.h
 core/types.h
+libraries/input/zero_cross/zero_cross.h
 ```
 
 ### Callback-provided dependencies
@@ -130,15 +132,16 @@ none
 | `AC_PHASE_CONTROL_DEFAULT_RELAY_MIN_ON_MS` | `200U` | header | min relay ON | shared source | default config | none |
 | `AC_PHASE_CONTROL_DEFAULT_RELAY_MIN_OFF_MS` | `200U` | header | min relay OFF | shared source | default config | none |
 | `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` | `2U` | header | recovery events | shared source | default config | none |
+| `AC_PHASE_CONTROL_DEFAULT_GLITCH_REJECT_US` | `500U` | header | zero-cross glitch filter | shared source | default config | none |
 
 ## Runtime model
 
-- One group owns shared timing and the channel array.
-- One zero-cross event starts a half-cycle.
+- One group owns a shared `zero_cross` detector instance as its sync domain.
+- One shared zero-cross event starts a half-cycle and drives all channels.
 - Each enabled channel may produce at most one short gate pulse per half-cycle.
 - A channel in phase mode may also carry a relay bypass that takes over at `power_percent >= relay_on_threshold_percent` (default `98%`).
 - Relay transitions respect hysteresis (`relay_off_threshold_percent`, default `96%`), break-before-make, and minimum ON/OFF times.
-- `ac_phase_control_process()` advances the relay state machine and, when configured, the zero-cross timeout fail-safe (`AC_PHASE_STATUS_ZERO_CROSS_LOST`).
+- `ac_phase_control_process()` advances the relay state machine and calls `zero_cross_process()` for the timeout fail-safe (`AC_PHASE_STATUS_ZERO_CROSS_LOST`).
 - The group recovers after `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` fresh zero-cross events.
 
 ## ISR requirements

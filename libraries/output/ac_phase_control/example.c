@@ -59,7 +59,22 @@ void ac_phase_control_example_init(void)
 
 void ac_phase_control_example_zero_cross(void)
 {
+    /* Legacy wrapper: drives the embedded detector and dispatches the event. */
     ac_phase_control_on_zero_cross(&g_example_group);
+}
+
+void ac_phase_control_example_zero_cross_event(uint32_t now_us)
+{
+    /*
+     * Event path: feed the shared detector and dispatch the produced event to
+     * this group (and to any other consumer of the same detector).
+     */
+    zero_cross_event_t event;
+
+    if (zero_cross_on_edge(&g_example_group.zero_cross, now_us, &event) != 0u)
+    {
+        ac_phase_control_on_zero_cross_event(&g_example_group, &event);
+    }
 }
 
 void ac_phase_control_example_update_us(uint16_t elapsed_us)

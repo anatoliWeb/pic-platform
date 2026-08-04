@@ -14,6 +14,7 @@
 #include "core/types.h"
 
 #include "libraries/output/ac_phase_control/ac_phase_control.c"
+#include "libraries/input/zero_cross/zero_cross.c"
 #include "drivers/timers/timer2/timer2.c"
 
 static ac_phase_control_group_t g_group;

@@ -11,6 +11,12 @@
 
 static ac_phase_control_group_t* g_active_group = (ac_phase_control_group_t*)0;
 
+static uint32_t ac_phase_control_now_us(const ac_phase_control_group_t* group)
+{
+    return ((uint32_t)group->tick_ms * 1000UL) +
+           (uint32_t)group->tick_accumulator_us;
+}
+
 static uint8_t ac_phase_control_channel_valid(const ac_phase_control_group_t* group,
                                              uint8_t channel)
 {
@@ -589,6 +595,9 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
                                          uint8_t channel_count)
 {
     uint8_t index;
+    zero_cross_config_t zero_cross_config;
+    uint32_t min_half_cycle;
+    uint32_t max_half_cycle;
 
     if ((group == (ac_phase_control_group_t*)0) ||
         (config == (const ac_phase_control_config_t*)0) ||
@@ -646,6 +655,26 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
         return DRV_STATUS_ERROR;
     }
 
+    /*
+     * Seed the shared zero-cross detector from the group timing config. The
+     * half-cycle acceptance window tolerates a 60 Hz source (8333 us) when the
+     * configured target is 50 Hz (10000 us).
+     */
+    min_half_cycle = ((uint32_t)config->half_cycle_us * 80u) / 100u;
+    max_half_cycle = ((uint32_t)config->half_cycle_us * 125u) / 100u;
+
+    zero_cross_config.timeout_ms = group->config.zero_cross_timeout_ms;
+    zero_cross_config.min_half_cycle_us = (uint16_t)min_half_cycle;
+    zero_cross_config.max_half_cycle_us = (uint16_t)max_half_cycle;
+    zero_cross_config.glitch_reject_us = AC_PHASE_CONTROL_DEFAULT_GLITCH_REJECT_US;
+    zero_cross_config.recovery_event_count = AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS;
+
+    if (zero_cross_init(&group->zero_cross, &zero_cross_config) != DRV_STATUS_OK)
+    {
+        group->status = AC_PHASE_STATUS_CONFIG_ERROR;
+        return DRV_STATUS_ERROR;
+    }
+
     group->channels = channels;
     group->channel_count = channel_count;
     group->elapsed_us = 0u;
@@ -653,8 +682,6 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
     group->tick_ms = 0u;
     group->timer_tick_us = 0u;
     group->half_cycle_active = 0u;
-    group->last_zero_cross_ms = 0UL;
-    group->zero_cross_recovery_count = 0u;
     group->status = AC_PHASE_STATUS_OK;
     group->initialized = 1u;
 
@@ -913,26 +940,31 @@ uint8_t ac_phase_control_is_channel_in_relay_mode(const ac_phase_control_group_t
     return (group->channels[channel].relay_state == (uint8_t)AC_PHASE_RELAY_STATE_HOLD_ON) ? 1u : 0u;
 }
 
-void ac_phase_control_on_zero_cross(ac_phase_control_group_t* group)
+void ac_phase_control_on_zero_cross_event(ac_phase_control_group_t* group,
+                                          const zero_cross_event_t* event)
 {
     uint8_t channel;
 
     if ((group == (ac_phase_control_group_t*)0) ||
-        (group->initialized == 0u))
+        (group->initialized == 0u) ||
+        (event == (const zero_cross_event_t*)0))
     {
         return;
     }
 
-    group->last_zero_cross_ms = group->tick_ms;
+    /*
+     * Do not arm the half-cycle before a valid sync or while the zero-cross
+     * stream is LOST: recovery events are only dispatched once the detector is
+     * ALIVE again, so this keeps all outputs OFF on lost sync.
+     */
+    if (zero_cross_is_alive(&group->zero_cross) == 0u)
+    {
+        return;
+    }
 
     if (group->status == AC_PHASE_STATUS_ZERO_CROSS_LOST)
     {
-        group->zero_cross_recovery_count++;
-        if (group->zero_cross_recovery_count >= AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS)
-        {
-            group->status = AC_PHASE_STATUS_OK;
-            group->zero_cross_recovery_count = 0u;
-        }
+        group->status = AC_PHASE_STATUS_OK;
     }
 
     group->elapsed_us = 0u;
@@ -945,6 +977,24 @@ void ac_phase_control_on_zero_cross(ac_phase_control_group_t* group)
     }
 
     ac_phase_control_apply_group_outputs(group);
+}
+
+void ac_phase_control_on_zero_cross(ac_phase_control_group_t* group)
+{
+    zero_cross_event_t event;
+
+    if ((group == (ac_phase_control_group_t*)0) ||
+        (group->initialized == 0u))
+    {
+        return;
+    }
+
+    if (zero_cross_on_edge(&group->zero_cross,
+                           ac_phase_control_now_us(group),
+                           &event) != 0u)
+    {
+        ac_phase_control_on_zero_cross_event(group, &event);
+    }
 }
 
 void ac_phase_control_update_us(ac_phase_control_group_t* group,
@@ -1029,6 +1079,7 @@ void ac_phase_control_process(ac_phase_control_group_t* group)
 {
     uint8_t channel;
     uint32_t now_ms;
+    uint32_t now_us;
     ac_phase_control_channel_t* entry;
 
     if ((group == (ac_phase_control_group_t*)0) ||
@@ -1038,16 +1089,14 @@ void ac_phase_control_process(ac_phase_control_group_t* group)
     }
 
     now_ms = group->tick_ms;
+    now_us = ac_phase_control_now_us(group);
 
-    if (group->config.zero_cross_timeout_ms != 0u)
+    zero_cross_process(&group->zero_cross, now_us);
+
+    if (zero_cross_get_status(&group->zero_cross) == ZERO_CROSS_STATUS_LOST)
     {
-        if ((group->last_zero_cross_ms != 0UL) &&
-            ((now_ms - group->last_zero_cross_ms) >
-             (uint32_t)group->config.zero_cross_timeout_ms))
-        {
-            ac_phase_control_enter_fault(group);
-            return;
-        }
+        ac_phase_control_enter_fault(group);
+        return;
     }
 
     for (channel = 0u; channel < group->channel_count; channel++)
@@ -1194,5 +1243,5 @@ uint8_t ac_phase_control_is_zero_cross_alive(const ac_phase_control_group_t* gro
         return 0u;
     }
 
-    return (group->status == AC_PHASE_STATUS_OK) ? 1u : 0u;
+    return zero_cross_is_alive(&group->zero_cross);
 }

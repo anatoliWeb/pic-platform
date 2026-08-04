@@ -9,7 +9,10 @@
 
 ## Архітектура
 
-- Один `ac_phase_control_group_t` зберігає спільний timing і масив каналів.
+- Один `ac_phase_control_group_t` володіє спільним екземпляром `zero_cross` детектора як синхронізуючою областю та масивом каналів.
+- Виявлення переходу через нуль, придушення глітчів, валідація напівперіоду, таймаут і відновлення живуть у багаторазовій бібліотеці `libraries/input/zero_cross`.
+- Програма подає фронтами у `zero_cross` детектор групи та розсилає створену подію в групу (і, за потреби, іншим споживачам).
+- `ac_phase_control_on_zero_cross_event()` розпочинає нову півхвилю зі спільної події.
 - Підтримується до `AC_PHASE_CONTROL_MAX_CHANNELS` каналів.
 - Кожен канал має власний gate pin, enabled state, power percent і delay.
 - Вибір таймера передається через `ac_phase_control_init_group()`.
@@ -36,10 +39,12 @@
 
 ## Zero-Cross Timeout
 
-- Коли `zero_cross_timeout_ms` ненульовий, `ac_phase_control_process()` порівнює час від останньоя zero-cross з timeout.
-- Якщо timeout вичерпано, група переходить у `AC_PHASE_STATUS_ZERO_CROSS_LOST`, очищає всі gate pulses, вимикає всі реле і встанов ай стан повного оффу.
+- Група володіє `zero_cross_t` детектором, який `ac_phase_control_init_group()` ініціалізує з `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` і `AC_PHASE_CONTROL_DEFAULT_GLITCH_REJECT_US`.
+- Легасі-обгортка `ac_phase_control_on_zero_cross()` подає фронт через `zero_cross_on_edge()` і розсилає його подію.
+- `ac_phase_control_process()` викликає `zero_cross_process()`; коли детектор переходить у `ZERO_CROSS_STATUS_LOST`, група переходить у `AC_PHASE_STATUS_ZERO_CROSS_LOST`, очищає всі gate pulses, вимикає всі реле і встанов ай стан повного оффу.
 - Група автоматично відновлюється після `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` (за замовчування `2`) свіжих zero-cross подій.
 - `ac_phase_control_get_status()` поверта стату групи, а `ac_phase_control_is_zero_cross_alive()` повідомне чи живій zero-cross stream.
+- Жодна подія не запускає імпульс, поки детектор не повідомить `zero_cross_is_alive()`.
 
 ## Public API
 
@@ -54,6 +59,7 @@
 - `ac_phase_control_is_channel_enabled()`
 - `ac_phase_control_is_channel_in_relay_mode()`
 - `ac_phase_control_on_zero_cross()`
+- `ac_phase_control_on_zero_cross_event()`
 - `ac_phase_control_update_us()`
 - `ac_phase_control_process()`
 - `ac_phase_control_all_off()`
@@ -81,7 +87,7 @@
 - Типова ціль симуляції AC — `50 Hz`.
 - Один повний цикл — `20 ms`.
 - Одна півхвиля — `10 ms`.
-- `ac_phase_control_on_zero_cross()` починає нову півхвилю.
+- `ac_phase_control_on_zero_cross_event()` починає нову півхвилю зі спільної zero-cross події.
 - `ac_phase_control_update_us()` рухає elapsed time без блокування.
 - Кожен увімкнений канал може сформувати не більше одного короткого gate pulse за півхвилю.
 - Великі значення elapsed обробляються через ширші тимчасові типи, щоб уникнути overflow.

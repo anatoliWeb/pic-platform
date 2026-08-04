@@ -9,7 +9,10 @@ An optional per-channel relay bypass takes over the output at full power, so the
 
 ## Architecture
 
-- One `ac_phase_control_group_t` owns shared timing and the channel array.
+- One `ac_phase_control_group_t` owns a shared `zero_cross` detector instance as its sync domain and the channel array.
+- Zero-cross detection, glitch rejection, half-cycle validation, timeout, and recovery live in the reusable `libraries/input/zero_cross` library.
+- The application feeds edges into the owned `zero_cross` detector and dispatches the produced event to the group (and optionally to other consumers).
+- `ac_phase_control_on_zero_cross_event()` starts a fresh half-cycle from a shared event.
 - Up to `AC_PHASE_CONTROL_MAX_CHANNELS` channels are supported.
 - Each channel has its own gate pin, enabled state, power percent, and delay.
 - Timer selection is passed through `ac_phase_control_init_group()`.
@@ -36,10 +39,12 @@ An optional per-channel relay bypass takes over the output at full power, so the
 
 ## Zero-Cross Timeout
 
-- When `zero_cross_timeout_ms` is non-zero, `ac_phase_control_process()` compares the elapsed time since the last zero-cross against the timeout.
-- If the timeout expires, the group enters `AC_PHASE_STATUS_ZERO_CROSS_LOST`, clears all gate pulses, releases all relays, and applies an all-off state.
-- The group recovers automatically after `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` (default `2`) fresh zero-cross events.
+- The group owns a `zero_cross_t` detector seeded by `ac_phase_control_init_group()` with `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` and `AC_PHASE_CONTROL_DEFAULT_GLITCH_REJECT_US`.
+- The legacy `ac_phase_control_on_zero_cross()` wrapper feeds the detector via `zero_cross_on_edge()` and dispatches its event.
+- `ac_phase_control_process()` calls `zero_cross_process()`; when the detector reaches `ZERO_CROSS_STATUS_LOST`, the group enters `AC_PHASE_STATUS_ZERO_CROSS_LOST`, clears all gate pulses, releases all relays, and applies an all-off state.
+- The group recovers after `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` (default `2`) fresh zero-cross events.
 - `ac_phase_control_get_status()` returns the group status and `ac_phase_control_is_zero_cross_alive()` reports whether the zero-cross stream is healthy.
+- No event starts a pulse unless the detector reports `zero_cross_is_alive()`.
 
 ## Public API
 
@@ -54,6 +59,7 @@ An optional per-channel relay bypass takes over the output at full power, so the
 - `ac_phase_control_is_channel_enabled()`
 - `ac_phase_control_is_channel_in_relay_mode()`
 - `ac_phase_control_on_zero_cross()`
+- `ac_phase_control_on_zero_cross_event()`
 - `ac_phase_control_update_us()`
 - `ac_phase_control_process()`
 - `ac_phase_control_all_off()`
@@ -81,7 +87,7 @@ An optional per-channel relay bypass takes over the output at full power, so the
 - Default AC simulation target is `50 Hz`.
 - One full cycle is `20 ms`.
 - One half-cycle is `10 ms`.
-- `ac_phase_control_on_zero_cross()` starts a fresh half-cycle.
+- `ac_phase_control_on_zero_cross_event()` starts a fresh half-cycle from a shared zero-cross event.
 - `ac_phase_control_update_us()` advances elapsed time without blocking.
 - Each enabled channel may generate at most one short gate pulse per half-cycle.
 - Larger elapsed values are handled with wider temporary integers to avoid overflow.

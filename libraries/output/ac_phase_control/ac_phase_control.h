@@ -2,11 +2,16 @@
  * File: libraries/output/ac_phase_control/ac_phase_control.h
  *
  * Multi-channel zero-cross synchronized phase-angle control with optional
- * per-channel relay bypass for full-power mode.
+ * per-channel relay-bypass for full-power mode.
  *
  * One shared zero-cross event starts a half-cycle and drives all channels.
  * One shared timer performs the gate-pulse scheduling. Relay transitions are
  * handled by a non-blocking state machine advanced from ac_phase_control_process().
+ *
+ * Zero-cross detection, timeout and recovery live in the reusable
+ * libraries/input/zero_cross library. The group owns one zero_cross_t instance
+ * as its shared sync domain; the caller feeds edges and dispatches the produced
+ * event to this group (and optionally to other consumers).
  */
 
 #ifndef LIBRARIES_OUTPUT_AC_PHASE_CONTROL_H
@@ -14,6 +19,7 @@
 
 #include "core/compiler.h"
 #include "core/types.h"
+#include "libraries/input/zero_cross/zero_cross.h"
 
 #ifndef AC_PHASE_CONTROL_MAX_CHANNELS
 #define AC_PHASE_CONTROL_MAX_CHANNELS 4U
@@ -26,6 +32,8 @@
 #define AC_PHASE_CONTROL_DEFAULT_RELAY_MIN_OFF_MS     200U
 
 #define AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS   2U
+
+#define AC_PHASE_CONTROL_DEFAULT_GLITCH_REJECT_US     500U
 
 typedef enum
 {
@@ -97,8 +105,7 @@ typedef struct
     uint16_t timer_tick_us;
     uint8_t half_cycle_active;
     uint8_t initialized;
-    uint32_t last_zero_cross_ms;
-    uint8_t zero_cross_recovery_count;
+    zero_cross_t zero_cross;
     ac_phase_status_t status;
 } ac_phase_control_group_t;
 
@@ -145,6 +152,8 @@ uint8_t ac_phase_control_is_channel_in_relay_mode(const ac_phase_control_group_t
                                                   uint8_t channel);
 
 void ac_phase_control_on_zero_cross(ac_phase_control_group_t* group);
+void ac_phase_control_on_zero_cross_event(ac_phase_control_group_t* group,
+                                          const zero_cross_event_t* event);
 void ac_phase_control_update_us(ac_phase_control_group_t* group,
                                 uint16_t elapsed_us);
 void ac_phase_control_process(ac_phase_control_group_t* group);
