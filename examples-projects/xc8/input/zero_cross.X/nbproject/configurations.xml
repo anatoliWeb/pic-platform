@@ -1,56 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="65">
   <logicalFolder name="root" displayName="root" projectFiles="true">
-    <logicalFolder name="HeaderFiles"
-                   displayName="Header Files"
-                   projectFiles="true">
+    <logicalFolder name="HeaderFiles" displayName="Header Files" projectFiles="true">
       <itemPath>project_config.h</itemPath>
     </logicalFolder>
-    <logicalFolder name="ExternalFiles"
-                   displayName="Important Files"
-                   projectFiles="true">
+    <logicalFolder name="ExternalFiles" displayName="Important Files" projectFiles="true">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
-    <logicalFolder name="LinkerScript"
-                   displayName="Linker Files"
-                   projectFiles="true">
+    <logicalFolder name="LinkerScript" displayName="Linker Files" projectFiles="true">
     </logicalFolder>
-    <logicalFolder name="SourceFiles"
-                   displayName="Source Files"
-                   projectFiles="true">
+    <logicalFolder name="SourceFiles" displayName="Source Files" projectFiles="true">
       <logicalFolder name="app" displayName="Application" projectFiles="true">
         <itemPath>main.c</itemPath>
         <itemPath>config_bits.c</itemPath>
       </logicalFolder>
-      <logicalFolder name="f1" displayName="core" projectFiles="true">
-        <itemPath>../../../../core/delay.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
-        <logicalFolder name="timers" displayName="timers" projectFiles="true">
-          <logicalFolder name="timer2" displayName="timer2" projectFiles="true">
-            <itemPath>../../../../drivers/timers/timer2/timer2.c</itemPath>
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="interrupts" displayName="interrupts" projectFiles="true">
-          <logicalFolder name="ext_interrupt"
-                         displayName="ext_interrupt"
-                         projectFiles="true">
-            <itemPath>../../../../drivers/interrupts/ext_interrupt/ext_interrupt.c</itemPath>
-          </logicalFolder>
-        </logicalFolder>
-      </logicalFolder>
       <logicalFolder name="libraries" displayName="libraries" projectFiles="true">
-        <logicalFolder name="output" displayName="output" projectFiles="true">
-          <logicalFolder name="ac_phase_control"
-                         displayName="ac_phase_control"
-                         projectFiles="true">
-            <itemPath>../../../../libraries/output/ac_phase_control/ac_phase_control.c</itemPath>
-          </logicalFolder>
-        </logicalFolder>
         <logicalFolder name="input" displayName="input" projectFiles="true">
-          <logicalFolder name="zero_cross"
-                         displayName="zero_cross"
-                         projectFiles="true">
+          <logicalFolder name="zero_cross" displayName="zero_cross" projectFiles="true">
             <itemPath>../../../../libraries/input/zero_cross/zero_cross.c</itemPath>
           </logicalFolder>
         </logicalFolder>
@@ -59,7 +25,6 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>../../../../core</Elem>
-    <Elem>../../../../drivers</Elem>
     <Elem>../../../../libraries</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
@@ -113,8 +78,7 @@
         <property key="default-char-type" value="true"/>
         <property key="define-macros" value="PIC_PLATFORM_CLOCK_HZ=10000000UL"/>
         <property key="disable-optimizations" value="true"/>
-        <property key="extra-include-directories"
-                  value="..\..\..\..\..;..\..\..\..\..\core;..\..\..\..\..\drivers;..\..\..\..\..\libraries"/>
+        <property key="extra-include-directories" value="..\..\..\..\..;..\..\..\..\..\core;..\..\..\..\..\libraries"/>
         <property key="favor-optimization-for" value="-speed,+space"/>
         <property key="garbage-collect-data" value="true"/>
         <property key="garbage-collect-functions" value="true"/>
@@ -156,8 +120,7 @@
         <property key="calibrate-oscillator-value" value="0x3400"/>
         <property key="checksum-flash-options-addressce" value=""/>
         <property key="checksum-flash-options-addresscs" value=""/>
-        <property key="checksum-flash-options-algorithmc"
-                  value="Select checksum algorithm"/>
+        <property key="checksum-flash-options-algorithmc" value="Select checksum algorithm"/>
         <property key="checksum-flash-options-destc" value=""/>
         <property key="checksum-flash-options-offsetc" value="0xFFFF"/>
         <property key="checksum-flash-options-widthc" value="2"/>
@@ -230,10 +193,8 @@
         <property key="periphComp6.gte" value="gt"/>
         <property key="reset.scl" value="false"/>
         <property key="reset.type" value="MCLR"/>
-        <property key="toolpack.updateoptions"
-                  value="toolpack.updateoptions.uselatestoolpack"/>
-        <property key="toolpack.updateoptions.packversion"
-                  value="Press to select which tool pack to use"/>
+        <property key="toolpack.updateoptions" value="toolpack.updateoptions.uselatestoolpack"/>
+        <property key="toolpack.updateoptions.packversion" value="Press to select which tool pack to use"/>
         <property key="tracecontrol.include.timestamp" value="summarydataenabled"/>
         <property key="tracecontrol.select" value="0"/>
         <property key="tracecontrol.stallontracebufferfull" value="false"/>
@@ -244,27 +205,6 @@
         <property key="uart0io.output" value="window"/>
         <property key="uart0io.outputfile" value=""/>
         <property key="uart0io.uartioenabled" value="false"/>
-        <property key="uart1io.output" value="window"/>
-        <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="false"/>
-        <property key="uart2io.output" value="window"/>
-        <property key="uart2io.outputfile" value=""/>
-        <property key="uart2io.uartioenabled" value="false"/>
-        <property key="uart3io.output" value="window"/>
-        <property key="uart3io.outputfile" value=""/>
-        <property key="uart3io.uartioenabled" value="false"/>
-        <property key="uart4io.output" value="window"/>
-        <property key="uart4io.outputfile" value=""/>
-        <property key="uart4io.uartioenabled" value="false"/>
-        <property key="uart5io.output" value="window"/>
-        <property key="uart5io.outputfile" value=""/>
-        <property key="uart5io.uartioenabled" value="false"/>
-        <property key="uart6io.output" value="window"/>
-        <property key="uart6io.outputfile" value=""/>
-        <property key="uart6io.uartioenabled" value="false"/>
-        <property key="usart0io.output" value="window"/>
-        <property key="usart0io.outputfile" value=""/>
-        <property key="usart0io.uartioenabled" value="false"/>
       </Simulator>
       <Tool>
         <property key="codecoverage.enabled" value="Disable"/>
@@ -296,10 +236,8 @@
         <property key="periphComp6.gte" value="gt"/>
         <property key="reset.scl" value="false"/>
         <property key="reset.type" value="MCLR"/>
-        <property key="toolpack.updateoptions"
-                  value="toolpack.updateoptions.uselatestoolpack"/>
-        <property key="toolpack.updateoptions.packversion"
-                  value="Press to select which tool pack to use"/>
+        <property key="toolpack.updateoptions" value="toolpack.updateoptions.uselatestoolpack"/>
+        <property key="toolpack.updateoptions.packversion" value="Press to select which tool pack to use"/>
         <property key="tracecontrol.include.timestamp" value="summarydataenabled"/>
         <property key="tracecontrol.select" value="0"/>
         <property key="tracecontrol.stallontracebufferfull" value="false"/>
@@ -310,27 +248,6 @@
         <property key="uart0io.output" value="window"/>
         <property key="uart0io.outputfile" value=""/>
         <property key="uart0io.uartioenabled" value="false"/>
-        <property key="uart1io.output" value="window"/>
-        <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="false"/>
-        <property key="uart2io.output" value="window"/>
-        <property key="uart2io.outputfile" value=""/>
-        <property key="uart2io.uartioenabled" value="false"/>
-        <property key="uart3io.output" value="window"/>
-        <property key="uart3io.outputfile" value=""/>
-        <property key="uart3io.uartioenabled" value="false"/>
-        <property key="uart4io.output" value="window"/>
-        <property key="uart4io.outputfile" value=""/>
-        <property key="uart4io.uartioenabled" value="false"/>
-        <property key="uart5io.output" value="window"/>
-        <property key="uart5io.outputfile" value=""/>
-        <property key="uart5io.uartioenabled" value="false"/>
-        <property key="uart6io.output" value="window"/>
-        <property key="uart6io.outputfile" value=""/>
-        <property key="uart6io.uartioenabled" value="false"/>
-        <property key="usart0io.output" value="window"/>
-        <property key="usart0io.outputfile" value=""/>
-        <property key="usart0io.uartioenabled" value="false"/>
       </Tool>
       <XC8-CO>
         <property key="coverage-enable" value=""/>

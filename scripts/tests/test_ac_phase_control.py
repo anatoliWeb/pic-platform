@@ -177,6 +177,8 @@ class AcPhaseControlHeaderTests(unittest.TestCase):
         text = read_text(HDR)
         for field in (
             "zero_cross",
+            "owned_zero_cross",
+            "zero_cross_bound",
             "status",
         ):
             self.assertIn(field, text)
@@ -189,6 +191,7 @@ class AcPhaseControlHeaderTests(unittest.TestCase):
     def test_zero_cross_dependency_declared(self) -> None:
         text = read_text(HDR)
         self.assertIn("zero_cross.h", text)
+        self.assertIn("ac_phase_control_bind_zero_cross(", text)
         self.assertIn("ac_phase_control_on_zero_cross_event(", text)
         self.assertIn("zero_cross_event_t* event", text)
 
@@ -288,13 +291,15 @@ class AcPhaseControlBehaviorTests(unittest.TestCase):
 
     def test_zero_cross_event_api_drives_half_cycle(self) -> None:
         body = extract_source_function(read_text(SRC), "void ac_phase_control_on_zero_cross_event(")
-        self.assertIn("zero_cross_is_alive(&group->zero_cross)", body)
+        self.assertIn("ac_phase_control_zero_cross_ref_const(group)", body)
+        self.assertIn("zero_cross_is_alive(zero_cross)", body)
         self.assertIn("group->half_cycle_active = 1u;", body)
         self.assertIn("group->channels[channel].pulse_active = 0u;", body)
 
     def test_zero_cross_no_pulse_before_valid_sync(self) -> None:
         body = extract_source_function(read_text(SRC), "void ac_phase_control_on_zero_cross_event(")
-        self.assertIn("zero_cross_is_alive(&group->zero_cross) == 0u", body)
+        self.assertIn("zero_cross == (const zero_cross_t*)0", body)
+        self.assertIn("zero_cross_is_alive(zero_cross) == 0u", body)
         self.assertIn("return;", body)
 
     def test_zero_cross_recovers_from_lost(self) -> None:
@@ -302,20 +307,31 @@ class AcPhaseControlBehaviorTests(unittest.TestCase):
         self.assertIn("group->status == AC_PHASE_STATUS_ZERO_CROSS_LOST", body)
         self.assertIn("group->status = AC_PHASE_STATUS_OK", body)
 
+    def test_bind_api_declared(self) -> None:
+        text = read_text(HDR)
+        self.assertIn("ac_phase_control_bind_zero_cross(", text)
+
+    def test_bind_api_updates_group_pointer(self) -> None:
+        body = extract_source_function(read_text(SRC), "drv_status_t ac_phase_control_bind_zero_cross(")
+        self.assertIn("group->zero_cross = zero_cross;", body)
+        self.assertIn("group->zero_cross_bound = 1u;", body)
+
     def test_zero_cross_legacy_wrapper_drives_detector(self) -> None:
         body = extract_source_function(read_text(SRC), "void ac_phase_control_on_zero_cross(")
-        self.assertIn("zero_cross_on_edge(&group->zero_cross,", body)
+        self.assertIn("zero_cross = ac_phase_control_zero_cross_ref(group);", body)
+        self.assertIn("zero_cross_on_edge(zero_cross,", body)
         self.assertIn("ac_phase_control_on_zero_cross_event(group, &event)", body)
 
     def test_init_seeds_zero_cross_detector(self) -> None:
         body = extract_source_function(read_text(SRC), "drv_status_t ac_phase_control_init_group(")
-        self.assertIn("zero_cross_init(&group->zero_cross,", body)
+        self.assertIn("zero_cross_init(&group->owned_zero_cross,", body)
         self.assertIn("AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS", body)
         self.assertIn("AC_PHASE_CONTROL_DEFAULT_GLITCH_REJECT_US", body)
 
     def test_process_delegates_timeout_to_zero_cross(self) -> None:
         body = extract_source_function(read_text(SRC), "void ac_phase_control_process(")
-        self.assertIn("zero_cross_process(&group->zero_cross,", body)
+        self.assertIn("zero_cross = ac_phase_control_zero_cross_ref(group);", body)
+        self.assertIn("zero_cross_process(zero_cross,", body)
         self.assertIn("ZERO_CROSS_STATUS_LOST", body)
         self.assertIn("ac_phase_control_enter_fault(group)", body)
 
@@ -358,7 +374,8 @@ class AcPhaseControlBehaviorTests(unittest.TestCase):
         text = read_text(SRC)
         self.assertIn("AC_PHASE_STATUS_NOT_INITIALIZED", extract_source_function(text, "ac_phase_status_t ac_phase_control_get_status("))
         body = extract_source_function(text, "uint8_t ac_phase_control_is_zero_cross_alive(")
-        self.assertIn("zero_cross_is_alive(&group->zero_cross)", body)
+        self.assertIn("ac_phase_control_zero_cross_ref_const(group)", body)
+        self.assertIn("zero_cross_is_alive(zero_cross)", body)
 
     def test_gate_pulse_width_bounded(self) -> None:
         body = extract_source_function(read_text(SRC), "void ac_phase_control_update_us(")

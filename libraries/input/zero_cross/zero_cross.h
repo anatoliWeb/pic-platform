@@ -67,13 +67,14 @@ typedef struct
 typedef struct
 {
     zero_cross_config_t config;
+    uint8_t initialized;
+    uint8_t armed;
     zero_cross_status_t status;
     uint32_t last_edge_us;
-    uint32_t sequence;
     uint16_t half_cycle_us;
+    uint32_t sequence;
     zero_cross_frequency_t frequency;
     uint8_t recovery_count;
-    uint8_t initialized;
 } zero_cross_t;
 
 drv_status_t zero_cross_init(zero_cross_t* zc,

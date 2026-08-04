@@ -14,6 +14,7 @@
 
 static ac_phase_control_group_t g_example_group;
 static ac_phase_control_channel_t g_example_channels[AC_PHASE_CONTROL_MAX_CHANNELS];
+static zero_cross_t g_example_zero_cross;
 
 /*
  * Relay threshold and hysteresis use the defaults (98 % / 96 %) when the
@@ -34,6 +35,15 @@ static const ac_phase_control_config_t g_example_config =
     500u    /* zero-cross timeout (ms). */
 };
 
+static const zero_cross_config_t g_example_zero_cross_config =
+{
+    500u,
+    7500u,
+    12000u,
+    500u,
+    2u
+};
+
 void ac_phase_control_example_init(void)
 {
     (void)ac_phase_control_init_group(&g_example_group,
@@ -41,6 +51,9 @@ void ac_phase_control_example_init(void)
                                       &g_example_config,
                                       g_example_channels,
                                       AC_PHASE_CONTROL_MAX_CHANNELS);
+
+    (void)zero_cross_init(&g_example_zero_cross, &g_example_zero_cross_config);
+    (void)ac_phase_control_bind_zero_cross(&g_example_group, &g_example_zero_cross);
 
     (void)ac_phase_control_attach_channel(&g_example_group,
                                           0u,
@@ -71,7 +84,7 @@ void ac_phase_control_example_zero_cross_event(uint32_t now_us)
      */
     zero_cross_event_t event;
 
-    if (zero_cross_on_edge(&g_example_group.zero_cross, now_us, &event) != 0u)
+    if (zero_cross_on_edge(&g_example_zero_cross, now_us, &event) != 0u)
     {
         ac_phase_control_on_zero_cross_event(&g_example_group, &event);
     }

@@ -39,7 +39,7 @@ No compiler-specific wrappers exist yet. Use the shared implementation directly.
 | `zero_cross_config_t` | thresholds | struct | config | see below |
 | `zero_cross_event_t` | produced event | nothing | struct | fills `timestamp_us`, `half_cycle_us`, `sequence`, `frequency` |
 | `zero_cross_init()` | seed state | zc, config | `drv_status_t` | validates config |
-| `zero_cross_on_edge()` | feed an edge | zc, now_us, event | `uint8_t` (1 = event produced) | first edge arms the detector |
+| `zero_cross_on_edge()` | feed an edge | zc, now_us, event | `uint8_t` (1 = event produced) | first edge arms the detector; `LOST` re-arms on the next edge |
 | `zero_cross_process()` | advance timeout | zc, now_us | none | sets `LOST` on timeout |
 | `zero_cross_is_alive()` | sync healthy check | zc | `uint8_t` | `1` only when `ALIVE` |
 | `zero_cross_get_status()` | status query | zc | `zero_cross_status_t` | non-consuming |
@@ -95,6 +95,15 @@ core/compiler.h
 
 - The zero-cross pin, timer, and output devices are project-owned.
 - The library exposes hardware only through a time feed and produced events.
+- `armed` is explicit state; `timestamp_us == 0` is valid and not a sentinel.
+- `sequence` increases only for events that can be dispatched to consumers.
+- Recovery after `LOST` requires fresh stable edges before `ALIVE` returns.
+
+## Standalone example
+
+```text
+examples-projects/xc8/input/zero_cross.X
+```
 
 ## Known limitations
 

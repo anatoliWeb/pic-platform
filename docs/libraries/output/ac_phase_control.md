@@ -9,10 +9,12 @@ An optional per-channel relay bypass takes over the output at full power, so the
 
 ## Architecture
 
-- One `ac_phase_control_group_t` owns a shared `zero_cross` detector instance as its sync domain and the channel array.
+- One `ac_phase_control_group_t` owns a shared sync pointer and the channel array.
 - Zero-cross detection, glitch rejection, half-cycle validation, timeout, and recovery live in the reusable `libraries/input/zero_cross` library.
-- The application feeds edges into the owned `zero_cross` detector and dispatches the produced event to the group (and optionally to other consumers).
-- `ac_phase_control_on_zero_cross_event()` starts a fresh half-cycle from a shared event.
+- Legacy mode uses the group's internal detector.
+- Shared-detector mode uses `ac_phase_control_bind_zero_cross()` to point the group at an external `zero_cross_t` source of truth.
+- The application feeds edges into the bound detector and dispatches the produced event to the group (and optionally to other consumers).
+- `ac_phase_control_on_zero_cross_event()` starts a fresh half-cycle from a shared event only when the bound detector is alive.
 - Up to `AC_PHASE_CONTROL_MAX_CHANNELS` channels are supported.
 - Each channel has its own gate pin, enabled state, power percent, and delay.
 - Timer selection is passed through `ac_phase_control_init_group()`.
@@ -39,16 +41,18 @@ An optional per-channel relay bypass takes over the output at full power, so the
 
 ## Zero-Cross Timeout
 
-- The group owns a `zero_cross_t` detector seeded by `ac_phase_control_init_group()` with `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` and `AC_PHASE_CONTROL_DEFAULT_GLITCH_REJECT_US`.
-- The legacy `ac_phase_control_on_zero_cross()` wrapper feeds the detector via `zero_cross_on_edge()` and dispatches its event.
-- `ac_phase_control_process()` calls `zero_cross_process()`; when the detector reaches `ZERO_CROSS_STATUS_LOST`, the group enters `AC_PHASE_STATUS_ZERO_CROSS_LOST`, clears all gate pulses, releases all relays, and applies an all-off state.
+- The group seeds an internal detector by default and can be rebound to an external shared detector with `ac_phase_control_bind_zero_cross()`.
+- The bound detector is the source of truth in shared-detector mode.
+- The legacy `ac_phase_control_on_zero_cross()` wrapper feeds whichever detector is currently bound.
+- `ac_phase_control_process()` calls `zero_cross_process()` on the bound detector; when it reaches `ZERO_CROSS_STATUS_LOST`, the group enters `AC_PHASE_STATUS_ZERO_CROSS_LOST`, clears all gate pulses, releases all relays, and applies an all-off state.
 - The group recovers after `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` (default `2`) fresh zero-cross events.
-- `ac_phase_control_get_status()` returns the group status and `ac_phase_control_is_zero_cross_alive()` reports whether the zero-cross stream is healthy.
-- No event starts a pulse unless the detector reports `zero_cross_is_alive()`.
+- `ac_phase_control_get_status()` returns the group status and `ac_phase_control_is_zero_cross_alive()` reports whether the bound zero-cross stream is healthy.
+- No event starts a pulse unless the bound detector reports `zero_cross_is_alive()`.
 
 ## Public API
 
 - `ac_phase_control_init_group()`
+- `ac_phase_control_bind_zero_cross()`
 - `ac_phase_control_attach_channel()`
 - `ac_phase_control_attach_channel_relay()`
 - `ac_phase_control_detach_channel()`
@@ -110,6 +114,9 @@ An optional per-channel relay bypass takes over the output at full power, so the
 ## Proteus Notes
 
 - Use one fake zero-cross pulse source on `RB0 / INT0`.
+- Do not let the firmware pretend to provide isolation.
+- The detector hardware must be galvanically isolated from mains.
+- The glitch filter is not a safety boundary.
 - Probe `RD0..RD3` with an oscilloscope or logic analyzer.
 - Optional diagnostic pins:
   - `RC0`: zero-cross toggle

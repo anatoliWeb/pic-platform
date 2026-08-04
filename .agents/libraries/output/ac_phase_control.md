@@ -37,10 +37,11 @@ examples-projects/proteus/ac_phase_control/README.md
 | `ac_phase_relay_state_t` | enum | relay state machine | PHASE/WAIT_ON/HOLD_ON/WAIT_OFF | state | none | relay state enum |
 | `ac_phase_control_config_t` | struct | half-cycle timing + relay policy | half_cycle/min_delay/max_delay/gate_pulse + relay thresholds/min times/break-before-make + zero_cross_timeout | config | none | caller config; zero fields use defaults |
 | `ac_phase_control_channel_t` | struct | per-channel output state | gate registers, mask, delay, power, flags + relay registers/mask/state | state | GPIO config | caller-owned |
-| `ac_phase_control_group_t` | struct | group state | timer, config, channels, count + zero-cross tracking/status | state | group metadata | one shared zero-cross domain |
+| `ac_phase_control_group_t` | struct | group state | timer, config, channels, count + shared zero-cross pointer/status | state | group metadata | one shared zero-cross domain |
 | `ac_phase_control_init_group` | `drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group, ac_phase_control_timer_t timer, const ac_phase_control_config_t* config, ac_phase_control_channel_t* channels, uint8_t channel_count);` | initialize group | group, timer, config, channels, count | status | initializes internal state | validates timing + relay thresholds |
 | `ac_phase_control_attach_channel` | `drv_status_t ac_phase_control_attach_channel(ac_phase_control_group_t* group, uint8_t channel, volatile uint8_t* gate_lat, volatile uint8_t* gate_tris, uint8_t gate_mask);` | attach gate output | group, index, LAT/TRIS, bitmask | status | configures gate pin | bitmask example `1U << 0U` |
 | `ac_phase_control_attach_channel_relay` | `drv_status_t ac_phase_control_attach_channel_relay(ac_phase_control_group_t* group, uint8_t channel, volatile uint8_t* relay_lat, volatile uint8_t* relay_tris, uint8_t relay_mask);` | attach relay bypass | group, index, LAT/TRIS, bitmask | status | configures relay pin | bitmask example `1U << 4U` |
+| `ac_phase_control_bind_zero_cross` | `drv_status_t ac_phase_control_bind_zero_cross(ac_phase_control_group_t* group, zero_cross_t* zero_cross);` | bind shared detector | group, detector | status | switches sync source | external detector becomes source of truth |
 | `ac_phase_control_detach_channel` | `drv_status_t ac_phase_control_detach_channel(ac_phase_control_group_t* group, uint8_t channel);` | detach gate output | group, index | status | clears channel | also releases relay |
 | `ac_phase_control_set_power_percent` | `drv_status_t ac_phase_control_set_power_percent(ac_phase_control_group_t* group, uint8_t channel, uint8_t percent);` | set power | group, index, percent | status | updates delay | `0..100` |
 | `ac_phase_control_set_delay_us` | `drv_status_t ac_phase_control_set_delay_us(ac_phase_control_group_t* group, uint8_t channel, uint16_t delay_us);` | set delay | group, index, delay | status | updates channel delay |  |
@@ -136,12 +137,12 @@ none
 
 ## Runtime model
 
-- One group owns a shared `zero_cross` detector instance as its sync domain.
+- One group owns a shared zero-cross sync pointer; legacy mode uses the embedded detector, shared mode uses `ac_phase_control_bind_zero_cross()`.
 - One shared zero-cross event starts a half-cycle and drives all channels.
 - Each enabled channel may produce at most one short gate pulse per half-cycle.
 - A channel in phase mode may also carry a relay bypass that takes over at `power_percent >= relay_on_threshold_percent` (default `98%`).
 - Relay transitions respect hysteresis (`relay_off_threshold_percent`, default `96%`), break-before-make, and minimum ON/OFF times.
-- `ac_phase_control_process()` advances the relay state machine and calls `zero_cross_process()` for the timeout fail-safe (`AC_PHASE_STATUS_ZERO_CROSS_LOST`).
+- `ac_phase_control_process()` advances the relay state machine and calls `zero_cross_process()` on the bound detector for the timeout fail-safe (`AC_PHASE_STATUS_ZERO_CROSS_LOST`).
 - The group recovers after `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` fresh zero-cross events.
 
 ## ISR requirements

@@ -8,6 +8,15 @@
     "xc8_pattern": "absent",
     "c18_pattern": "absent"
   },
+  "zero_cross": {
+    "header": "libraries/input/zero_cross/zero_cross.h",
+    "card": ".agents/libraries/input/zero_cross.md",
+    "mapper": ".agents/libraries/input/README.md",
+    "shared_source": "libraries/input/zero_cross/zero_cross.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
   "adc": {
     "header": "drivers/analog/adc/adc.h",
     "card": ".agents/drivers/adc.md",

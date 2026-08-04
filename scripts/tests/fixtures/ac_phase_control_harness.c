@@ -21,6 +21,7 @@ static ac_phase_control_group_t g_group;
 static ac_phase_control_channel_t g_channels[AC_PHASE_CONTROL_MAX_CHANNELS];
 static volatile uint8_t g_lat;
 static volatile uint8_t g_tris;
+static zero_cross_t g_zero_cross;
 
 static const ac_phase_control_config_t g_config =
 {
@@ -36,6 +37,15 @@ static const ac_phase_control_config_t g_config =
     500u    /* zero-cross timeout. */
 };
 
+static const zero_cross_config_t g_zero_cross_config =
+{
+    500u,
+    7500u,
+    12000u,
+    500u,
+    2u
+};
+
 void main(void)
 {
     drv_status_t status;
@@ -49,6 +59,8 @@ void main(void)
 
     if (status == DRV_STATUS_OK)
     {
+        (void)zero_cross_init(&g_zero_cross, &g_zero_cross_config);
+        (void)ac_phase_control_bind_zero_cross(&g_group, &g_zero_cross);
         (void)ac_phase_control_attach_channel(
             &g_group,
             0u,

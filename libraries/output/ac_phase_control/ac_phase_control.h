@@ -9,9 +9,10 @@
  * handled by a non-blocking state machine advanced from ac_phase_control_process().
  *
  * Zero-cross detection, timeout and recovery live in the reusable
- * libraries/input/zero_cross library. The group owns one zero_cross_t instance
- * as its shared sync domain; the caller feeds edges and dispatches the produced
- * event to this group (and optionally to other consumers).
+ * libraries/input/zero_cross library. The group uses one zero_cross_t source
+ * of truth as its shared sync domain; the caller can keep the legacy internal
+ * detector or bind an external shared detector and dispatch its produced event
+ * to this group (and optionally to other consumers).
  */
 
 #ifndef LIBRARIES_OUTPUT_AC_PHASE_CONTROL_H
@@ -105,7 +106,9 @@ typedef struct
     uint16_t timer_tick_us;
     uint8_t half_cycle_active;
     uint8_t initialized;
-    zero_cross_t zero_cross;
+    zero_cross_t* zero_cross;
+    zero_cross_t owned_zero_cross;
+    uint8_t zero_cross_bound;
     ac_phase_status_t status;
 } ac_phase_control_group_t;
 
@@ -124,13 +127,16 @@ drv_status_t ac_phase_control_attach_channel(ac_phase_control_group_t* group,
 
 /* Optional relay bypass output. Channel must be attached with a gate first. */
 drv_status_t ac_phase_control_attach_channel_relay(ac_phase_control_group_t* group,
-                                                   uint8_t channel,
-                                                   volatile uint8_t* relay_lat,
-                                                   volatile uint8_t* relay_tris,
-                                                   uint8_t relay_mask);
+                                                    uint8_t channel,
+                                                    volatile uint8_t* relay_lat,
+                                                    volatile uint8_t* relay_tris,
+                                                    uint8_t relay_mask);
+
+drv_status_t ac_phase_control_bind_zero_cross(ac_phase_control_group_t* group,
+                                              zero_cross_t* zero_cross);
 
 drv_status_t ac_phase_control_detach_channel(ac_phase_control_group_t* group,
-                                             uint8_t channel);
+                                              uint8_t channel);
 
 drv_status_t ac_phase_control_set_power_percent(ac_phase_control_group_t* group,
                                                 uint8_t channel,

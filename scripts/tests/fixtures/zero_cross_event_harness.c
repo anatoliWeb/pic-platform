@@ -22,6 +22,7 @@ static ac_phase_control_group_t g_group;
 static ac_phase_control_channel_t g_channels[AC_PHASE_CONTROL_MAX_CHANNELS];
 static volatile uint8_t g_lat;
 static volatile uint8_t g_tris;
+static zero_cross_t g_zero_cross;
 
 static const ac_phase_control_config_t g_config =
 {
@@ -35,6 +36,15 @@ static const ac_phase_control_config_t g_config =
     200u,   /* min on. */
     200u,   /* min off. */
     500u    /* zero-cross timeout. */
+};
+
+static const zero_cross_config_t g_zero_cross_config =
+{
+    500u,
+    7500u,
+    12000u,
+    500u,
+    2u
 };
 
 static uint8_t g_other_consumer_count;
@@ -55,6 +65,9 @@ void main(void)
         }
     }
 
+    (void)zero_cross_init(&g_zero_cross, &g_zero_cross_config);
+    (void)ac_phase_control_bind_zero_cross(&g_group, &g_zero_cross);
+
     (void)ac_phase_control_attach_channel(
         &g_group,
         0u,
@@ -72,12 +85,12 @@ void main(void)
     now_us = 1000u;
 
     /* First edge: arms the detector, no event yet. */
-    (void)zero_cross_on_edge(&g_group.zero_cross, now_us, &event);
+    (void)zero_cross_on_edge(&g_zero_cross, now_us, &event);
 
     /* Second edge: valid half-cycle -> ALIVE event dispatched to consumers. */
     now_us += 10000u;
 
-    if (zero_cross_on_edge(&g_group.zero_cross, now_us, &event) != 0u)
+    if (zero_cross_on_edge(&g_zero_cross, now_us, &event) != 0u)
     {
         ac_phase_control_on_zero_cross_event(&g_group, &event);
         g_other_consumer_count++;
@@ -91,7 +104,7 @@ void main(void)
     ac_phase_control_on_zero_cross(&g_group);
 
     /* Lost sync: force a timeout so the group enters ZERO_CROSS_LOST. */
-    zero_cross_process(&g_group.zero_cross, now_us + 600000u);
+    zero_cross_process(&g_zero_cross, now_us + 600000u);
     ac_phase_control_process(&g_group);
 
     ac_phase_control_all_off(&g_group);

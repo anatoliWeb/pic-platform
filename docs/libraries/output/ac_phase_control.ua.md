@@ -9,10 +9,12 @@
 
 ## Архітектура
 
-- Один `ac_phase_control_group_t` володіє спільним екземпляром `zero_cross` детектора як синхронізуючою областю та масивом каналів.
+- Один `ac_phase_control_group_t` володіє спільним pointer на detector як синхронізуючою областю та масивом каналів.
 - Виявлення переходу через нуль, придушення глітчів, валідація напівперіоду, таймаут і відновлення живуть у багаторазовій бібліотеці `libraries/input/zero_cross`.
-- Програма подає фронтами у `zero_cross` детектор групи та розсилає створену подію в групу (і, за потреби, іншим споживачам).
-- `ac_phase_control_on_zero_cross_event()` розпочинає нову півхвилю зі спільної події.
+- Legacy mode використовує внутрішній detector групи.
+- Shared-detector mode використовує `ac_phase_control_bind_zero_cross()` і зовнішній `zero_cross_t` як source of truth.
+- Програма подає фронти в bound detector та розсилає створену подію в групу (і, за потреби, іншим споживачам).
+- `ac_phase_control_on_zero_cross_event()` розпочинає нову півхвилю зі спільної події лише коли bound detector живий.
 - Підтримується до `AC_PHASE_CONTROL_MAX_CHANNELS` каналів.
 - Кожен канал має власний gate pin, enabled state, power percent і delay.
 - Вибір таймера передається через `ac_phase_control_init_group()`.
@@ -39,16 +41,18 @@
 
 ## Zero-Cross Timeout
 
-- Група володіє `zero_cross_t` детектором, який `ac_phase_control_init_group()` ініціалізує з `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` і `AC_PHASE_CONTROL_DEFAULT_GLITCH_REJECT_US`.
-- Легасі-обгортка `ac_phase_control_on_zero_cross()` подає фронт через `zero_cross_on_edge()` і розсилає його подію.
-- `ac_phase_control_process()` викликає `zero_cross_process()`; коли детектор переходить у `ZERO_CROSS_STATUS_LOST`, група переходить у `AC_PHASE_STATUS_ZERO_CROSS_LOST`, очищає всі gate pulses, вимикає всі реле і встанов ай стан повного оффу.
-- Група автоматично відновлюється після `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` (за замовчування `2`) свіжих zero-cross подій.
-- `ac_phase_control_get_status()` поверта стату групи, а `ac_phase_control_is_zero_cross_alive()` повідомне чи живій zero-cross stream.
-- Жодна подія не запускає імпульс, поки детектор не повідомить `zero_cross_is_alive()`.
+- Група ініціалізує внутрішній detector за замовчуванням і може бути переприв'язана до зовнішнього shared detector через `ac_phase_control_bind_zero_cross()`.
+- Bound detector є source of truth у shared-detector mode.
+- Легасі-обгортка `ac_phase_control_on_zero_cross()` подає фронт через поточний bound detector.
+- `ac_phase_control_process()` викликає `zero_cross_process()` на bound detector; коли він переходить у `ZERO_CROSS_STATUS_LOST`, група переходить у `AC_PHASE_STATUS_ZERO_CROSS_LOST`, очищає всі gate pulses, вимикає всі реле і встановлює стан повного off.
+- Група автоматично відновлюється після `AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS` (за замовчуванням `2`) свіжих zero-cross подій.
+- `ac_phase_control_get_status()` повертає статус групи, а `ac_phase_control_is_zero_cross_alive()` повідомляє, чи живий bound zero-cross stream.
+- Жодна подія не запускає імпульс, поки bound detector не повідомить `zero_cross_is_alive()`.
 
 ## Public API
 
 - `ac_phase_control_init_group()`
+- `ac_phase_control_bind_zero_cross()`
 - `ac_phase_control_attach_channel()`
 - `ac_phase_control_attach_channel_relay()`
 - `ac_phase_control_detach_channel()`
@@ -110,6 +114,9 @@
 ## Примітки для Proteus
 
 - Використовуйте один fake zero-cross pulse source на `RB0 / INT0`.
+- MCU не забезпечує ізоляцію.
+- Detector hardware має бути гальванічно ізольованим від мережі.
+- Glitch filter не є межею безпеки.
 - Перевіряйте `RD0..RD3` через oscilloscope або logic analyzer.
 - Додаткові diagnostic pin:
   - `RC0`: toggle для zero-cross

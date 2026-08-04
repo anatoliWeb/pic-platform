@@ -10,3 +10,5 @@
 | Keypad matrix | `keypad_matrix` | `.agents/libraries/input/keypad_matrix.md` | `libraries/input/keypad_matrix/keypad_matrix.h` | detailed |
 | Shared segment buttons | `shared_segment_buttons` | `.agents/libraries/input/shared_segment_buttons.md` | `libraries/input/shared_segment_buttons/shared_segment_buttons.h` | detailed |
 | Zero-cross detection | `zero_cross` | `.agents/libraries/input/zero_cross.md` | `libraries/input/zero_cross/zero_cross.h` | detailed |
+
+`zero_cross` is the shared detector for phase control and diagnostics; it now uses explicit armed/recovery state and has a standalone XC8 example under `examples-projects/xc8/input/zero_cross.X`.

@@ -97,7 +97,7 @@
         <property key="define-macros" value="PIC_PLATFORM_CLOCK_HZ=10000000UL"/>
         <property key="disable-optimizations" value="true"/>
         <property key="extra-include-directories"
-                  value="..\..\..;..\..\..\core;..\..\..\drivers;..\..\..\libraries"/>
+                  value="..\..\..\..\..;..\..\..\..\..\core;..\..\..\..\..\drivers;..\..\..\..\..\libraries"/>
         <property key="favor-optimization-for" value="-speed,+space"/>
         <property key="garbage-collect-data" value="true"/>
         <property key="garbage-collect-functions" value="true"/>

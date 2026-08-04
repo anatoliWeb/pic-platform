@@ -17,6 +17,29 @@ static uint32_t ac_phase_control_now_us(const ac_phase_control_group_t* group)
            (uint32_t)group->tick_accumulator_us;
 }
 
+static zero_cross_t* ac_phase_control_zero_cross_ref(ac_phase_control_group_t* group)
+{
+    if ((group == (ac_phase_control_group_t*)0) ||
+        (group->zero_cross == (zero_cross_t*)0))
+    {
+        return (zero_cross_t*)0;
+    }
+
+    return group->zero_cross;
+}
+
+static const zero_cross_t* ac_phase_control_zero_cross_ref_const(
+    const ac_phase_control_group_t* group)
+{
+    if ((group == (const ac_phase_control_group_t*)0) ||
+        (group->zero_cross == (zero_cross_t*)0))
+    {
+        return (const zero_cross_t*)0;
+    }
+
+    return group->zero_cross;
+}
+
 static uint8_t ac_phase_control_channel_valid(const ac_phase_control_group_t* group,
                                              uint8_t channel)
 {
@@ -589,10 +612,10 @@ static void ac_phase_control_timer_tick(void)
 }
 
 drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
-                                         ac_phase_control_timer_t timer,
-                                         const ac_phase_control_config_t* config,
-                                         ac_phase_control_channel_t* channels,
-                                         uint8_t channel_count)
+                                          ac_phase_control_timer_t timer,
+                                          const ac_phase_control_config_t* config,
+                                          ac_phase_control_channel_t* channels,
+                                          uint8_t channel_count)
 {
     uint8_t index;
     zero_cross_config_t zero_cross_config;
@@ -669,7 +692,7 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
     zero_cross_config.glitch_reject_us = AC_PHASE_CONTROL_DEFAULT_GLITCH_REJECT_US;
     zero_cross_config.recovery_event_count = AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS;
 
-    if (zero_cross_init(&group->zero_cross, &zero_cross_config) != DRV_STATUS_OK)
+    if (zero_cross_init(&group->owned_zero_cross, &zero_cross_config) != DRV_STATUS_OK)
     {
         group->status = AC_PHASE_STATUS_CONFIG_ERROR;
         return DRV_STATUS_ERROR;
@@ -682,6 +705,8 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
     group->tick_ms = 0u;
     group->timer_tick_us = 0u;
     group->half_cycle_active = 0u;
+    group->zero_cross = &group->owned_zero_cross;
+    group->zero_cross_bound = 0u;
     group->status = AC_PHASE_STATUS_OK;
     group->initialized = 1u;
 
@@ -722,9 +747,26 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
     {
         group->initialized = 0u;
         group->status = AC_PHASE_STATUS_CONFIG_ERROR;
+        group->zero_cross = (zero_cross_t*)0;
         g_active_group = (ac_phase_control_group_t*)0;
         return DRV_STATUS_ERROR;
     }
+
+    return DRV_STATUS_OK;
+}
+
+drv_status_t ac_phase_control_bind_zero_cross(ac_phase_control_group_t* group,
+                                              zero_cross_t* zero_cross)
+{
+    if ((group == (ac_phase_control_group_t*)0) ||
+        (group->initialized == 0u) ||
+        (zero_cross == (zero_cross_t*)0))
+    {
+        return DRV_STATUS_ERROR;
+    }
+
+    group->zero_cross = zero_cross;
+    group->zero_cross_bound = 1u;
 
     return DRV_STATUS_OK;
 }
@@ -943,6 +985,7 @@ uint8_t ac_phase_control_is_channel_in_relay_mode(const ac_phase_control_group_t
 void ac_phase_control_on_zero_cross_event(ac_phase_control_group_t* group,
                                           const zero_cross_event_t* event)
 {
+    const zero_cross_t* zero_cross;
     uint8_t channel;
 
     if ((group == (ac_phase_control_group_t*)0) ||
@@ -952,12 +995,9 @@ void ac_phase_control_on_zero_cross_event(ac_phase_control_group_t* group,
         return;
     }
 
-    /*
-     * Do not arm the half-cycle before a valid sync or while the zero-cross
-     * stream is LOST: recovery events are only dispatched once the detector is
-     * ALIVE again, so this keeps all outputs OFF on lost sync.
-     */
-    if (zero_cross_is_alive(&group->zero_cross) == 0u)
+    zero_cross = ac_phase_control_zero_cross_ref_const(group);
+    if ((zero_cross == (const zero_cross_t*)0) ||
+        (zero_cross_is_alive(zero_cross) == 0u))
     {
         return;
     }
@@ -981,6 +1021,7 @@ void ac_phase_control_on_zero_cross_event(ac_phase_control_group_t* group,
 
 void ac_phase_control_on_zero_cross(ac_phase_control_group_t* group)
 {
+    zero_cross_t* zero_cross;
     zero_cross_event_t event;
 
     if ((group == (ac_phase_control_group_t*)0) ||
@@ -989,9 +1030,15 @@ void ac_phase_control_on_zero_cross(ac_phase_control_group_t* group)
         return;
     }
 
-    if (zero_cross_on_edge(&group->zero_cross,
-                           ac_phase_control_now_us(group),
-                           &event) != 0u)
+    zero_cross = ac_phase_control_zero_cross_ref(group);
+    if (zero_cross == (zero_cross_t*)0)
+    {
+        return;
+    }
+
+    if (zero_cross_on_edge(zero_cross,
+                            ac_phase_control_now_us(group),
+                            &event) != 0u)
     {
         ac_phase_control_on_zero_cross_event(group, &event);
     }
@@ -1077,6 +1124,7 @@ void ac_phase_control_update_us(ac_phase_control_group_t* group,
 
 void ac_phase_control_process(ac_phase_control_group_t* group)
 {
+    zero_cross_t* zero_cross;
     uint8_t channel;
     uint32_t now_ms;
     uint32_t now_us;
@@ -1091,12 +1139,16 @@ void ac_phase_control_process(ac_phase_control_group_t* group)
     now_ms = group->tick_ms;
     now_us = ac_phase_control_now_us(group);
 
-    zero_cross_process(&group->zero_cross, now_us);
-
-    if (zero_cross_get_status(&group->zero_cross) == ZERO_CROSS_STATUS_LOST)
+    zero_cross = ac_phase_control_zero_cross_ref(group);
+    if (zero_cross != (zero_cross_t*)0)
     {
-        ac_phase_control_enter_fault(group);
-        return;
+        zero_cross_process(zero_cross, now_us);
+
+        if (zero_cross_get_status(zero_cross) == ZERO_CROSS_STATUS_LOST)
+        {
+            ac_phase_control_enter_fault(group);
+            return;
+        }
     }
 
     for (channel = 0u; channel < group->channel_count; channel++)
@@ -1237,11 +1289,19 @@ ac_phase_status_t ac_phase_control_get_status(const ac_phase_control_group_t* gr
 
 uint8_t ac_phase_control_is_zero_cross_alive(const ac_phase_control_group_t* group)
 {
+    const zero_cross_t* zero_cross;
+
     if ((group == (const ac_phase_control_group_t*)0) ||
         (group->initialized == 0u))
     {
         return 0u;
     }
 
-    return zero_cross_is_alive(&group->zero_cross);
+    zero_cross = ac_phase_control_zero_cross_ref_const(group);
+    if (zero_cross == (const zero_cross_t*)0)
+    {
+        return 0u;
+    }
+
+    return zero_cross_is_alive(zero_cross);
 }

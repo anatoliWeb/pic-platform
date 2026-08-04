@@ -22,6 +22,8 @@
 drv_status_t zero_cross_init(zero_cross_t* zc,
                              const zero_cross_config_t* config)
 {
+    uint32_t timeout_us;
+
     if ((zc == (zero_cross_t*)0) ||
         (config == (const zero_cross_config_t*)0))
     {
@@ -29,21 +31,36 @@ drv_status_t zero_cross_init(zero_cross_t* zc,
     }
 
     if ((config->recovery_event_count == 0u) ||
-        (config->min_half_cycle_us >= config->max_half_cycle_us))
+        (config->min_half_cycle_us == 0u) ||
+        (config->min_half_cycle_us >= config->max_half_cycle_us) ||
+        (config->glitch_reject_us >= config->min_half_cycle_us))
     {
         zc->status = ZERO_CROSS_STATUS_CONFIG_ERROR;
         zc->initialized = 0u;
+        zc->armed = 0u;
+        return DRV_STATUS_ERROR;
+    }
+
+    timeout_us = (uint32_t)config->timeout_ms * 1000u;
+    if ((config->timeout_ms != 0u) &&
+        (((timeout_us / 1000u) != (uint32_t)config->timeout_ms) ||
+         (timeout_us <= (uint32_t)config->max_half_cycle_us)))
+    {
+        zc->status = ZERO_CROSS_STATUS_CONFIG_ERROR;
+        zc->initialized = 0u;
+        zc->armed = 0u;
         return DRV_STATUS_ERROR;
     }
 
     zc->config = *config;
     zc->status = ZERO_CROSS_STATUS_WAITING;
+    zc->initialized = 1u;
+    zc->armed = 0u;
     zc->last_edge_us = 0UL;
-    zc->sequence = 0UL;
     zc->half_cycle_us = 0u;
+    zc->sequence = 0UL;
     zc->frequency = ZERO_CROSS_FREQUENCY_UNKNOWN;
     zc->recovery_count = 0u;
-    zc->initialized = 1u;
 
     return DRV_STATUS_OK;
 }
@@ -61,35 +78,42 @@ uint8_t zero_cross_on_edge(zero_cross_t* zc,
         return 0u;
     }
 
+    if (zc->armed == 0u)
+    {
+        zc->last_edge_us = now_us;
+        zc->armed = 1u;
+
+        if (zc->status == ZERO_CROSS_STATUS_LOST)
+        {
+            zc->recovery_count = 0u;
+        }
+
+        return 0u;
+    }
+
 #ifdef ZERO_CROSS_ENABLE_GLITCH_FILTER
     if ((zc->config.glitch_reject_us != 0u) &&
-        (zc->last_edge_us != 0UL) &&
-        ((now_us - zc->last_edge_us) <
-         (uint32_t)zc->config.glitch_reject_us))
+        ((now_us - zc->last_edge_us) < (uint32_t)zc->config.glitch_reject_us))
     {
         return 0u;
     }
 #endif
-
-    if (zc->last_edge_us == 0UL)
-    {
-        /* First edge only arms the detector; half-cycle needs two edges. */
-        zc->last_edge_us = now_us;
-        zc->status = ZERO_CROSS_STATUS_WAITING;
-        return 0u;
-    }
 
     half_cycle = now_us - zc->last_edge_us;
 
     if ((half_cycle < (uint32_t)zc->config.min_half_cycle_us) ||
         (half_cycle > (uint32_t)zc->config.max_half_cycle_us))
     {
+        if (zc->status == ZERO_CROSS_STATUS_LOST)
+        {
+            zc->last_edge_us = now_us;
+            zc->recovery_count = 0u;
+        }
         return 0u;
     }
 
     zc->last_edge_us = now_us;
     zc->half_cycle_us = (uint16_t)half_cycle;
-    zc->sequence++;
 
 #ifdef ZERO_CROSS_ENABLE_FREQUENCY_DETECTION
     zc->frequency = (half_cycle >= (uint32_t)ZERO_CROSS_FREQ_BOUNDARY_US)
@@ -108,6 +132,7 @@ uint8_t zero_cross_on_edge(zero_cross_t* zc,
     }
 
     zc->status = ZERO_CROSS_STATUS_ALIVE;
+    zc->sequence++;
 
     if (event != (zero_cross_event_t*)0)
     {
@@ -122,6 +147,8 @@ uint8_t zero_cross_on_edge(zero_cross_t* zc,
 
 void zero_cross_process(zero_cross_t* zc, uint32_t now_us)
 {
+    uint32_t timeout_us;
+
     if ((zc == (zero_cross_t*)0) ||
         (zc->initialized == 0u))
     {
@@ -129,14 +156,19 @@ void zero_cross_process(zero_cross_t* zc, uint32_t now_us)
     }
 
 #ifdef ZERO_CROSS_ENABLE_TIMEOUT
-    if ((zc->config.timeout_ms != 0u) &&
-        (zc->last_edge_us != 0UL) &&
-        (zc->status == ZERO_CROSS_STATUS_ALIVE))
+    if (zc->config.timeout_ms != 0u)
     {
-        if ((now_us - zc->last_edge_us) >
-            ((uint32_t)zc->config.timeout_ms * 1000u))
+        timeout_us = (uint32_t)zc->config.timeout_ms * 1000u;
+
+        if ((zc->armed != 0u) &&
+            (zc->status != ZERO_CROSS_STATUS_LOST) &&
+            ((now_us - zc->last_edge_us) >= timeout_us))
         {
             zc->status = ZERO_CROSS_STATUS_LOST;
+            zc->armed = 0u;
+            zc->last_edge_us = 0UL;
+            zc->half_cycle_us = 0u;
+            zc->frequency = ZERO_CROSS_FREQUENCY_UNKNOWN;
             zc->recovery_count = 0u;
         }
     }
@@ -207,9 +239,10 @@ void zero_cross_reset(zero_cross_t* zc)
     }
 
     zc->status = ZERO_CROSS_STATUS_WAITING;
+    zc->armed = 0u;
     zc->last_edge_us = 0UL;
-    zc->sequence = 0UL;
     zc->half_cycle_us = 0u;
+    zc->sequence = 0UL;
     zc->frequency = ZERO_CROSS_FREQUENCY_UNKNOWN;
     zc->recovery_count = 0u;
 }

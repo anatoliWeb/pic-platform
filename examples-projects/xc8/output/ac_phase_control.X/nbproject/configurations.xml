@@ -49,6 +49,13 @@
             <itemPath>../../../../libraries/output/ac_phase_control/ac_phase_control.c</itemPath>
           </logicalFolder>
         </logicalFolder>
+        <logicalFolder name="input" displayName="input" projectFiles="true">
+          <logicalFolder name="zero_cross"
+                         displayName="zero_cross"
+                         projectFiles="true">
+            <itemPath>../../../../libraries/input/zero_cross/zero_cross.c</itemPath>
+          </logicalFolder>
+        </logicalFolder>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>

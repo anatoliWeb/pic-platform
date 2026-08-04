@@ -166,6 +166,20 @@ class ZeroCrossHeaderTests(unittest.TestCase):
         ):
             self.assertIn(macro, text)
 
+    def test_state_fields_declared(self) -> None:
+        text = read_text(HDR)
+        for field in (
+            "initialized",
+            "armed",
+            "status",
+            "last_edge_us",
+            "half_cycle_us",
+            "sequence",
+            "frequency",
+            "recovery_count",
+        ):
+            self.assertIn(field, text)
+
 
 class ZeroCrossBehaviorTests(unittest.TestCase):
     """Structural behavioral checks on the library source text."""
@@ -182,19 +196,22 @@ class ZeroCrossBehaviorTests(unittest.TestCase):
         body = extract_source_function(read_text(SRC), "drv_status_t zero_cross_init(")
         self.assertIn("config->recovery_event_count == 0u", body)
         self.assertIn("config->min_half_cycle_us >= config->max_half_cycle_us", body)
+        self.assertIn("config->glitch_reject_us >= config->min_half_cycle_us", body)
+        self.assertIn("timeout_us <= (uint32_t)config->max_half_cycle_us", body)
         self.assertIn("ZERO_CROSS_STATUS_CONFIG_ERROR", body)
 
     def test_init_arms_waiting_state(self) -> None:
         body = extract_source_function(read_text(SRC), "drv_status_t zero_cross_init(")
         self.assertIn("ZERO_CROSS_STATUS_WAITING", body)
+        self.assertIn("zc->armed = 0u", body)
         self.assertIn("zc->last_edge_us = 0UL", body)
         self.assertIn("zc->sequence = 0UL", body)
         self.assertIn("ZERO_CROSS_FREQUENCY_UNKNOWN", body)
 
     def test_first_edge_stays_waiting(self) -> None:
         body = extract_source_function(read_text(SRC), "uint8_t zero_cross_on_edge(")
-        self.assertIn("zc->last_edge_us == 0UL", body)
-        self.assertIn("ZERO_CROSS_STATUS_WAITING", body)
+        self.assertIn("zc->armed == 0u", body)
+        self.assertIn("zc->armed = 1u", body)
         self.assertIn("return 0u;", body)
 
     def test_second_edge_computes_half_cycle(self) -> None:
@@ -235,10 +252,21 @@ class ZeroCrossBehaviorTests(unittest.TestCase):
         self.assertIn("zc->recovery_count++", body)
         self.assertIn("zc->config.recovery_event_count", body)
 
+    def test_recovery_rearms_after_lost(self) -> None:
+        body = extract_source_function(read_text(SRC), "uint8_t zero_cross_on_edge(")
+        self.assertIn("if (zc->armed == 0u)", body)
+        self.assertIn("if (zc->status == ZERO_CROSS_STATUS_LOST)", body)
+
+    def test_timeout_clears_armed_state(self) -> None:
+        body = extract_source_function(read_text(SRC), "void zero_cross_process(")
+        self.assertIn("zc->armed = 0u", body)
+        self.assertIn("zc->status = ZERO_CROSS_STATUS_LOST", body)
+
     def test_reset_clears_state(self) -> None:
         body = extract_source_function(read_text(SRC), "void zero_cross_reset(")
         for reset in (
             "ZERO_CROSS_STATUS_WAITING",
+            "zc->armed = 0u",
             "zc->last_edge_us = 0UL",
             "zc->sequence = 0UL",
             "zc->half_cycle_us = 0u",

@@ -42,11 +42,21 @@ if (zero_cross_on_edge(&zc, now_us(), &event))
 ## Notes
 
 - The library never owns a clock; the caller passes monotonic microseconds in `now_us`.
+- `armed` is explicit state; `timestamp_us == 0` is valid and not a sentinel.
 - The first edge only arms the detector; a valid half-cycle needs two edges.
-- A valid edge produces one event and marks the detector `ALIVE`.
+- After `LOST`, the first edge re-arms the detector and does not dispatch an event.
+- Recovery needs `recovery_event_count` valid half-cycles before the detector returns to `ALIVE` and dispatches again.
+- `sequence` increments only for dispatched events.
 - Timeout is advanced from the main loop via `zero_cross_process()`.
-- `ac_phase_control` uses `zero_cross` as its shared sync domain.
+- Wrap-safe subtraction is used for edge deltas and timeout checks.
 - Feature blocks (timeout, frequency detection, glitch filter) can be cut with `ZERO_CROSS_DISABLE_*` defines.
+
+## Safety
+
+- This library does not provide galvanic isolation.
+- The MCU must not connect directly to 220/230 V mains.
+- The detector hardware must provide isolation and proper input conditioning.
+- The glitch filter does not replace a correct mains sensing circuit.
 
 ## Dependencies
 
@@ -56,4 +66,5 @@ if (zero_cross_on_edge(&zc, now_us(), &event))
 ## Related Examples
 
 - `libraries/input/zero_cross/example.c`
+- `examples-projects/xc8/input/zero_cross.X`
 - `libraries/output/ac_phase_control/example.c`
