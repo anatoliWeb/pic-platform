@@ -38,6 +38,7 @@ typedef struct
     uint32_t last_pulse_us;
     uint32_t pulse_count;
     uint16_t rpm;
+    /* 0 = unarmed, 1 = first pulse, 2 = active measurement */
     uint8_t session_pulse_count;
 } tachometer_t;
 

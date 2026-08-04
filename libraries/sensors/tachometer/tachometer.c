@@ -201,7 +201,7 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
     }
 
     tachometer->last_pulse_us = now_us;
-    tachometer->session_pulse_count++;
+    tachometer->session_pulse_count = 2u;
     tachometer->pulse_count++;
     tachometer->rpm = tachometer_compute_rpm(tachometer, interval_us);
     tachometer_update_status(tachometer, now_us);

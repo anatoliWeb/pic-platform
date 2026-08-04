@@ -56,6 +56,8 @@ core/types.h
 - `startup_grace_ms` suppresses `TOO_SLOW` during startup.
 - Two pulses are needed to compute RPM; the first pulse of a session only re-arms the measurement state.
 - `signal_timeout_ms` moves the state to `NO_SIGNAL` and re-arms the session (RPM 0, stale timestamp discarded) when pulses stop. The cumulative `pulse_count` survives timeouts.
+- `session_pulse_count` is saturated at `2` and is not a cumulative counter.
+- `pulse_count` remains the cumulative accepted pulse counter.
 - `minimum_pulse_interval_us` rejects noise before RPM is updated.
 
 ## ISR contract

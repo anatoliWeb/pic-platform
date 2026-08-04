@@ -19,6 +19,8 @@ Reusable pulse-to-RPM helper with startup grace, noise rejection, timeout, and s
 - Two pulses are needed to compute an RPM; the first pulse of a session only re-arms the measurement state.
 - After `signal_timeout_ms` without a pulse the session re-arms: RPM returns to 0, the stale pulse timestamp is discarded, and a fresh session starts on the next pulse. The cumulative `pulse_count` is not reset by a timeout.
 - `pulse_count` counts accepted pulses since init, reset, or an expected-running change; it survives timeouts.
+- `session_pulse_count` is a saturated measurement state: `0` = unarmed, `1` = first pulse, `2` = active measurement.
+- Long pulse streams cannot overflow `session_pulse_count`; it stays at `2` after the second accepted pulse.
 
 ## Examples
 
