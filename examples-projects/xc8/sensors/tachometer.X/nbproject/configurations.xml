@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="65">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles" displayName="Header Files" projectFiles="true">
+      <itemPath>project_config.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles" displayName="Source Files" projectFiles="true">
+      <logicalFolder name="app" displayName="Application" projectFiles="true">
+        <itemPath>main.c</itemPath>
+        <itemPath>config_bits.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="libraries" displayName="libraries" projectFiles="true">
+        <logicalFolder name="sensors" displayName="sensors" projectFiles="true">
+          <logicalFolder name="tachometer" displayName="tachometer" projectFiles="true">
+            <itemPath>../../../../libraries/sensors/tachometer/tachometer.c</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+      </logicalFolder>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../../core</Elem>
+    <Elem>../../../../libraries</Elem>
+  </sourceRootList>
+  <confs>
+    <conf name="default" type="2">
+      <toolsSet>
+        <targetDevice>PIC18F452</targetDevice>
+        <platformTool>Simulator</platformTool>
+        <languageToolchain>XC8</languageToolchain>
+        <languageToolchainVersion>3.10</languageToolchainVersion>
+      </toolsSet>
+      <packs>
+        <pack name="PIC18Fxxxx_DFP" vendor="Microchip" version="1.7.171"/>
+      </packs>
+      <HI-TECH-COMP>
+        <property key="define-macros" value="PIC_PLATFORM_CLOCK_HZ=10000000UL"/>
+        <property key="extra-include-directories" value="..\..\..\..\..;..\..\..\..\..\core;..\..\..\..\..\libraries"/>
+      </HI-TECH-COMP>
+    </conf>
+  </confs>
+</configurationDescriptor>

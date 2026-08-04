@@ -39,10 +39,9 @@ XC8 projects are grouped into families under `xc8/`; standalone smoke-test proje
 | Core validation (root) | `blink.X`, `gpio.X`, `adc.X`, `adc_read.X`, `timer.X`, `pwm.X`, `ccp_capture.X`, `ccp_compare.X`, `clock.X`, `comparator.X`, `crc.X`, `eeprom.X`, `ext_interrupt.X`, `portb_change.X`, `reset.X`, `ring_buffer.X`, `template.X` | Baseline integration checks and canonical smoke tests |
 | Debug | `xc8/debug/default_uart.X`, `xc8/debug/display_i2c.X`, `xc8/debug/display_parallel.X`, `xc8/debug/pins_gpio.X`, `xc8/debug/multi_backend.X`, `xc8/debug/disabled.X` | Switchable debug backend demos (UART / display / GPIO / disabled) |
 | Communication | `xc8/communication/uart/{basic,debug}.X`, `xc8/communication/i2c/{basic,scan}.X`, `xc8/communication/spi/{basic,loopback}.X`, `xc8/communication/rs485/{basic,echo}.X`, `xc8/communication/onewire/{basic,bus_test}.X` | UART, I2C, SPI, RS485, and OneWire protocol examples |
-| Sensors | `xc8/sensors/ds18b20/{basic,read,multi_read,search_rom}.X` | DS18B20 read, multi-drop, and ROM search examples |
-| Input | `xc8/input/button.X`, `xc8/input/encoder.X`, `xc8/input/adc_buttons.X`, `xc8/input/zero_cross.X` | Input helpers, debounce-related examples, and the standalone zero-cross smoke test |
-| Display | `xc8/display/lcd_hd44780/i2c_pcf8574.X`, `lcd_hd44780.X`, `xc8/seven_segment/basic_manual.X`, `xc8/seven_segment/multiplex_manual.X`, `xc8/seven_segment/multiplex_timer.X`, `xc8/seven_segment/keys_single_line.X`, `xc8/seven_segment/keys_diode_coded.X` | Display refresh, timer-owned multiplexing, and shared-line input examples |
-| Actuator | `xc8/actuator/position_drive_adc.X` | Closed-loop position drive with an ADC position sensor; encoder backend is still a placeholder |
+| Sensors | `xc8/sensors/tachometer.X`, `xc8/sensors/ds18b20/{basic,read,multi_read,search_rom}.X` | Tachometer simulation/demo plus DS18B20 read, multi-drop, and ROM search examples |
+| Input | `xc8/input/button.X`, `xc8/input/encoder.X`, `xc8/input/adc_buttons.X`, `xc8/input/zero_cross.X`, `xc8/input/digital_input.X` | Input helpers, debounce-related examples, the generic digital input demo, and the standalone zero-cross smoke test |
+| Actuator | `xc8/actuator/cooldown_output.X`, `xc8/actuator/position_drive_adc.X` | Cooldown output simulation/demo and closed-loop position drive with an ADC position sensor; encoder backend is still a placeholder |
 | Output / control | `xc8/output/software_pwm.X`, `xc8/output/ac_phase_control.X` | Software PWM and AC phase control output examples |
 | Timers | `xc8/timers/tick.X`, `xc8/timers/timer0.X`, `xc8/timers/timer1.X`, `xc8/timers/timer2.X`, `xc8/timers/timer3.X` | Timebase and timer peripheral examples |
 | System | `xc8/system/wdt.X` | Watchdog example |
@@ -55,6 +54,9 @@ XC8 projects are grouped into families under `xc8/`; standalone smoke-test proje
 | `xc8/input/encoder.X` | Verified in Proteus |
 | `xc8/input/adc_buttons.X` | Verified in Proteus |
 | `xc8/input/zero_cross.X` | Ready for Proteus validation |
+| `xc8/input/digital_input.X` | Ready for XC8 validation |
+| `xc8/sensors/tachometer.X` | Ready for XC8 validation |
+| `xc8/actuator/cooldown_output.X` | Ready for XC8 validation |
 | `xc8/output/software_pwm.X` | Verified in Proteus |
 | `xc8/system/wdt.X` | Verified in Proteus |
 | `xc8/output/ac_phase_control.X` | Ready for Proteus validation |

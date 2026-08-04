@@ -44,6 +44,7 @@
 
 - [ ] Gyver-style helper expansion: button/encoder/ADC-buttons/keypad helpers, millis/elapsed helpers, relay, buzzer, servo, LED effects, filters, PID, NTC, joystick, 74HC595/74HC165 shift registers, menu core + input adapter.
 - [ ] Phase 2 menu libraries: encoder menu demo, button/encoder navigation layer, LCD/OLED menu libraries, display-specific menu examples.
+- [ ] Phase 2 transport/config roadmap: framed_transport incremental RX parser with framing/address/command/length/CRC/inter-byte timeout/frame timeout/counters/callback; config_store with magic/version/payload length/CRC/defaults callback/validation callback/load-save backend; defer fan_guard until tachometer, digital_input, and cooldown_output are used in at least two application integrations or the same state machine is proven.
 - [ ] Burst-fire heater control as a separate future module.
 - [ ] Board/profile configuration templates for more PIC18 devices.
 - [ ] More complete MPLAB `.X` example projects and Proteus coverage.

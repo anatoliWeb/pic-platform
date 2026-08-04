@@ -31,8 +31,11 @@
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | seven_segment | `libraries/display/seven_segment/` | `libraries/display/seven_segment/seven_segment.h` | `libraries/display/seven_segment/seven_segment.c` | `gpio`, timer drivers, core headers | seven-segment examples, `segment_keys` | manual and timer-backed refresh | example-tested |
 | button | `libraries/input/button/` | `libraries/input/button/button.h` | `libraries/input/button/button.c` | `tick`, `bit_utils`, core headers | `segment_keys`, button examples | debounce/click/hold logic | example-tested |
+| digital_input | `libraries/input/digital_input/` | `libraries/input/digital_input/digital_input.h` | `libraries/input/digital_input/digital_input.c` | core headers | digital_input example | generic debounced raw input helper | example-tested |
 | segment_keys | `libraries/input/segment_keys/` | `libraries/input/segment_keys/segment_keys.h` | `libraries/input/segment_keys/segment_keys.c` | `seven_segment`, `button`, `gpio` | seven-segment shared-line examples | exact-mask decoder | example-tested |
 | position_drive | `libraries/actuator/position_drive/` | `libraries/actuator/position_drive/position_drive.h` | `libraries/actuator/position_drive/position_drive.c` | core headers, optional `tick`/`adc`/`pwm` via callbacks | position drive examples | ADC backend implemented, encoder placeholder unsupported, callback-based debug | example-tested |
+| cooldown_output | `libraries/actuator/cooldown_output/` | `libraries/actuator/cooldown_output/cooldown_output.h` | `libraries/actuator/cooldown_output/cooldown_output.c` | core headers | cooldown_output example | requested/active helper with cooldown | example-tested |
+| tachometer | `libraries/sensors/tachometer/` | `libraries/sensors/tachometer/tachometer.h` | `libraries/sensors/tachometer/tachometer.c` | core headers | tachometer example | pulse-to-RPM helper with timeout and noise rejection | example-tested |
 | uart_debug | `libraries/system/uart_debug/` | `libraries/system/uart_debug/uart_debug.h` | `libraries/system/uart_debug/uart_debug.c` | `core/config.h`, `uart` | UART-based debug examples | macro-based debug layer | example-tested |
 
 ## Compiler Wrappers / Backends

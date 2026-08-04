@@ -39,6 +39,15 @@
     "c18_source": "C18/libraries/input/adc_buttons/adc_buttons.c",
     "c18_pattern": "independent"
   },
+  "cooldown_output": {
+    "header": "libraries/actuator/cooldown_output/cooldown_output.h",
+    "card": ".agents/libraries/actuator/cooldown_output.md",
+    "mapper": ".agents/libraries/actuator/README.md",
+    "shared_source": "libraries/actuator/cooldown_output/cooldown_output.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
   "bit_utils": {
     "header": "core/bit_utils.h",
     "card": ".agents/core/bit_utils.md",
@@ -205,6 +214,15 @@
     "card": ".agents/libraries/sensors/dht.md",
     "mapper": ".agents/libraries/sensors/README.md",
     "shared_source": "libraries/sensors/dht/dht.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
+  },
+  "digital_input": {
+    "header": "libraries/input/digital_input/digital_input.h",
+    "card": ".agents/libraries/input/digital_input.md",
+    "mapper": ".agents/libraries/input/README.md",
+    "shared_source": "libraries/input/digital_input/digital_input.c",
     "shared_pattern": "implementation",
     "xc8_pattern": "absent",
     "c18_pattern": "absent"
@@ -531,6 +549,15 @@
     "shared_pattern": "implementation",
     "xc8_pattern": "include-wrapper",
     "c18_pattern": "include-wrapper"
+  },
+  "tachometer": {
+    "header": "libraries/sensors/tachometer/tachometer.h",
+    "card": ".agents/libraries/sensors/tachometer.md",
+    "mapper": ".agents/libraries/sensors/README.md",
+    "shared_source": "libraries/sensors/tachometer/tachometer.c",
+    "shared_pattern": "implementation",
+    "xc8_pattern": "absent",
+    "c18_pattern": "absent"
   },
   "pwm": {
     "header": "drivers/timers/pwm/pwm.h",

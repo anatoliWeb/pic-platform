@@ -3,6 +3,7 @@
 | Need | Module | Detailed card | Source | Status |
 |---|---|---|---|---|
 | Button events | `button` | `.agents/libraries/input/button.md` | `libraries/input/button/button.h` | detailed |
+| Generic digital input | `digital_input` | `.agents/libraries/input/digital_input.md` | `libraries/input/digital_input/digital_input.h` | detailed |
 | Shared-line segment keys | `segment_keys` | `.agents/libraries/input/segment_keys.md` | `libraries/input/segment_keys/segment_keys.h` | detailed |
 | Rotary encoder | `encoder` | `.agents/libraries/input/encoder.md` | `libraries/input/encoder/encoder.h` | detailed |
 | ADC ladder buttons | `adc_buttons` | `.agents/libraries/input/adc_buttons.md` | `libraries/input/adc_buttons/adc_buttons.h` | detailed |

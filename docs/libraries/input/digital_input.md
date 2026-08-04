@@ -1,0 +1,26 @@
+# digital_input
+
+Reusable debounced digital input helper with active-high/low mapping and consuming edge flags.
+
+## API
+
+| Item | Notes |
+| --- | --- |
+| `digital_input_init()` | validates config and seeds a safe initial state |
+| `digital_input_update()` | feeds raw levels and advances debounce |
+| `digital_input_rose()` / `digital_input_fell()` | consuming edge flags |
+| `digital_input_is_latched()` | read-only latch query |
+
+## Behavior
+
+- `active_level` selects active-high or active-low mapping.
+- `debounce_ms` is stable-time based.
+- Latch is optional and clears only by `digital_input_clear_latch()`.
+
+## Examples
+
+- `examples-projects/xc8/input/digital_input.X`
+
+## Tests
+
+- `scripts/tests/test_digital_input.py`
