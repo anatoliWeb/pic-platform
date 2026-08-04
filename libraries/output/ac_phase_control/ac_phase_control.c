@@ -1,5 +1,8 @@
 /*
  * File: libraries/output/ac_phase_control/ac_phase_control.c
+ *
+ * Shared zero-cross synchronized phase-angle control with optional per-channel
+ * relay bypass. See ac_phase_control.h for the API contract.
  */
 
 #include "libraries/output/ac_phase_control/ac_phase_control.h"
@@ -73,6 +76,85 @@ static void ac_phase_control_write_gate(const ac_phase_control_channel_t* channe
     }
 }
 
+static void ac_phase_control_relay_write(const ac_phase_control_channel_t* channel,
+                                         uint8_t active)
+{
+    if ((channel == (const ac_phase_control_channel_t*)0) ||
+        (channel->relay_lat == (volatile uint8_t*)0) ||
+        (channel->relay_mask == 0u))
+    {
+        return;
+    }
+
+    if (active != 0u)
+    {
+        *(channel->relay_lat) |= channel->relay_mask;
+    }
+    else
+    {
+        *(channel->relay_lat) &= (uint8_t)(~channel->relay_mask);
+    }
+}
+
+static void ac_phase_control_channel_relay_off(ac_phase_control_channel_t* channel)
+{
+    if (channel == (ac_phase_control_channel_t*)0)
+    {
+        return;
+    }
+
+    channel->relay_state = (uint8_t)AC_PHASE_RELAY_STATE_PHASE;
+    channel->relay_active = 0u;
+}
+
+/*
+ * Collect the combined controlled bit mask and the high-state bit mask that a
+ * single LAT register must carry. Gate pulses are suppressed while a channel
+ * is in any relay transition or relay-on state to guarantee break-before-make.
+ */
+static void ac_phase_control_collect_lat(const ac_phase_control_group_t* group,
+                                         volatile uint8_t* lat,
+                                         uint8_t* controlled,
+                                         uint8_t* high)
+{
+    uint8_t scan;
+    uint8_t blocked;
+    const ac_phase_control_channel_t* entry;
+
+    *controlled = 0u;
+    *high = 0u;
+
+    for (scan = 0u; scan < group->channel_count; scan++)
+    {
+        entry = &group->channels[scan];
+
+        if (entry->attached == 0u)
+        {
+            continue;
+        }
+
+        if (entry->gate_lat == lat)
+        {
+            *controlled |= entry->gate_mask;
+            blocked = (entry->relay_state != (uint8_t)AC_PHASE_RELAY_STATE_PHASE) ? 1u : 0u;
+            if ((entry->enabled != 0u) &&
+                (entry->pulse_active != 0u) &&
+                (blocked == 0u))
+            {
+                *high |= entry->gate_mask;
+            }
+        }
+
+        if (entry->relay_lat == lat)
+        {
+            *controlled |= entry->relay_mask;
+            if ((entry->enabled != 0u) && (entry->relay_active != 0u))
+            {
+                *high |= entry->relay_mask;
+            }
+        }
+    }
+}
 
 static void ac_phase_control_apply_group_outputs(
     const ac_phase_control_group_t* group)
@@ -83,7 +165,7 @@ static void ac_phase_control_apply_group_outputs(
     uint8_t controlled_mask;
     uint8_t high_mask;
     uint8_t lat_value;
-    volatile uint8_t* gate_lat;
+    volatile uint8_t* lat;
     const ac_phase_control_channel_t* entry;
 
     if ((group == (const ac_phase_control_group_t*)0) ||
@@ -93,30 +175,27 @@ static void ac_phase_control_apply_group_outputs(
     }
 
     /*
-     * Update every physical LAT register only once.
-     *
-     * Several logical phase-control channels may share the same LATx
-     * register. Building one combined mask prevents one channel update
-     * from disturbing another channel on the same port.
+     * Update every physical LAT register only once. Several gate/relay
+     * channels may share the same LATx register; building one combined mask
+     * prevents one channel update from disturbing another on the same port.
      */
     for (channel = 0u; channel < group->channel_count; channel++)
     {
         entry = &group->channels[channel];
 
         if ((entry->attached == 0u) ||
-            (entry->gate_lat == (volatile uint8_t*)0) ||
-            (entry->gate_mask == 0u))
+            (entry->gate_lat == (volatile uint8_t*)0))
         {
             continue;
         }
 
-        gate_lat = entry->gate_lat;
         already_processed = 0u;
 
         for (scan = 0u; scan < channel; scan++)
         {
             if ((group->channels[scan].attached != 0u) &&
-                (group->channels[scan].gate_lat == gate_lat))
+                ((group->channels[scan].gate_lat == entry->gate_lat) ||
+                 (group->channels[scan].relay_lat == entry->gate_lat)))
             {
                 already_processed = 1u;
                 break;
@@ -128,36 +207,54 @@ static void ac_phase_control_apply_group_outputs(
             continue;
         }
 
-        controlled_mask = 0u;
-        high_mask = 0u;
+        lat = entry->gate_lat;
+        ac_phase_control_collect_lat(group, lat, &controlled_mask, &high_mask);
 
-        for (scan = channel; scan < group->channel_count; scan++)
+        lat_value = *lat;
+        lat_value &= (uint8_t)(~controlled_mask);
+        lat_value |= high_mask;
+        *lat = lat_value;
+    }
+
+    /*
+     * Relay-only LAT registers (no gate attached on the same register) are
+     * written in a second pass.
+     */
+    for (channel = 0u; channel < group->channel_count; channel++)
+    {
+        entry = &group->channels[channel];
+
+        if ((entry->attached == 0u) ||
+            (entry->relay_lat == (volatile uint8_t*)0))
         {
-            entry = &group->channels[scan];
+            continue;
+        }
 
-            if ((entry->attached == 0u) ||
-                (entry->gate_lat != gate_lat))
+        already_processed = 0u;
+
+        for (scan = 0u; scan < channel; scan++)
+        {
+            if ((group->channels[scan].attached != 0u) &&
+                ((group->channels[scan].gate_lat == entry->relay_lat) ||
+                 (group->channels[scan].relay_lat == entry->relay_lat)))
             {
-                continue;
-            }
-
-            controlled_mask |= entry->gate_mask;
-
-            if ((entry->enabled != 0u) &&
-                (entry->pulse_active != 0u))
-            {
-                high_mask |= entry->gate_mask;
+                already_processed = 1u;
+                break;
             }
         }
 
-        /*
-         * Preserve unrelated pins on the same port and replace only
-         * the bits owned by this phase-control group.
-         */
-        lat_value = *gate_lat;
+        if (already_processed != 0u)
+        {
+            continue;
+        }
+
+        lat = entry->relay_lat;
+        ac_phase_control_collect_lat(group, lat, &controlled_mask, &high_mask);
+
+        lat_value = *lat;
         lat_value &= (uint8_t)(~controlled_mask);
         lat_value |= high_mask;
-        *gate_lat = lat_value;
+        *lat = lat_value;
     }
 }
 
@@ -248,6 +345,134 @@ static uint8_t ac_phase_control_map_delay_to_percent(const ac_phase_control_grou
     scaled /= delay_range;
 
     return (uint8_t)(100u - (uint8_t)scaled);
+}
+
+static void ac_phase_control_release_relay(ac_phase_control_channel_t* channel,
+                                           uint32_t now_ms)
+{
+    if (channel == (ac_phase_control_channel_t*)0)
+    {
+        return;
+    }
+
+    channel->relay_active = 0u;
+    channel->relay_state = (uint8_t)AC_PHASE_RELAY_STATE_WAIT_OFF;
+    channel->relay_off_ms = now_ms;
+}
+
+static void ac_phase_control_enter_fault(ac_phase_control_group_t* group)
+{
+    uint8_t channel;
+    ac_phase_control_channel_t* entry;
+
+    group->status = AC_PHASE_STATUS_ZERO_CROSS_LOST;
+    group->half_cycle_active = 0u;
+    group->elapsed_us = 0u;
+
+    for (channel = 0u; channel < group->channel_count; channel++)
+    {
+        entry = &group->channels[channel];
+        entry->pulse_active = 0u;
+        entry->pulse_generated = 0u;
+        ac_phase_control_channel_relay_off(entry);
+    }
+
+    ac_phase_control_apply_group_outputs(group);
+}
+
+/*
+ * Advance one channel's relay state machine. Uses the shared tick_ms timebase
+ * so no blocking delay is required. enforce On/OFF times, hysteresis and
+ * break-before-make are handled here.
+ */
+static void ac_phase_control_relay_step(ac_phase_control_group_t* group,
+                                        ac_phase_control_channel_t* channel,
+                                        uint32_t now_ms)
+{
+    uint8_t requested_on;
+    uint16_t break_ms;
+    uint16_t min_on_ms;
+    uint16_t min_off_ms;
+
+    if ((group == (ac_phase_control_group_t*)0) ||
+        (channel == (ac_phase_control_channel_t*)0))
+    {
+        return;
+    }
+
+    break_ms = group->config.relay_break_before_make_ms;
+    min_on_ms = group->config.relay_min_on_ms;
+    min_off_ms = group->config.relay_min_off_ms;
+
+    if (channel->enabled == 0u)
+    {
+        if (channel->relay_state == (uint8_t)AC_PHASE_RELAY_STATE_HOLD_ON)
+        {
+            if ((now_ms - channel->relay_on_ms) >= (uint32_t)min_on_ms)
+            {
+                ac_phase_control_release_relay(channel, now_ms);
+            }
+        }
+        else if (channel->relay_state == (uint8_t)AC_PHASE_RELAY_STATE_WAIT_OFF)
+        {
+            if ((now_ms - channel->relay_off_ms) >= (uint32_t)break_ms)
+            {
+                ac_phase_control_channel_relay_off(channel);
+            }
+        }
+        else
+        {
+            ac_phase_control_channel_relay_off(channel);
+        }
+        return;
+    }
+
+    requested_on = (channel->power_percent >= group->config.relay_on_threshold_percent) ? 1u : 0u;
+
+    switch (channel->relay_state)
+    {
+        case AC_PHASE_RELAY_STATE_PHASE:
+            if ((requested_on != 0u) &&
+                ((now_ms - channel->relay_off_ms) >= (uint32_t)min_off_ms))
+            {
+                channel->relay_state = (uint8_t)AC_PHASE_RELAY_STATE_WAIT_ON;
+                channel->relay_on_ms = now_ms;
+            }
+            break;
+
+        case AC_PHASE_RELAY_STATE_WAIT_ON:
+            if ((now_ms - channel->relay_on_ms) >= (uint32_t)break_ms)
+            {
+                channel->relay_state = (uint8_t)AC_PHASE_RELAY_STATE_HOLD_ON;
+                channel->relay_active = 1u;
+                channel->relay_on_ms = now_ms;
+            }
+            else if (requested_on == 0u)
+            {
+                channel->relay_state = (uint8_t)AC_PHASE_RELAY_STATE_PHASE;
+                channel->relay_active = 0u;
+            }
+            break;
+
+        case AC_PHASE_RELAY_STATE_HOLD_ON:
+            if ((requested_on == 0u) &&
+                ((now_ms - channel->relay_on_ms) >= (uint32_t)min_on_ms))
+            {
+                ac_phase_control_release_relay(channel, now_ms);
+            }
+            break;
+
+        case AC_PHASE_RELAY_STATE_WAIT_OFF:
+            if ((now_ms - channel->relay_off_ms) >= (uint32_t)break_ms)
+            {
+                ac_phase_control_channel_relay_off(channel);
+            }
+            break;
+
+        default:
+            ac_phase_control_channel_relay_off(channel);
+            break;
+    }
 }
 
 static void ac_phase_control_reload_timer(const ac_phase_control_group_t* group)
@@ -374,8 +599,7 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
         return DRV_STATUS_ERROR;
     }
 
-    if ((timer < AC_PHASE_CONTROL_TIMER0) ||
-        (timer > AC_PHASE_CONTROL_TIMER3))
+    if (timer > AC_PHASE_CONTROL_TIMER3)
     {
         return DRV_STATUS_ERROR;
     }
@@ -386,11 +610,42 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
         (config->min_delay_us > config->max_delay_us) ||
         (config->gate_pulse_us == 0u))
     {
+        group->status = AC_PHASE_STATUS_CONFIG_ERROR;
         return DRV_STATUS_ERROR;
     }
 
     group->timer = timer;
     group->config = *config;
+
+    if (group->config.relay_on_threshold_percent == 0u)
+    {
+        group->config.relay_on_threshold_percent = AC_PHASE_CONTROL_DEFAULT_RELAY_ON_THRESHOLD;
+    }
+    if (group->config.relay_off_threshold_percent == 0u)
+    {
+        group->config.relay_off_threshold_percent = AC_PHASE_CONTROL_DEFAULT_RELAY_OFF_THRESHOLD;
+    }
+    if (group->config.relay_break_before_make_ms == 0u)
+    {
+        group->config.relay_break_before_make_ms = AC_PHASE_CONTROL_DEFAULT_RELAY_BREAK_MAKE_MS;
+    }
+    if (group->config.relay_min_on_ms == 0u)
+    {
+        group->config.relay_min_on_ms = AC_PHASE_CONTROL_DEFAULT_RELAY_MIN_ON_MS;
+    }
+    if (group->config.relay_min_off_ms == 0u)
+    {
+        group->config.relay_min_off_ms = AC_PHASE_CONTROL_DEFAULT_RELAY_MIN_OFF_MS;
+    }
+
+    if ((group->config.relay_on_threshold_percent > 100u) ||
+        (group->config.relay_off_threshold_percent > 100u) ||
+        (group->config.relay_on_threshold_percent <= group->config.relay_off_threshold_percent))
+    {
+        group->status = AC_PHASE_STATUS_CONFIG_ERROR;
+        return DRV_STATUS_ERROR;
+    }
+
     group->channels = channels;
     group->channel_count = channel_count;
     group->elapsed_us = 0u;
@@ -398,6 +653,9 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
     group->tick_ms = 0u;
     group->timer_tick_us = 0u;
     group->half_cycle_active = 0u;
+    group->last_zero_cross_ms = 0UL;
+    group->zero_cross_recovery_count = 0u;
+    group->status = AC_PHASE_STATUS_OK;
     group->initialized = 1u;
 
     for (index = 0u; index < channel_count; index++)
@@ -405,18 +663,26 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
         channels[index].gate_lat = (volatile uint8_t*)0;
         channels[index].gate_tris = (volatile uint8_t*)0;
         channels[index].gate_mask = 0u;
+        channels[index].relay_lat = (volatile uint8_t*)0;
+        channels[index].relay_tris = (volatile uint8_t*)0;
+        channels[index].relay_mask = 0u;
         channels[index].delay_us = group->config.max_delay_us;
         channels[index].power_percent = 0u;
         channels[index].enabled = 0u;
         channels[index].pulse_active = 0u;
         channels[index].pulse_generated = 0u;
         channels[index].attached = 0u;
+        channels[index].relay_state = (uint8_t)AC_PHASE_RELAY_STATE_PHASE;
+        channels[index].relay_active = 0u;
+        channels[index].relay_on_ms = 0UL;
+        channels[index].relay_off_ms = 0UL;
     }
 
     g_active_group = group;
     if (ac_phase_control_timer_init(group) != DRV_STATUS_OK)
     {
         group->initialized = 0u;
+        group->status = AC_PHASE_STATUS_CONFIG_ERROR;
         g_active_group = (ac_phase_control_group_t*)0;
         return DRV_STATUS_ERROR;
     }
@@ -428,6 +694,7 @@ drv_status_t ac_phase_control_init_group(ac_phase_control_group_t* group,
     if (group->timer_tick_us == 0u)
     {
         group->initialized = 0u;
+        group->status = AC_PHASE_STATUS_CONFIG_ERROR;
         g_active_group = (ac_phase_control_group_t*)0;
         return DRV_STATUS_ERROR;
     }
@@ -470,6 +737,39 @@ drv_status_t ac_phase_control_attach_channel(ac_phase_control_group_t* group,
     return DRV_STATUS_OK;
 }
 
+drv_status_t ac_phase_control_attach_channel_relay(ac_phase_control_group_t* group,
+                                                   uint8_t channel,
+                                                   volatile uint8_t* relay_lat,
+                                                   volatile uint8_t* relay_tris,
+                                                   uint8_t relay_mask)
+{
+    ac_phase_control_channel_t* entry;
+
+    if ((group == (ac_phase_control_group_t*)0) ||
+        (group->initialized == 0u) ||
+        (ac_phase_control_channel_valid(group, channel) == 0u) ||
+        (relay_lat == (volatile uint8_t*)0) ||
+        (relay_tris == (volatile uint8_t*)0) ||
+        (ac_phase_control_mask_valid(relay_mask) == 0u))
+    {
+        return DRV_STATUS_ERROR;
+    }
+
+    entry = &group->channels[channel];
+    entry->relay_lat = relay_lat;
+    entry->relay_tris = relay_tris;
+    entry->relay_mask = relay_mask;
+    entry->relay_state = (uint8_t)AC_PHASE_RELAY_STATE_PHASE;
+    entry->relay_active = 0u;
+    entry->relay_on_ms = 0UL;
+    entry->relay_off_ms = 0UL;
+
+    *(entry->relay_tris) &= (uint8_t)(~entry->relay_mask);
+    ac_phase_control_relay_write(entry, 0u);
+
+    return DRV_STATUS_OK;
+}
+
 drv_status_t ac_phase_control_detach_channel(ac_phase_control_group_t* group,
                                              uint8_t channel)
 {
@@ -482,9 +782,16 @@ drv_status_t ac_phase_control_detach_channel(ac_phase_control_group_t* group,
 
     entry = &group->channels[channel];
     ac_phase_control_reset_channel_cycle(entry);
+    entry->relay_active = 0u;
+    entry->relay_state = (uint8_t)AC_PHASE_RELAY_STATE_PHASE;
+    ac_phase_control_relay_write(entry, 0u);
+
     entry->gate_lat = (volatile uint8_t*)0;
     entry->gate_tris = (volatile uint8_t*)0;
     entry->gate_mask = 0u;
+    entry->relay_lat = (volatile uint8_t*)0;
+    entry->relay_tris = (volatile uint8_t*)0;
+    entry->relay_mask = 0u;
     entry->delay_us = group->config.max_delay_us;
     entry->power_percent = 0u;
     entry->enabled = 0u;
@@ -595,6 +902,17 @@ uint8_t ac_phase_control_is_channel_enabled(const ac_phase_control_group_t* grou
     return group->channels[channel].enabled;
 }
 
+uint8_t ac_phase_control_is_channel_in_relay_mode(const ac_phase_control_group_t* group,
+                                                  uint8_t channel)
+{
+    if (ac_phase_control_channel_valid(group, channel) == 0u)
+    {
+        return 0u;
+    }
+
+    return (group->channels[channel].relay_state == (uint8_t)AC_PHASE_RELAY_STATE_HOLD_ON) ? 1u : 0u;
+}
+
 void ac_phase_control_on_zero_cross(ac_phase_control_group_t* group)
 {
     uint8_t channel;
@@ -603,6 +921,18 @@ void ac_phase_control_on_zero_cross(ac_phase_control_group_t* group)
         (group->initialized == 0u))
     {
         return;
+    }
+
+    group->last_zero_cross_ms = group->tick_ms;
+
+    if (group->status == AC_PHASE_STATUS_ZERO_CROSS_LOST)
+    {
+        group->zero_cross_recovery_count++;
+        if (group->zero_cross_recovery_count >= AC_PHASE_CONTROL_ZERO_CROSS_RECOVERY_EVENTS)
+        {
+            group->status = AC_PHASE_STATUS_OK;
+            group->zero_cross_recovery_count = 0u;
+        }
     }
 
     group->elapsed_us = 0u;
@@ -664,6 +994,13 @@ void ac_phase_control_update_us(ac_phase_control_group_t* group,
             continue;
         }
 
+        if (entry->relay_state != (uint8_t)AC_PHASE_RELAY_STATE_PHASE)
+        {
+            entry->pulse_active = 0u;
+            entry->pulse_generated = 1u;
+            continue;
+        }
+
         if ((entry->pulse_generated == 0u) &&
             (total_elapsed >= (uint32_t)entry->delay_us))
         {
@@ -688,6 +1025,84 @@ void ac_phase_control_update_us(ac_phase_control_group_t* group,
     ac_phase_control_apply_group_outputs(group);
 }
 
+void ac_phase_control_process(ac_phase_control_group_t* group)
+{
+    uint8_t channel;
+    uint32_t now_ms;
+    ac_phase_control_channel_t* entry;
+
+    if ((group == (ac_phase_control_group_t*)0) ||
+        (group->initialized == 0u))
+    {
+        return;
+    }
+
+    now_ms = group->tick_ms;
+
+    if (group->config.zero_cross_timeout_ms != 0u)
+    {
+        if ((group->last_zero_cross_ms != 0UL) &&
+            ((now_ms - group->last_zero_cross_ms) >
+             (uint32_t)group->config.zero_cross_timeout_ms))
+        {
+            ac_phase_control_enter_fault(group);
+            return;
+        }
+    }
+
+    for (channel = 0u; channel < group->channel_count; channel++)
+    {
+        entry = &group->channels[channel];
+
+        if (entry->attached == 0u)
+        {
+            continue;
+        }
+
+        if ((entry->relay_lat == (volatile uint8_t*)0) ||
+            (entry->relay_tris == (volatile uint8_t*)0) ||
+            (entry->relay_mask == 0u))
+        {
+            ac_phase_control_channel_relay_off(entry);
+            continue;
+        }
+
+        ac_phase_control_relay_step(group, entry, now_ms);
+    }
+
+    ac_phase_control_apply_group_outputs(group);
+}
+
+void ac_phase_control_all_off(ac_phase_control_group_t* group)
+{
+    uint8_t channel;
+    ac_phase_control_channel_t* entry;
+
+    if ((group == (ac_phase_control_group_t*)0) ||
+        (group->initialized == 0u))
+    {
+        return;
+    }
+
+    for (channel = 0u; channel < group->channel_count; channel++)
+    {
+        entry = &group->channels[channel];
+
+        if (entry->attached != 0u)
+        {
+            entry->enabled = 0u;
+            entry->pulse_active = 0u;
+            entry->pulse_generated = 0u;
+            ac_phase_control_channel_relay_off(entry);
+        }
+    }
+
+    group->elapsed_us = 0u;
+    group->half_cycle_active = 0u;
+
+    ac_phase_control_apply_group_outputs(group);
+}
+
 void ac_phase_control_stop_group(ac_phase_control_group_t* group)
 {
     uint8_t channel;
@@ -706,6 +1121,7 @@ void ac_phase_control_stop_group(ac_phase_control_group_t* group)
             group->channels[channel].power_percent = 0u;
             group->channels[channel].pulse_active = 0u;
             group->channels[channel].pulse_generated = 0u;
+            ac_phase_control_channel_relay_off(&group->channels[channel]);
         }
     }
 
@@ -757,4 +1173,26 @@ uint8_t ac_phase_control_is_any_channel_active(const ac_phase_control_group_t* g
     }
 
     return 0u;
+}
+
+ac_phase_status_t ac_phase_control_get_status(const ac_phase_control_group_t* group)
+{
+    if ((group == (const ac_phase_control_group_t*)0) ||
+        (group->initialized == 0u))
+    {
+        return AC_PHASE_STATUS_NOT_INITIALIZED;
+    }
+
+    return group->status;
+}
+
+uint8_t ac_phase_control_is_zero_cross_alive(const ac_phase_control_group_t* group)
+{
+    if ((group == (const ac_phase_control_group_t*)0) ||
+        (group->initialized == 0u))
+    {
+        return 0u;
+    }
+
+    return (group->status == AC_PHASE_STATUS_OK) ? 1u : 0u;
 }
