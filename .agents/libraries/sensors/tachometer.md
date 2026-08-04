@@ -54,7 +54,8 @@ core/types.h
 
 - Caller passes monotonic microseconds.
 - `startup_grace_ms` suppresses `TOO_SLOW` during startup.
-- `signal_timeout_ms` moves the state to `NO_SIGNAL` when pulses stop.
+- Two pulses are needed to compute RPM; the first pulse of a session only re-arms the measurement state.
+- `signal_timeout_ms` moves the state to `NO_SIGNAL` and re-arms the session (RPM 0, stale timestamp discarded) when pulses stop. The cumulative `pulse_count` survives timeouts.
 - `minimum_pulse_interval_us` rejects noise before RPM is updated.
 
 ## ISR contract

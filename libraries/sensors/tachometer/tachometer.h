@@ -38,7 +38,7 @@ typedef struct
     uint32_t last_pulse_us;
     uint32_t pulse_count;
     uint16_t rpm;
-    uint8_t has_pulse;
+    uint8_t session_pulse_count;
 } tachometer_t;
 
 drv_status_t tachometer_init(tachometer_t* tachometer,

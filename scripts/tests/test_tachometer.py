@@ -99,10 +99,23 @@ class TachometerBehaviorTests(unittest.TestCase):
 
     def test_first_and_second_pulse_paths_exist(self) -> None:
         body = source_function(read_text(SRC), "uint8_t tachometer_on_pulse(")
-        self.assertIn("tachometer->has_pulse == 0u", body)
-        self.assertIn("tachometer->pulse_count = 1UL", body)
+        self.assertIn("tachometer->session_pulse_count == 0u", body)
+        self.assertIn("tachometer->session_pulse_count = 1u", body)
+        self.assertIn("tachometer->session_pulse_count++", body)
         self.assertIn("tachometer->pulse_count++", body)
         self.assertIn("tachometer_compute_rpm", body)
+
+    def test_stale_pulse_timestamp_is_re_armed(self) -> None:
+        body = source_function(read_text(SRC), "uint8_t tachometer_on_pulse(")
+        self.assertIn("tachometer_rearm(tachometer)", body)
+        self.assertIn("signal_timeout_ms", body)
+        self.assertIn("tachometer->last_pulse_us", body)
+
+    def test_timeout_re_arms_session_keeps_cumulative_count(self) -> None:
+        body = source_function(read_text(SRC), "static void tachometer_update_status(")
+        self.assertIn("tachometer_rearm(tachometer)", body)
+        self.assertIn("session_pulse_count == 0u", body)
+        self.assertNotIn("tachometer->pulse_count = 0UL", body)
 
     def test_noise_rejection_and_wrap_safe_time(self) -> None:
         body = source_function(read_text(SRC), "uint8_t tachometer_on_pulse(")
@@ -122,7 +135,7 @@ class TachometerBehaviorTests(unittest.TestCase):
         for symbol in (
             "startup_grace_ms",
             "signal_timeout_ms",
-            "pulse_count < 2UL",
+            "session_pulse_count < 2u",
             "TACHOMETER_STATUS_NO_SIGNAL",
             "TACHOMETER_STATUS_TOO_SLOW",
             "TACHOMETER_STATUS_RUNNING",

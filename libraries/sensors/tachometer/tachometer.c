@@ -9,12 +9,17 @@ static uint32_t tachometer_ms_to_us(uint16_t ms)
     return (uint32_t)ms * 1000UL;
 }
 
+static void tachometer_rearm(tachometer_t* tachometer)
+{
+    tachometer->session_pulse_count = 0u;
+    tachometer->last_pulse_us = 0UL;
+    tachometer->rpm = 0u;
+}
+
 static void tachometer_clear_measurement(tachometer_t* tachometer)
 {
-    tachometer->has_pulse = 0u;
-    tachometer->last_pulse_us = 0UL;
+    tachometer_rearm(tachometer);
     tachometer->pulse_count = 0UL;
-    tachometer->rpm = 0u;
 }
 
 static uint16_t tachometer_compute_rpm(const tachometer_t* tachometer,
@@ -45,7 +50,6 @@ static void tachometer_update_status(tachometer_t* tachometer, uint32_t now_us)
     uint32_t grace_us;
     uint32_t timeout_us;
     uint32_t since_start_us;
-    uint32_t since_pulse_us;
 
     if ((tachometer == (tachometer_t*)0) || (tachometer->initialized == 0u))
     {
@@ -59,6 +63,7 @@ static void tachometer_update_status(tachometer_t* tachometer, uint32_t now_us)
 
     if (tachometer->expected_running == 0u)
     {
+        tachometer_rearm(tachometer);
         tachometer->status = TACHOMETER_STATUS_STOPPED;
         return;
     }
@@ -72,8 +77,9 @@ static void tachometer_update_status(tachometer_t* tachometer, uint32_t now_us)
         return;
     }
 
-    if (tachometer->has_pulse == 0u)
+    if (tachometer->session_pulse_count == 0u)
     {
+        tachometer_rearm(tachometer);
         tachometer->status = TACHOMETER_STATUS_NO_SIGNAL;
         return;
     }
@@ -82,11 +88,12 @@ static void tachometer_update_status(tachometer_t* tachometer, uint32_t now_us)
     if ((timeout_us != 0UL) &&
         ((uint32_t)(now_us - tachometer->last_pulse_us) >= timeout_us))
     {
+        tachometer_rearm(tachometer);
         tachometer->status = TACHOMETER_STATUS_NO_SIGNAL;
         return;
     }
 
-    if (tachometer->pulse_count < 2UL)
+    if (tachometer->session_pulse_count < 2u)
     {
         tachometer->status = TACHOMETER_STATUS_STARTING;
         return;
@@ -155,6 +162,7 @@ void tachometer_set_expected_running(tachometer_t* tachometer,
 uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
 {
     uint32_t interval_us;
+    uint32_t timeout_us;
 
     if ((tachometer == (tachometer_t*)0) ||
         (tachometer->initialized == 0u) ||
@@ -164,11 +172,22 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
         return 0u;
     }
 
-    if (tachometer->has_pulse == 0u)
+    if (tachometer->session_pulse_count != 0u)
     {
-        tachometer->has_pulse = 1u;
+        timeout_us = tachometer_ms_to_us(tachometer->config.signal_timeout_ms);
+        if ((timeout_us != 0UL) &&
+            ((uint32_t)(now_us - tachometer->last_pulse_us) >= timeout_us))
+        {
+            tachometer_rearm(tachometer);
+            tachometer->status = TACHOMETER_STATUS_NO_SIGNAL;
+        }
+    }
+
+    if (tachometer->session_pulse_count == 0u)
+    {
+        tachometer->session_pulse_count = 1u;
         tachometer->last_pulse_us = now_us;
-        tachometer->pulse_count = 1UL;
+        tachometer->pulse_count++;
         tachometer->rpm = 0u;
         tachometer_update_status(tachometer, now_us);
         return 1u;
@@ -182,6 +201,7 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
     }
 
     tachometer->last_pulse_us = now_us;
+    tachometer->session_pulse_count++;
     tachometer->pulse_count++;
     tachometer->rpm = tachometer_compute_rpm(tachometer, interval_us);
     tachometer_update_status(tachometer, now_us);
