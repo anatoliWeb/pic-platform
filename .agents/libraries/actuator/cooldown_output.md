@@ -92,6 +92,8 @@ docs/libraries/actuator/cooldown_output.ua.md
 
 - The helper does not own hardware outputs.
 - `get_remaining_ms()` is based on caller-supplied time.
+- `cooldown_ms` must stay below `2^31` ms for the wrap-safe deadline comparison.
+- `cooldown_output_process()` must be polled for a cooldown to expire.
 
 ## AI decision rule
 

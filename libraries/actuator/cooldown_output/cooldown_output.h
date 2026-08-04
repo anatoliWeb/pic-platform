@@ -8,8 +8,24 @@
 #include "core/compiler.h"
 #include "core/types.h"
 
+/*
+ * Optional callback fired only when the physical active state actually changes
+ * (on -> off or off -> on). It reports the physical active state, not the
+ * caller's latest request, so the application can drive the real output.
+ * Arguments: (application context, active 0/1).
+ */
 typedef void (*cooldown_output_callback_t)(void* context, uint8_t active);
 
+/*
+ * Configuration for the cooldown output.
+ *
+ *   cooldown_ms      - how long the output stays active after the last request
+ *                      goes OFF before it physically turns off. The value must
+ *                      stay below 2^31 ms so the wrap-safe deadline comparison
+ *                      in the implementation is valid. 0 means immediate off.
+ *   callback         - optional hardware adapter; NULL disables notifications.
+ *   callback_context - opaque pointer passed back unchanged to the callback.
+ */
 typedef struct
 {
     uint32_t cooldown_ms;
@@ -17,6 +33,16 @@ typedef struct
     void* callback_context;
 } cooldown_output_config_t;
 
+/*
+ * Caller-owned runtime state.
+ *
+ *   requested       - the logical caller command (on/off), independent of the
+ *                     physical output.
+ *   active          - the physical output state (on/off).
+ *   cooling_down    - request is OFF, but the output is still on and waiting
+ *                     out the cooldown before it turns off.
+ *   cooldown_end_ms - monotonic deadline for the current cooldown.
+ */
 typedef struct
 {
     cooldown_output_config_t config;

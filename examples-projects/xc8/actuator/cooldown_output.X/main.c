@@ -11,10 +11,18 @@ static volatile uint8_t g_active;
 static volatile uint8_t g_cooling;
 static volatile uint32_t g_remaining;
 
+/* Hardware adapter: mirrors the physical active state into g_active. The
+ * library reports the committed active state, not the latest request. */
+static void on_active_change(void* context, uint8_t active)
+{
+    (void)context;
+    g_active = active;
+}
+
 static const cooldown_output_config_t g_output_config =
 {
     250u,
-    (cooldown_output_callback_t)0,
+    on_active_change,
     (void*)0
 };
 

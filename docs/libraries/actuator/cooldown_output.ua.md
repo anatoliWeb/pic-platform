@@ -16,6 +16,7 @@ Reusable requested/active output helper з cooldown delay, remaining time і opt
 - `cooldown_ms == 0` означає immediate off.
 - Повторний request on скасовує pending shutdown.
 - Callback спрацьовує лише на зміну active-state.
+- Для коректності wrap-safe порівняння deadline `cooldown_ms` має бути меншим за `2^31` мс. Вихід обов'язково треба політи через `cooldown_output_process()`.
 
 ## Приклад
 

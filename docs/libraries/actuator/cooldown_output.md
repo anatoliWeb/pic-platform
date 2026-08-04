@@ -16,6 +16,7 @@ Reusable requested/active output helper with cooldown delay, remaining time, and
 - `cooldown_ms == 0` means immediate off.
 - Re-requesting on cancels pending shutdown.
 - Callback fires only on active-state change.
+- For the wrap-safe deadline comparison to be valid, `cooldown_ms` must stay below `2^31` ms. The output must be polled via `cooldown_output_process()`.
 
 ## Examples
 
