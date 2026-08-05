@@ -21,6 +21,10 @@ Reusable PIC18 platform code organized into `core/`, `drivers/`, `libraries/`, c
 - Do not push unless explicitly asked.
 - Do not report completion while requested tests, builds, documentation, or commits are missing.
 
+## AI workflow skill
+
+Before working on pic-platform, read `.skills/pic-platform/SKILL.md`. The skill defines the AI operating workflow. The `.agents/` tree defines routing maps and module knowledge.
+
 ## Required task start
 
 Before changing code:
