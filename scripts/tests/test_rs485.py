@@ -91,6 +91,7 @@ class Rs485HeaderTests(unittest.TestCase):
             "uint8_t rs485_read_byte(void)",
             "uint8_t rs485_send_frame(",
             "uint8_t rs485_receive_frame(",
+            "uint8_t rs485_finish_tx(void)",
             "uint8_t rs485_crc8(",
         ):
             self.assertIn(declaration, text)
@@ -130,62 +131,84 @@ class Rs485TxCompleteTests(unittest.TestCase):
         self.assertIn("rs485_wait_tx_complete", text)
         self.assertIn("TXSTAbits.TRMT", text)
 
-    def test_xc8_wrapper_calls_wait_before_rx(self) -> None:
+    def test_xc8_wrapper_calls_finish_tx(self) -> None:
         text = read_text(XC8_SRC)
         body = extract_source_function(text, "uint8_t rs485_send_frame(")
-        wait_pos = body.find("rs485_wait_tx_complete()")
-        rx_pos = body.find("rs485_set_rx()")
-        self.assertGreater(wait_pos, -1, "wait_tx_complete must be called")
-        self.assertGreater(rx_pos, -1, "set_rx must be called")
-        self.assertGreater(
-            rx_pos, wait_pos,
-            "set_rx must follow wait_tx_complete",
-        )
+        self.assertIn("rs485_finish_tx()", body, "send_frame must call finish_tx")
 
     def test_c18_wrapper_has_trmt_polling(self) -> None:
         text = read_text(C18_SRC)
         self.assertIn("rs485_wait_tx_complete", text)
         self.assertIn("TXSTAbits.TRMT", text)
 
-    def test_c18_wrapper_calls_wait_before_rx(self) -> None:
+    def test_c18_wrapper_calls_finish_tx(self) -> None:
         text = read_text(C18_SRC)
         body = extract_source_function(text, "uint8_t rs485_send_frame(")
-        wait_pos = body.find("rs485_wait_tx_complete()")
-        rx_pos = body.find("rs485_set_rx()")
-        self.assertGreater(wait_pos, -1, "wait_tx_complete must be called")
-        self.assertGreater(rx_pos, -1, "set_rx must be called")
-        self.assertGreater(
-            rx_pos, wait_pos,
-            "set_rx must follow wait_tx_complete",
-        )
+        self.assertIn("rs485_finish_tx()", body, "send_frame must call finish_tx")
+
+    def test_shared_fallback_calls_finish_tx(self) -> None:
+        text = read_text(SHARED_SRC)
+        body = extract_source_function(text, "uint8_t rs485_send_frame(")
+        self.assertIn("rs485_finish_tx()", body, "send_frame must call finish_tx")
+
+    def test_finish_tx_calls_wait_tx_complete(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            body = extract_source_function(read_text(src), "uint8_t rs485_finish_tx(")
+            self.assertIn("rs485_wait_tx_complete()", body,
+                          f"finish_tx must call wait_tx_complete in {src.name}")
+
+    def test_finish_tx_restores_rx_on_success(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            body = extract_source_function(read_text(src), "uint8_t rs485_finish_tx(")
+            self.assertIn("rs485_set_rx()", body,
+                          f"finish_tx must restore RX in {src.name}")
+
+    def test_finish_tx_returns_1_on_success(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            body = extract_source_function(read_text(src), "uint8_t rs485_finish_tx(")
+            self.assertIn("return 1u", body,
+                          f"finish_tx must return 1u on success in {src.name}")
+
+    def test_finish_tx_returns_0_on_timeout(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            body = extract_source_function(read_text(src), "uint8_t rs485_finish_tx(")
+            self.assertIn("return 0u", body,
+                          f"finish_tx must return 0u on timeout in {src.name}")
+
+    def test_finish_tx_settling_delay_only_after_success(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            body = extract_source_function(read_text(src), "uint8_t rs485_finish_tx(")
+            wait_pos = body.find("rs485_wait_tx_complete()")
+            delay_pos = body.find("DRV_DELAY_US(50u)", wait_pos + 1)
+            self.assertGreater(wait_pos, -1)
+            self.assertGreater(delay_pos, wait_pos,
+                               f"settling delay after wait in {src.name}")
 
     def test_send_frame_rx_always_restored(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             body = extract_source_function(read_text(src), "uint8_t rs485_send_frame(")
-            rx_pos = body.find("rs485_set_rx()")
-            self.assertGreater(rx_pos, -1, f"set_rx must be called in {src.name}")
+            self.assertIn("rs485_finish_tx()", body,
+                          f"send_frame must call finish_tx in {src.name}")
 
     def test_send_frame_returns_zero_on_invalid_args(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             body = extract_source_function(read_text(src), "uint8_t rs485_send_frame(")
             self.assertIn("return 0u", body)
 
-    def test_send_frame_uses_result_variable(self) -> None:
+    def test_send_frame_delegates_to_finish_tx(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             body = extract_source_function(read_text(src), "uint8_t rs485_send_frame(")
-            self.assertIn("uint8_t result = 0u", body)
-            self.assertIn("result = 1u", body)
-            self.assertIn("return result", body)
+            self.assertIn("rs485_finish_tx()", body)
+            self.assertNotIn("rs485_wait_tx_complete()", body,
+                             f"send_frame must not directly call wait_tx_complete in {src.name}")
 
-    def test_send_frame_guard_delay_only_after_success(self) -> None:
+    def test_finish_tx_encapsulates_settling_delay(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
-            body = extract_source_function(read_text(src), "uint8_t rs485_send_frame(")
-            wait_pos = body.find("rs485_wait_tx_complete()")
-            delay_pos = body.find("DRV_DELAY_US(50u)", wait_pos + 1)
-            self.assertGreater(wait_pos, -1)
-            self.assertGreater(delay_pos, wait_pos, f"guard delay after wait in {src.name}")
-            result_pos = body.find("result = 1u", wait_pos)
-            self.assertGreater(result_pos, delay_pos, f"result=1u after guard delay in {src.name}")
+            body = extract_source_function(read_text(src), "uint8_t rs485_finish_tx(")
+            self.assertIn("DRV_DELAY_US(50u)", body,
+                          f"finish_tx must have settling delay in {src.name}")
+            self.assertIn("rs485_set_rx()", body,
+                          f"finish_tx must restore RX in {src.name}")
 
 class Rs485SharedFallbackTests(unittest.TestCase):
     def test_shared_fallback_requires_compiler_define(self) -> None:
@@ -315,9 +338,9 @@ class Rs485FrameOrderingTests(unittest.TestCase):
             self.assertIn("crc16_modbus", text)
 
     def test_send_frame_restores_rx(self) -> None:
-        for src in (SHARED_SRC, XC8_SRC, C18_SRC):
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             body = extract_source_function(read_text(src), "uint8_t rs485_send_frame(")
-            self.assertIn("rs485_set_rx()", body)
+            self.assertIn("rs485_finish_tx()", body)
 
 
 class Rs485InitTests(unittest.TestCase):
@@ -371,16 +394,16 @@ class Rs485BaudRateTests(unittest.TestCase):
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             text = read_text(src)
             body = extract_source_function(text, "uint8_t rs485_send_frame(")
-            has_wait = "rs485_wait_tx_complete()" in body
+            has_finish_tx = "rs485_finish_tx()" in body
             self.assertTrue(
-                has_wait,
-                f"{src.name} send_frame must use wait_tx_complete, not fixed delay",
+                has_finish_tx,
+                f"{src.name} send_frame must use finish_tx, not fixed delay",
             )
 
     def test_guard_delay_preserved_after_wait(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             text = read_text(src)
-            body = extract_source_function(text, "uint8_t rs485_send_frame(")
+            body = extract_source_function(text, "uint8_t rs485_finish_tx(")
             wait_pos = body.find("rs485_wait_tx_complete()")
             delay_pos = body.find("DRV_DELAY_US(50u)", wait_pos + 1)
             self.assertGreater(wait_pos, -1)
@@ -389,11 +412,11 @@ class Rs485BaudRateTests(unittest.TestCase):
                 f"guard delay after wait_tx_complete in {src.name}",
             )
 
-    def test_send_frame_uses_bounded_wait(self) -> None:
+    def test_send_frame_uses_finish_tx(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             text = read_text(src)
             body = extract_source_function(text, "uint8_t rs485_send_frame(")
-            self.assertIn("if (rs485_wait_tx_complete() != 0u)", body)
+            self.assertIn("rs485_finish_tx()", body)
 
 
 class Rs485ErrorContractTests(unittest.TestCase):
@@ -506,6 +529,203 @@ class Rs485CompileTests(unittest.TestCase):
             self.skipTest(f"harness not found: {harness}")
         result = self._compile_harness(harness)
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+
+
+class Rs485FinishTxSymbolTests(unittest.TestCase):
+    def test_finish_tx_not_static(self) -> None:
+        for src in (XC8_SRC, C18_SRC):
+            text = read_text(src)
+            body = extract_source_function(text, "uint8_t rs485_finish_tx(")
+            self.assertNotIn("static", body,
+                             f"finish_tx must not be static in {src.name}")
+
+    def test_wait_tx_complete_still_static(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            self.assertIn("static uint8_t rs485_wait_tx_complete", text,
+                          f"wait_tx_complete must remain static in {src.name}")
+
+    def test_finish_tx_in_header(self) -> None:
+        text = read_text(SHARED_HDR)
+        self.assertIn("uint8_t rs485_finish_tx(void)", text)
+
+    def test_no_duplicate_algorithm(self) -> None:
+        for src in (XC8_SRC, C18_SRC):
+            text = read_text(src)
+            finish_body = extract_source_function(text, "uint8_t rs485_finish_tx(")
+            self.assertIn("rs485_wait_tx_complete()", finish_body)
+            self.assertIn("DRV_DELAY_US(50u)", finish_body)
+            self.assertIn("rs485_set_rx()", finish_body)
+
+    def test_send_frame_no_duplicate_rx_logic(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            send_body = extract_source_function(text, "uint8_t rs485_send_frame(")
+            self.assertNotIn("rs485_set_rx()", send_body,
+                             f"send_frame must not have direct RX restore in {src.name}")
+            self.assertNotIn("rs485_wait_tx_complete()", send_body,
+                             f"send_frame must not have direct TRMT polling in {src.name}")
+
+    def test_finish_tx_has_no_frame_or_crc(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            body = extract_source_function(text, "uint8_t rs485_finish_tx(")
+            self.assertNotIn("crc16_modbus", body)
+            self.assertNotIn("RS485_START_BYTE", body)
+            self.assertNotIn("rs485_send_byte", body)
+
+
+class Rs485RuntimeBehaviorTests(unittest.TestCase):
+    """Runtime behavior tests using C harness with mock TRMT."""
+
+    def _compile_inline(self, harness_source: str, name: str) -> None:
+        out_dir = Path(tempfile.gettempdir()) / "rs485_runtime"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        harness_path = out_dir / f"{name}.c"
+        harness_path.write_text(harness_source, encoding="utf-8")
+        result = run_xc8([
+            f"-mcpu={MCU}", f"-mdfp={DFP}", f"-I{ROOT}",
+            f"-D{CLOCK_DEFINE}", "-O0", str(harness_path),
+            "-o", str(out_dir / f"{name}.hex"),
+        ])
+        self.assertEqual(result.returncode, 0,
+                         msg=f"{name} compile failed: {result.stderr}")
+
+    def test_finish_tx_success_path(self) -> None:
+        """TRMT already 1: finish_tx returns 1, RX restored, settling delay done."""
+        harness_source = """
+#include "core/compiler.h"
+#include "core/types.h"
+#include "core/device.h"
+#include "core/delay.h"
+#include "drivers/gpio/gpio.h"
+#include "drivers/communication/uart/uart.h"
+#include "core/crc/crc.h"
+
+static uint8_t mock_trmt = 1u;
+static uint8_t rx_set_count = 0u;
+static uint16_t delay_us_count = 0u;
+
+void delay_us(uint16_t us) { delay_us_count = (uint16_t)(delay_us_count + us); }
+void delay_ms(uint16_t ms) { (void)ms; }
+void gpio_set_output(volatile uint8_t* tris, uint8_t pin) { (void)tris; (void)pin; }
+void gpio_write_high(volatile uint8_t* port, uint8_t pin) { (void)port; (void)pin; rx_set_count++; }
+void gpio_write_low(volatile uint8_t* port, uint8_t pin) { (void)port; (void)pin; rx_set_count++; }
+void uart_init(uint32_t baudrate) { (void)baudrate; }
+void uart_write_byte(uint8_t data) { (void)data; }
+uint8_t uart_read_byte(void) { return 0u; }
+uint8_t uart_is_data_ready(void) { return 0u; }
+
+#include "XC8/drivers/communication/rs485/rs485.c"
+
+void main(void) {
+    uint8_t result;
+
+    rs485_init(&PORTB, &TRISB, 2u);
+    rx_set_count = 0u;
+    delay_us_count = 0u;
+    mock_trmt = 1u;
+
+    rs485_set_tx();
+    result = rs485_finish_tx();
+
+    if (result != 1u) { while(1); }
+    if (rx_set_count == 0u) { while(1); }
+    if (delay_us_count == 0u) { while(1); }
+    while(1);
+}
+"""
+        self._compile_inline(harness_source, "finish_tx_success")
+
+    def test_finish_tx_timeout_path(self) -> None:
+        """TRMT always 0: finish_tx returns 0, RX restored."""
+        harness_source = """
+#include "core/compiler.h"
+#include "core/types.h"
+#include "core/device.h"
+#include "core/delay.h"
+#include "drivers/gpio/gpio.h"
+#include "drivers/communication/uart/uart.h"
+#include "core/crc/crc.h"
+
+static uint8_t mock_trmt = 0u;
+static uint8_t rx_set_count = 0u;
+
+void delay_us(uint16_t us) { (void)us; }
+void delay_ms(uint16_t ms) { (void)ms; }
+void gpio_set_output(volatile uint8_t* tris, uint8_t pin) { (void)tris; (void)pin; }
+void gpio_write_high(volatile uint8_t* port, uint8_t pin) { (void)port; (void)pin; }
+void gpio_write_low(volatile uint8_t* port, uint8_t pin) { (void)port; (void)pin; rx_set_count++; }
+void uart_init(uint32_t baudrate) { (void)baudrate; }
+void uart_write_byte(uint8_t data) { (void)data; }
+uint8_t uart_read_byte(void) { return 0u; }
+uint8_t uart_is_data_ready(void) { return 0u; }
+
+#include "XC8/drivers/communication/rs485/rs485.c"
+
+void main(void) {
+    uint8_t result;
+
+    rs485_init(&PORTB, &TRISB, 2u);
+    rx_set_count = 0u;
+
+    result = rs485_finish_tx();
+
+    if (result != 0u) { while(1); }
+    if (rx_set_count == 0u) { while(1); }
+    while(1);
+}
+"""
+        self._compile_inline(harness_source, "finish_tx_timeout")
+
+    def test_finish_tx_compiles_in_shared_dispatcher(self) -> None:
+        """finish_tx compiles through the shared dispatcher path."""
+        harness_source = """
+#define DRV_COMPILER_XC8
+
+#include "core/compiler.h"
+#include "core/types.h"
+#include "core/device.h"
+#include "core/delay.h"
+#include "drivers/gpio/gpio.h"
+#include "drivers/communication/uart/uart.h"
+#include "core/crc/crc.h"
+
+void delay_us(uint16_t us) { (void)us; }
+void delay_ms(uint16_t ms) { (void)ms; }
+void gpio_set_output(volatile uint8_t* tris, uint8_t pin) { (void)tris; (void)pin; }
+void gpio_write_high(volatile uint8_t* port, uint8_t pin) { (void)port; (void)pin; }
+void gpio_write_low(volatile uint8_t* port, uint8_t pin) { (void)port; (void)pin; }
+void uart_init(uint32_t baudrate) { (void)baudrate; }
+void uart_write_byte(uint8_t data) { (void)data; }
+uint8_t uart_read_byte(void) { return 0u; }
+uint8_t uart_is_data_ready(void) { return 0u; }
+
+#include "drivers/communication/rs485/rs485.c"
+
+void main(void) {
+    uint8_t result = rs485_finish_tx();
+    (void)result;
+}
+"""
+        self._compile_inline(harness_source, "finish_tx_shared")
+
+    def test_send_frame_reuses_finish_tx(self) -> None:
+        """send_frame compiles and links with finish_tx delegation."""
+        harness = FIXTURES / "rs485_xc8_send_frame_harness.c"
+        if not harness.exists():
+            self.skipTest(f"harness not found: {harness}")
+        out_dir = Path(tempfile.gettempdir()) / "rs485_runtime"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        staged = out_dir / "send_frame_reuse.c"
+        staged.write_bytes(harness.read_bytes())
+        result = run_xc8([
+            f"-mcpu={MCU}", f"-mdfp={DFP}", f"-I{ROOT}",
+            f"-D{CLOCK_DEFINE}", "-O0", str(staged),
+            "-o", str(out_dir / "send_frame_reuse.hex"),
+        ])
+        self.assertEqual(result.returncode, 0,
+                         msg="send_frame reuse compile failed: " + result.stderr)
 
 
 if __name__ == "__main__":

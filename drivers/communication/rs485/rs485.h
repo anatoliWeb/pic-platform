@@ -23,6 +23,8 @@ uint8_t rs485_read_byte(void);
 uint8_t rs485_send_frame(uint8_t* data, uint8_t len);
 uint8_t rs485_receive_frame(uint8_t* buffer, uint8_t max_len);
 
+uint8_t rs485_finish_tx(void);
+
 uint8_t rs485_crc8(uint8_t* data, uint8_t len);
 
 #endif /* DRIVERS_RS485_RS485_H */

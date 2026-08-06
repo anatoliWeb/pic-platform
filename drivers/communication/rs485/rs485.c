@@ -77,11 +77,23 @@ uint8_t rs485_crc8(uint8_t* data, uint8_t len)
     return crc8_dallas(data, len);
 }
 
+uint8_t rs485_finish_tx(void)
+{
+    if (rs485_wait_tx_complete() != 0u)
+    {
+        DRV_DELAY_US(50u);
+        rs485_set_rx();
+        return 1u;
+    }
+
+    rs485_set_rx();
+    return 0u;
+}
+
 uint8_t rs485_send_frame(uint8_t* data, uint8_t len)
 {
     uint16_t crc;
     uint8_t i;
-    uint8_t result = 0u;
 
     if ((data == (uint8_t*)0) || (len == 0u))
     {
@@ -104,15 +116,7 @@ uint8_t rs485_send_frame(uint8_t* data, uint8_t len)
     rs485_send_byte((uint8_t)(crc & 0x00FFu));
     rs485_send_byte((uint8_t)((crc >> 8u) & 0x00FFu));
 
-    if (rs485_wait_tx_complete() != 0u)
-    {
-        DRV_DELAY_US(50u);
-        result = 1u;
-    }
-
-    rs485_set_rx();
-
-    return result;
+    return rs485_finish_tx();
 }
 
 uint8_t rs485_receive_frame(uint8_t* buffer, uint8_t max_len)

@@ -18,6 +18,34 @@ static void rs485_master_send_example(void)
     rs485_send_frame(payload, 3u);
 }
 
+static void rs485_custom_tx_example(void)
+{
+    /*
+     * Custom protocol TX flow.
+     *
+     * Caller owns frame format, CRC, and commands.
+     * Platform only handles direction control and TX completion.
+     */
+    rs485_set_tx();
+
+    uart_write_byte(0x01u);
+    uart_write_byte(0x02u);
+    uart_write_byte(0x03u);
+
+    if (rs485_finish_tx() == 0u)
+    {
+        /* Timeout: application handles retry or error policy. */
+    }
+
+    /*
+     * After rs485_finish_tx() returns:
+     *   - TRMT wait completed or timed out
+     *   - settling delay ran only on success
+     *   - RX is always restored
+     *   - line never stays in TX
+     */
+}
+
 static void rs485_slave_receive_example(void)
 {
     uint8_t buffer[16];
@@ -26,7 +54,6 @@ static void rs485_slave_receive_example(void)
     len = rs485_receive_frame(buffer, (uint8_t)sizeof(buffer));
     if (len != 0u)
     {
-        /* Valid frame received: CRC check passed. */
         DRV_UNUSED(len);
     }
 }
@@ -41,6 +68,7 @@ void main(void)
     while (1)
     {
         rs485_master_send_example();
+        rs485_custom_tx_example();
         rs485_slave_receive_example();
         DRV_DELAY_MS(100);
     }

@@ -149,87 +149,46 @@ uint8_t rs485_crc8(uint8_t* data, uint8_t len)
     return crc8_dallas(data, len);
 }
 
+uint8_t rs485_finish_tx(void)
+{
+    if (rs485_wait_tx_complete() != 0u)
+    {
+        DRV_DELAY_US(50u);
+        rs485_set_rx();
+        return 1u;
+    }
+
+    rs485_set_rx();
+    return 0u;
+}
+
 uint8_t rs485_send_frame(uint8_t* data, uint8_t len)
 {
     uint16_t crc;
     uint8_t i;
-    uint8_t result = 0u;
 
     if ((data == (uint8_t*)0) || (len == 0u))
     {
         return 0u;
     }
 
-    /*
-     * Calculate CRC only over payload data.
-     *
-     * Frame format:
-     *   0xAA
-     *   LEN
-     *   DATA[0..LEN-1]
-     *   CRC_LOW
-     *   CRC_HIGH
-     *
-     * If this frame is viewed directly in Virtual Terminal,
-     * 0xAA and CRC bytes can look like random characters.
-     * That is normal for a binary frame protocol.
-     */
     crc = crc16_modbus(data, len);
 
-    /*
-     * Enable RS485 transmitter.
-     */
     rs485_set_tx();
-
-    /*
-     * Guard delay before first byte.
-     * Gives MAX487 time to enable its driver.
-     */
     DRV_DELAY_US(50u);
 
-    /*
-     * Send frame header.
-     */
     rs485_send_byte(RS485_START_BYTE);
     rs485_send_byte(len);
 
-    /*
-     * Send payload.
-     */
     for (i = 0u; i < len; i++)
     {
         rs485_send_byte(data[i]);
     }
 
-    /*
-     * Send CRC16 Modbus, little-endian.
-     */
     rs485_send_byte((uint8_t)(crc & 0x00FFu));
     rs485_send_byte((uint8_t)((crc >> 8u) & 0x00FFu));
 
-    /*
-     * Wait for UART shift register to empty.
-     * Bounded timeout prevents infinite hang if UART is broken.
-     * On timeout, RX is still restored — line never stays in TX.
-     */
-    if (rs485_wait_tx_complete() != 0u)
-    {
-        /*
-         * Guard delay after final bit.
-         * Helps Proteus/MAX487 avoid direction-switch glitches.
-         * This is a transceiver settling delay, not a final-byte guarantee.
-         */
-        DRV_DELAY_US(50u);
-        result = 1u;
-    }
-
-    /*
-     * Return RS485 transceiver to receive/idle mode.
-     * Always executed — line never stays in TX after return.
-     */
-    rs485_set_rx();
-
-    return result;
+    return rs485_finish_tx();
 }
 
 uint8_t rs485_receive_frame(uint8_t* buffer, uint8_t max_len)
