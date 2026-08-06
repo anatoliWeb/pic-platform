@@ -10,14 +10,16 @@
 
 #define RS485_START_BYTE              0xAAu
 #define RS485_TIMEOUT_TICKS           200u
-#define RS485_TX_COMPLETE_TIMEOUT     200u
+#define RS485_TX_COMPLETE_DELAY_US    100u
+#define RS485_TX_COMPLETE_ITERATIONS  100u
 
 static uint8_t rs485_wait_tx_complete(void)
 {
-    uint16_t timeout = RS485_TX_COMPLETE_TIMEOUT;
+    uint16_t timeout = RS485_TX_COMPLETE_ITERATIONS;
 
     while ((TXSTAbits.TRMT == 0u) && (timeout > 0u))
     {
+        DRV_DELAY_US(RS485_TX_COMPLETE_DELAY_US);
         timeout--;
     }
 

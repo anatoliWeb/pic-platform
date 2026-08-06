@@ -237,13 +237,18 @@ class Rs485TrmtBoundedWaitTests(unittest.TestCase):
             text = read_text(src)
             self.assertIn("static uint8_t rs485_wait_tx_complete", text)
 
-    def test_wait_tx_complete_has_timeout_counter(self) -> None:
+    def test_wait_tx_complete_uses_drv_delay_us(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             text = read_text(src)
             body = extract_source_function(text, "uint8_t rs485_wait_tx_complete(")
-            self.assertIn("RS485_TX_COMPLETE_TIMEOUT", body)
-            self.assertIn("timeout", body)
-            self.assertIn("timeout--", body)
+            self.assertIn("DRV_DELAY_US", body,
+                          f"{src.name} must use DRV_DELAY_US for deterministic timing")
+
+    def test_wait_tx_complete_has_time_based_constants(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            self.assertIn("RS485_TX_COMPLETE_DELAY_US", text)
+            self.assertIn("RS485_TX_COMPLETE_ITERATIONS", text)
 
     def test_wait_tx_complete_polls_trmt_with_timeout(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
@@ -258,10 +263,11 @@ class Rs485TrmtBoundedWaitTests(unittest.TestCase):
             body = extract_source_function(text, "uint8_t rs485_wait_tx_complete(")
             self.assertIn("return", body)
 
-    def test_tx_complete_timeout_define_exists(self) -> None:
+    def test_timeout_is_10ms(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             text = read_text(src)
-            self.assertIn("RS485_TX_COMPLETE_TIMEOUT", text)
+            self.assertIn("RS485_TX_COMPLETE_DELAY_US    100u", text)
+            self.assertIn("RS485_TX_COMPLETE_ITERATIONS  100u", text)
 
 
 class Rs485FrameOrderingTests(unittest.TestCase):
