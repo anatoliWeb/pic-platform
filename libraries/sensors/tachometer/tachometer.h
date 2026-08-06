@@ -9,19 +9,15 @@
 #include "core/types.h"
 
 /*
- * Portable critical section for ISR/main shared data.
+ * Critical section for ISR/main shared data.
  *
- * On PIC18 this disables global interrupts. The matching restore must be
- * called as soon as the critical section ends. For polling-only usage these
- * macros can be left empty.
+ * Uses DRV_INT_SAVE_AND_DISABLE / DRV_INT_RESTORE from core/compiler.h.
+ * These save the previous GIE state and restore it exactly, so they are
+ * safe whether called from main loop (GIE=1) or from ISR context (GIE=0).
+ *
+ * For polling-only usage where no ISR is involved, these macros still work
+ * correctly: they save GIE=1, disable, then restore GIE=1.
  */
-#if defined(DRV_COMPILER_XC8) || defined(DRV_COMPILER_C18)
-    #define TACHOMETER_CRITICAL_ENTER()  do { INTCONbits.GIE = 0u; } while(0)
-    #define TACHOMETER_CRITICAL_EXIT()   do { INTCONbits.GIE = 1u; } while(0)
-#else
-    #define TACHOMETER_CRITICAL_ENTER()
-    #define TACHOMETER_CRITICAL_EXIT()
-#endif
 
 /*
  * Diagnostic state of the tachometer.
@@ -96,19 +92,24 @@ void tachometer_reset(tachometer_t* tachometer);
  *
  * tachometer_on_pulse()
  *   - Safe to call from a timer or external interrupt (ISR context).
- *   - Uses TACHOMETER_CRITICAL_ENTER/EXIT to protect shared fields against
- *     concurrent main-loop reads.
+ *   - Uses DRV_INT_SAVE_AND_DISABLE / DRV_INT_RESTORE to protect shared
+ *     fields against concurrent main-loop reads. The save/restore pair is
+ *     safe from ISR context because it preserves the previous GIE state
+ *     (which is 0 inside an ISR) rather than unconditionally re-enabling.
  *   - Writes: session_state, last_pulse_us, pulse_count, rpm, status.
  *
  * tachometer_process()
  *   - Call from the main loop or a periodic timer task.
  *   - Advances timeout and status without blocking.
- *   - Uses TACHOMETER_CRITICAL_ENTER/EXIT when reading ISR-written fields.
+ *   - Does NOT use critical sections; it reads ISR-written fields that may
+ *     change at any time. Callers that need a consistent multi-field snapshot
+ *     should use the getter functions instead.
  *   - Reads: session_state, last_pulse_us, rpm, status.
  *
  * tachometer_get_rpm() / tachometer_get_status() / tachometer_get_pulse_count()
  *   - Main-loop context only.
- *   - Return a consistent snapshot; the values may change on the next ISR.
+ *   - Each returns a consistent single-field snapshot protected by a short
+ *     critical section. The values may change on the next ISR after the restore.
  *
  * tachometer_set_expected_running() / tachometer_init() / tachometer_reset()
  *   - Main-loop context only.

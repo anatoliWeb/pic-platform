@@ -17,9 +17,9 @@ Reusable helper для переводу імпульсів у RPM зі startup g
 
 ## ISR контракт
 
-- `tachometer_on_pulse()` безпечний для виклику з таймера або зовнішнього переривання. Він використовує `TACHOMETER_CRITICAL_ENTER/EXIT` для захисту спільних полів.
-- `tachometer_process()` має викликатися з main loop. Він також використовує critical sections при читанні полів, що записуються ISR.
-- Гетери (`get_rpm`, `get_status`, `get_pulse_count`) повертають консистентні snapshots.
+- `tachometer_on_pulse()` безпечний для виклику з таймера або зовнішнього переривання. Він використовує `DRV_INT_SAVE_AND_DISABLE` / `DRV_INT_RESTORE` з `core/compiler.h` для захисту спільних полів. Ці макроси зберігають попередній стан GIE і відновлюють його точно, тому вони безпечні з ISR контексту (де GIE вже 0) і з main loop (де GIE 1).
+- `tachometer_process()` має викликатися з main loop. Він НЕ використовує critical sections; він читає ISR-записані поля, які можуть змінитися в будь-який момент.
+- Гетери (`get_rpm`, `get_status`, `get_pulse_count`) повертають консистентні snapshots окремих полів, захищені короткими critical sections.
 - `init`, `set_expected_running` та `reset` призначені лише для main loop.
 
 ## Поведінка

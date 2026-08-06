@@ -191,6 +191,7 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
 {
     uint32_t interval_us;
     uint32_t timeout_us;
+    drv_int_state_t int_state;
 
     if ((tachometer == (tachometer_t*)0) ||
         (tachometer->initialized == 0u) ||
@@ -200,7 +201,10 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
         return 0u;
     }
 
-    TACHOMETER_CRITICAL_ENTER();
+    /* Save-and-disable: safe from both main loop and ISR context. Inside an
+     * ISR GIE is already 0, so this saves 0 and the restore writes back 0.
+     * From the main loop GIE is 1, so this saves 1 and restores 1. */
+    DRV_INT_SAVE_AND_DISABLE(int_state);
 
     if (tachometer->session_state != TACHOMETER_SESSION_UNARMED)
     {
@@ -225,7 +229,7 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
         tachometer->pulse_count++;
         tachometer->rpm = 0u;
         tachometer_update_status(tachometer, now_us);
-        TACHOMETER_CRITICAL_EXIT();
+        DRV_INT_RESTORE(int_state);
         return 1u;
     }
 
@@ -235,7 +239,7 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
     {
         /* Too-short interval is treated as noise: reject without updating the
          * timestamp or counters, so a burst of bounce pulses cannot skew RPM. */
-        TACHOMETER_CRITICAL_EXIT();
+        DRV_INT_RESTORE(int_state);
         return 0u;
     }
 
@@ -248,7 +252,7 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
     tachometer->rpm = tachometer_compute_rpm(tachometer, interval_us);
     tachometer_update_status(tachometer, now_us);
 
-    TACHOMETER_CRITICAL_EXIT();
+    DRV_INT_RESTORE(int_state);
     return 1u;
 }
 
@@ -266,6 +270,7 @@ void tachometer_process(tachometer_t* tachometer, uint32_t now_us)
 uint16_t tachometer_get_rpm(const tachometer_t* tachometer)
 {
     uint16_t rpm;
+    drv_int_state_t int_state;
 
     if ((tachometer == (const tachometer_t*)0) ||
         (tachometer->initialized == 0u))
@@ -273,9 +278,9 @@ uint16_t tachometer_get_rpm(const tachometer_t* tachometer)
         return 0u;
     }
 
-    TACHOMETER_CRITICAL_ENTER();
+    DRV_INT_SAVE_AND_DISABLE(int_state);
     rpm = tachometer->rpm;
-    TACHOMETER_CRITICAL_EXIT();
+    DRV_INT_RESTORE(int_state);
 
     return rpm;
 }
@@ -283,6 +288,7 @@ uint16_t tachometer_get_rpm(const tachometer_t* tachometer)
 tachometer_status_t tachometer_get_status(const tachometer_t* tachometer)
 {
     tachometer_status_t status;
+    drv_int_state_t int_state;
 
     if (tachometer == (const tachometer_t*)0)
     {
@@ -294,9 +300,9 @@ tachometer_status_t tachometer_get_status(const tachometer_t* tachometer)
         return TACHOMETER_STATUS_NOT_INITIALIZED;
     }
 
-    TACHOMETER_CRITICAL_ENTER();
+    DRV_INT_SAVE_AND_DISABLE(int_state);
     status = tachometer->status;
-    TACHOMETER_CRITICAL_EXIT();
+    DRV_INT_RESTORE(int_state);
 
     return status;
 }
@@ -304,6 +310,7 @@ tachometer_status_t tachometer_get_status(const tachometer_t* tachometer)
 uint32_t tachometer_get_pulse_count(const tachometer_t* tachometer)
 {
     uint32_t count;
+    drv_int_state_t int_state;
 
     if ((tachometer == (const tachometer_t*)0) ||
         (tachometer->initialized == 0u))
@@ -311,9 +318,9 @@ uint32_t tachometer_get_pulse_count(const tachometer_t* tachometer)
         return 0UL;
     }
 
-    TACHOMETER_CRITICAL_ENTER();
+    DRV_INT_SAVE_AND_DISABLE(int_state);
     count = tachometer->pulse_count;
-    TACHOMETER_CRITICAL_EXIT();
+    DRV_INT_RESTORE(int_state);
 
     return count;
 }

@@ -205,17 +205,18 @@ class TachometerHeaderTests(unittest.TestCase):
     def test_critical_section_macros_declared(self) -> None:
         text = read_text(HDR)
         for symbol in (
-            "TACHOMETER_CRITICAL_ENTER",
-            "TACHOMETER_CRITICAL_EXIT",
+            "DRV_INT_SAVE_AND_DISABLE",
+            "DRV_INT_RESTORE",
         ):
             self.assertIn(symbol, text)
+        self.assertIn("core/compiler.h", text)
 
     def test_isr_contract_documented(self) -> None:
         text = read_text(HDR)
         for phrase in (
             "ISR/polling contract",
             "Safe to call from a timer or external interrupt",
-            "TACHOMETER_CRITICAL_ENTER/EXIT",
+            "DRV_INT_SAVE_AND_DISABLE / DRV_INT_RESTORE",
             "Main-loop context only",
         ):
             self.assertIn(phrase, text)
@@ -290,25 +291,31 @@ class TachometerBehaviorTests(unittest.TestCase):
 
     def test_on_pulse_uses_critical_section(self) -> None:
         body = source_function(read_text(SRC), "uint8_t tachometer_on_pulse(")
-        self.assertIn("TACHOMETER_CRITICAL_ENTER()", body)
-        self.assertIn("TACHOMETER_CRITICAL_EXIT()", body)
+        self.assertIn("DRV_INT_SAVE_AND_DISABLE(int_state)", body)
+        self.assertIn("DRV_INT_RESTORE(int_state)", body)
 
     def test_get_rpm_uses_critical_section(self) -> None:
         body = source_function(read_text(SRC), "uint16_t tachometer_get_rpm(")
-        self.assertIn("TACHOMETER_CRITICAL_ENTER()", body)
-        self.assertIn("TACHOMETER_CRITICAL_EXIT()", body)
+        self.assertIn("DRV_INT_SAVE_AND_DISABLE(int_state)", body)
+        self.assertIn("DRV_INT_RESTORE(int_state)", body)
         self.assertIn("rpm = tachometer->rpm", body)
 
     def test_get_status_uses_critical_section(self) -> None:
         body = source_function(read_text(SRC), "tachometer_status_t tachometer_get_status(")
-        self.assertIn("TACHOMETER_CRITICAL_ENTER()", body)
-        self.assertIn("TACHOMETER_CRITICAL_EXIT()", body)
+        self.assertIn("DRV_INT_SAVE_AND_DISABLE(int_state)", body)
+        self.assertIn("DRV_INT_RESTORE(int_state)", body)
 
     def test_get_pulse_count_uses_critical_section(self) -> None:
         body = source_function(read_text(SRC), "uint32_t tachometer_get_pulse_count(")
-        self.assertIn("TACHOMETER_CRITICAL_ENTER()", body)
-        self.assertIn("TACHOMETER_CRITICAL_EXIT()", body)
+        self.assertIn("DRV_INT_SAVE_AND_DISABLE(int_state)", body)
+        self.assertIn("DRV_INT_RESTORE(int_state)", body)
         self.assertIn("count = tachometer->pulse_count", body)
+
+    def test_on_pulse_does_not_unconditionally_enable_interrupts(self) -> None:
+        body = source_function(read_text(SRC), "uint8_t tachometer_on_pulse(")
+        self.assertNotIn("GIE = 1", body)
+        self.assertNotIn("GIE = 1u", body)
+        self.assertIn("drv_int_state_t", body)
 
 
 class TachometerRuntimeTests(unittest.TestCase):

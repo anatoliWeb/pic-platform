@@ -90,10 +90,33 @@
 
 /* =========================================================
  * Interrupt control
+ *
+ * DRV_INT_DISABLE / DRV_INT_ENABLE are simple toggle macros.
+ * They are unsafe inside ISR context because DRV_INT_ENABLE
+ * unconditionally re-enables interrupts regardless of the
+ * entry state.
+ *
+ * For ISR-safe critical sections use the save/restore pair:
+ *   drv_int_state_t saved;
+ *   DRV_INT_SAVE_AND_DISABLE(saved);
+ *   ... critical section ...
+ *   DRV_INT_RESTORE(saved);
+ *
+ * These are safe whether called from main loop or ISR because
+ * the restore writes back the exact GIE value that was present
+ * before the disable.
  * ========================================================= */
+
+typedef uint8_t drv_int_state_t;
 
 #define DRV_INT_DISABLE()  do { INTCONbits.GIE = 0; } while (0)
 #define DRV_INT_ENABLE()   do { INTCONbits.GIE = 1; } while (0)
+
+#define DRV_INT_SAVE_AND_DISABLE(state) \
+    do { (state) = INTCONbits.GIE; INTCONbits.GIE = 0; } while (0)
+
+#define DRV_INT_RESTORE(state) \
+    do { INTCONbits.GIE = (state); } while (0)
 
 /* =========================================================
  * Utils
