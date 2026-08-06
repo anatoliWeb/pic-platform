@@ -20,6 +20,21 @@ Reusable debounced digital input helper with active-high/low mapping, consuming 
   2. `activate_debounce_ms` / `release_debounce_ms` → directional thresholds
   3. `debounce_ms` → symmetric fallback (when both directional fields are 0)
 - `activate_debounce_ms` and `release_debounce_ms` override the symmetric debounce per direction. When both are 0, `debounce_ms` is used (backward compatible).
+
+### Debounce modes
+
+**Legacy symmetric mode** (both directional fields = 0):
+- Both directions use `debounce_ms`.
+- Exception: if `immediate_active` is set, activation is still instant.
+- This is the backward-compatible default for existing configs.
+
+**Asymmetric mode** (at least one directional field != 0):
+- Each direction uses its own threshold.
+- `activate_debounce_ms == 0` means immediate activation.
+- `release_debounce_ms == 0` means immediate release.
+- Nonzero value means stable-time debounce for that direction.
+- `immediate_active` still overrides activation to 0 ms.
+
 - Latch is optional and clears only by `digital_input_clear_latch()`.
 
 ## Examples

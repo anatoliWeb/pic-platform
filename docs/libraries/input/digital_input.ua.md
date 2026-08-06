@@ -20,6 +20,21 @@ Reusable debounced digital input helper з active-high/low mapping, consuming ed
   2. `activate_debounce_ms` / `release_debounce_ms` → directional thresholds
   3. `debounce_ms` → symmetric fallback (коли обидва directional поля 0)
 - `activate_debounce_ms` та `release_debounce_ms` перезаписують symmetric debounce для кожного напрямку. Якщо обидва 0, використовується `debounce_ms` (сумісність).
+
+### Режими debounce
+
+**Legacy symmetric mode** (обидва directional поля = 0):
+- Обидва напрямки використовують `debounce_ms`.
+- Виняток: якщо `immediate_active` ввімкнений, активація все одно миттєва.
+- Це backward-compatible default для існуючих конфігів.
+
+**Asymmetric mode** (хоча б одне directional поле != 0):
+- Кожен напрямок використовує власний threshold.
+- `activate_debounce_ms == 0` означає миттєву активацію.
+- `release_debounce_ms == 0` означає миттєвий реліз.
+- Ненульове значення означає stable-time debounce для цього напрямку.
+- `immediate_active` все одно перезаписує активацію на 0 ms.
+
 - Latch опційний і скидається тільки `digital_input_clear_latch()`.
 
 ## Приклад

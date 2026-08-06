@@ -24,10 +24,20 @@ static uint8_t digital_input_to_active(const digital_input_t* input, uint8_t raw
  *      (activation is instant regardless of directional fields).
  *   2. If both activate_debounce_ms and release_debounce_ms are 0, fall back
  *      to the symmetric debounce_ms (backward-compatible legacy mode).
- *   3. Otherwise use the direction-specific threshold.
+ *      Note: immediate_active is already handled in step 1, so legacy mode
+ *      applies only to release transitions and to activation when
+ *      immediate_active is not set.
+ *   3. Otherwise use the direction-specific threshold. In asymmetric mode,
+ *      a zero threshold means immediate for that direction.
  *
- * This means immediate_active works correctly even when both directional
- * fields are 0, which is the expected legacy config pattern for safety inputs.
+ * Legacy symmetric mode:
+ *   activate_debounce_ms == 0 && release_debounce_ms == 0
+ *   => both directions use debounce_ms (except activation when immediate_active)
+ *
+ * Asymmetric mode:
+ *   at least one directional field != 0
+ *   => each direction uses its own threshold; zero means immediate for
+ *      that direction; immediate_active still overrides activation to 0 ms.
  */
 static uint16_t digital_input_resolve_debounce(const digital_input_t* input,
                                                uint8_t new_active)

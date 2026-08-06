@@ -30,6 +30,17 @@
  *   immediate_active      - when set, activation is committed on the first
  *                           sample without waiting for the debounce window.
  *                           Release still goes through release_debounce_ms.
+ *
+ * Debounce priority order (digital_input_resolve_debounce):
+ *
+ *   1. immediate_active (activation only): returns 0 regardless of other fields.
+ *   2. Legacy symmetric mode: when BOTH activate_debounce_ms and
+ *      release_debounce_ms are 0, both directions use debounce_ms.
+ *      Exception: if immediate_active is set, activation is still instant.
+ *   3. Asymmetric mode: when at least one directional field is nonzero,
+ *      each direction uses its own threshold. A zero in either field means
+ *      immediate for that direction. immediate_active still overrides
+ *      activation to 0 ms.
  */
 typedef struct
 {
