@@ -15,8 +15,11 @@ Reusable debounced digital input helper з active-high/low mapping, consuming ed
 
 - `active_level` обирає active-high або active-low mapping.
 - `debounce_ms` працює через stable-time, використовується як default для обох напрямків.
+- `immediate_active` перевіряється ПЕРШИМ: якщо ввімкнений, активація миттєва (0 ms) незалежно від directional полів. Це пріоритет:
+  1. `immediate_active` → активація миттєва
+  2. `activate_debounce_ms` / `release_debounce_ms` → directional thresholds
+  3. `debounce_ms` → symmetric fallback (коли обидва directional поля 0)
 - `activate_debounce_ms` та `release_debounce_ms` перезаписують symmetric debounce для кожного напрямку. Якщо обидва 0, використовується `debounce_ms` (сумісність).
-- `immediate_active` робить активацію миттєвою (0 ms debounce). Реліз використовує `release_debounce_ms`.
 - Latch опційний і скидається тільки `digital_input_clear_latch()`.
 
 ## Приклад

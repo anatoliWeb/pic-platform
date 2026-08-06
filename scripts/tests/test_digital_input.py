@@ -117,10 +117,16 @@ class DigitalInputBehaviorTests(unittest.TestCase):
         self.assertIn("(act_ms == 0u) && (rel_ms == 0u)", body)
         self.assertIn("return input->config.debounce_ms", body)
 
-    def test_resolve_debounce_immediate_active(self) -> None:
+    def test_resolve_debounce_immediate_active_checked_first(self) -> None:
         body = source_function(read_text(SRC), "static uint16_t digital_input_resolve_debounce(")
         self.assertIn("immediate_active != 0u", body)
         self.assertIn("return 0u", body)
+        # Verify immediate_active is checked BEFORE the symmetric fallback
+        idx_immediate = body.find("immediate_active != 0u")
+        idx_symmetric = body.find("(act_ms == 0u) && (rel_ms == 0u)")
+        self.assertGreater(idx_immediate, 0)
+        self.assertGreater(idx_symmetric, 0)
+        self.assertLess(idx_immediate, idx_symmetric)
 
     def test_update_uses_resolved_debounce(self) -> None:
         body = source_function(read_text(SRC), "void digital_input_update(")

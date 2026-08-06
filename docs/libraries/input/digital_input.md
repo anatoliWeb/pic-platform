@@ -15,8 +15,11 @@ Reusable debounced digital input helper with active-high/low mapping, consuming 
 
 - `active_level` selects active-high or active-low mapping.
 - `debounce_ms` is stable-time based, used as the default for both directions.
+- `immediate_active` is checked FIRST: when set, activation is instant (0 ms) regardless of directional fields. This is the priority order:
+  1. `immediate_active` → activation instant
+  2. `activate_debounce_ms` / `release_debounce_ms` → directional thresholds
+  3. `debounce_ms` → symmetric fallback (when both directional fields are 0)
 - `activate_debounce_ms` and `release_debounce_ms` override the symmetric debounce per direction. When both are 0, `debounce_ms` is used (backward compatible).
-- `immediate_active` makes activation instant (0 ms debounce). Release still uses `release_debounce_ms`.
 - Latch is optional and clears only by `digital_input_clear_latch()`.
 
 ## Examples

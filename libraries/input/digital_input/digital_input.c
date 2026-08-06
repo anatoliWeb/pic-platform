@@ -18,9 +18,16 @@ static uint8_t digital_input_to_active(const digital_input_t* input, uint8_t raw
 
 /*
  * Resolve the effective debounce threshold for the given transition direction.
- *   - If immediate_active is set and the new level is active, return 0.
- *   - If activate_debounce_ms / release_debounce_ms are both 0, use debounce_ms.
- *   - Otherwise use the direction-specific threshold (0 means immediate).
+ *
+ * Priority order:
+ *   1. If immediate_active is set and the new level is active, return 0
+ *      (activation is instant regardless of directional fields).
+ *   2. If both activate_debounce_ms and release_debounce_ms are 0, fall back
+ *      to the symmetric debounce_ms (backward-compatible legacy mode).
+ *   3. Otherwise use the direction-specific threshold.
+ *
+ * This means immediate_active works correctly even when both directional
+ * fields are 0, which is the expected legacy config pattern for safety inputs.
  */
 static uint16_t digital_input_resolve_debounce(const digital_input_t* input,
                                                uint8_t new_active)
@@ -28,27 +35,28 @@ static uint16_t digital_input_resolve_debounce(const digital_input_t* input,
     uint16_t act_ms;
     uint16_t rel_ms;
 
+    /* Priority 1: immediate_active overrides everything for activation. */
+    if ((new_active != 0u) && (input->config.immediate_active != 0u))
+    {
+        return 0u;
+    }
+
     act_ms = input->config.activate_debounce_ms;
     rel_ms = input->config.release_debounce_ms;
 
     if ((act_ms == 0u) && (rel_ms == 0u))
     {
-        /* Both direction-specific thresholds are 0: fall back to the symmetric
-         * debounce_ms for backward compatibility. */
+        /* Priority 2: both direction-specific thresholds are 0: fall back to
+         * the symmetric debounce_ms for backward compatibility. */
         return input->config.debounce_ms;
     }
 
+    /* Priority 3: use direction-specific threshold. */
     if (new_active != 0u)
     {
-        /* Activation direction. */
-        if (input->config.immediate_active != 0u)
-        {
-            return 0u;
-        }
         return act_ms;
     }
 
-    /* Release direction. */
     return rel_ms;
 }
 
