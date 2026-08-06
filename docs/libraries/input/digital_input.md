@@ -1,6 +1,6 @@
 # digital_input
 
-Reusable debounced digital input helper with active-high/low mapping and consuming edge flags.
+Reusable debounced digital input helper with active-high/low mapping, consuming edge flags, and optional asymmetric debounce.
 
 ## API
 
@@ -14,7 +14,9 @@ Reusable debounced digital input helper with active-high/low mapping and consumi
 ## Behavior
 
 - `active_level` selects active-high or active-low mapping.
-- `debounce_ms` is stable-time based.
+- `debounce_ms` is stable-time based, used as the default for both directions.
+- `activate_debounce_ms` and `release_debounce_ms` override the symmetric debounce per direction. When both are 0, `debounce_ms` is used (backward compatible).
+- `immediate_active` makes activation instant (0 ms debounce). Release still uses `release_debounce_ms`.
 - Latch is optional and clears only by `digital_input_clear_latch()`.
 
 ## Examples

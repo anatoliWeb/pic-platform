@@ -14,12 +14,17 @@ static digital_input_t g_input;
 /*
  * 20 ms debounce, active-low (raw 0 = active), initial raw level released (1),
  * latch enabled so an active event is held until the application clears it.
+ * activate_debounce_ms = 0: immediate activation (safety input).
+ * release_debounce_ms = 20: filtered release (normal return).
  */
 static const digital_input_config_t g_input_config =
 {
     20u,
     0u,
     1u,
+    1u,
+    0u,
+    20u,
     1u
 };
 

@@ -52,7 +52,9 @@ core/types.h
 ## Runtime/time model
 
 - Caller passes monotonic milliseconds.
-- `debounce_ms` is a stable-time threshold.
+- `debounce_ms` is the default stable-time threshold for both directions.
+- `activate_debounce_ms` / `release_debounce_ms` override the symmetric debounce per direction. When both are 0, `debounce_ms` is used.
+- `immediate_active` makes activation instant (0 ms debounce). Release still uses `release_debounce_ms`.
 - `rose()` and `fell()` consume their flags.
 - Latch stays set until `digital_input_clear_latch()`.
 

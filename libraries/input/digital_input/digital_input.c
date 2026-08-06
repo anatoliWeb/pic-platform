@@ -17,6 +17,42 @@ static uint8_t digital_input_to_active(const digital_input_t* input, uint8_t raw
 }
 
 /*
+ * Resolve the effective debounce threshold for the given transition direction.
+ *   - If immediate_active is set and the new level is active, return 0.
+ *   - If activate_debounce_ms / release_debounce_ms are both 0, use debounce_ms.
+ *   - Otherwise use the direction-specific threshold (0 means immediate).
+ */
+static uint16_t digital_input_resolve_debounce(const digital_input_t* input,
+                                               uint8_t new_active)
+{
+    uint16_t act_ms;
+    uint16_t rel_ms;
+
+    act_ms = input->config.activate_debounce_ms;
+    rel_ms = input->config.release_debounce_ms;
+
+    if ((act_ms == 0u) && (rel_ms == 0u))
+    {
+        /* Both direction-specific thresholds are 0: fall back to the symmetric
+         * debounce_ms for backward compatibility. */
+        return input->config.debounce_ms;
+    }
+
+    if (new_active != 0u)
+    {
+        /* Activation direction. */
+        if (input->config.immediate_active != 0u)
+        {
+            return 0u;
+        }
+        return act_ms;
+    }
+
+    /* Release direction. */
+    return rel_ms;
+}
+
+/*
  * Commit a debounced raw level as the new stable state. Only a committed
  * transition produces a rose/fell edge flag; a brief glitch that returns to the
  * previous stable level never reaches here and therefore never creates an edge.
@@ -54,7 +90,8 @@ drv_status_t digital_input_init(digital_input_t* input,
         (config == (const digital_input_config_t*)0) ||
         (config->active_level > 1u) ||
         (config->initial_raw_level > 1u) ||
-        (config->latch_active > 1u))
+        (config->latch_active > 1u) ||
+        (config->immediate_active > 1u))
     {
         return DRV_STATUS_ERROR;
     }
@@ -77,6 +114,8 @@ void digital_input_update(digital_input_t* input,
                           uint32_t now_ms)
 {
     uint8_t normalized_raw;
+    uint8_t new_active;
+    uint16_t debounce_ms;
 
     if ((input == (digital_input_t*)0) || (input->initialized == 0u))
     {
@@ -93,6 +132,19 @@ void digital_input_update(digital_input_t* input,
         return;
     }
 
+    new_active = digital_input_to_active(input, normalized_raw);
+    debounce_ms = digital_input_resolve_debounce(input, new_active);
+
+    if (debounce_ms == 0u)
+    {
+        /* Immediate commit: no debounce required for this direction. */
+        if (normalized_raw != input->stable_raw_level)
+        {
+            digital_input_commit_level(input, normalized_raw);
+        }
+        return;
+    }
+
     if (normalized_raw != input->raw_level)
     {
         /* A new candidate level: restart the debounce window. */
@@ -100,7 +152,7 @@ void digital_input_update(digital_input_t* input,
         input->pending_since_ms = now_ms;
     }
 
-    if ((uint32_t)(now_ms - input->pending_since_ms) >= (uint32_t)input->config.debounce_ms)
+    if ((uint32_t)(now_ms - input->pending_since_ms) >= (uint32_t)debounce_ms)
     {
         /* The candidate held for the full debounce window: commit it as the
          * new stable state, then begin a fresh debounce period. */

@@ -1,6 +1,6 @@
 # digital_input
 
-Reusable debounced digital input helper з active-high/low mapping і consuming edge flags.
+Reusable debounced digital input helper з active-high/low mapping, consuming edge flags і optional asymmetric debounce.
 
 ## API
 
@@ -14,7 +14,9 @@ Reusable debounced digital input helper з active-high/low mapping і consuming 
 ## Поведінка
 
 - `active_level` обирає active-high або active-low mapping.
-- `debounce_ms` працює через stable-time.
+- `debounce_ms` працює через stable-time, використовується як default для обох напрямків.
+- `activate_debounce_ms` та `release_debounce_ms` перезаписують symmetric debounce для кожного напрямку. Якщо обидва 0, використовується `debounce_ms` (сумісність).
+- `immediate_active` робить активацію миттєвою (0 ms debounce). Реліз використовує `release_debounce_ms`.
 - Latch опційний і скидається тільки `digital_input_clear_latch()`.
 
 ## Приклад

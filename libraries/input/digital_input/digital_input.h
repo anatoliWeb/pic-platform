@@ -11,14 +11,25 @@
 /*
  * Configuration for a debounced digital input.
  *
- *   debounce_ms       - how long a candidate raw level must persist before it
- *                       becomes the committed stable level.
- *   active_level      - the raw electrical level (0 or 1) that maps to the
- *                       logical "active" state (active-low or active-high).
- *   initial_raw_level - the electrical level assumed at init; committing it
- *                       does NOT emit an edge event.
- *   latch_active      - when set, an active transition also sets the sticky
- *                       latch until the application clears it.
+ *   debounce_ms           - how long a candidate raw level must persist before
+ *                           it becomes the committed stable level. Used as the
+ *                           default when activate_debounce_ms and
+ *                           release_debounce_ms are both 0.
+ *   active_level          - the raw electrical level (0 or 1) that maps to the
+ *                           logical "active" state (active-low or active-high).
+ *   initial_raw_level     - the electrical level assumed at init; committing it
+ *                           does NOT emit an edge event.
+ *   latch_active          - when set, an active transition also sets the sticky
+ *                           latch until the application clears it.
+ *   activate_debounce_ms  - debounce for activation transitions (level becomes
+ *                           active). 0 = immediate activation (no debounce).
+ *                           When both activate and release are 0, debounce_ms
+ *                           is used for both directions (backward compatible).
+ *   release_debounce_ms   - debounce for release transitions (level returns to
+ *                           inactive). 0 = use debounce_ms as fallback.
+ *   immediate_active      - when set, activation is committed on the first
+ *                           sample without waiting for the debounce window.
+ *                           Release still goes through release_debounce_ms.
  */
 typedef struct
 {
@@ -26,6 +37,9 @@ typedef struct
     uint8_t active_level;
     uint8_t initial_raw_level;
     uint8_t latch_active;
+    uint16_t activate_debounce_ms;
+    uint16_t release_debounce_ms;
+    uint8_t immediate_active;
 } digital_input_config_t;
 
 /*

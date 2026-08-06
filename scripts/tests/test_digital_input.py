@@ -63,6 +63,9 @@ class DigitalInputHeaderTests(unittest.TestCase):
             "active_level",
             "initial_raw_level",
             "latch_active",
+            "activate_debounce_ms",
+            "release_debounce_ms",
+            "immediate_active",
         ):
             self.assertIn(symbol, text)
 
@@ -104,6 +107,30 @@ class DigitalInputBehaviorTests(unittest.TestCase):
         self.assertIn("initial_raw_level", body)
         self.assertIn("stable_active", body)
         self.assertIn("latched = 0u", body)
+
+    def test_init_validates_immediate_active(self) -> None:
+        body = source_function(read_text(SRC), "drv_status_t digital_input_init(")
+        self.assertIn("immediate_active > 1u", body)
+
+    def test_resolve_debounce_uses_symmetric_fallback(self) -> None:
+        body = source_function(read_text(SRC), "static uint16_t digital_input_resolve_debounce(")
+        self.assertIn("(act_ms == 0u) && (rel_ms == 0u)", body)
+        self.assertIn("return input->config.debounce_ms", body)
+
+    def test_resolve_debounce_immediate_active(self) -> None:
+        body = source_function(read_text(SRC), "static uint16_t digital_input_resolve_debounce(")
+        self.assertIn("immediate_active != 0u", body)
+        self.assertIn("return 0u", body)
+
+    def test_update_uses_resolved_debounce(self) -> None:
+        body = source_function(read_text(SRC), "void digital_input_update(")
+        self.assertIn("digital_input_resolve_debounce", body)
+        self.assertIn("debounce_ms", body)
+
+    def test_immediate_commit_on_zero_debounce(self) -> None:
+        body = source_function(read_text(SRC), "void digital_input_update(")
+        self.assertIn("if (debounce_ms == 0u)", body)
+        self.assertIn("digital_input_commit_level(input, normalized_raw)", body)
 
 
 if __name__ == "__main__":
