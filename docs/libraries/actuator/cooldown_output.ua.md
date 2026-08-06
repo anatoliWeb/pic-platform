@@ -23,6 +23,7 @@ Reusable requested/active output helper з cooldown delay, remaining time і opt
 ## Поведінка
 
 - `cooldown_ms == 0` означає immediate off.
+- `init()` перевіряє `cooldown_ms <= COOLDOWN_OUTPUT_MAX_DURATION_MS` і повертає `DRV_STATUS_ERROR` при перевищенні. Невдала init залишає модуль неініціалізованим (`initialized` лишається 0).
 - Повторний request on скасовує pending shutdown.
 - Callback спрацьовує лише на зміну active-state.
 - `set_duration_ms()` повертає `DRV_STATUS_ERROR` якщо тривалість перевищує `COOLDOWN_OUTPUT_MAX_DURATION_MS`. Якщо відбувається охолодження, deadline перераховується з `now_ms` з новою тривалістю. Якщо нова тривалість 0, вихід вимикається негайно.

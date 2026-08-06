@@ -23,6 +23,7 @@ Reusable requested/active output helper with cooldown delay, remaining time, and
 ## Behavior
 
 - `cooldown_ms == 0` means immediate off.
+- `init()` validates `cooldown_ms <= COOLDOWN_OUTPUT_MAX_DURATION_MS` and returns `DRV_STATUS_ERROR` if exceeded. Failed init leaves the module uninitialized (`initialized` stays 0).
 - Re-requesting on cancels pending shutdown.
 - Callback fires only on active-state change.
 - `set_duration_ms()` returns `DRV_STATUS_ERROR` if duration exceeds `COOLDOWN_OUTPUT_MAX_DURATION_MS`. If currently cooling down, the deadline is recalculated from `now_ms` with the new duration. If the new duration is 0, the output turns off immediately.

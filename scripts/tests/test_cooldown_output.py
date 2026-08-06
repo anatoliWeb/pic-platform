@@ -139,6 +139,11 @@ class CooldownOutputBehaviorTests(unittest.TestCase):
         body = source_function(read_text(SRC), "drv_status_t cooldown_output_init(")
         self.assertIn("output->cooldown_ms = config->cooldown_ms", body)
 
+    def test_init_validates_max_duration(self) -> None:
+        body = source_function(read_text(SRC), "drv_status_t cooldown_output_init(")
+        self.assertIn("config->cooldown_ms > COOLDOWN_OUTPUT_MAX_DURATION_MS", body)
+        self.assertIn("DRV_STATUS_ERROR", body)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -32,6 +32,14 @@ drv_status_t cooldown_output_init(cooldown_output_t* output,
         return DRV_STATUS_ERROR;
     }
 
+    /* Validate cooldown duration before any state is written. A value above
+     * COOLDOWN_OUTPUT_MAX_DURATION_MS would break the wrap-safe deadline
+     * comparison (int32_t)(now - deadline) in set_requested and process. */
+    if (config->cooldown_ms > COOLDOWN_OUTPUT_MAX_DURATION_MS)
+    {
+        return DRV_STATUS_ERROR;
+    }
+
     output->config = *config;
     output->initialized = 1u;
     output->requested = 0u;
