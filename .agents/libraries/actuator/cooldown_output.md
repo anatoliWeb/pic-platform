@@ -57,8 +57,8 @@ core/types.h
 - `cooldown_ms == 0` means immediate off.
 - Re-requesting on cancels pending shutdown.
 - The callback fires only on active-state changes.
-- `set_duration_ms()` updates the stored cooldown. If cooling down, the deadline is recalculated from `now_ms` with the new duration. If the new duration is 0, the output turns off immediately.
-- `cancel()` clears the cooling-down flag while preserving the current physical output state.
+- `set_duration_ms()` returns `DRV_STATUS_ERROR` if duration exceeds `COOLDOWN_OUTPUT_MAX_DURATION_MS`. If cooling down, the deadline is recalculated from `now_ms` with the new duration. If the new duration is 0, the output turns off immediately.
+- `cancel()` clears the cooling-down flag and syncs `requested` with `active`: if the output is ON, `requested` becomes 1; if OFF, `requested` stays 0. This prevents a contradictory state.
 
 ## ISR contract
 

@@ -102,13 +102,18 @@ void cooldown_output_set_requested(cooldown_output_t* output,
     output->cooldown_end_ms = now_ms + output->cooldown_ms;
 }
 
-void cooldown_output_set_duration_ms(cooldown_output_t* output,
-                                     uint32_t duration_ms,
-                                     uint32_t now_ms)
+drv_status_t cooldown_output_set_duration_ms(cooldown_output_t* output,
+                                             uint32_t duration_ms,
+                                             uint32_t now_ms)
 {
     if ((output == (cooldown_output_t*)0) || (output->initialized == 0u))
     {
-        return;
+        return DRV_STATUS_ERROR;
+    }
+
+    if (duration_ms > COOLDOWN_OUTPUT_MAX_DURATION_MS)
+    {
+        return DRV_STATUS_ERROR;
     }
 
     output->cooldown_ms = duration_ms;
@@ -136,6 +141,8 @@ void cooldown_output_set_duration_ms(cooldown_output_t* output,
             output->cooldown_end_ms = now_ms + duration_ms;
         }
     }
+
+    return DRV_STATUS_OK;
 }
 
 void cooldown_output_cancel(cooldown_output_t* output)
@@ -145,9 +152,13 @@ void cooldown_output_cancel(cooldown_output_t* output)
         return;
     }
 
-    /* Cancel any pending cooldown while preserving the current active state
-     * and the request. The output stays in its current physical state. */
+    /* Cancel any pending cooldown. Sync requested state with the current
+     * physical output to avoid a contradictory state where requested=0 but
+     * active=1 with no cooling-down. If the output is currently ON, the
+     * request becomes ON so the output stays on in a consistent state.
+     * If the output is OFF, the request stays OFF. */
     output->cooling_down = 0u;
+    output->requested = output->active;
 }
 
 void cooldown_output_process(cooldown_output_t* output, uint32_t now_ms)

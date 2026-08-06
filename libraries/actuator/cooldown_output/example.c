@@ -44,17 +44,19 @@ void cooldown_output_example_request(uint8_t requested, uint32_t now_ms)
 }
 
 /* Runtime duration change. Updates the stored cooldown. If currently cooling
- * down, the deadline is recalculated from now with the new duration. */
+ * down, the deadline is recalculated from now with the new duration.
+ * Returns DRV_STATUS_ERROR if duration exceeds COOLDOWN_OUTPUT_MAX_DURATION_MS. */
 void cooldown_output_example_change_duration(uint32_t duration_ms,
                                              uint32_t now_ms)
 {
-    cooldown_output_set_duration_ms(&g_output, duration_ms, now_ms);
+    (void)cooldown_output_set_duration_ms(&g_output, duration_ms, now_ms);
 }
 
-/* Cancel pending cooldown. The output stays in its current physical state. */
-void cooldown_output_example_cancel(uint32_t now_ms)
+/* Cancel pending cooldown. Syncs requested state with the current physical
+ * output: if the output is ON, requested becomes ON; if OFF, requested stays
+ * OFF. No contradictory state is created. */
+void cooldown_output_example_cancel(void)
 {
-    (void)now_ms;
     cooldown_output_cancel(&g_output);
 }
 

@@ -9,6 +9,13 @@
 #include "core/types.h"
 
 /*
+ * Maximum valid cooldown duration. The wrap-safe deadline comparison
+ * (int32_t)(now - deadline) requires cooldown_ms < 2^31. This constant
+ * enforces the limit at compile time and documents the contract.
+ */
+#define COOLDOWN_OUTPUT_MAX_DURATION_MS  0x7FFFFFFFUL
+
+/*
  * Optional callback fired only when the physical active state actually changes
  * (on -> off or off -> on). It reports the physical active state, not the
  * caller's latest request, so the application can drive the real output.
@@ -59,9 +66,9 @@ drv_status_t cooldown_output_init(cooldown_output_t* output,
 void cooldown_output_set_requested(cooldown_output_t* output,
                                    uint8_t requested,
                                    uint32_t now_ms);
-void cooldown_output_set_duration_ms(cooldown_output_t* output,
-                                     uint32_t duration_ms,
-                                     uint32_t now_ms);
+drv_status_t cooldown_output_set_duration_ms(cooldown_output_t* output,
+                                             uint32_t duration_ms,
+                                             uint32_t now_ms);
 void cooldown_output_cancel(cooldown_output_t* output);
 void cooldown_output_process(cooldown_output_t* output, uint32_t now_ms);
 uint8_t cooldown_output_is_active(const cooldown_output_t* output);

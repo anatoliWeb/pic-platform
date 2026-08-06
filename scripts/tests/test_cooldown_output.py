@@ -62,6 +62,7 @@ class CooldownOutputHeaderTests(unittest.TestCase):
             "cooldown_output_get_remaining_ms(",
             "cooldown_output_force_off(",
             "cooldown_output_callback_t",
+            "COOLDOWN_OUTPUT_MAX_DURATION_MS",
         ):
             self.assertIn(symbol, text)
 
@@ -110,24 +111,29 @@ class CooldownOutputBehaviorTests(unittest.TestCase):
         self.assertIn("(int32_t)(now_ms - output->cooldown_end_ms) >= 0", body)
 
     def test_set_duration_updates_stored_duration(self) -> None:
-        body = source_function(read_text(SRC), "void cooldown_output_set_duration_ms(")
+        body = source_function(read_text(SRC), "drv_status_t cooldown_output_set_duration_ms(")
         self.assertIn("output->cooldown_ms = duration_ms", body)
 
     def test_set_duration_recalculates_deadline_when_cooling(self) -> None:
-        body = source_function(read_text(SRC), "void cooldown_output_set_duration_ms(")
+        body = source_function(read_text(SRC), "drv_status_t cooldown_output_set_duration_ms(")
         self.assertIn("output->cooling_down != 0u", body)
         self.assertIn("output->cooldown_end_ms = now_ms + duration_ms", body)
 
     def test_set_duration_immediate_off_on_zero(self) -> None:
-        body = source_function(read_text(SRC), "void cooldown_output_set_duration_ms(")
+        body = source_function(read_text(SRC), "drv_status_t cooldown_output_set_duration_ms(")
         self.assertIn("duration_ms == 0UL", body)
         self.assertIn("output->active = 0u", body)
         self.assertIn("cooldown_output_notify", body)
 
-    def test_cancel_preserves_active_state(self) -> None:
+    def test_set_duration_validates_max(self) -> None:
+        body = source_function(read_text(SRC), "drv_status_t cooldown_output_set_duration_ms(")
+        self.assertIn("COOLDOWN_OUTPUT_MAX_DURATION_MS", body)
+        self.assertIn("DRV_STATUS_ERROR", body)
+
+    def test_cancel_syncs_requested_with_active(self) -> None:
         body = source_function(read_text(SRC), "void cooldown_output_cancel(")
         self.assertIn("output->cooling_down = 0u", body)
-        self.assertNotIn("output->active = 0u", body)
+        self.assertIn("output->requested = output->active", body)
 
     def test_init_stores_cooldown_ms(self) -> None:
         body = source_function(read_text(SRC), "drv_status_t cooldown_output_init(")
