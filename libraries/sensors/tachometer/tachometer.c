@@ -258,13 +258,159 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
 
 void tachometer_process(tachometer_t* tachometer, uint32_t now_us)
 {
+    drv_int_state_t int_state;
+    uint32_t last_pulse_us_snap;
+    tachometer_session_state_t session_state_snap;
+    tachometer_status_t status_snap;
+    uint8_t expected_running_snap;
+    uint32_t expected_running_since_us_snap;
+    uint32_t grace_us;
+    uint32_t timeout_us;
+    uint32_t since_start_us;
+
     if ((tachometer == (tachometer_t*)0) ||
         (tachometer->initialized == 0u))
     {
         return;
     }
 
-    tachometer_update_status(tachometer, now_us);
+    /* Take an atomic snapshot of ISR-written fields. On PIC18, uint32_t
+     * reads are not atomic (4 byte-wide accesses). Without this snapshot,
+     * a torn read of last_pulse_us could cause a false timeout or
+     * incorrect status transition. */
+    DRV_INT_SAVE_AND_DISABLE(int_state);
+    last_pulse_us_snap = tachometer->last_pulse_us;
+    session_state_snap = tachometer->session_state;
+    status_snap = tachometer->status;
+    expected_running_snap = tachometer->expected_running;
+    expected_running_since_us_snap = tachometer->expected_running_since_us;
+    DRV_INT_RESTORE(int_state);
+
+    if (status_snap == TACHOMETER_STATUS_CONFIG_ERROR)
+    {
+        return;
+    }
+
+    if (expected_running_snap == 0u)
+    {
+        /* Running is not expected. Only rearm if session is not already
+         * unarmed, to avoid redundant writes. */
+        if (session_state_snap != TACHOMETER_SESSION_UNARMED)
+        {
+            /* Re-verify before committing: an ISR pulse may have arrived
+             * after the snapshot. Check if last_pulse_us changed — if so,
+             * the ISR already updated the session, skip the rearm. */
+            DRV_INT_SAVE_AND_DISABLE(int_state);
+            if (tachometer->last_pulse_us == last_pulse_us_snap)
+            {
+                tachometer_rearm(tachometer);
+                tachometer->status = TACHOMETER_STATUS_STOPPED;
+            }
+            DRV_INT_RESTORE(int_state);
+        }
+        else
+        {
+            /* Session already unarmed; just ensure status is STOPPED. */
+            if (status_snap != TACHOMETER_STATUS_STOPPED)
+            {
+                DRV_INT_SAVE_AND_DISABLE(int_state);
+                if (tachometer->last_pulse_us == last_pulse_us_snap)
+                {
+                    tachometer->status = TACHOMETER_STATUS_STOPPED;
+                }
+                DRV_INT_RESTORE(int_state);
+            }
+        }
+        return;
+    }
+
+    grace_us = tachometer_ms_to_us(tachometer->config.startup_grace_ms);
+    since_start_us = (uint32_t)(now_us - expected_running_since_us_snap);
+
+    if (since_start_us < grace_us)
+    {
+        if (status_snap != TACHOMETER_STATUS_STARTING)
+        {
+            DRV_INT_SAVE_AND_DISABLE(int_state);
+            if (tachometer->last_pulse_us == last_pulse_us_snap)
+            {
+                tachometer->status = TACHOMETER_STATUS_STARTING;
+            }
+            DRV_INT_RESTORE(int_state);
+        }
+        return;
+    }
+
+    if (session_state_snap == TACHOMETER_SESSION_UNARMED)
+    {
+        DRV_INT_SAVE_AND_DISABLE(int_state);
+        if (tachometer->last_pulse_us == last_pulse_us_snap)
+        {
+            tachometer_rearm(tachometer);
+            tachometer->status = TACHOMETER_STATUS_NO_SIGNAL;
+        }
+        DRV_INT_RESTORE(int_state);
+        return;
+    }
+
+    timeout_us = tachometer_ms_to_us(tachometer->config.signal_timeout_ms);
+    if ((timeout_us != 0UL) &&
+        ((uint32_t)(now_us - last_pulse_us_snap) >= timeout_us))
+    {
+        /* Signal loss detected from snapshot. Before rearming, verify the
+         * ISR has not delivered a newer pulse since the snapshot. If
+         * last_pulse_us changed, a fresh pulse arrived and the session was
+         * already updated by on_pulse(). Skip the rearm. */
+        DRV_INT_SAVE_AND_DISABLE(int_state);
+        if (tachometer->last_pulse_us == last_pulse_us_snap)
+        {
+            tachometer_rearm(tachometer);
+            tachometer->status = TACHOMETER_STATUS_NO_SIGNAL;
+        }
+        DRV_INT_RESTORE(int_state);
+        return;
+    }
+
+    if (session_state_snap != TACHOMETER_SESSION_ACTIVE)
+    {
+        if (status_snap != TACHOMETER_STATUS_STARTING)
+        {
+            DRV_INT_SAVE_AND_DISABLE(int_state);
+            if (tachometer->last_pulse_us == last_pulse_us_snap)
+            {
+                tachometer->status = TACHOMETER_STATUS_STARTING;
+            }
+            DRV_INT_RESTORE(int_state);
+        }
+        return;
+    }
+
+    /* Session is ACTIVE. Check RPM against minimum. The rpm value was
+     * snapshot-safe (uint16_t, may tear but the comparison is advisory). */
+    if ((tachometer->rpm < tachometer->config.minimum_rpm) &&
+        (tachometer->config.minimum_rpm != 0u))
+    {
+        if (status_snap != TACHOMETER_STATUS_TOO_SLOW)
+        {
+            DRV_INT_SAVE_AND_DISABLE(int_state);
+            if (tachometer->last_pulse_us == last_pulse_us_snap)
+            {
+                tachometer->status = TACHOMETER_STATUS_TOO_SLOW;
+            }
+            DRV_INT_RESTORE(int_state);
+        }
+        return;
+    }
+
+    if (status_snap != TACHOMETER_STATUS_RUNNING)
+    {
+        DRV_INT_SAVE_AND_DISABLE(int_state);
+        if (tachometer->last_pulse_us == last_pulse_us_snap)
+        {
+            tachometer->status = TACHOMETER_STATUS_RUNNING;
+        }
+        DRV_INT_RESTORE(int_state);
+    }
 }
 
 uint16_t tachometer_get_rpm(const tachometer_t* tachometer)

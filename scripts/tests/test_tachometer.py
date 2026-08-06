@@ -294,6 +294,22 @@ class TachometerBehaviorTests(unittest.TestCase):
         self.assertIn("DRV_INT_SAVE_AND_DISABLE(int_state)", body)
         self.assertIn("DRV_INT_RESTORE(int_state)", body)
 
+    def test_process_takes_atomic_snapshot(self) -> None:
+        body = source_function(read_text(SRC), "void tachometer_process(")
+        self.assertIn("DRV_INT_SAVE_AND_DISABLE(int_state)", body)
+        self.assertIn("DRV_INT_RESTORE(int_state)", body)
+        self.assertIn("last_pulse_us_snap", body)
+        self.assertIn("session_state_snap", body)
+
+    def test_process_reverifies_before_rearm(self) -> None:
+        body = source_function(read_text(SRC), "void tachometer_process(")
+        self.assertIn("tachometer->last_pulse_us == last_pulse_us_snap", body)
+
+    def test_process_no_unconditional_gie_enable(self) -> None:
+        body = source_function(read_text(SRC), "void tachometer_process(")
+        self.assertNotIn("GIE = 1", body)
+        self.assertNotIn("GIE = 1u", body)
+
     def test_get_rpm_uses_critical_section(self) -> None:
         body = source_function(read_text(SRC), "uint16_t tachometer_get_rpm(")
         self.assertIn("DRV_INT_SAVE_AND_DISABLE(int_state)", body)

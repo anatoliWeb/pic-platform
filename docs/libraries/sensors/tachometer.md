@@ -18,7 +18,7 @@ Reusable pulse-to-RPM helper with startup grace, noise rejection, timeout, ISR-s
 ## ISR contract
 
 - `tachometer_on_pulse()` is safe to call from timer or external interrupt context. It uses `DRV_INT_SAVE_AND_DISABLE` / `DRV_INT_RESTORE` from `core/compiler.h` to protect shared fields. These macros save the previous GIE state and restore it exactly, so they are safe from ISR context (where GIE is already 0) and from the main loop (where GIE is 1).
-- `tachometer_process()` must be called from the main loop. It does NOT use critical sections; it reads ISR-written fields that may change at any time.
+- `tachometer_process()` takes an atomic snapshot of ISR-written fields (`last_pulse_us`, `session_state`, `rpm`, `expected_running`, `expected_running_since_us`) under a short critical section. All timeout and status calculations use the snapshot. Before committing any state change (rearm, status update), it re-verifies that `last_pulse_us` has not changed — if it changed, a newer pulse arrived and the stale result is discarded.
 - Getters (`get_rpm`, `get_status`, `get_pulse_count`) return consistent single-field snapshots protected by short critical sections.
 - `init`, `set_expected_running`, and `reset` are main-loop only.
 

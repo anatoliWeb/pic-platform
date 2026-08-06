@@ -63,8 +63,8 @@ core/types.h
 ## ISR contract
 
 - The module owns no ISR.
-- A timer or external interrupt may call `tachometer_on_pulse()` with the pulse timestamp. This function is ISR-safe and uses `DRV_INT_SAVE_AND_DISABLE` / `DRV_INT_RESTORE` from `core/compiler.h` to protect shared fields. These macros save the previous GIE state and restore it exactly, so they are safe whether called from main loop or ISR context.
-- `tachometer_process()` must be called from the main loop or a timer task. It does NOT use critical sections; it reads ISR-written fields that may change at any time.
+- A timer or external interrupt may call `tachometer_on_pulse()` with the pulse timestamp. This function is ISR-safe and uses `DRV_INT_SAVE_AND_DISABLE` / `DRV_INT_RESTORE` from `core/compiler.h` to protect shared fields.
+- `tachometer_process()` must be called from the main loop. It takes an atomic snapshot of ISR-written fields under a short critical section, computes timeout/status using the snapshot, and re-verifies `last_pulse_us` before committing any state change to prevent stale results from overwriting fresh pulse data.
 - Getters (`get_rpm`, `get_status`, `get_pulse_count`) return consistent single-field snapshots protected by short critical sections and are main-loop only.
 - `init`, `set_expected_running`, and `reset` are main-loop only; do not call from ISR.
 - Multiple instances are fully independent; no shared global state.

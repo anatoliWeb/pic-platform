@@ -100,11 +100,16 @@ void tachometer_reset(tachometer_t* tachometer);
  *
  * tachometer_process()
  *   - Call from the main loop or a periodic timer task.
- *   - Advances timeout and status without blocking.
- *   - Does NOT use critical sections; it reads ISR-written fields that may
- *     change at any time. Callers that need a consistent multi-field snapshot
- *     should use the getter functions instead.
- *   - Reads: session_state, last_pulse_us, rpm, status.
+ *   - Takes an atomic snapshot of ISR-written fields (last_pulse_us,
+ *     session_state, rpm, expected_running, expected_running_since_us)
+ *     under a short critical section.
+ *   - Computes timeout and status transitions using the snapshot.
+ *   - Before committing any state change (rearm, status update), re-verifies
+ *     that last_pulse_us has not changed since the snapshot. If it changed,
+ *     a newer pulse arrived after the snapshot and on_pulse() already updated
+ *     the session — the stale result is discarded.
+ *   - This prevents a torn read of last_pulse_us from causing a false
+ *     NO_SIGNAL timeout that would overwrite a fresh pulse state.
  *
  * tachometer_get_rpm() / tachometer_get_status() / tachometer_get_pulse_count()
  *   - Main-loop context only.
