@@ -425,6 +425,32 @@ class Rs485DocumentationConsistencyTests(unittest.TestCase):
             text = read_text(doc)
             self.assertIn("50", text, f"{doc.name} must document guard delay")
 
+    def test_docs_document_minimum_baud(self) -> None:
+        docs_en = ROOT / "docs" / "drivers" / "communication" / "rs485.md"
+        docs_ua = ROOT / "docs" / "drivers" / "communication" / "rs485.ua.md"
+        for doc in (docs_en, docs_ua):
+            text = read_text(doc)
+            self.assertIn("9600", text, f"{doc.name} must document 9600 baud minimum")
+
+    def test_docs_state_minimum_supported_baud(self) -> None:
+        docs_en = ROOT / "docs" / "drivers" / "communication" / "rs485.md"
+        docs_ua = ROOT / "docs" / "drivers" / "communication" / "rs485.ua.md"
+        en_text = read_text(docs_en)
+        ua_text = read_text(docs_ua)
+        self.assertIn("minimum", en_text.lower(),
+                       "EN docs must state minimum supported baud")
+        self.assertIn("9600", ua_text, "UA docs must state 9600 baud minimum")
+
+    def test_docs_warn_below_9600(self) -> None:
+        docs_en = ROOT / "docs" / "drivers" / "communication" / "rs485.md"
+        docs_ua = ROOT / "docs" / "drivers" / "communication" / "rs485.ua.md"
+        en_text = read_text(docs_en)
+        ua_text = read_text(docs_ua)
+        self.assertIn("not supported", en_text.lower(),
+                       "EN docs must warn that below 9600 is not supported")
+        self.assertIn("не підтримуються", ua_text,
+                       "UA docs must warn that below 9600 is not supported")
+
 
 class Rs485SourceInclusionNoDuplicationTests(unittest.TestCase):
     def test_xc8_wrapper_not_added_alongside_shared(self) -> None:
