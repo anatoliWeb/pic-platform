@@ -14,17 +14,20 @@
 #define RS485_TIMEOUT_TICKS           200u
 
 /*
- * TX-complete timeout: 100 iterations x 100 us = 10 ms.
+ * TX-complete timeout contract:
  *
- * At 9600 baud one byte takes ~1.04 ms to shift out.
- * 10 ms covers worst-case baud rate with 10x margin.
+ *   poll interval:   100 us  (RS485_TX_COMPLETE_POLL_US)
+ *   total timeout: 10000 us  (RS485_TX_COMPLETE_TIMEOUT_US = 10 ms)
+ *
+ * At 9600 baud one byte (10 bits) takes ~1.04 ms.
+ * 10 ms covers worst-case baud rate with ~10x margin.
  *
  * Uses DRV_DELAY_US() for deterministic, compiler-independent timing.
- * The loop polls TRMT between delays so it returns as soon as the
- * shift register empties — the 10 ms is a ceiling, not a fixed wait.
+ * The loop polls TRMT between delays and returns immediately when
+ * the shift register empties — the 10 ms is a ceiling, not a fixed wait.
  */
-#define RS485_TX_COMPLETE_DELAY_US    100u
-#define RS485_TX_COMPLETE_ITERATIONS  100u
+#define RS485_TX_COMPLETE_POLL_US      100u
+#define RS485_TX_COMPLETE_TIMEOUT_US 10000u
 
 /*
  * RS485 direction control pin.
@@ -43,7 +46,7 @@ static uint8_t rs485_dir_pin = 0u;
 
 static uint8_t rs485_wait_tx_complete(void)
 {
-    uint16_t timeout = RS485_TX_COMPLETE_ITERATIONS;
+    uint16_t elapsed_us = 0u;
 
     /*
      * Wait until UART transmit shift register is empty.
@@ -55,17 +58,22 @@ static uint8_t rs485_wait_tx_complete(void)
      * If we switch RS485 direction before TRMT becomes 1,
      * the final byte or stop bit can be cut and receiver will see garbage.
      *
-     * Uses DRV_DELAY_US(100u) per iteration for deterministic timing.
-     * Total timeout: RS485_TX_COMPLETE_ITERATIONS x RS485_TX_COMPLETE_DELAY_US.
-     * Returns immediately when TRMT becomes 1 — does not wait full timeout.
+     * Polls TRMT with DRV_DELAY_US(100u) between checks.
+     * Returns 1 when TRMT becomes 1 (success).
+     * Returns 0 when elapsed time exceeds RS485_TX_COMPLETE_TIMEOUT_US.
      */
-    while ((TXSTAbits.TRMT == 0u) && (timeout > 0u))
+    while (TXSTAbits.TRMT == 0u)
     {
-        DRV_DELAY_US(RS485_TX_COMPLETE_DELAY_US);
-        timeout--;
+        if (elapsed_us >= RS485_TX_COMPLETE_TIMEOUT_US)
+        {
+            return 0u;
+        }
+
+        DRV_DELAY_US(RS485_TX_COMPLETE_POLL_US);
+        elapsed_us = (uint16_t)(elapsed_us + RS485_TX_COMPLETE_POLL_US);
     }
 
-    return (timeout > 0u) ? 1u : 0u;
+    return 1u;
 }
 
 void rs485_init(volatile uint8_t* dir_port, volatile uint8_t* dir_tris, uint8_t dir_pin)

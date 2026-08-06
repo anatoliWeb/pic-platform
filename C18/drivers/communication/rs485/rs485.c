@@ -10,20 +10,25 @@
 
 #define RS485_START_BYTE              0xAAu
 #define RS485_TIMEOUT_TICKS           200u
-#define RS485_TX_COMPLETE_DELAY_US    100u
-#define RS485_TX_COMPLETE_ITERATIONS  100u
+#define RS485_TX_COMPLETE_POLL_US      100u
+#define RS485_TX_COMPLETE_TIMEOUT_US 10000u
 
 static uint8_t rs485_wait_tx_complete(void)
 {
-    uint16_t timeout = RS485_TX_COMPLETE_ITERATIONS;
+    uint16_t elapsed_us = 0u;
 
-    while ((TXSTAbits.TRMT == 0u) && (timeout > 0u))
+    while (TXSTAbits.TRMT == 0u)
     {
-        DRV_DELAY_US(RS485_TX_COMPLETE_DELAY_US);
-        timeout--;
+        if (elapsed_us >= RS485_TX_COMPLETE_TIMEOUT_US)
+        {
+            return 0u;
+        }
+
+        DRV_DELAY_US(RS485_TX_COMPLETE_POLL_US);
+        elapsed_us = (uint16_t)(elapsed_us + RS485_TX_COMPLETE_POLL_US);
     }
 
-    return (timeout > 0u) ? 1u : 0u;
+    return 1u;
 }
 
 static volatile uint8_t* rs485_dir_port = (volatile uint8_t*)0;

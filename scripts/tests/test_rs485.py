@@ -244,30 +244,44 @@ class Rs485TrmtBoundedWaitTests(unittest.TestCase):
             self.assertIn("DRV_DELAY_US", body,
                           f"{src.name} must use DRV_DELAY_US for deterministic timing")
 
-    def test_wait_tx_complete_has_time_based_constants(self) -> None:
+    def test_wait_tx_complete_has_elapsed_us_accumulator(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             text = read_text(src)
-            self.assertIn("RS485_TX_COMPLETE_DELAY_US", text)
-            self.assertIn("RS485_TX_COMPLETE_ITERATIONS", text)
+            body = extract_source_function(text, "uint8_t rs485_wait_tx_complete(")
+            self.assertIn("elapsed_us", body,
+                          f"{src.name} must use elapsed_us accumulator")
+
+    def test_wait_tx_complete_has_timeout_us_constant(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            self.assertIn("RS485_TX_COMPLETE_TIMEOUT_US", text)
+            self.assertIn("RS485_TX_COMPLETE_POLL_US", text)
 
     def test_wait_tx_complete_polls_trmt_with_timeout(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             text = read_text(src)
             body = extract_source_function(text, "uint8_t rs485_wait_tx_complete(")
             self.assertIn("TXSTAbits.TRMT", body)
-            self.assertIn("timeout > 0u", body)
+            self.assertIn("elapsed_us >= RS485_TX_COMPLETE_TIMEOUT_US", body)
 
     def test_wait_tx_complete_returns_success_or_failure(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             text = read_text(src)
             body = extract_source_function(text, "uint8_t rs485_wait_tx_complete(")
-            self.assertIn("return", body)
+            self.assertIn("return 1u", body)
+            self.assertIn("return 0u", body)
 
     def test_timeout_is_10ms(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             text = read_text(src)
-            self.assertIn("RS485_TX_COMPLETE_DELAY_US    100u", text)
-            self.assertIn("RS485_TX_COMPLETE_ITERATIONS  100u", text)
+            self.assertIn("RS485_TX_COMPLETE_POLL_US      100u", text)
+            self.assertIn("RS485_TX_COMPLETE_TIMEOUT_US 10000u", text)
+
+    def test_elapsed_us_accumulated_correctly(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            body = extract_source_function(text, "uint8_t rs485_wait_tx_complete(")
+            self.assertIn("elapsed_us = (uint16_t)(elapsed_us + RS485_TX_COMPLETE_POLL_US)", body)
 
 
 class Rs485FrameOrderingTests(unittest.TestCase):
