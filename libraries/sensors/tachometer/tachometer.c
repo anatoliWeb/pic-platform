@@ -200,6 +200,8 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
         return 0u;
     }
 
+    TACHOMETER_CRITICAL_ENTER();
+
     if (tachometer->session_state != TACHOMETER_SESSION_UNARMED)
     {
         timeout_us = tachometer_ms_to_us(tachometer->config.signal_timeout_ms);
@@ -223,6 +225,7 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
         tachometer->pulse_count++;
         tachometer->rpm = 0u;
         tachometer_update_status(tachometer, now_us);
+        TACHOMETER_CRITICAL_EXIT();
         return 1u;
     }
 
@@ -232,6 +235,7 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
     {
         /* Too-short interval is treated as noise: reject without updating the
          * timestamp or counters, so a burst of bounce pulses cannot skew RPM. */
+        TACHOMETER_CRITICAL_EXIT();
         return 0u;
     }
 
@@ -243,6 +247,8 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
     tachometer->pulse_count++;
     tachometer->rpm = tachometer_compute_rpm(tachometer, interval_us);
     tachometer_update_status(tachometer, now_us);
+
+    TACHOMETER_CRITICAL_EXIT();
     return 1u;
 }
 
@@ -259,17 +265,25 @@ void tachometer_process(tachometer_t* tachometer, uint32_t now_us)
 
 uint16_t tachometer_get_rpm(const tachometer_t* tachometer)
 {
+    uint16_t rpm;
+
     if ((tachometer == (const tachometer_t*)0) ||
         (tachometer->initialized == 0u))
     {
         return 0u;
     }
 
-    return tachometer->rpm;
+    TACHOMETER_CRITICAL_ENTER();
+    rpm = tachometer->rpm;
+    TACHOMETER_CRITICAL_EXIT();
+
+    return rpm;
 }
 
 tachometer_status_t tachometer_get_status(const tachometer_t* tachometer)
 {
+    tachometer_status_t status;
+
     if (tachometer == (const tachometer_t*)0)
     {
         return TACHOMETER_STATUS_NOT_INITIALIZED;
@@ -280,18 +294,28 @@ tachometer_status_t tachometer_get_status(const tachometer_t* tachometer)
         return TACHOMETER_STATUS_NOT_INITIALIZED;
     }
 
-    return tachometer->status;
+    TACHOMETER_CRITICAL_ENTER();
+    status = tachometer->status;
+    TACHOMETER_CRITICAL_EXIT();
+
+    return status;
 }
 
 uint32_t tachometer_get_pulse_count(const tachometer_t* tachometer)
 {
+    uint32_t count;
+
     if ((tachometer == (const tachometer_t*)0) ||
         (tachometer->initialized == 0u))
     {
         return 0UL;
     }
 
-    return tachometer->pulse_count;
+    TACHOMETER_CRITICAL_ENTER();
+    count = tachometer->pulse_count;
+    TACHOMETER_CRITICAL_EXIT();
+
+    return count;
 }
 
 void tachometer_reset(tachometer_t* tachometer)

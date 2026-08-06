@@ -9,6 +9,21 @@
 #include "core/types.h"
 
 /*
+ * Portable critical section for ISR/main shared data.
+ *
+ * On PIC18 this disables global interrupts. The matching restore must be
+ * called as soon as the critical section ends. For polling-only usage these
+ * macros can be left empty.
+ */
+#if defined(DRV_COMPILER_XC8) || defined(DRV_COMPILER_C18)
+    #define TACHOMETER_CRITICAL_ENTER()  do { INTCONbits.GIE = 0u; } while(0)
+    #define TACHOMETER_CRITICAL_EXIT()   do { INTCONbits.GIE = 1u; } while(0)
+#else
+    #define TACHOMETER_CRITICAL_ENTER()
+    #define TACHOMETER_CRITICAL_EXIT()
+#endif
+
+/*
  * Diagnostic state of the tachometer.
  *
  *   STOPPED      - running is not expected in the first place.
@@ -74,5 +89,40 @@ uint16_t tachometer_get_rpm(const tachometer_t* tachometer);
 tachometer_status_t tachometer_get_status(const tachometer_t* tachometer);
 uint32_t tachometer_get_pulse_count(const tachometer_t* tachometer);
 void tachometer_reset(tachometer_t* tachometer);
+
+/*
+ * ISR/polling contract
+ * ====================
+ *
+ * tachometer_on_pulse()
+ *   - Safe to call from a timer or external interrupt (ISR context).
+ *   - Uses TACHOMETER_CRITICAL_ENTER/EXIT to protect shared fields against
+ *     concurrent main-loop reads.
+ *   - Writes: session_state, last_pulse_us, pulse_count, rpm, status.
+ *
+ * tachometer_process()
+ *   - Call from the main loop or a periodic timer task.
+ *   - Advances timeout and status without blocking.
+ *   - Uses TACHOMETER_CRITICAL_ENTER/EXIT when reading ISR-written fields.
+ *   - Reads: session_state, last_pulse_us, rpm, status.
+ *
+ * tachometer_get_rpm() / tachometer_get_status() / tachometer_get_pulse_count()
+ *   - Main-loop context only.
+ *   - Return a consistent snapshot; the values may change on the next ISR.
+ *
+ * tachometer_set_expected_running() / tachometer_init() / tachometer_reset()
+ *   - Main-loop context only.
+ *   - Do not call from ISR.
+ *
+ * Multiple instances:
+ *   - Each tachometer_t is fully independent; no shared global state.
+ *   - Critical sections protect per-instance fields only.
+ *
+ * Polling support:
+ *   - When no hardware pulse source is available, the caller can simulate
+ *     pulses by calling tachometer_on_pulse() at known intervals from a
+ *     timer interrupt or a precise main-loop timer. The module treats
+ *     simulated pulses identically to hardware captures.
+ */
 
 #endif /* LIBRARIES_SENSORS_TACHOMETER_H */

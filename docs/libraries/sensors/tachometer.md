@@ -1,6 +1,6 @@
 # tachometer
 
-Reusable pulse-to-RPM helper with startup grace, noise rejection, timeout, and status.
+Reusable pulse-to-RPM helper with startup grace, noise rejection, timeout, ISR-safe critical sections, and status.
 
 ## API
 
@@ -8,8 +8,19 @@ Reusable pulse-to-RPM helper with startup grace, noise rejection, timeout, and s
 | --- | --- |
 | `tachometer_init()` | validates config and starts in `STOPPED` or `CONFIG_ERROR` |
 | `tachometer_set_expected_running()` | explicit running expectation, caller passes `now_us` |
-| `tachometer_on_pulse()` | accepts a pulse timestamp and updates RPM |
+| `tachometer_on_pulse()` | accepts a pulse timestamp and updates RPM; ISR-safe |
 | `tachometer_process()` | advances timeout state without blocking |
+| `tachometer_get_rpm()` | returns snapshot of current RPM |
+| `tachometer_get_status()` | returns snapshot of current status |
+| `tachometer_get_pulse_count()` | returns cumulative accepted pulse count |
+| `tachometer_reset()` | clears runtime state, keeps config |
+
+## ISR contract
+
+- `tachometer_on_pulse()` is safe to call from timer or external interrupt context. It uses `TACHOMETER_CRITICAL_ENTER/EXIT` to protect shared fields.
+- `tachometer_process()` must be called from the main loop. It also uses critical sections when reading ISR-written fields.
+- Getters (`get_rpm`, `get_status`, `get_pulse_count`) return consistent snapshots.
+- `init`, `set_expected_running`, and `reset` are main-loop only.
 
 ## Behavior
 

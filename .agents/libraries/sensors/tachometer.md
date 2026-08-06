@@ -63,8 +63,11 @@ core/types.h
 ## ISR contract
 
 - The module owns no ISR.
-- A timer or external interrupt may call `tachometer_on_pulse()` with the pulse timestamp.
-- The caller may call `tachometer_process()` from a main loop or timer task.
+- A timer or external interrupt may call `tachometer_on_pulse()` with the pulse timestamp. This function is ISR-safe and uses `TACHOMETER_CRITICAL_ENTER/EXIT` to protect shared fields.
+- `tachometer_process()` must be called from the main loop or a timer task. It also uses critical sections when reading ISR-written fields.
+- Getters (`get_rpm`, `get_status`, `get_pulse_count`) return consistent snapshots and are main-loop only.
+- `init`, `set_expected_running`, and `reset` are main-loop only; do not call from ISR.
+- Multiple instances are fully independent; no shared global state.
 
 ## Resource ownership
 

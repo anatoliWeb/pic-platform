@@ -202,6 +202,24 @@ class TachometerHeaderTests(unittest.TestCase):
             self.assertIn(symbol, text)
         self.assertNotIn("session_pulse_count", text)
 
+    def test_critical_section_macros_declared(self) -> None:
+        text = read_text(HDR)
+        for symbol in (
+            "TACHOMETER_CRITICAL_ENTER",
+            "TACHOMETER_CRITICAL_EXIT",
+        ):
+            self.assertIn(symbol, text)
+
+    def test_isr_contract_documented(self) -> None:
+        text = read_text(HDR)
+        for phrase in (
+            "ISR/polling contract",
+            "Safe to call from a timer or external interrupt",
+            "TACHOMETER_CRITICAL_ENTER/EXIT",
+            "Main-loop context only",
+        ):
+            self.assertIn(phrase, text)
+
 
 class TachometerBehaviorTests(unittest.TestCase):
     def test_init_validates_input_and_config(self) -> None:
@@ -269,6 +287,28 @@ class TachometerBehaviorTests(unittest.TestCase):
         body = source_function(read_text(SRC), "void tachometer_reset(")
         self.assertIn("TACHOMETER_STATUS_STOPPED", body)
         self.assertIn("tachometer_clear_measurement", body)
+
+    def test_on_pulse_uses_critical_section(self) -> None:
+        body = source_function(read_text(SRC), "uint8_t tachometer_on_pulse(")
+        self.assertIn("TACHOMETER_CRITICAL_ENTER()", body)
+        self.assertIn("TACHOMETER_CRITICAL_EXIT()", body)
+
+    def test_get_rpm_uses_critical_section(self) -> None:
+        body = source_function(read_text(SRC), "uint16_t tachometer_get_rpm(")
+        self.assertIn("TACHOMETER_CRITICAL_ENTER()", body)
+        self.assertIn("TACHOMETER_CRITICAL_EXIT()", body)
+        self.assertIn("rpm = tachometer->rpm", body)
+
+    def test_get_status_uses_critical_section(self) -> None:
+        body = source_function(read_text(SRC), "tachometer_status_t tachometer_get_status(")
+        self.assertIn("TACHOMETER_CRITICAL_ENTER()", body)
+        self.assertIn("TACHOMETER_CRITICAL_EXIT()", body)
+
+    def test_get_pulse_count_uses_critical_section(self) -> None:
+        body = source_function(read_text(SRC), "uint32_t tachometer_get_pulse_count(")
+        self.assertIn("TACHOMETER_CRITICAL_ENTER()", body)
+        self.assertIn("TACHOMETER_CRITICAL_EXIT()", body)
+        self.assertIn("count = tachometer->pulse_count", body)
 
 
 class TachometerRuntimeTests(unittest.TestCase):
