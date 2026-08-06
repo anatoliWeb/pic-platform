@@ -8,14 +8,20 @@
 #include "drivers/communication/uart/uart.h"
 #include "core/crc/crc.h"
 
-#define RS485_START_BYTE       0xAAu
-#define RS485_TIMEOUT_TICKS    200u
+#define RS485_START_BYTE              0xAAu
+#define RS485_TIMEOUT_TICKS           200u
+#define RS485_TX_COMPLETE_TIMEOUT     200u
 
-static void rs485_wait_tx_complete(void)
+static uint8_t rs485_wait_tx_complete(void)
 {
-    while (TXSTAbits.TRMT == 0u)
+    uint16_t timeout = RS485_TX_COMPLETE_TIMEOUT;
+
+    while ((TXSTAbits.TRMT == 0u) && (timeout > 0u))
     {
+        timeout--;
     }
+
+    return (timeout > 0u) ? 1u : 0u;
 }
 
 static volatile uint8_t* rs485_dir_port = (volatile uint8_t*)0;
@@ -61,6 +67,7 @@ uint8_t rs485_send_frame(uint8_t* data, uint8_t len)
 {
     uint16_t crc;
     uint8_t i;
+    uint8_t result = 0u;
 
     if ((data == (uint8_t*)0) || (len == 0u))
     {
@@ -83,11 +90,15 @@ uint8_t rs485_send_frame(uint8_t* data, uint8_t len)
     rs485_send_byte((uint8_t)(crc & 0x00FFu));
     rs485_send_byte((uint8_t)((crc >> 8u) & 0x00FFu));
 
-    rs485_wait_tx_complete();
-    DRV_DELAY_US(50u);
+    if (rs485_wait_tx_complete() != 0u)
+    {
+        DRV_DELAY_US(50u);
+        result = 1u;
+    }
+
     rs485_set_rx();
 
-    return 1u;
+    return result;
 }
 
 uint8_t rs485_receive_frame(uint8_t* buffer, uint8_t max_len)

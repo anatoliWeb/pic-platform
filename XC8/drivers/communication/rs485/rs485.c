@@ -10,8 +10,9 @@
 #include "drivers/communication/uart/uart.h"
 #include "core/crc/crc.h"
 
-#define RS485_START_BYTE       0xAAu
-#define RS485_TIMEOUT_TICKS    200u
+#define RS485_START_BYTE              0xAAu
+#define RS485_TIMEOUT_TICKS           200u
+#define RS485_TX_COMPLETE_TIMEOUT     200u
 
 /*
  * RS485 direction control pin.
@@ -28,8 +29,10 @@ static volatile uint8_t* rs485_dir_port = (volatile uint8_t*)0;
 static volatile uint8_t* rs485_dir_tris = (volatile uint8_t*)0;
 static uint8_t rs485_dir_pin = 0u;
 
-static void rs485_wait_tx_complete(void)
+static uint8_t rs485_wait_tx_complete(void)
 {
+    uint16_t timeout = RS485_TX_COMPLETE_TIMEOUT;
+
     /*
      * Wait until UART transmit shift register is empty.
      *
@@ -39,10 +42,16 @@ static void rs485_wait_tx_complete(void)
      *
      * If we switch RS485 direction before TRMT becomes 1,
      * the final byte or stop bit can be cut and receiver will see garbage.
+     *
+     * Timeout guards against infinite hang if UART is not initialized
+     * or hardware state never transitions to complete.
      */
-    while (TXSTAbits.TRMT == 0u)
+    while ((TXSTAbits.TRMT == 0u) && (timeout > 0u))
     {
+        timeout--;
     }
+
+    return (timeout > 0u) ? 1u : 0u;
 }
 
 void rs485_init(volatile uint8_t* dir_port, volatile uint8_t* dir_tris, uint8_t dir_pin)
@@ -122,6 +131,7 @@ uint8_t rs485_send_frame(uint8_t* data, uint8_t len)
 {
     uint16_t crc;
     uint8_t i;
+    uint8_t result = 0u;
 
     if ((data == (uint8_t*)0) || (len == 0u))
     {
@@ -176,24 +186,28 @@ uint8_t rs485_send_frame(uint8_t* data, uint8_t len)
     rs485_send_byte((uint8_t)((crc >> 8u) & 0x00FFu));
 
     /*
-     * Critical wait:
-     * Do not disable MAX487 transmitter until the last stop bit
-     * has physically left the UART TX pin.
+     * Wait for UART shift register to empty.
+     * Bounded timeout prevents infinite hang if UART is broken.
+     * On timeout, RX is still restored — line never stays in TX.
      */
-    rs485_wait_tx_complete();
-
-    /*
-     * Guard delay after final bit.
-     * Helps Proteus/MAX487 avoid direction-switch glitches.
-     */
-    DRV_DELAY_US(50u);
+    if (rs485_wait_tx_complete() != 0u)
+    {
+        /*
+         * Guard delay after final bit.
+         * Helps Proteus/MAX487 avoid direction-switch glitches.
+         * This is a transceiver settling delay, not a final-byte guarantee.
+         */
+        DRV_DELAY_US(50u);
+        result = 1u;
+    }
 
     /*
      * Return RS485 transceiver to receive/idle mode.
+     * Always executed — line never stays in TX after return.
      */
     rs485_set_rx();
 
-    return 1u;
+    return result;
 }
 
 uint8_t rs485_receive_frame(uint8_t* buffer, uint8_t max_len)

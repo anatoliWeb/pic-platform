@@ -118,9 +118,9 @@ class Rs485SourceInclusionTests(unittest.TestCase):
 
         for wrapper_text in (xc8_text, c18_text):
             self.assertIn(
-                "static void rs485_wait_tx_complete",
+                "static uint8_t rs485_wait_tx_complete",
                 wrapper_text,
-                "wait_tx_complete must be static to avoid duplicate symbols",
+                "wait_tx_complete must be static uint8_t to avoid duplicate symbols",
             )
 
 
@@ -159,6 +159,34 @@ class Rs485TxCompleteTests(unittest.TestCase):
             "set_rx must follow wait_tx_complete",
         )
 
+    def test_send_frame_rx_always_restored(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            body = extract_source_function(read_text(src), "uint8_t rs485_send_frame(")
+            rx_pos = body.find("rs485_set_rx()")
+            self.assertGreater(rx_pos, -1, f"set_rx must be called in {src.name}")
+
+    def test_send_frame_returns_zero_on_invalid_args(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            body = extract_source_function(read_text(src), "uint8_t rs485_send_frame(")
+            self.assertIn("return 0u", body)
+
+    def test_send_frame_uses_result_variable(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            body = extract_source_function(read_text(src), "uint8_t rs485_send_frame(")
+            self.assertIn("uint8_t result = 0u", body)
+            self.assertIn("result = 1u", body)
+            self.assertIn("return result", body)
+
+    def test_send_frame_guard_delay_only_after_success(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            body = extract_source_function(read_text(src), "uint8_t rs485_send_frame(")
+            wait_pos = body.find("rs485_wait_tx_complete()")
+            delay_pos = body.find("DRV_DELAY_US(50u)", wait_pos + 1)
+            self.assertGreater(wait_pos, -1)
+            self.assertGreater(delay_pos, wait_pos, f"guard delay after wait in {src.name}")
+            result_pos = body.find("result = 1u", wait_pos)
+            self.assertGreater(result_pos, delay_pos, f"result=1u after guard delay in {src.name}")
+
 class Rs485SharedFallbackTests(unittest.TestCase):
     def test_shared_fallback_requires_compiler_define(self) -> None:
         compiler_h = ROOT / "core" / "compiler.h"
@@ -195,7 +223,7 @@ class Rs485C18ConsistencyTests(unittest.TestCase):
 
     def test_c18_wait_tx_complete_is_static(self) -> None:
         text = read_text(C18_SRC)
-        self.assertIn("static void rs485_wait_tx_complete", text)
+        self.assertIn("static uint8_t rs485_wait_tx_complete", text)
 
 
 class Rs485TrmtBoundedWaitTests(unittest.TestCase):
@@ -204,12 +232,36 @@ class Rs485TrmtBoundedWaitTests(unittest.TestCase):
             text = read_text(src)
             self.assertIn("TXSTAbits.TRMT", text)
 
-    def test_wait_tx_complete_is_bounded_by_hardware(self) -> None:
+    def test_wait_tx_complete_returns_uint8_t(self) -> None:
         for src in (XC8_SRC, C18_SRC, SHARED_SRC):
             text = read_text(src)
-            body = extract_source_function(text, "void rs485_wait_tx_complete(")
+            self.assertIn("static uint8_t rs485_wait_tx_complete", text)
+
+    def test_wait_tx_complete_has_timeout_counter(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            body = extract_source_function(text, "uint8_t rs485_wait_tx_complete(")
+            self.assertIn("RS485_TX_COMPLETE_TIMEOUT", body)
+            self.assertIn("timeout", body)
+            self.assertIn("timeout--", body)
+
+    def test_wait_tx_complete_polls_trmt_with_timeout(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            body = extract_source_function(text, "uint8_t rs485_wait_tx_complete(")
             self.assertIn("TXSTAbits.TRMT", body)
-            self.assertIn("while", body)
+            self.assertIn("timeout > 0u", body)
+
+    def test_wait_tx_complete_returns_success_or_failure(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            body = extract_source_function(text, "uint8_t rs485_wait_tx_complete(")
+            self.assertIn("return", body)
+
+    def test_tx_complete_timeout_define_exists(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            self.assertIn("RS485_TX_COMPLETE_TIMEOUT", text)
 
 
 class Rs485FrameOrderingTests(unittest.TestCase):
@@ -316,6 +368,12 @@ class Rs485BaudRateTests(unittest.TestCase):
                 delay_pos, wait_pos,
                 f"guard delay after wait_tx_complete in {src.name}",
             )
+
+    def test_send_frame_uses_bounded_wait(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            body = extract_source_function(text, "uint8_t rs485_send_frame(")
+            self.assertIn("if (rs485_wait_tx_complete() != 0u)", body)
 
 
 class Rs485ErrorContractTests(unittest.TestCase):
