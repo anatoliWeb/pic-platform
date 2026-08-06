@@ -18,6 +18,13 @@
 #define RS485_START_BYTE       0xAAu
 #define RS485_TIMEOUT_TICKS    200u
 
+static void rs485_wait_tx_complete(void)
+{
+    while (TXSTAbits.TRMT == 0u)
+    {
+    }
+}
+
 static volatile uint8_t* rs485_dir_port = (volatile uint8_t*)0;
 static volatile uint8_t* rs485_dir_tris = (volatile uint8_t*)0;
 static uint8_t rs485_dir_pin = 0u;
@@ -83,6 +90,7 @@ uint8_t rs485_send_frame(uint8_t* data, uint8_t len)
     rs485_send_byte((uint8_t)(crc & 0x00FFu));
     rs485_send_byte((uint8_t)((crc >> 8u) & 0x00FFu));
 
+    rs485_wait_tx_complete();
     DRV_DELAY_US(50u);
     rs485_set_rx();
 
