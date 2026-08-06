@@ -37,6 +37,7 @@ drv_status_t cooldown_output_init(cooldown_output_t* output,
     output->requested = 0u;
     output->active = 0u;
     output->cooling_down = 0u;
+    output->cooldown_ms = config->cooldown_ms;
     output->cooldown_end_ms = 0UL;
 
     return DRV_STATUS_OK;
@@ -85,7 +86,7 @@ void cooldown_output_set_requested(cooldown_output_t* output,
         return;
     }
 
-    if (output->config.cooldown_ms == 0UL)
+    if (output->cooldown_ms == 0UL)
     {
         /* Zero cooldown means immediate off, with no delay phase. */
         output->active = 0u;
@@ -98,7 +99,55 @@ void cooldown_output_set_requested(cooldown_output_t* output,
      * monotonic deadline. The deadline comparison later is wrap-safe as long
      * as cooldown_ms stays below 2^31 ms (see the header). */
     output->cooling_down = 1u;
-    output->cooldown_end_ms = now_ms + output->config.cooldown_ms;
+    output->cooldown_end_ms = now_ms + output->cooldown_ms;
+}
+
+void cooldown_output_set_duration_ms(cooldown_output_t* output,
+                                     uint32_t duration_ms,
+                                     uint32_t now_ms)
+{
+    if ((output == (cooldown_output_t*)0) || (output->initialized == 0u))
+    {
+        return;
+    }
+
+    output->cooldown_ms = duration_ms;
+
+    /* If currently cooling down, recalculate the deadline from now with the
+     * new duration. This makes the change predictable in all phases:
+     *   - idle: stored for the next OFF request
+     *   - cooling down: deadline updated immediately
+     *   - after completion: stored for the next cycle
+     */
+    if (output->cooling_down != 0u)
+    {
+        if (duration_ms == 0UL)
+        {
+            /* Zero cooldown now: turn off immediately. */
+            output->cooling_down = 0u;
+            if (output->active != 0u)
+            {
+                output->active = 0u;
+                cooldown_output_notify(output);
+            }
+        }
+        else
+        {
+            output->cooldown_end_ms = now_ms + duration_ms;
+        }
+    }
+}
+
+void cooldown_output_cancel(cooldown_output_t* output)
+{
+    if ((output == (cooldown_output_t*)0) || (output->initialized == 0u))
+    {
+        return;
+    }
+
+    /* Cancel any pending cooldown while preserving the current active state
+     * and the request. The output stays in its current physical state. */
+    output->cooling_down = 0u;
 }
 
 void cooldown_output_process(cooldown_output_t* output, uint32_t now_ms)

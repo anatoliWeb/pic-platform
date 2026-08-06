@@ -50,6 +50,7 @@ typedef struct
     uint8_t requested;
     uint8_t active;
     uint8_t cooling_down;
+    uint32_t cooldown_ms;
     uint32_t cooldown_end_ms;
 } cooldown_output_t;
 
@@ -58,6 +59,10 @@ drv_status_t cooldown_output_init(cooldown_output_t* output,
 void cooldown_output_set_requested(cooldown_output_t* output,
                                    uint8_t requested,
                                    uint32_t now_ms);
+void cooldown_output_set_duration_ms(cooldown_output_t* output,
+                                     uint32_t duration_ms,
+                                     uint32_t now_ms);
+void cooldown_output_cancel(cooldown_output_t* output);
 void cooldown_output_process(cooldown_output_t* output, uint32_t now_ms);
 uint8_t cooldown_output_is_active(const cooldown_output_t* output);
 uint8_t cooldown_output_is_cooling_down(const cooldown_output_t* output);

@@ -43,6 +43,21 @@ void cooldown_output_example_request(uint8_t requested, uint32_t now_ms)
     cooldown_output_set_requested(&g_output, requested, now_ms);
 }
 
+/* Runtime duration change. Updates the stored cooldown. If currently cooling
+ * down, the deadline is recalculated from now with the new duration. */
+void cooldown_output_example_change_duration(uint32_t duration_ms,
+                                             uint32_t now_ms)
+{
+    cooldown_output_set_duration_ms(&g_output, duration_ms, now_ms);
+}
+
+/* Cancel pending cooldown. The output stays in its current physical state. */
+void cooldown_output_example_cancel(uint32_t now_ms)
+{
+    (void)now_ms;
+    cooldown_output_cancel(&g_output);
+}
+
 /* Periodic step: advances the cooldown deadline. Must be called regularly. */
 void cooldown_output_example_process(uint32_t now_ms)
 {

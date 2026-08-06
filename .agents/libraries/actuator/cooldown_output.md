@@ -36,6 +36,8 @@ scripts/tests/test_cooldown_output.py
 | `cooldown_output_config_t` | cooldown and callback | struct | config | validates in init |
 | `cooldown_output_init()` | initialize state | output, config | `drv_status_t` | starts off |
 | `cooldown_output_set_requested()` | request on/off | output, requested, `now_ms` | none | off starts cooldown |
+| `cooldown_output_set_duration_ms()` | change cooldown at runtime | output, duration_ms, `now_ms` | none | recalculates deadline if cooling |
+| `cooldown_output_cancel()` | cancel pending cooldown | output | none | preserves active state |
 | `cooldown_output_process()` | advance cooldown | output, `now_ms` | none | non-blocking |
 | `cooldown_output_is_active()` | read active state | output | `uint8_t` | non-consuming |
 | `cooldown_output_is_cooling_down()` | read cooldown state | output | `uint8_t` | non-consuming |
@@ -55,6 +57,8 @@ core/types.h
 - `cooldown_ms == 0` means immediate off.
 - Re-requesting on cancels pending shutdown.
 - The callback fires only on active-state changes.
+- `set_duration_ms()` updates the stored cooldown. If cooling down, the deadline is recalculated from `now_ms` with the new duration. If the new duration is 0, the output turns off immediately.
+- `cancel()` clears the cooling-down flag while preserving the current physical output state.
 
 ## ISR contract
 
