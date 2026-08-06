@@ -159,13 +159,57 @@ class Rs485TxCompleteTests(unittest.TestCase):
             "set_rx must follow wait_tx_complete",
         )
 
-    def test_shared_fallback_has_trmt_polling(self) -> None:
-        text = read_text(SHARED_SRC)
-        if "DRV_COMPILER_XC8" in text and "#elif defined(DRV_COMPILER_XC8)" in text:
-            self.skipTest("shared dispatcher delegates to compiler wrappers")
+class Rs485SharedFallbackTests(unittest.TestCase):
+    def test_shared_fallback_requires_compiler_define(self) -> None:
+        compiler_h = ROOT / "core" / "compiler.h"
+        text = read_text(compiler_h)
+        self.assertIn('#error "Unsupported compiler', text)
 
-        self.assertIn("rs485_wait_tx_complete", text)
-        self.assertIn("TXSTAbits.TRMT", text)
+    def test_shared_dispatcher_always_dispatches(self) -> None:
+        text = read_text(SHARED_SRC)
+        self.assertIn("#if defined(DRV_COMPILER_C18)", text)
+        self.assertIn("#elif defined(DRV_COMPILER_XC8)", text)
+        self.assertIn("#else", text)
+
+    def test_shared_fallback_has_trmt_as_safety_net(self) -> None:
+        text = read_text(SHARED_SRC)
+        fallback_start = text.find("#else")
+        self.assertGreater(fallback_start, -1)
+        fallback = text[fallback_start:]
+        self.assertIn("rs485_wait_tx_complete", fallback)
+        self.assertIn("TXSTAbits.TRMT", fallback)
+
+
+class Rs485C18ConsistencyTests(unittest.TestCase):
+    def test_c18_wrapper_follows_same_sfr_pattern_as_uart(self) -> None:
+        uart_c18 = ROOT / "C18" / "drivers" / "communication" / "uart" / "uart.c"
+        rs485_c18 = read_text(C18_SRC)
+        uart_text = read_text(uart_c18)
+        self.assertIn("TXSTAbits", rs485_c18)
+        self.assertIn("TXSTAbits", uart_text)
+
+    def test_c18_wrapper_does_not_include_device_header(self) -> None:
+        text = read_text(C18_SRC)
+        self.assertNotIn("<p18f", text)
+        self.assertNotIn("<xc.h>", text)
+
+    def test_c18_wait_tx_complete_is_static(self) -> None:
+        text = read_text(C18_SRC)
+        self.assertIn("static void rs485_wait_tx_complete", text)
+
+
+class Rs485TrmtBoundedWaitTests(unittest.TestCase):
+    def test_trmt_is_hardware_register(self) -> None:
+        for src in (XC8_SRC, C18_SRC):
+            text = read_text(src)
+            self.assertIn("TXSTAbits.TRMT", text)
+
+    def test_wait_tx_complete_is_bounded_by_hardware(self) -> None:
+        for src in (XC8_SRC, C18_SRC, SHARED_SRC):
+            text = read_text(src)
+            body = extract_source_function(text, "void rs485_wait_tx_complete(")
+            self.assertIn("TXSTAbits.TRMT", body)
+            self.assertIn("while", body)
 
 
 class Rs485FrameOrderingTests(unittest.TestCase):
