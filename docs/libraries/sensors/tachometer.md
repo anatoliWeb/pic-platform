@@ -2,6 +2,28 @@
 
 Reusable pulse-to-RPM helper with startup grace, noise rejection, timeout, ISR-safe critical sections, and status.
 
+## Compile-time profiles
+
+### FULL (default)
+
+Full tachometer behavior with RPM calculation, minimum RPM check, and all diagnostic statuses.
+
+### LIGHTWEIGHT
+
+Define `TACHOMETER_LIGHTWEIGHT=1` before including the header to enable the lightweight profile:
+
+- Disables expensive 64-bit division RPM calculation
+- `tachometer_get_rpm()` always returns 0
+- TOO_SLOW status is never set
+- All pulse filtering, startup grace, timeout, and presence detection remain fully functional
+- Saves ~1236 B ROM on PIC18F452 (measured with XC8 3.10)
+
+Usage:
+```c
+#define TACHOMETER_LIGHTWEIGHT 1
+#include "libraries/sensors/tachometer/tachometer.h"
+```
+
 ## API
 
 | Item | Notes |
@@ -10,7 +32,7 @@ Reusable pulse-to-RPM helper with startup grace, noise rejection, timeout, ISR-s
 | `tachometer_set_expected_running()` | explicit running expectation, caller passes `now_us` |
 | `tachometer_on_pulse()` | accepts a pulse timestamp and updates RPM; ISR-safe |
 | `tachometer_process()` | advances timeout state without blocking |
-| `tachometer_get_rpm()` | returns snapshot of current RPM |
+| `tachometer_get_rpm()` | returns snapshot of current RPM; macro returns 0 in LIGHTWEIGHT |
 | `tachometer_get_status()` | returns snapshot of current status |
 | `tachometer_get_pulse_count()` | returns cumulative accepted pulse count |
 | `tachometer_reset()` | clears runtime state, keeps config |

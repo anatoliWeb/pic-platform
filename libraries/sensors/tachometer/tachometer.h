@@ -9,6 +9,23 @@
 #include "core/types.h"
 
 /*
+ * Compile-time profile selection.
+ *
+ * Define TACHOMETER_LIGHTWEIGHT to 1 before including this header to
+ * disable expensive RPM arithmetic (64-bit division). In lightweight mode:
+ *   - tachometer_get_rpm() always returns 0
+ *   - The rpm field in tachometer_t is not computed
+ *   - All pulse filtering, startup grace, timeout, and presence detection
+ *     remain fully functional
+ *   - The 64-bit division runtime helper is eliminated from the linked image
+ *
+ * Default (TACHOMETER_LIGHTWEIGHT not defined or 0) preserves full behavior.
+ */
+#ifndef TACHOMETER_LIGHTWEIGHT
+#define TACHOMETER_LIGHTWEIGHT 0
+#endif
+
+/*
  * Critical section for ISR/main shared data.
  *
  * Uses DRV_INT_SAVE_AND_DISABLE / DRV_INT_RESTORE from core/compiler.h.
@@ -81,7 +98,11 @@ void tachometer_set_expected_running(tachometer_t* tachometer,
                                      uint32_t now_us);
 uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us);
 void tachometer_process(tachometer_t* tachometer, uint32_t now_us);
+#if TACHOMETER_LIGHTWEIGHT
+#define tachometer_get_rpm(tachometer) ((uint16_t)0u)
+#else
 uint16_t tachometer_get_rpm(const tachometer_t* tachometer);
+#endif
 tachometer_status_t tachometer_get_status(const tachometer_t* tachometer);
 uint32_t tachometer_get_pulse_count(const tachometer_t* tachometer);
 void tachometer_reset(tachometer_t* tachometer);

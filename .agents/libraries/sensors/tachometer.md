@@ -28,6 +28,28 @@ scripts/tests/test_tachometer.py
 - you want board pin binding in the library;
 - you only need a raw interrupt flag.
 
+## Compile-time profiles
+
+### FULL (default)
+
+Full tachometer behavior with RPM calculation, minimum RPM check, and all diagnostic statuses.
+
+### LIGHTWEIGHT
+
+Define `TACHOMETER_LIGHTWEIGHT=1` before including the header to enable the lightweight profile:
+
+- Disables expensive 64-bit division RPM calculation
+- `tachometer_get_rpm()` always returns 0
+- TOO_SLOW status is never set
+- All pulse filtering, startup grace, timeout, and presence detection remain fully functional
+- Saves ~1236 B ROM on PIC18F452 (measured with XC8 3.10)
+
+Usage:
+```c
+#define TACHOMETER_LIGHTWEIGHT 1
+#include "libraries/sensors/tachometer/tachometer.h"
+```
+
 ## API
 
 | Function/type | Purpose | What to pass | Output | Notes |
@@ -38,7 +60,7 @@ scripts/tests/test_tachometer.py
 | `tachometer_set_expected_running()` | set armed-running mode | tachometer, flag, `now_us` | none | resets measurement on change |
 | `tachometer_on_pulse()` | feed a pulse edge | tachometer, `now_us` | `uint8_t` | returns 1 when accepted |
 | `tachometer_process()` | advance timeout/status | tachometer, `now_us` | none | non-blocking |
-| `tachometer_get_rpm()` | read current RPM | tachometer | `uint16_t` | non-consuming |
+| `tachometer_get_rpm()` | read current RPM | tachometer | `uint16_t` | non-consuming; macro returns 0 in LIGHTWEIGHT |
 | `tachometer_get_status()` | read status | tachometer | `tachometer_status_t` | non-consuming |
 | `tachometer_get_pulse_count()` | read accepted pulse count | tachometer | `uint32_t` | non-consuming |
 | `tachometer_reset()` | clear runtime state | tachometer | none | keeps config |

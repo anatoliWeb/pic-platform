@@ -464,5 +464,40 @@ class TachometerRuntimeTests(unittest.TestCase):
         self.assertNotEqual(tach.rpm, 0)
 
 
+class TachometerLightweightTests(unittest.TestCase):
+    def test_lightweight_macro_declared(self) -> None:
+        text = read_text(HDR)
+        self.assertIn("TACHOMETER_LIGHTWEIGHT", text)
+        self.assertIn("#ifndef TACHOMETER_LIGHTWEIGHT", text)
+        self.assertIn("#define TACHOMETER_LIGHTWEIGHT 0", text)
+
+    def test_lightweight_get_rpm_is_macro(self) -> None:
+        text = read_text(HDR)
+        self.assertIn("#if TACHOMETER_LIGHTWEIGHT", text)
+        self.assertIn("#define tachometer_get_rpm(tachometer) ((uint16_t)0u)", text)
+        self.assertIn("#else", text)
+
+    def test_lightweight_rpm_computation_excluded(self) -> None:
+        text = read_text(SRC)
+        self.assertIn("#if !TACHOMETER_LIGHTWEIGHT", text)
+        self.assertIn("static uint16_t tachometer_compute_rpm(", text)
+
+    def test_lightweight_rpm_check_in_process_excluded(self) -> None:
+        body = source_function(read_text(SRC), "void tachometer_process(")
+        self.assertIn("#if !TACHOMETER_LIGHTWEIGHT", body)
+
+    def test_lightweight_rpm_check_in_update_status_excluded(self) -> None:
+        body = source_function(read_text(SRC), "static void tachometer_update_status(")
+        self.assertIn("#if !TACHOMETER_LIGHTWEIGHT", body)
+
+    def test_lightweight_rearm_skips_rpm_clear(self) -> None:
+        body = source_function(read_text(SRC), "static void tachometer_rearm(")
+        self.assertIn("#if !TACHOMETER_LIGHTWEIGHT", body)
+
+    def test_lightweight_on_pulse_skips_rpm_calc(self) -> None:
+        body = source_function(read_text(SRC), "uint8_t tachometer_on_pulse(")
+        self.assertIn("#if !TACHOMETER_LIGHTWEIGHT", body)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

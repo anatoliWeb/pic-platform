@@ -2,6 +2,28 @@
 
 Reusable helper для переводу імпульсів у RPM зі startup grace, noise rejection, timeout, ISR-safe critical sections і status.
 
+## Compile-time профілі
+
+### FULL (за замовчуванням)
+
+Повна поведінка тахометра з розрахунком RPM, перевіркою мінімального RPM та всіма діагностичними статусами.
+
+### LIGHTWEIGHT
+
+Визначте `TACHOMETER_LIGHTWEIGHT=1` перед включенням заголовка для активації легкого профілю:
+
+- Вимикає дорогий 64-бітний розподіл для розрахунку RPM
+- `tachometer_get_rpm()` завжди повертає 0
+- Статус TOO_SLOW ніколи не встановлюється
+- Всі фільтрація імпульсів, startup grace, timeout та визначення наявності залишаються повністю функціональними
+- Зберігає ~1236 B ROM на PIC18F452 (виміряно з XC8 3.10)
+
+Використання:
+```c
+#define TACHOMETER_LIGHTWEIGHT 1
+#include "libraries/sensors/tachometer/tachometer.h"
+```
+
 ## API
 
 | Елемент | Примітка |
@@ -10,7 +32,7 @@ Reusable helper для переводу імпульсів у RPM зі startup g
 | `tachometer_set_expected_running()` | явний expected-running, caller передає `now_us` |
 | `tachometer_on_pulse()` | приймає timestamp імпульсу і оновлює RPM; ISR-safe |
 | `tachometer_process()` | просуває timeout state без блокування |
-| `tachometer_get_rpm()` | повертає snapshot поточного RPM |
+| `tachometer_get_rpm()` | повертає snapshot поточного RPM; макро повертає 0 у LIGHTWEIGHT |
 | `tachometer_get_status()` | повертає snapshot поточного status |
 | `tachometer_get_pulse_count()` | повертає cumulative кількість прийнятих імпульсів |
 | `tachometer_reset()` | очищає runtime state, зберігає config |

@@ -19,7 +19,9 @@ static void tachometer_rearm(tachometer_t* tachometer)
 {
     tachometer->session_state = TACHOMETER_SESSION_UNARMED;
     tachometer->last_pulse_us = 0UL;
+#if !TACHOMETER_LIGHTWEIGHT
     tachometer->rpm = 0u;
+#endif
 }
 
 /*
@@ -39,7 +41,12 @@ static void tachometer_clear_measurement(tachometer_t* tachometer)
  *
  * The microsecond interval times the number of pulses per revolution is kept
  * in 64-bit so the multiplication cannot overflow 16-bit or 32-bit math.
+ *
+ * This function is compiled out when TACHOMETER_LIGHTWEIGHT is enabled,
+ * eliminating the expensive 64-bit division runtime helper from the linked
+ * image.
  */
+#if !TACHOMETER_LIGHTWEIGHT
 static uint16_t tachometer_compute_rpm(const tachometer_t* tachometer,
                                        uint32_t pulse_interval_us)
 {
@@ -62,6 +69,7 @@ static uint16_t tachometer_compute_rpm(const tachometer_t* tachometer,
 
     return (uint16_t)rpm;
 }
+#endif
 
 static void tachometer_update_status(tachometer_t* tachometer, uint32_t now_us)
 {
@@ -124,6 +132,7 @@ static void tachometer_update_status(tachometer_t* tachometer, uint32_t now_us)
         return;
     }
 
+#if !TACHOMETER_LIGHTWEIGHT
     if ((tachometer->rpm < tachometer->config.minimum_rpm) &&
         (tachometer->config.minimum_rpm != 0u))
     {
@@ -131,6 +140,7 @@ static void tachometer_update_status(tachometer_t* tachometer, uint32_t now_us)
         tachometer->status = TACHOMETER_STATUS_TOO_SLOW;
         return;
     }
+#endif
 
     tachometer->status = TACHOMETER_STATUS_RUNNING;
 }
@@ -227,7 +237,9 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
         tachometer->session_state = TACHOMETER_SESSION_FIRST_PULSE;
         tachometer->last_pulse_us = now_us;
         tachometer->pulse_count++;
+#if !TACHOMETER_LIGHTWEIGHT
         tachometer->rpm = 0u;
+#endif
         tachometer_update_status(tachometer, now_us);
         DRV_INT_RESTORE(int_state);
         return 1u;
@@ -249,7 +261,9 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
      * stream cannot overflow it. */
     tachometer->session_state = TACHOMETER_SESSION_ACTIVE;
     tachometer->pulse_count++;
+#if !TACHOMETER_LIGHTWEIGHT
     tachometer->rpm = tachometer_compute_rpm(tachometer, interval_us);
+#endif
     tachometer_update_status(tachometer, now_us);
 
     DRV_INT_RESTORE(int_state);
@@ -386,7 +400,9 @@ void tachometer_process(tachometer_t* tachometer, uint32_t now_us)
     }
 
     /* Session is ACTIVE. Check RPM against minimum. The rpm value was
-     * snapshot-safe (uint16_t, may tear but the comparison is advisory). */
+     * snapshot-safe (uint16_t, may tear but the comparison is advisory).
+     * In lightweight mode, RPM is not computed, so TOO_SLOW is never set. */
+#if !TACHOMETER_LIGHTWEIGHT
     if ((tachometer->rpm < tachometer->config.minimum_rpm) &&
         (tachometer->config.minimum_rpm != 0u))
     {
@@ -401,6 +417,7 @@ void tachometer_process(tachometer_t* tachometer, uint32_t now_us)
         }
         return;
     }
+#endif
 
     if (status_snap != TACHOMETER_STATUS_RUNNING)
     {
@@ -413,6 +430,7 @@ void tachometer_process(tachometer_t* tachometer, uint32_t now_us)
     }
 }
 
+#if !TACHOMETER_LIGHTWEIGHT
 uint16_t tachometer_get_rpm(const tachometer_t* tachometer)
 {
     uint16_t rpm;
@@ -430,6 +448,7 @@ uint16_t tachometer_get_rpm(const tachometer_t* tachometer)
 
     return rpm;
 }
+#endif
 
 tachometer_status_t tachometer_get_status(const tachometer_t* tachometer)
 {
