@@ -11,6 +11,18 @@
  * The address is a 7-bit I2C address (0x27 for the common backpack). It is
  * used as-is; no masking is applied. Address 0x00 and addresses above 0x7F
  * are rejected as invalid.
+ *
+ * Compile-time profiles:
+ *
+ *   FULL (default) - all APIs available.
+ *   MINIMAL        - define LCD_I2C_MINIMAL=1 before including this header.
+ *                    Removes runtime backlight control, lcd_i2c_home(),
+ *                    lcd_i2c_write_string(), lcd_i2c_attach(),
+ *                    lcd_i2c_controller_init(), lcd_i2c_probe(),
+ *                    lcd_i2c_last_status(), lcd_i2c_is_ready().
+ *                    Backlight is always ON (LCD_I2C_PIN_BL included
+ *                    in every nibble). All other display operations
+ *                    remain fully functional.
  */
 
 #ifndef LIBRARIES_DISPLAY_LCD_HD44780_LCD_I2C_H
@@ -18,6 +30,10 @@
 
 #include "core/compiler.h"
 #include "core/types.h"
+
+#ifndef LCD_I2C_MINIMAL
+#define LCD_I2C_MINIMAL 0
+#endif
 
 /*
  * Compile-time PCF8574 pin mapping. Override any of these before including
@@ -51,36 +67,26 @@ typedef enum lcd_i2c_status
     LCD_I2C_NO_ACK
 } lcd_i2c_status_t;
 
-/*
- * Full init: configures the shared I2C master, runs the HD44780 init sequence
- * and enables the backlight. The LCD is ready on success.
- *
- * Attach: binds the LCD to an I2C bus that is already initialized elsewhere.
- * It only probes the address; it never calls i2c_init(), never runs the
- * HD44780 init sequence and never clears the display. The bind is committed
- * only after a successful probe. Run lcd_i2c_controller_init() afterwards to
- * make the display ready.
- *
- * Controller init: runs only the HD44780 init sequence on an already
- * initialized I2C bus, using the address bound by init() or attach().
- * It returns LCD_I2C_NOT_INITIALIZED if no address is bound.
- *
- * Probe: diagnostic only. It checks address presence without changing the
- * currently bound address or ready flag.
- */
 lcd_i2c_status_t lcd_i2c_init(uint8_t i2c_addr, uint32_t i2c_clock_hz);
+#if !LCD_I2C_MINIMAL
 lcd_i2c_status_t lcd_i2c_attach(uint8_t i2c_addr);
 lcd_i2c_status_t lcd_i2c_controller_init(void);
-
 lcd_i2c_status_t lcd_i2c_probe(uint8_t i2c_addr);
 lcd_i2c_status_t lcd_i2c_last_status(void);
 uint8_t lcd_i2c_is_ready(void);
+#endif
 
 void lcd_i2c_clear(void);
+#if LCD_I2C_MINIMAL
+#define lcd_i2c_home() lcd_i2c_set_cursor(0u, 0u)
+#else
 void lcd_i2c_home(void);
+#endif
 void lcd_i2c_set_cursor(uint8_t row, uint8_t col);
 void lcd_i2c_write_char(char c);
+#if !LCD_I2C_MINIMAL
 void lcd_i2c_write_string(const char* str);
 void lcd_i2c_backlight(uint8_t on);
+#endif
 
 #endif /* LIBRARIES_DISPLAY_LCD_HD44780_LCD_I2C_H */
