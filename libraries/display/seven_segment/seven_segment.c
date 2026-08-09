@@ -18,9 +18,9 @@
  * In that case the library remains fully usable in manual refresh mode.
  *
  * Enable only the timer driver that is actually added to the project,
- * for example:
- *
- *   #define SEVEN_SEGMENT_ENABLE_TIMER2 1
+ * project-wide through a compiler macro (for example -DSEVEN_SEGMENT_ENABLE_TIMER2=1).
+ * This file is compiled separately, so a local #define inside a single
+ * translation unit is not visible here.
  *
  * The runtime configuration passed to seven_segment_init() then selects
  * whether manual refresh or that compiled timer backend is used.

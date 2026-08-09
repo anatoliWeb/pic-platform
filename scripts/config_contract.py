@@ -5,6 +5,9 @@ in docs/configuration.md (Category A / B / C). Consumers import these
 constants instead of re-declaring them.
 
 Category A: project-wide build defines (must be visible to all units).
+            Includes profile, backend, layout, capacity and timing macros that
+            a library .c consumes directly; a per-unit value mismatch silently
+            breaks behavior, struct layout, or the public API surface.
 Category B: runtime function arguments (no global defines needed).
 Category C: CONFIG-bit helper flags documenting literal #pragma config values.
 """
@@ -36,6 +39,7 @@ CATEGORY_A = frozenset({
     "LCD_I2C_PIN_EN",
     "LCD_I2C_PIN_BL",
     "LCD_I2C_DATA_SHIFT",
+    "LCD_I2C_MINIMAL",
     "SEVEN_SEGMENT_ENABLE_TIMER0",
     "SEVEN_SEGMENT_ENABLE_TIMER1",
     "SEVEN_SEGMENT_ENABLE_TIMER2",
@@ -47,6 +51,16 @@ CATEGORY_A = frozenset({
     "POSITION_DRIVE_ENABLE_STUCK_DETECTION",
     "POSITION_DRIVE_ENABLE_DIRECTION_CHECK",
     "POSITION_DRIVE_ENABLE_UART_DEBUG",
+    "RB_OVERWRITE",
+    "DRV_USE_FREERTOS",
+    "DRV_USE_UART",
+    "DRV_DEBUG_UART_BAUD",
+    "SCHEDULER_MAX_TASKS",
+    "CRON_MAX_TASKS",
+    "LED_ANIM_ENGINE_MAX_ANIMATIONS",
+    "AC_PHASE_CONTROL_MAX_CHANNELS",
+    "_XTAL_FREQ",
+    "DRV_XTAL_FREQ",
 })
 
 CATEGORY_B = [

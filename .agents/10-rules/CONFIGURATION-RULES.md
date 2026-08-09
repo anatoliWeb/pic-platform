@@ -8,6 +8,14 @@
 - `config_bits.c` holds literal configuration bits only.
 - `pic_platform_config.h` provides platform defaults and shared feature flags.
 
+## Category A classification
+
+- A macro belongs to Category A (project-wide build define) when a library `.c` consumes it in `#if`, or when it changes a caller-visible struct layout, or when it compiles out public API functions.
+- Known Category A macros are listed in `scripts/config_contract.py` and `docs/configuration.md` / `docs/configuration.ua.md`.
+- Category A values must be passed through compiler `-D` or MPLAB `define-macros` only. Never override them inside `project_config.h` or as a local `#define` in a single translation unit.
+- A library `.c` and the application must never see different values of the same define. Different per-unit values silently break behavior, struct layout, or the API surface.
+- Layout-affecting macros (`TACHOMETER_LIGHTWEIGHT`, `CRON_MAX_TASKS`, `LED_ANIM_ENGINE_MAX_ANIMATIONS`) and API-compiling-out macros (`LCD_I2C_MINIMAL`) are especially dangerous: every translation unit must compile the identical profile.
+
 ## Feature defines
 
 - Use `SEVEN_SEGMENT_ENABLE_TIMER0..3` for seven-segment timer ownership.

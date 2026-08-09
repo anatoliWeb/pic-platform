@@ -15,14 +15,18 @@
  * Compile-time profiles:
  *
  *   FULL (default) - all APIs available.
- *   MINIMAL        - define LCD_I2C_MINIMAL=1 before including this header.
- *                    Removes runtime backlight control, lcd_i2c_home(),
- *                    lcd_i2c_write_string(), lcd_i2c_attach(),
- *                    lcd_i2c_controller_init(), lcd_i2c_probe(),
+ *   MINIMAL        - pass -DLCD_I2C_MINIMAL=1 project-wide (compiler macro,
+ *                    identical in every translation unit). Removes runtime
+ *                    backlight control, lcd_i2c_home(), lcd_i2c_write_string(),
+ *                    lcd_i2c_attach(), lcd_i2c_controller_init(), lcd_i2c_probe(),
  *                    lcd_i2c_last_status(), lcd_i2c_is_ready().
  *                    Backlight is always ON (LCD_I2C_PIN_BL included
  *                    in every nibble). All other display operations
  *                    remain fully functional.
+ *
+ * The library .c is compiled separately, so the profile and the pin mapping
+ * defines must be set project-wide through compiler -D or MPLAB define-macros,
+ * not through a local #define in one translation unit.
  */
 
 #ifndef LIBRARIES_DISPLAY_LCD_HD44780_LCD_I2C_H
@@ -36,8 +40,9 @@
 #endif
 
 /*
- * Compile-time PCF8574 pin mapping. Override any of these before including
- * this header (for example through a compiler -D define).
+ * Compile-time PCF8574 pin mapping. Override any of these project-wide
+ * through compiler -D defines or MPLAB define-macros. A local override
+ * before including this header is visible to one translation unit only.
  */
 #ifndef LCD_I2C_PIN_RS
     #define LCD_I2C_PIN_RS 0x01u

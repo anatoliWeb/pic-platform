@@ -104,14 +104,16 @@ Current limitation:
 
 ## Project Configuration Visibility
 
-Timer-enabled library builds must expose the same `project_config.h` to library translation units.
-For MPLAB example projects, add the project directory to include paths, for example:
+The timer backend selection macros (`SEVEN_SEGMENT_ENABLE_TIMER0..3`) are consumed
+by `seven_segment.c`, which is compiled separately. Set them project-wide through
+compiler `-D` or MPLAB `define-macros`, identical in every translation unit.
+
+For MPLAB example projects, keep the project root, `core`, `drivers`, and
+`libraries` on the include path, for example:
 
 ```text
 .;../../../../;../../../../core;../../../../drivers;../../../../libraries
 ```
-
-This allows `seven_segment.c` to see the local project configuration and backend macros such as `SEVEN_SEGMENT_ENABLE_TIMER2`.
 
 ## Interrupt Requirements
 

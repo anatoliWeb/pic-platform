@@ -158,6 +158,8 @@ Rules:
 - Do not create duplicate configuration sources of truth.
 - Reusable libraries must not hardcode project pins.
 - Add a new Category A define only when it must be visible to all relevant translation units.
+- A library `.c` and the application must never see different values of the same define. Profile and layout macros (`TACHOMETER_LIGHTWEIGHT`, `LCD_I2C_MINIMAL`, `CRON_MAX_TASKS`, `LED_ANIM_ENGINE_MAX_ANIMATIONS`) must be set project-wide so every TU compiles the identical profile.
+- The full Category A macro list and the official macro table live in `scripts/config_contract.py` and `docs/configuration.md` / `docs/configuration.ua.md`.
 
 ## Compiler and build rules
 
