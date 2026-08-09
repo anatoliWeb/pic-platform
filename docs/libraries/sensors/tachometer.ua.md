@@ -10,18 +10,16 @@ Reusable helper для переводу імпульсів у RPM зі startup g
 
 ### LIGHTWEIGHT
 
-Визначте `TACHOMETER_LIGHTWEIGHT=1` перед включенням заголовка для активації легкого профілю:
+`TACHOMETER_LIGHTWEIGHT` є project-wide compiler define (Category A). Він змінює
+layout `tachometer_t`, тому його треба передавати однаково кожному translation
+unit, який включає заголовок — library `.c` і кожному caller TU. Передавайте як
+`-DTACHOMETER_LIGHTWEIGHT=1` у командному рядку `xc8` або через MPLAB X
+Preprocessor macros; не `#define` його всередині одного `.c` файла.
 
 - Вимикає дорогий 64-бітний розподіл для розрахунку RPM; `tachometer_get_rpm()` завжди повертає 0
-- `minimum_rpm` все одно перевіряється: модуль один раз обчислює у `tachometer_init()` граничний максимальний інтервал імпульсів і встановлює `TOO_SLOW`, коли прийнятий інтервал його перевищує. Перевірка bit-exact із FULL, за винятком нульового інтервалу, який теж трактується як `TOO_SLOW` (відповідає FULL з вимкненим noise filter)
+- `minimum_rpm` все одно перевіряється: модуль один раз обчислює у `tachometer_init()` граничний максимальний інтервал імпульсів і встановлює `TOO_SLOW`, коли прийнятий інтервал його перевищує. Перевірка bit-exact із FULL, включно з випадком нульового інтервалу (відповідає FULL з вимкненим noise filter)
 - Всі фільтрація імпульсів, startup grace, timeout та визначення наявності залишаються повністю функціональними
 - Зберігає 524 B ROM на PIC18F452 (виміряно з XC8 3.10) порівняно з FULL; RAM однакова (103 B)
-
-Використання:
-```c
-#define TACHOMETER_LIGHTWEIGHT 1
-#include "libraries/sensors/tachometer/tachometer.h"
-```
 
 ## API
 

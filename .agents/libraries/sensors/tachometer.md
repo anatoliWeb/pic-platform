@@ -36,18 +36,16 @@ Full tachometer behavior with RPM calculation, minimum RPM check, and all diagno
 
 ### LIGHTWEIGHT
 
-Define `TACHOMETER_LIGHTWEIGHT=1` before including the header to enable the lightweight profile:
+`TACHOMETER_LIGHTWEIGHT` is a project-wide compiler define (Category A): it
+changes the layout of `tachometer_t`, so it must be passed identically to every
+translation unit that includes the header — the library `.c` and every caller
+TU. Pass it as `-DTACHOMETER_LIGHTWEIGHT=1` on the `xc8` command line or through
+MPLAB X Preprocessor macros; do not `#define` it inside a single `.c` file.
 
 - Disables the expensive 64-bit RPM division; `tachometer_get_rpm()` always returns 0
-- `minimum_rpm` is still enforced: the module computes a maximum pulse-interval threshold once in `tachometer_init()` and raises `TOO_SLOW` when the accepted pulse interval exceeds it. The check is bit-exact with the FULL profile, except that a zero interval is also reported `TOO_SLOW` (mirrors FULL with the noise filter disabled)
+- `minimum_rpm` is still enforced: the module computes a maximum pulse-interval threshold once in `tachometer_init()` and raises `TOO_SLOW` when the accepted pulse interval exceeds it. The check is bit-exact with the FULL profile, including the zero-interval case (mirrors FULL with the noise filter disabled)
 - All pulse filtering, startup grace, timeout, and presence detection remain fully functional
 - Saves 524 B ROM on PIC18F452 (measured with XC8 3.10) versus the FULL profile; RAM usage is identical (103 B)
-
-Usage:
-```c
-#define TACHOMETER_LIGHTWEIGHT 1
-#include "libraries/sensors/tachometer/tachometer.h"
-```
 
 ## API
 

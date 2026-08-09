@@ -43,6 +43,7 @@ These values must be visible to all translation units:
 - `SEVEN_SEGMENT_ENABLE_TIMER1`
 - `SEVEN_SEGMENT_ENABLE_TIMER2`
 - `SEVEN_SEGMENT_ENABLE_TIMER3`
+- `TACHOMETER_LIGHTWEIGHT` (selects the tachometer LIGHTWEIGHT profile; changes `tachometer_t` layout, so it must be identical in every TU)
 - `POSITION_DRIVE_SENSOR_TYPE`
 - `POSITION_DRIVE_ENABLE_PWM`
 - `POSITION_DRIVE_ENABLE_TIMEOUT`

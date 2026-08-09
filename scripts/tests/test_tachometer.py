@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import importlib.util
+import sys
 import unittest
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -9,6 +11,16 @@ ROOT = Path(__file__).resolve().parents[2]
 LIB = ROOT / "libraries" / "sensors" / "tachometer"
 HDR = LIB / "tachometer.h"
 SRC = LIB / "tachometer.c"
+
+
+def load_config_contract():
+    spec = importlib.util.spec_from_file_location(
+        "config_contract", ROOT / "scripts" / "config_contract.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 def read_text(path: Path) -> str:
@@ -793,6 +805,116 @@ class TachometerLightweightBehaviorTests(unittest.TestCase):
         harness = self.make_harness()
         self.assertEqual(self.feed_pair(harness, 0, 10000), "RUNNING")
         self.assertEqual(harness.rpm, 0)
+
+
+class TachometerLightweightConfigContractTests(unittest.TestCase):
+    """Regression: TACHOMETER_LIGHTWEIGHT changes tachometer_t layout, so it
+    must be a project-wide Category A define, identical in every translation
+    unit that includes the header. A TU-local #define would make the library
+    and the caller disagree on the struct layout."""
+
+    def test_macro_is_category_a_in_config_contract(self) -> None:
+        contract = load_config_contract()
+        self.assertIn("TACHOMETER_LIGHTWEIGHT", contract.CATEGORY_A)
+
+    def test_header_documents_project_wide_define(self) -> None:
+        text = read_text(HDR)
+        self.assertIn("project-wide compiler define", text)
+        self.assertIn("-DTACHOMETER_LIGHTWEIGHT=1", text)
+        self.assertIn("Do not #define it inside a single .c file", text)
+
+    def test_header_default_is_full(self) -> None:
+        text = read_text(HDR)
+        self.assertIn("#ifndef TACHOMETER_LIGHTWEIGHT", text)
+        self.assertIn("#define TACHOMETER_LIGHTWEIGHT 0", text)
+
+    def test_configuration_docs_list_macro_as_category_a(self) -> None:
+        en = read_text(ROOT / "docs" / "configuration.md")
+        ua = read_text(ROOT / "docs" / "configuration.ua.md")
+        for text in (en, ua):
+            self.assertIn("TACHOMETER_LIGHTWEIGHT", text)
+
+    def test_library_source_does_not_define_macro_locally(self) -> None:
+        src = read_text(SRC)
+        self.assertNotIn("#define TACHOMETER_LIGHTWEIGHT 1", src)
+        hdr = read_text(HDR)
+        self.assertNotIn("#define TACHOMETER_LIGHTWEIGHT 1", hdr)
+
+
+class TachometerProfileDifferentialTests(unittest.TestCase):
+    """FULL and LIGHTWEIGHT must reach the same TOO_SLOW/RUNNING decision for
+    every valid (ppr, minimum_rpm, interval) tuple."""
+
+    MINIMUMS = (0, 1, 900, 65535)
+    PPMS = (1, 2, 4, 255)
+
+    @staticmethod
+    def threshold(ppr: int, minimum_rpm: int) -> int | None:
+        if minimum_rpm == 0:
+            return None
+        return 60000000 // (minimum_rpm * ppr)
+
+    def intervals_for(self, ppr: int, minimum_rpm: int) -> list[int]:
+        base = {0, 1, 2, 3, 10000, 60000000}
+        threshold = self.threshold(ppr, minimum_rpm)
+        if threshold is not None and threshold > 1:
+            base.update({threshold - 1, threshold, threshold + 1})
+        return sorted(base)
+
+    def run_pair(self, ppr: int, minimum_rpm: int, interval_us: int):
+        full = TachometerRuntimeHarness(
+            pulses_per_revolution=ppr,
+            minimum_rpm=minimum_rpm,
+            startup_grace_ms=0,
+            signal_timeout_ms=65000,
+            minimum_pulse_interval_us=0,
+            lightweight=0,
+        )
+        light = TachometerRuntimeHarness(
+            pulses_per_revolution=ppr,
+            minimum_rpm=minimum_rpm,
+            startup_grace_ms=0,
+            signal_timeout_ms=65000,
+            minimum_pulse_interval_us=0,
+            lightweight=1,
+        )
+        for harness in (full, light):
+            harness.init()
+            harness.set_expected_running(1, 0)
+            harness.on_pulse(0)
+            harness.on_pulse(interval_us)
+            harness.process(interval_us + 1)
+        return full.status, light.status
+
+    def test_differential_status_matches_all_tuples(self) -> None:
+        checked = 0
+        for ppr in self.PPMS:
+            for minimum_rpm in self.MINIMUMS:
+                for interval_us in self.intervals_for(ppr, minimum_rpm):
+                    full_status, light_status = self.run_pair(ppr, minimum_rpm, interval_us)
+                    with self.subTest(ppr=ppr, minimum_rpm=minimum_rpm, interval_us=interval_us):
+                        self.assertEqual(light_status, full_status)
+                    checked += 1
+        self.assertGreater(checked, 40)
+
+    def test_threshold_arithmetic_never_overflows(self) -> None:
+        # maximum product 65535 * 255 = 16711425 fits uint32; the threshold
+        # division uses only uint32 operands (60000000UL, cast operands).
+        self.assertEqual(60000000 // (65535 * 255), 3)
+        self.assertLess(65535 * 255, 1 << 32)
+
+    def test_zero_ppr_is_config_error_in_both_profiles(self) -> None:
+        for lightweight in (0, 1):
+            harness = TachometerRuntimeHarness(
+                pulses_per_revolution=0,
+                minimum_rpm=900,
+                startup_grace_ms=0,
+                signal_timeout_ms=65000,
+                minimum_pulse_interval_us=0,
+                lightweight=lightweight,
+            )
+            harness.init()
+            self.assertEqual(harness.status, "CONFIG_ERROR")
 
 
 if __name__ == "__main__":

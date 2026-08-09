@@ -11,8 +11,15 @@
 /*
  * Compile-time profile selection.
  *
- * Define TACHOMETER_LIGHTWEIGHT to 1 before including this header to
- * disable expensive RPM arithmetic (64-bit division). In lightweight mode:
+ * TACHOMETER_LIGHTWEIGHT is a project-wide compiler define (Category A): it
+ * changes the layout of tachometer_t (adds minimum_interval_threshold_us and
+ * slow_signal), so it MUST be passed identically to every translation unit
+ * that sees tachometer_t — the library TU (tachometer.c) and every caller TU.
+ * Pass it as -DTACHOMETER_LIGHTWEIGHT=1 on the xc8 command line or through
+ * MPLAB X Preprocessor macros. Do not #define it inside a single .c file,
+ * otherwise the library and the caller disagree on the struct layout.
+ *
+ * In lightweight mode:
  *   - tachometer_get_rpm() always returns 0
  *   - The rpm field in tachometer_t is not computed
  *   - minimum_rpm is still enforced: a pulse interval longer than
@@ -124,7 +131,8 @@ void tachometer_reset(tachometer_t* tachometer);
  *     fields against concurrent main-loop reads. The save/restore pair is
  *     safe from ISR context because it preserves the previous GIE state
  *     (which is 0 inside an ISR) rather than unconditionally re-enabling.
- *   - Writes: session_state, last_pulse_us, pulse_count, rpm, status.
+ *   - Writes: session_state, last_pulse_us, pulse_count, status, and in
+ *     LIGHTWEIGHT also slow_signal (8-bit, atomic on PIC18).
  *
  * tachometer_process()
  *   - Call from the main loop or a periodic timer task.

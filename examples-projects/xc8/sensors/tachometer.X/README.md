@@ -32,6 +32,12 @@ tracks RPM/status without any board-specific tachometer wiring.
 python scripts\build_xc8_project.py examples-projects\xc8\sensors\tachometer.X
 ```
 
+To build the LIGHTWEIGHT profile, pass `TACHOMETER_LIGHTWEIGHT=1` as a
+project-wide compiler define (identical for the example and `tachometer.c`):
+```cmd
+xc8 -mcpu=18F452 -DTACHOMETER_LIGHTWEIGHT=1 ...\main.c ...\config_bits.c ...\tachometer.c
+```
+
 ## Status
 
 Ready for XC8 build validation.

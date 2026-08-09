@@ -44,6 +44,7 @@ Project-wide значення повинні надходити з compiler macr
 - `SEVEN_SEGMENT_ENABLE_TIMER1`
 - `SEVEN_SEGMENT_ENABLE_TIMER2`
 - `SEVEN_SEGMENT_ENABLE_TIMER3`
+- `TACHOMETER_LIGHTWEIGHT` (вибір LIGHTWEIGHT-профілю тахометра; змінює layout `tachometer_t`, тому має бути однаковим у кожному TU)
 - `POSITION_DRIVE_SENSOR_TYPE`
 - `POSITION_DRIVE_ENABLE_PWM`
 - `POSITION_DRIVE_ENABLE_TIMEOUT`
