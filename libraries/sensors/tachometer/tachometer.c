@@ -21,6 +21,8 @@ static void tachometer_rearm(tachometer_t* tachometer)
     tachometer->last_pulse_us = 0UL;
 #if !TACHOMETER_LIGHTWEIGHT
     tachometer->rpm = 0u;
+#else
+    tachometer->slow_signal = 0u;
 #endif
 }
 
@@ -140,6 +142,13 @@ static void tachometer_update_status(tachometer_t* tachometer, uint32_t now_us)
         tachometer->status = TACHOMETER_STATUS_TOO_SLOW;
         return;
     }
+#else
+    if (tachometer->slow_signal != 0u)
+    {
+        /* slow_signal is set by on_pulse from the accepted pulse interval. */
+        tachometer->status = TACHOMETER_STATUS_TOO_SLOW;
+        return;
+    }
 #endif
 
     tachometer->status = TACHOMETER_STATUS_RUNNING;
@@ -166,6 +175,24 @@ drv_status_t tachometer_init(tachometer_t* tachometer,
         tachometer->status = TACHOMETER_STATUS_CONFIG_ERROR;
         return DRV_STATUS_ERROR;
     }
+
+#if TACHOMETER_LIGHTWEIGHT
+    /* Minimum-speed threshold computed once. An accepted pulse interval longer
+     * than this means speed is below minimum_rpm. Computed as an exact integer
+     * threshold (floor division), so the TOO_SLOW decision matches FULL, which
+     * compares rpm < minimum_rpm. minimum_rpm == 0 disables the check. */
+    if (tachometer->config.minimum_rpm != 0u)
+    {
+        tachometer->minimum_interval_threshold_us =
+            60000000UL / ((uint32_t)tachometer->config.minimum_rpm *
+                          (uint32_t)tachometer->config.pulses_per_revolution);
+    }
+    else
+    {
+        tachometer->minimum_interval_threshold_us = 0UL;
+    }
+    tachometer->slow_signal = 0u;
+#endif
 
     return DRV_STATUS_OK;
 }
@@ -263,6 +290,15 @@ uint8_t tachometer_on_pulse(tachometer_t* tachometer, uint32_t now_us)
     tachometer->pulse_count++;
 #if !TACHOMETER_LIGHTWEIGHT
     tachometer->rpm = tachometer_compute_rpm(tachometer, interval_us);
+#else
+    /* Interval-based minimum-speed flag, exact counterpart of the FULL rpm
+     * comparison: interval > threshold means floor(60000000/(interval*ppr))
+     * is below minimum_rpm. An interval of 0 (identical timestamps with the
+     * noise filter disabled) is also flagged, matching the FULL rpm==0 case. */
+    tachometer->slow_signal = (uint8_t)(
+        (tachometer->config.minimum_rpm != 0u) &&
+        ((interval_us == 0UL) ||
+         (interval_us > tachometer->minimum_interval_threshold_us)));
 #endif
     tachometer_update_status(tachometer, now_us);
 
@@ -399,12 +435,27 @@ void tachometer_process(tachometer_t* tachometer, uint32_t now_us)
         return;
     }
 
-    /* Session is ACTIVE. Check RPM against minimum. The rpm value was
-     * snapshot-safe (uint16_t, may tear but the comparison is advisory).
-     * In lightweight mode, RPM is not computed, so TOO_SLOW is never set. */
+    /* Session is ACTIVE. Check the minimum-speed condition. In FULL the check
+     * uses the last computed rpm (uint16_t, may tear but the comparison is
+     * advisory); in lightweight mode it uses the 8-bit slow_signal flag set
+     * by on_pulse, which reads atomically on PIC18. */
 #if !TACHOMETER_LIGHTWEIGHT
     if ((tachometer->rpm < tachometer->config.minimum_rpm) &&
         (tachometer->config.minimum_rpm != 0u))
+    {
+        if (status_snap != TACHOMETER_STATUS_TOO_SLOW)
+        {
+            DRV_INT_SAVE_AND_DISABLE(int_state);
+            if (tachometer->last_pulse_us == last_pulse_us_snap)
+            {
+                tachometer->status = TACHOMETER_STATUS_TOO_SLOW;
+            }
+            DRV_INT_RESTORE(int_state);
+        }
+        return;
+    }
+#else
+    if (tachometer->slow_signal != 0u)
     {
         if (status_snap != TACHOMETER_STATUS_TOO_SLOW)
         {

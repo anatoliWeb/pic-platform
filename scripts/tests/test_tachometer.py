@@ -72,6 +72,7 @@ class TachometerRuntimeHarness:
     startup_grace_ms: int
     signal_timeout_ms: int
     minimum_pulse_interval_us: int
+    lightweight: int = 0
     initialized: int = 0
     expected_running: int = 0
     status: str = "STOPPED"
@@ -80,6 +81,8 @@ class TachometerRuntimeHarness:
     pulse_count: int = 0
     rpm: int = 0
     session_state: int = SESSION_UNARMED
+    minimum_interval_threshold_us: int = 0
+    slow_signal: int = 0
 
     def init(self) -> None:
         self.initialized = 1
@@ -90,6 +93,15 @@ class TachometerRuntimeHarness:
         self.pulse_count = 0
         self.rpm = 0
         self.session_state = SESSION_UNARMED
+        self.slow_signal = 0
+        if self.pulses_per_revolution == 0:
+            self.status = "CONFIG_ERROR"
+        if self.lightweight and self.pulses_per_revolution:
+            self.minimum_interval_threshold_us = (
+                60000000 // (self.minimum_rpm * self.pulses_per_revolution)
+                if self.minimum_rpm
+                else 0
+            )
 
     def set_expected_running(self, expected_running: int, now_us: int) -> None:
         expected_running = 1 if expected_running else 0
@@ -100,12 +112,14 @@ class TachometerRuntimeHarness:
         self.last_pulse_us = 0
         self.rpm = 0
         self.session_state = SESSION_UNARMED
+        self.slow_signal = 0
         self.status = "STARTING" if expected_running else "STOPPED"
 
     def _rearm(self) -> None:
         self.session_state = SESSION_UNARMED
         self.last_pulse_us = 0
         self.rpm = 0
+        self.slow_signal = 0
 
     def process(self, now_us: int) -> None:
         if not self.initialized:
@@ -128,7 +142,11 @@ class TachometerRuntimeHarness:
         if self.session_state != SESSION_ACTIVE:
             self.status = "STARTING"
             return
-        if self.minimum_rpm and self.rpm < self.minimum_rpm:
+        if self.lightweight:
+            if self.slow_signal:
+                self.status = "TOO_SLOW"
+                return
+        elif self.minimum_rpm and self.rpm < self.minimum_rpm:
             self.status = "TOO_SLOW"
             return
         self.status = "RUNNING"
@@ -144,6 +162,7 @@ class TachometerRuntimeHarness:
             self.last_pulse_us = now_us
             self.pulse_count += 1
             self.rpm = 0
+            self.slow_signal = 0
             self.process(now_us)
             return 1
         interval_us = u32_diff(now_us, self.last_pulse_us)
@@ -152,7 +171,14 @@ class TachometerRuntimeHarness:
         self.last_pulse_us = now_us
         self.session_state = SESSION_ACTIVE
         self.pulse_count += 1
-        self.rpm = rpm_from_interval(self.pulses_per_revolution, interval_us)
+        if self.lightweight:
+            self.rpm = 0
+            self.slow_signal = 1 if (
+                self.minimum_rpm != 0
+                and (interval_us == 0 or interval_us > self.minimum_interval_threshold_us)
+            ) else 0
+        else:
+            self.rpm = rpm_from_interval(self.pulses_per_revolution, interval_us)
         self.process(now_us)
         return 1
 
@@ -497,6 +523,276 @@ class TachometerLightweightTests(unittest.TestCase):
     def test_lightweight_on_pulse_skips_rpm_calc(self) -> None:
         body = source_function(read_text(SRC), "uint8_t tachometer_on_pulse(")
         self.assertIn("#if !TACHOMETER_LIGHTWEIGHT", body)
+
+
+class TachometerLightweightMinSpeedStructuralTests(unittest.TestCase):
+    def test_lightweight_min_speed_fields_declared(self) -> None:
+        text = read_text(HDR)
+        self.assertIn("minimum_interval_threshold_us", text)
+        self.assertIn("slow_signal", text)
+        self.assertIn("#if TACHOMETER_LIGHTWEIGHT", text)
+        self.assertIn("#endif", text)
+
+    def test_lightweight_init_computes_interval_threshold(self) -> None:
+        body = source_function(read_text(SRC), "drv_status_t tachometer_init(")
+        self.assertIn("#if TACHOMETER_LIGHTWEIGHT", body)
+        self.assertIn("minimum_interval_threshold_us", body)
+        self.assertIn("60000000UL /", body)
+        self.assertIn("minimum_rpm", body)
+        self.assertIn("pulses_per_revolution", body)
+
+    def test_lightweight_rearm_clears_slow_signal(self) -> None:
+        body = source_function(read_text(SRC), "static void tachometer_rearm(")
+        self.assertIn("#if !TACHOMETER_LIGHTWEIGHT", body)
+        self.assertIn("slow_signal = 0u", body)
+
+    def test_lightweight_on_pulse_sets_slow_signal(self) -> None:
+        body = source_function(read_text(SRC), "uint8_t tachometer_on_pulse(")
+        self.assertIn("#if !TACHOMETER_LIGHTWEIGHT", body)
+        self.assertIn("slow_signal =", body)
+        self.assertIn("minimum_interval_threshold_us", body)
+
+    def test_lightweight_process_uses_slow_signal(self) -> None:
+        body = source_function(read_text(SRC), "void tachometer_process(")
+        self.assertIn("slow_signal", body)
+        self.assertIn("TACHOMETER_STATUS_TOO_SLOW", body)
+
+    def test_lightweight_update_status_uses_slow_signal(self) -> None:
+        body = source_function(read_text(SRC), "static void tachometer_update_status(")
+        self.assertIn("slow_signal", body)
+        self.assertIn("TACHOMETER_STATUS_TOO_SLOW", body)
+
+    def test_lightweight_threshold_uses_32bit_division(self) -> None:
+        body = source_function(read_text(SRC), "drv_status_t tachometer_init(")
+        self.assertIn("60000000UL /", body)
+        self.assertNotIn("60000000ULL", body)
+
+
+class TachometerLightweightBehaviorTests(unittest.TestCase):
+    def make_harness(self, minimum_rpm=900, pulses_per_revolution=2,
+                     startup_grace_ms=0, signal_timeout_ms=10000,
+                     minimum_pulse_interval_us=800) -> TachometerRuntimeHarness:
+        harness = TachometerRuntimeHarness(
+            pulses_per_revolution=pulses_per_revolution,
+            minimum_rpm=minimum_rpm,
+            startup_grace_ms=startup_grace_ms,
+            signal_timeout_ms=signal_timeout_ms,
+            minimum_pulse_interval_us=minimum_pulse_interval_us,
+            lightweight=1,
+        )
+        harness.init()
+        harness.set_expected_running(1, 0)
+        return harness
+
+    def feed_pair(self, harness: TachometerRuntimeHarness, t0: int, t1: int) -> str:
+        self.assertEqual(harness.on_pulse(t0), 1)
+        self.assertEqual(harness.on_pulse(t1), 1)
+        return harness.status
+
+    def test_initial_state_is_stopped(self) -> None:
+        harness = TachometerRuntimeHarness(
+            pulses_per_revolution=2, minimum_rpm=900, startup_grace_ms=0,
+            signal_timeout_ms=500, minimum_pulse_interval_us=800, lightweight=1,
+        )
+        harness.init()
+        self.assertEqual(harness.status, "STOPPED")
+        self.assertEqual(harness.slow_signal, 0)
+
+    def test_first_pulse_is_starting(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(harness.on_pulse(0), 1)
+        self.assertEqual(harness.status, "STARTING")
+        self.assertEqual(harness.rpm, 0)
+
+    def test_clearly_above_minimum_is_running(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(self.feed_pair(harness, 0, 10000), "RUNNING")
+
+    def test_just_above_minimum_is_running(self) -> None:
+        harness = self.make_harness()
+        # threshold for min 900 / ppr 2 is 33333 us; rpm at 33332 us is 900.
+        self.assertEqual(self.feed_pair(harness, 0, 33332), "RUNNING")
+
+    def test_exactly_at_threshold_is_running(self) -> None:
+        harness = self.make_harness()
+        # rpm at exactly 33333 us is 900, which is not below minimum_rpm.
+        self.assertEqual(self.feed_pair(harness, 0, 33333), "RUNNING")
+
+    def test_just_below_minimum_is_too_slow(self) -> None:
+        harness = self.make_harness()
+        # rpm at 33334 us is 899, below minimum_rpm.
+        self.assertEqual(self.feed_pair(harness, 0, 33334), "TOO_SLOW")
+
+    def test_very_slow_valid_pulses_are_too_slow(self) -> None:
+        harness = self.make_harness()
+        # 1 s interval -> rpm 30, well below minimum; still inside 10 s timeout.
+        self.assertEqual(self.feed_pair(harness, 0, 1000000), "TOO_SLOW")
+
+    def test_too_slow_persists_between_pulses_in_process(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(self.feed_pair(harness, 0, 1000000), "TOO_SLOW")
+        harness.process(1500000)
+        self.assertEqual(harness.status, "TOO_SLOW")
+
+    def test_no_signal_when_pulses_stop(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(self.feed_pair(harness, 0, 10000), "RUNNING")
+        harness.process(30000000)
+        self.assertEqual(harness.status, "NO_SIGNAL")
+
+    def test_no_signal_distinct_from_too_slow(self) -> None:
+        slow = self.make_harness()
+        self.assertEqual(self.feed_pair(slow, 0, 1000000), "TOO_SLOW")
+        gone = self.make_harness()
+        self.assertEqual(self.feed_pair(gone, 0, 10000), "RUNNING")
+        gone.process(30000000)
+        self.assertEqual(gone.status, "NO_SIGNAL")
+        self.assertNotEqual(slow.status, gone.status)
+
+    def test_startup_grace_suppresses_too_slow(self) -> None:
+        harness = self.make_harness(startup_grace_ms=250)
+        harness.process(0)
+        self.assertEqual(harness.status, "STARTING")
+        # Slow pulses inside the 250 ms grace window still report STARTING.
+        self.assertEqual(harness.on_pulse(0), 1)
+        self.assertEqual(harness.on_pulse(200000), 1)
+        self.assertEqual(harness.status, "STARTING")
+
+    def test_startup_grace_ends_before_min_speed_applies(self) -> None:
+        harness = self.make_harness(startup_grace_ms=250)
+        self.assertEqual(self.feed_pair(harness, 0, 1000000), "TOO_SLOW")
+
+    def test_timeout_rearms_session_keeps_count(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(self.feed_pair(harness, 0, 10000), "RUNNING")
+        self.assertEqual(harness.pulse_count, 2)
+        harness.process(30000000)
+        self.assertEqual(harness.status, "NO_SIGNAL")
+        self.assertEqual(harness.pulse_count, 2)
+        self.assertEqual(harness.session_state, SESSION_UNARMED)
+        self.assertEqual(harness.slow_signal, 0)
+
+    def test_recovery_from_too_slow_to_running(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(self.feed_pair(harness, 0, 1000000), "TOO_SLOW")
+        # The rotor speeds up: a new interval above the minimum clears TOO_SLOW.
+        self.assertEqual(self.feed_pair(harness, 2000000, 2010000), "RUNNING")
+        self.assertEqual(harness.slow_signal, 0)
+
+    def test_recovery_from_no_signal(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(self.feed_pair(harness, 0, 10000), "RUNNING")
+        harness.process(30000000)
+        self.assertEqual(harness.status, "NO_SIGNAL")
+        self.assertEqual(self.feed_pair(harness, 30000000, 30010000), "RUNNING")
+        self.assertEqual(harness.status, "RUNNING")
+
+    def test_reset_clears_runtime_state(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(self.feed_pair(harness, 0, 1000000), "TOO_SLOW")
+        harness.set_expected_running(0, 5000000)
+        self.assertEqual(harness.status, "STOPPED")
+        self.assertEqual(harness.slow_signal, 0)
+
+    def test_repeated_init(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(self.feed_pair(harness, 0, 1000000), "TOO_SLOW")
+        harness.init()
+        self.assertEqual(harness.status, "STOPPED")
+        harness.set_expected_running(1, 0)
+        self.assertEqual(self.feed_pair(harness, 0, 10000), "RUNNING")
+
+    def test_multiple_instances_are_independent(self) -> None:
+        first = self.make_harness(minimum_rpm=900)
+        second = self.make_harness(minimum_rpm=10)
+        self.assertEqual(self.feed_pair(first, 0, 1000000), "TOO_SLOW")
+        # The same slow interval but a low minimum keeps the second instance running.
+        self.assertEqual(self.feed_pair(second, 0, 1000000), "RUNNING")
+
+    def test_ppr_one(self) -> None:
+        harness = self.make_harness(pulses_per_revolution=1)
+        # threshold for min 900 / ppr 1 is 66666 us.
+        self.assertEqual(self.feed_pair(harness, 0, 66666), "RUNNING")
+        self.assertEqual(self.feed_pair(harness, 100000, 166667), "TOO_SLOW")
+
+    def test_ppr_two(self) -> None:
+        harness = self.make_harness(pulses_per_revolution=2)
+        # threshold for min 900 / ppr 2 is 33333 us.
+        self.assertEqual(self.feed_pair(harness, 0, 33333), "RUNNING")
+        self.assertEqual(self.feed_pair(harness, 100000, 133334), "TOO_SLOW")
+
+    def test_ppr_four(self) -> None:
+        harness = self.make_harness(pulses_per_revolution=4)
+        # threshold for min 900 / ppr 4 is 16666 us.
+        self.assertEqual(self.feed_pair(harness, 0, 16666), "RUNNING")
+        self.assertEqual(self.feed_pair(harness, 100000, 116667), "TOO_SLOW")
+
+    def test_multiple_minimum_rpm_values(self) -> None:
+        low = self.make_harness(minimum_rpm=100)
+        mid = self.make_harness(minimum_rpm=2000)
+        high = self.make_harness(minimum_rpm=6000)
+        self.assertEqual(self.feed_pair(low, 0, 100000), "RUNNING")
+        self.assertEqual(self.feed_pair(mid, 0, 100000), "TOO_SLOW")
+        self.assertEqual(self.feed_pair(high, 0, 100000), "TOO_SLOW")
+
+    def test_minimum_rpm_zero_disables_check(self) -> None:
+        harness = self.make_harness(minimum_rpm=0)
+        self.assertEqual(harness.minimum_interval_threshold_us, 0)
+        self.assertEqual(self.feed_pair(harness, 0, 1000000), "RUNNING")
+        self.assertEqual(harness.slow_signal, 0)
+
+    def test_invalid_ppr_zero_is_rejected(self) -> None:
+        harness = TachometerRuntimeHarness(
+            pulses_per_revolution=0, minimum_rpm=900, startup_grace_ms=0,
+            signal_timeout_ms=500, minimum_pulse_interval_us=800, lightweight=1,
+        )
+        harness.init()
+        self.assertEqual(harness.status, "CONFIG_ERROR")
+
+    def test_minimum_pulse_interval_filters_noise(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(harness.on_pulse(0), 1)
+        self.assertEqual(harness.on_pulse(100), 0)
+        self.assertEqual(harness.pulse_count, 1)
+        self.assertEqual(harness.session_state, SESSION_FIRST_PULSE)
+
+    def test_timestamp_wraparound_interval(self) -> None:
+        harness = self.make_harness()
+        # Interval that straddles the 32-bit wrap is still measured wrap-safe.
+        self.assertEqual(harness.on_pulse(0xFFFFFF00), 1)
+        self.assertEqual(harness.on_pulse(0x00002710), 1)
+        # interval = 0x2810 = 10256 us -> rpm 2925, above minimum.
+        self.assertEqual(harness.status, "RUNNING")
+
+    def test_arithmetic_maximum_boundary(self) -> None:
+        harness = self.make_harness(minimum_rpm=65535, pulses_per_revolution=255,
+                                    minimum_pulse_interval_us=0)
+        # threshold = 60000000 / 16711425 = 3.
+        self.assertEqual(harness.minimum_interval_threshold_us, 3)
+        self.assertEqual(self.feed_pair(harness, 0, 3), "RUNNING")
+        self.assertEqual(self.feed_pair(harness, 100, 104), "TOO_SLOW")
+
+    def test_arithmetic_minimum_boundary(self) -> None:
+        harness = self.make_harness(minimum_rpm=1, pulses_per_revolution=1,
+                                    minimum_pulse_interval_us=0,
+                                    signal_timeout_ms=65000)
+        # threshold = 60000000 / 1 = 60000000 us (60 s), inside the 65 s timeout.
+        self.assertEqual(harness.minimum_interval_threshold_us, 60000000)
+        self.assertEqual(self.feed_pair(harness, 0, 60000000), "RUNNING")
+        self.assertEqual(self.feed_pair(harness, 100000000, 160000001), "TOO_SLOW")
+
+    def test_zero_interval_flagged_when_noise_filter_disabled(self) -> None:
+        harness = self.make_harness(minimum_pulse_interval_us=0)
+        # Identical timestamps with the noise filter off match the FULL rpm==0
+        # case: the interval of 0 is flagged as TOO_SLOW.
+        self.assertEqual(harness.on_pulse(0), 1)
+        self.assertEqual(harness.on_pulse(0), 1)
+        self.assertEqual(harness.status, "TOO_SLOW")
+
+    def test_get_rpm_stays_zero(self) -> None:
+        harness = self.make_harness()
+        self.assertEqual(self.feed_pair(harness, 0, 10000), "RUNNING")
+        self.assertEqual(harness.rpm, 0)
 
 
 if __name__ == "__main__":

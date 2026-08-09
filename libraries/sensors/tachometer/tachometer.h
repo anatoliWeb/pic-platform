@@ -15,9 +15,12 @@
  * disable expensive RPM arithmetic (64-bit division). In lightweight mode:
  *   - tachometer_get_rpm() always returns 0
  *   - The rpm field in tachometer_t is not computed
- *   - All pulse filtering, startup grace, timeout, and presence detection
- *     remain fully functional
+ *   - minimum_rpm is still enforced: a pulse interval longer than
+ *     60000000 / (minimum_rpm * pulses_per_revolution) sets TOO_SLOW
+ *   - All pulse filtering, startup grace, timeout, NO_SIGNAL, and presence
+ *     detection remain fully functional
  *   - The 64-bit division runtime helper is eliminated from the linked image
+ *   - A single 32-bit division computes the interval threshold once at init
  *
  * Default (TACHOMETER_LIGHTWEIGHT not defined or 0) preserves full behavior.
  */
@@ -89,6 +92,10 @@ typedef struct
     uint32_t pulse_count;                     /* cumulative accepted pulses for the current expected-running session */
     uint16_t rpm;                             /* last computed RPM in 1/min; 0 until the second pulse */
     tachometer_session_state_t session_state; /* measurement-session phase, not a cumulative counter */
+#if TACHOMETER_LIGHTWEIGHT
+    uint32_t minimum_interval_threshold_us;   /* max accepted pulse interval for minimum_rpm; 0 when check disabled */
+    uint8_t slow_signal;                      /* 1 when the last accepted interval is below minimum_rpm */
+#endif
 } tachometer_t;
 
 drv_status_t tachometer_init(tachometer_t* tachometer,

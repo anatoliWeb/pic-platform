@@ -38,11 +38,10 @@ Full tachometer behavior with RPM calculation, minimum RPM check, and all diagno
 
 Define `TACHOMETER_LIGHTWEIGHT=1` before including the header to enable the lightweight profile:
 
-- Disables expensive 64-bit division RPM calculation
-- `tachometer_get_rpm()` always returns 0
-- TOO_SLOW status is never set
+- Disables the expensive 64-bit RPM division; `tachometer_get_rpm()` always returns 0
+- `minimum_rpm` is still enforced: the module computes a maximum pulse-interval threshold once in `tachometer_init()` and raises `TOO_SLOW` when the accepted pulse interval exceeds it. The check is bit-exact with the FULL profile, except that a zero interval is also reported `TOO_SLOW` (mirrors FULL with the noise filter disabled)
 - All pulse filtering, startup grace, timeout, and presence detection remain fully functional
-- Saves ~1236 B ROM on PIC18F452 (measured with XC8 3.10)
+- Saves 524 B ROM on PIC18F452 (measured with XC8 3.10) versus the FULL profile; RAM usage is identical (103 B)
 
 Usage:
 ```c
@@ -77,6 +76,7 @@ core/types.h
 - Caller passes monotonic microseconds.
 - `startup_grace_ms` suppresses `TOO_SLOW` during startup.
 - Two pulses are needed to compute RPM; the first pulse of a session only re-arms the measurement state.
+- In LIGHTWEIGHT, `minimum_rpm` is enforced by a precomputed maximum pulse-interval threshold `60000000 / (minimum_rpm * pulses_per_revolution)` compared in `tachometer_on_pulse()`.
 - `signal_timeout_ms` moves the state to `NO_SIGNAL` and re-arms the session (RPM 0, stale timestamp discarded) when pulses stop. The cumulative `pulse_count` survives timeouts.
 - `session_state` is a named measurement-session phase (`TACHOMETER_SESSION_UNARMED` / `FIRST_PULSE` / `ACTIVE`), saturated at `ACTIVE`, and is not a cumulative counter.
 - `pulse_count` remains the cumulative accepted pulse counter.
